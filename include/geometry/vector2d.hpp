@@ -8,12 +8,23 @@
 #ifndef VECTOR2D_HPP_
 #define VECTOR2D_HPP_
 
+#include "util.hpp"
+
 struct Vector2D
 {
-	long double x, y;
+	double x, y;
 
-	Vector2D(long double x=0, long double y=0)
+	/** Creates a Vector2D with the given coordinates */
+	Vector2D::Vector2D(double x, double y)
 	: x(x), y(y) {}
+
+	/** Creates a Vector2D with the (0, 0) coordinates */
+	Vector2D::Vector2D()
+	: x(0), y(0) {}
+
+	/** Copy constructor */
+	Vector2D::Vector2D(const Vector2D& v)
+	: x(v.x), y(v.y) {}
 
 	bool operator ==(const Vector2D& v) const;
 	bool operator !=(const Vector2D& v) const;
@@ -21,55 +32,16 @@ struct Vector2D
 
 	Vector2D clone() const;
 
-	long double operator ~() const;
-	long double magnitude() const;
+	string toString() const;
 
-	Vector2D operator !() const;
-	Vector2D unit() const;
-	Vector2D& normalize();
+	double* getCoordinates() const;
 
-	Vector2D operator -() const;
-	Vector2D opposite() const;
-	Vector2D& operator --();
-	Vector2D& reflect();
-	Vector2D& reflectX();
-	Vector2D& reflectY();
+	double operator ~() const;
 
-	Vector2D operator +(const Vector2D& v) const;
-	Vector2D sum(const Vector2D& v) const;
-	Vector2D& operator +=(const Vector2D& v);
-	Vector2D& add(const Vector2D& v);
+	/**	@return the length/magnitude of this vector. */
+	double magnitude() const;
 
-	Vector2D operator -(const Vector2D& v) const;
-	Vector2D difference(const Vector2D& v) const;
-	Vector2D& operator -=(const Vector2D& v);
-	Vector2D& subtract(const Vector2D& v);
-
-	Vector2D operator *(const long double& factor) const;
-	Vector2D times(const long double& factor) const;
-	Vector2D& operator *=(const long double& factor);
-	Vector2D& scale(const long double& factor);
-
-	Vector2D operator ||(const Vector2D& v) const;
-	Vector2D projection(const Vector2D& v) const;
-	Vector2D rejection(const Vector2D& v) const;
-	Vector2D operator |(const Vector2D& v) const;
-	Vector2D reflection(const Vector2D& v) const;
-
-	long double operator /(const Vector2D& v) const;
-	long double distance(const Vector2D& v) const;
-
-	long double operator ^(const Vector2D& v) const;
-	long double innerProduct(const Vector2D& v) const;
-
-	Vector2D operator <(const long double& radians) const;
-	Vector2D rotation(const long double& radians) const;
-	Vector2D& rotate(const long double& radians);
-	Vector2D& operator <<(const long double& radians);
-	Vector2D perpendicular() const;
-
-	const Vector2D* const getCanonicalBase() const;
-	long double* getCoordinates() const;
+	inline double length() const { return magnitude(); }
 
 
 	/** Represents the null/zero vector. It has coordinates (0, 0). */
