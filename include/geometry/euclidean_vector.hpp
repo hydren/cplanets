@@ -2,7 +2,7 @@
  * euclidean_vector.hpp
  *
  *  Created on: 01/03/2015
- *      Author: felipe
+ *      Author: Carlos F. M. Faruolo <5carlosfelipe5@gmail.com>felipe
  */
 
 #ifndef EUCLIDEAN_VECTOR_HPP_

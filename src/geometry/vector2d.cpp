@@ -2,7 +2,7 @@
  * vector2d.cpp
  *
  *  Created on: 01/03/2015
- *      Author: felipe
+ *      Author: Carlos F. M. Faruolo <5carlosfelipe5@gmail.com>felipe
  */
 
 #include <math.h>

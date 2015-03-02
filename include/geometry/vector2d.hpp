@@ -2,7 +2,7 @@
  * vector2d.hpp
  *
  *  Created on: 25/06/2014
- *      Author: felipe
+ *      Author: Carlos F. M. Faruolo <5carlosfelipe5@gmail.com>felipe
  */
 
 #ifndef VECTOR2D_HPP_
