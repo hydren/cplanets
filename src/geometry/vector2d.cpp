@@ -5,8 +5,9 @@
  *      Author: Carlos F. M. Faruolo <5carlosfelipe5@gmail.com>felipe
  */
 
-#include <math.h>
 #include "geometry/vector2d.hpp"
+
+#include <math.h>
 
 bool Vector2D::operator ==(const Vector2D& v) const
 {
@@ -33,8 +34,7 @@ Vector2D Vector2D::clone() const
 /** Creates a string with this vector coordinates (x, y) */
 string Vector2D::toString() const
 {
-	return "";
-//	return "(" + x + ", " + y + ")";
+	return string() + "(" + x + ", " + y + ")";
 }
 
 /** Creates and returns an array with this Vectors coordinates, in correct order.  */
