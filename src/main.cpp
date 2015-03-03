@@ -7,6 +7,8 @@
 
 #include <cstdlib>
 
+#include "vector2d.hpp"
+
 int main(int arc, char* argv[])
 {
 	return EXIT_SUCCESS;
