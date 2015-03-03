@@ -7,7 +7,7 @@
 
 #include <cstdlib>
 
-#include "vector2d.hpp"
+#include "geometry/vector2d.hpp"
 
 int main(int arc, char* argv[])
 {

@@ -15,15 +15,15 @@ struct Vector2D
 	double x, y;
 
 	/** Creates a Vector2D with the given coordinates */
-	Vector2D::Vector2D(double x, double y)
+	Vector2D(double x, double y)
 	: x(x), y(y) {}
 
 	/** Creates a Vector2D with the (0, 0) coordinates */
-	Vector2D::Vector2D()
+	Vector2D()
 	: x(0), y(0) {}
 
 	/** Copy constructor */
-	Vector2D::Vector2D(const Vector2D& v)
+	Vector2D(const Vector2D& v)
 	: x(v.x), y(v.y) {}
 
 	bool operator ==(const Vector2D& v) const;

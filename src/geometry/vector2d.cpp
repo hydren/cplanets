@@ -33,13 +33,14 @@ Vector2D Vector2D::clone() const
 /** Creates a string with this vector coordinates (x, y) */
 string Vector2D::toString() const
 {
-	return "(" + x + ", " + y + ")";
+	return "";
+//	return "(" + x + ", " + y + ")";
 }
 
 /** Creates and returns an array with this Vectors coordinates, in correct order.  */
 double* Vector2D::getCoordinates() const
 {
-	double coord = new double[2];
+	double* coord = new double[2];
 	coord[0] = x;
 	coord[1] = y;
 	return coord;
