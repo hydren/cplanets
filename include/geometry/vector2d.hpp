@@ -143,6 +143,33 @@ struct Vector2D
 	/** Compute the inner/dot product between this and the given vector. */
 	double innerProduct(const Vector2D& v) const;
 
+	// ------- projection operations (XXX not tested)
+
+	Vector2D operator ||(const Vector2D& v) const;
+
+	/* Creates a vector that represents the projection of this vector on the given vector v. */
+	Vector2D projection(const Vector2D& v) const;
+
+	/* Creates a vector that represents the rejection of this vector on the given vector v. The rejection is defined as rej(u, v) = u - proj(u, v) */
+	Vector2D rejection(const Vector2D& v) const;
+
+	Vector2D operator |(const Vector2D& v) const;
+
+	/* Creates a vector that represents the reflection of this vector in the axis represented by the given vector v. */
+	Vector2D reflection(const Vector2D& v) const;
+
+	// ------- rotation operations (XXX not tested)
+
+	Vector2D operator <(const double& radians) const;
+
+	Vector2D rotation(const double& radians) const;
+
+	Vector2D& rotate(const double& radians);
+
+	Vector2D& operator <<(const double& radians);
+
+	Vector2D perpendicular() const;
+
 	//-----------------------------------------------------------------
 
 	/** Represents the null/zero vector. It has coordinates (0, 0). */

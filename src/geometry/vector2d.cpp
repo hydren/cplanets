@@ -235,3 +235,64 @@ double Vector2D::innerProduct(const Vector2D& v) const
 	return (*this) ^ v;
 }
 
+// ------- projection operations (XXX not tested)
+
+Vector2D Vector2D::operator ||(const Vector2D& v) const
+{
+	return (*this) * (((*this)^v)/(v^v));
+}
+
+/* Creates a vector that represents the projection of this vector on the given vector v. */
+Vector2D Vector2D::projection(const Vector2D& v) const
+{
+	return (*this) || v;
+}
+
+/* Creates a vector that represents the rejection of this vector on the given vector v. The rejection is defined as rej(u, v) = u - proj(u, v) */
+Vector2D Vector2D::rejection(const Vector2D& v) const
+{
+	return (*this) - ((*this) || v);
+}
+
+Vector2D Vector2D::operator |(const Vector2D& v) const
+{
+	return (*this) - (this->rejection(v)*2);
+}
+
+/* Creates a vector that represents the reflection of this vector in the axis represented by the given vector v. */
+Vector2D Vector2D::reflection(const Vector2D& v) const
+{
+	return (*this)|v;
+}
+
+// ------- rotation operations (XXX not tested)
+
+Vector2D Vector2D::operator <(const double& radians) const
+{
+	return Vector2D(x*cos(radians) - y*sin(radians), x*sin(radians) - y*cos(radians));
+}
+
+Vector2D Vector2D::rotation(const double& radians) const
+{
+	return (*this)<radians;
+}
+
+Vector2D& Vector2D::rotate(const double& radians)
+{
+	double
+	nx = x*cos(radians) - y*sin(radians),
+	ny = x*sin(radians) - y*cos(radians);
+	x = nx; y = ny;
+	return *this;
+}
+
+Vector2D& Vector2D::operator <<(const double& radians)
+{
+	return (*this) << radians;
+}
+
+Vector2D Vector2D::perpendicular() const
+{
+	return rotation(M_PI);
+}
+
