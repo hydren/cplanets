@@ -9,6 +9,15 @@
 
 #include <math.h>
 
+/** Represents the null/zero vector. It has coordinates (0, 0). */
+const Vector2D Vector2D::NULL_VECTOR (0, 0);
+
+/** A vector codirectional with the X axis, with length 1. */
+const Vector2D Vector2D::X_VERSOR (1, 0);
+
+/** A vector codirectional with the Y axis, with length 1. */
+const Vector2D Vector2D::Y_VERSOR (0, 1);
+
 // ------ equality & utils
 
 bool Vector2D::operator ==(const Vector2D& v) const
