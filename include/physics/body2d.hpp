@@ -45,6 +45,8 @@ struct Body2D
 	Body2D(const Body2D& b);
 
 	string toString();
+
+	bool operator<(const Body2D& b) const;
 };
 
 
