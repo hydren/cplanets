@@ -9,8 +9,16 @@
 #include <cstdlib>
 #include "geometry/vector2d.hpp"
 
+#ifdef _WIN32
+	#define SDLMAIN_STREAM_WORKAROUND workaround_sdl_stream_file = fopen("CON", "w" ); freopen( "CON", "w", stdout ); freopen( "CON", "w", stderr )
+#else
+	#define SDLMAIN_STREAM_WORKAROUND ;
+#endif
+
 TopWin *top_win;
 Button *but;
+
+FILE* workaround_sdl_stream_file = NULL;// part of workaround
 
 void topw_disp()
 {
@@ -28,9 +36,12 @@ void button_cmd(Button* b)
 
 int main(int arc, char* argv[])
 {
+  SDLMAIN_STREAM_WORKAROUND;// part of workaround
+  puts("Program start");
   top_win=new TopWin("Hello",Rect(100,100,120,100),SDL_INIT_VIDEO,0,topw_disp);
   but=new Button(top_win,0,Rect(5,10,60,0),"catch me!",button_cmd);
   get_events();
+  if(workaround_sdl_stream_file != NULL) fclose(workaround_sdl_stream_file); // part of workaround
   return EXIT_SUCCESS;
 }
 
