@@ -27,7 +27,9 @@ struct AbstractPhysics2DSolver
 	: universe(u), timeElapsed(0), timestep(0)
 	{}
 
-	void step() abstract;
+	virtual ~AbstractPhysics2DSolver();
+
+	virtual void step() abstract;
 
 	protected:
 	void computeAllBodiesAccelerations();

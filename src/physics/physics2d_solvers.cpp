@@ -16,9 +16,9 @@ void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
 {
 	foreach(Body2D, b1, set<Body2D>, universe->bodies)
 	{
-		if(b1.acceleration == NULL)
-			b1.acceleration = Vector2D();
-		else
+//		if(b1.acceleration == NULL)
+//			b1.acceleration = Vector2D();
+//		else
 			b1.acceleration.scale(0);
 
 		foreach(Body2D, b2, set<Body2D>, universe->bodies)
@@ -34,7 +34,7 @@ void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
 
 Vector2D AbstractPhysics2DSolver::calculateAccelerationDueToNeighborhood(Vector2D position, Body2D body)
 {
-	Vector2D acc = new Vector2D();
+	Vector2D acc;
 	foreach(Body2D, b2, set<Body2D>, universe->bodies)
 	{
 		if(b2 != body)
