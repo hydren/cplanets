@@ -10,4 +10,6 @@
 
 #include "futil/futil.hpp"
 
+#define FUTIL_DISABLE_RECT
+
 #endif /* UTIL_HPP_ */
