@@ -17,11 +17,11 @@ struct AbstractPhysics2DSolver
 {
 	string displayName;
 
-	double timestep;
+	Universe2D* universe;
 
 	double timeElapsed;
 
-	Universe2D* universe;
+	double timestep;
 
 	AbstractPhysics2DSolver(Universe2D* u)
 	: universe(u), timeElapsed(0), timestep(0)
