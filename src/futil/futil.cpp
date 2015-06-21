@@ -24,20 +24,20 @@
 
 #include <cstdarg>
 #include <cstdio>
-#include <exception>
+#include <stdexcept>
 
 //exception goodies
 
 /** Throws an standard exception with the specified message */
 void throw_exception(const string& msg)
 {
-	throw std::exception(msg.c_str());
+	throw std::runtime_error(msg.c_str());
 }
 
 /** Throws an standard exception with the specified message */
 void throw_exception(const char* msg)
 {
-	throw std::exception(msg);
+	throw std::runtime_error(msg);
 }
 
 /** Throws an standard exception with printf's style message */
@@ -49,7 +49,7 @@ void throw_exception(const char* format, ...)
 	vsprintf(buffer, format, args);
 	string msg = string(buffer);
 	va_end(args);
-	throw std::exception(msg.c_str());
+	throw std::runtime_error(msg.c_str());
 }
 
 
