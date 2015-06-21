@@ -24,6 +24,7 @@
 
 #include <cstdarg>
 #include <cstdio>
+#include <exception>
 
 //exception goodies
 
