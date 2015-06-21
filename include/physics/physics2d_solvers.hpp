@@ -24,16 +24,60 @@ struct AbstractPhysics2DSolver
 	double timestep;
 
 	AbstractPhysics2DSolver(Universe2D* u)
-	: universe(u), timeElapsed(0), timestep(0)
+	: displayName("Generic solver"), universe(u), timeElapsed(0), timestep(0)
 	{}
 
-	virtual ~AbstractPhysics2DSolver();
+	virtual ~AbstractPhysics2DSolver() {}
 
 	virtual void step() abstract;
 
 	protected:
 	void computeAllBodiesAccelerations();
 	Vector2D calculateAccelerationDueToNeighborhood(Vector2D position, Body2D body);
+};
+
+struct EulerSolver extends public AbstractPhysics2DSolver
+{
+	EulerSolver(Universe2D* u) : AbstractPhysics2DSolver(u)
+	{
+		this->displayName = "Euler";
+		this->timestep = 0.01;
+	}
+
+	void step();
+};
+
+struct SemiImplicitEulerSolver extends public AbstractPhysics2DSolver
+{
+	SemiImplicitEulerSolver(Universe2D* u) : AbstractPhysics2DSolver(u)
+	{
+		this->displayName = "Semi-implicit Euler";
+		this->timestep = 0.01;
+	}
+
+	void step();
+};
+
+struct EulerCromerSolver extends public AbstractPhysics2DSolver
+{
+	EulerCromerSolver(Universe2D* u) : AbstractPhysics2DSolver(u)
+	{
+		this->displayName = "Semi-implicit Euler (Euler-Cromer)";
+		this->timestep = 0.1;
+	}
+
+	void step();
+};
+
+struct LeapfrogSolver extends public AbstractPhysics2DSolver
+{
+	LeapfrogSolver(Universe2D* u) 	: AbstractPhysics2DSolver(u)
+	{
+		this->displayName = "Leapfrog";
+		this->timestep = 0.1;
+	}
+
+	void step();
 };
 
 #endif /* PHYSICS_PHYSICS2D_SOLVERS_HPP_ */
