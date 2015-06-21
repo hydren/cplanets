@@ -41,8 +41,3 @@ string Body2D::toString()
 {
 	return id + " ("+mass+"Kg, "+diameter+"Km)";
 }
-
-bool Body2D::operator < (const Body2D& b) const
-{
-	return this->id < b.id;
-}

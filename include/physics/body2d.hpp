@@ -46,7 +46,9 @@ struct Body2D
 
 	string toString();
 
-	bool operator<(const Body2D& b) const;
+	bool operator<(const Body2D& b) const { return this->id < b.id; }
+	bool operator==(const Body2D& b) const { return this->id == b.id; }
+	bool operator!=(const Body2D& b) const { return this->id != b.id; }
 };
 
 
