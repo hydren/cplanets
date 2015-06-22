@@ -3346,3 +3346,57 @@ void get_events() {
   }
   sdl_quit(0);
 }
+
+//CUSTOM
+//Returns true if this bounding box intersects with the given Rect.
+bool intersects(const Rect& box1 ,const Rect& box2 )
+{
+	if
+    (   ((int)box1.x + (int)box1.w) <= (int)box2.x || //S1, S4, S7
+        (int)box1.x  >= ((int)box2.x + (int)box2.w)  || //S3, S6, S9
+        ((int)box1.y + (int)box1.h) <= (int)box2.y || //S1, S2, S3
+        (int)box1.y  >= ((int)box2.y + (int)box2.h)     //S7, S8, S9
+	) return false;
+	else return true;
+}
+
+Rect intersection(const Rect& box1 ,const Rect& box2 )
+{
+	int x, y, h, w;
+	if(!intersects(box1, box2)) return Rect();
+	if(box1.x <= box2.x){
+		x = box2.x;
+		if(box1.w >= box2.x + box2.w)
+			w = box2.w;
+		else
+			w = box1.w - (box2.x - box1.x);
+	}
+	else{
+		x = box1.x;
+		if(box2.w >= box1.x + box1.w)
+			w = box1.w;
+		else
+			w = box2.w - (box1.x - box2.x);
+	}
+	if(box1.y <= box2.y){
+		y = box2.y;
+		if(box1.h >= box2.h + box2.y)
+			h = box2.h;
+		else
+			h = box1.h - (box2.y - box1.y);
+	}
+	else{
+		y = box1.y;
+		if(box2.h >= box1.h + box1.y)
+			h = box1.h;
+		else
+			h = box2.h - (box1.y - box2.y);
+	}
+	Rect intersectionBox(x,y,w,h);
+	return intersectionBox;
+}
+
+int area(const Rect& box)
+{
+	return box.w*box.h; //you don't say
+}

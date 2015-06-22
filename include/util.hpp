@@ -8,8 +8,6 @@
 #ifndef UTIL_HPP_
 #define UTIL_HPP_
 
-#define FUTIL_DISABLE_RECT
 #include "futil/futil.hpp"
-
 
 #endif /* UTIL_HPP_ */

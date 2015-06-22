@@ -484,3 +484,8 @@ namespace mwin {
   void move(BgrWin *bgw,int x,int y,int but);
   void up(BgrWin *bgw,int x,int y,int but);
 }
+
+//CUSTOM
+bool intersects(const Rect& box1 ,const Rect& box2);
+Rect intersection(const Rect& box1 ,const Rect& box2);
+int area(const Rect& box);
