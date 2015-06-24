@@ -17,13 +17,13 @@ struct AbstractPhysics2DSolver
 {
 	string displayName;
 
-	Universe2D* universe;
+	Universe2D& universe;
 
 	double timeElapsed;
 
 	double timestep;
 
-	AbstractPhysics2DSolver(Universe2D* u)
+	AbstractPhysics2DSolver(Universe2D& u)
 	: displayName("Generic solver"), universe(u), timeElapsed(0), timestep(0)
 	{}
 
@@ -38,7 +38,7 @@ struct AbstractPhysics2DSolver
 
 struct EulerSolver extends public AbstractPhysics2DSolver
 {
-	EulerSolver(Universe2D* u) : AbstractPhysics2DSolver(u)
+	EulerSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
 	{
 		this->displayName = "Euler";
 		this->timestep = 0.01;
@@ -49,7 +49,7 @@ struct EulerSolver extends public AbstractPhysics2DSolver
 
 struct SemiImplicitEulerSolver extends public AbstractPhysics2DSolver
 {
-	SemiImplicitEulerSolver(Universe2D* u) : AbstractPhysics2DSolver(u)
+	SemiImplicitEulerSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
 	{
 		this->displayName = "Semi-implicit Euler";
 		this->timestep = 0.01;
@@ -60,7 +60,7 @@ struct SemiImplicitEulerSolver extends public AbstractPhysics2DSolver
 
 struct EulerCromerSolver extends public AbstractPhysics2DSolver
 {
-	EulerCromerSolver(Universe2D* u) : AbstractPhysics2DSolver(u)
+	EulerCromerSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
 	{
 		this->displayName = "Semi-implicit Euler (Euler-Cromer)";
 		this->timestep = 0.1;
@@ -71,7 +71,7 @@ struct EulerCromerSolver extends public AbstractPhysics2DSolver
 
 struct LeapfrogSolver extends public AbstractPhysics2DSolver
 {
-	LeapfrogSolver(Universe2D* u) 	: AbstractPhysics2DSolver(u)
+	LeapfrogSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
 	{
 		this->displayName = "Leapfrog";
 		this->timestep = 0.1;
