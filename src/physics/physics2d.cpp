@@ -60,3 +60,79 @@ void Physics2D::changeReferenceFrameTo(set<Body2D*>& reference)
 	//subtract from all bodies the position and speed
 }
 
+void Physics2D::resolveCollisions()
+{
+	//detect collisions
+	collisions.clear();
+	foreach(Body2D&, a, set<Body2D*>, universe.bodies)	foreach(Body2D&, b, set<Body2D*>, universe.bodies)
+	{
+		if(a == b) continue;
+
+		if(a.position.distance(b.position) < a.diameter/2 + b.diameter/2)
+		{
+			bool bothAdded=false;
+			foreach(set<Body2D*>&, set, set< set<Body2D*> >, collisions)
+			{
+				if(Collections::containsElement(set, a) && Collections::containsElement(set, b)) //probably a duplicate lookup
+				{
+					bothAdded = true;
+					break;
+				}
+				else if(Collections::containsElement(set, a) && not Collections::containsElement(set, b)) //append colliding b
+				{
+					set.insert(&a);
+					bothAdded = true;
+					break;
+				}
+				else if(!Collections::containsElement(set, a) && Collections::containsElement(set, b)) //append colliding a
+				{
+					set.insert(&a);
+					bothAdded = true;
+					break;
+				}
+			}
+			if(!bothAdded) //new colliding pair
+			{
+				set<Body2D*> newSet;
+				newSet.insert(&a);
+				newSet.insert(&b);
+				collisions.insert(newSet);
+			}
+		}
+	}
+
+	if(collisions.empty() == false)
+		referenceFrame.bodies.clear();
+
+	//resolve collisions
+	foreach(set<Body2D*>&, collisionSet, set< set<Body2D*> >, collisions)
+	{
+		Body2D merger(0, 0, new Vector2D(), new Vector2D(), new Vector2D());
+		foreach(Body2D&, body, set<Body2D*>, collisionSet)
+		{
+			merger.position.x += body.position.x;
+			merger.position.y += body.position.y;
+
+			merger.velocity.x = (merger.velocity.x*merger.mass + body.velocity.x*body.mass)/(merger.mass + body.mass);
+			merger.velocity.y = (merger.velocity.y*merger.mass + body.velocity.y*body.mass)/(merger.mass + body.mass);
+
+			merger.diameter = sqrt(merger.diameter*merger.diameter + body.diameter*body.diameter);
+			merger.mass += body.mass;
+
+			merger.color = (merger.color + body.color)/2;
+
+			universe.bodies.erase(body);
+		}
+
+		if(collisionSet.size() == 0) continue;
+
+		merger.position.x /= collisionSet.size();
+		merger.position.y /= collisionSet.size();
+
+		universe.bodies.insert(merger);
+
+		//notify listeners about the collision
+		foreach(BodyCollisionListener*, listener, set<BodyCollisionListener*>, registeredBodyCollisionListeners)
+			listener->onBodyCollision(collisionSet, merger);
+	}
+}

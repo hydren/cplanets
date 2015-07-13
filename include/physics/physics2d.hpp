@@ -28,17 +28,16 @@ struct Physics2D
 	void step();
 	void changeReferenceFrameTo(set<Body2D*>& reference);
 
+	struct BodyCollisionListener
+	{
+		virtual ~BodyCollisionListener() {}
+		virtual void onBodyCollision(set<Body2D*>& collidingSet, Body2D& resultingMerger) abstract;
+	};
+	set<BodyCollisionListener*> registeredBodyCollisionListeners;
+
 	private:
 	set< set<Body2D*> > collisions;
 	void resolveCollisions();
-
 };
-
-struct BodyCollisionListener
-{
-	virtual ~BodyCollisionListener(){}
-	virtual void onBodyCollision(set<Body2D*>& collidingSet, Body2D& resultingMerger) abstract;
-};
-
 
 #endif /* PHYSICS_PHYSICS2D_HPP_ */
