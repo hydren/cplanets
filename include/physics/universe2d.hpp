@@ -15,7 +15,7 @@
 struct Universe2D
 {
 	double gravity;
-	std::set<Body2D> bodies;
+	std::list<Body2D> bodies;
 
 	Universe2D()
 	: gravity(1)

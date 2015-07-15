@@ -9,12 +9,13 @@
 #define PHYSICS_PHYSICS2D_HPP_
 
 #include "universe2d.hpp"
-#include <set>
-using std::set;
+#include "physics2d_solvers.hpp"
+#include <list>
+using std::list;
 
 struct ReferenceFrame
 {
-	set<Body2D*> bodies;
+	list<Body2D*> bodies;
 	Vector2D getPosition() const;
 	Vector2D getVelocity() const;
 };
@@ -26,17 +27,19 @@ struct Physics2D
 	AbstractPhysics2DSolver* physics2DSolver;
 
 	void step();
-	void changeReferenceFrameTo(set<Body2D*>& reference);
+	void changeReferenceFrameTo(list<Body2D*>& reference);
 
+	/** A struct to notify observers of collision between bodies.
+	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER*/
 	struct BodyCollisionListener
 	{
 		virtual ~BodyCollisionListener() {}
-		virtual void onBodyCollision(set<Body2D*>& collidingSet, Body2D& resultingMerger) abstract;
+		virtual void onBodyCollision(list<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
 	};
-	set<BodyCollisionListener*> registeredBodyCollisionListeners;
+	list<BodyCollisionListener*> registeredBodyCollisionListeners;
 
 	private:
-	set< set<Body2D*> > collisions;
+	list< list<Body2D*> > collisions;
 	void resolveCollisions();
 };
 

@@ -7,13 +7,15 @@
 
 #include "physics/physics2d.hpp"
 #include <iostream>
+#include <cmath>
 
 Vector2D ReferenceFrame::getPosition() const
 {
 	Vector2D centerOfMass;
 	double totalMass = 0;
-	foreach(Body2D&, b, set<Body2D>, bodies)
+	const_foreach(const Body2D*, body, list<Body2D*>, bodies)
 	{
+		const Body2D& b = *body;
 		centerOfMass.add(b.position.times(b.mass));
 		totalMass += b.mass;
 	}
@@ -27,8 +29,9 @@ Vector2D ReferenceFrame::getVelocity() const
 {
 	Vector2D totalVelocity;
 	double totalMass = 0;
-	foreach(Body2D&, b, set<Body2D>, bodies)
+	const_foreach(const Body2D*, body, list<Body2D*>, bodies)
 	{
+		const Body2D& b = *body;
 		totalVelocity.add(b.velocity.times(b.mass));
 		totalMass += b.mass;
 	}
@@ -52,7 +55,7 @@ void Physics2D::step()
 	resolveCollisions();
 }
 
-void Physics2D::changeReferenceFrameTo(set<Body2D*>& reference)
+void Physics2D::changeReferenceFrameTo(list<Body2D*>& reference)
 {
 	//FIXME TODO implement Physics2D::changeReferenceFrameTo
 	//compute center of mass of 'reference'
@@ -64,39 +67,39 @@ void Physics2D::resolveCollisions()
 {
 	//detect collisions
 	collisions.clear();
-	foreach(Body2D&, a, set<Body2D*>, universe.bodies)	foreach(Body2D&, b, set<Body2D*>, universe.bodies)
+	foreach(Body2D&, a, list<Body2D>, universe.bodies)	foreach(Body2D&, b, list<Body2D>, universe.bodies)
 	{
 		if(a == b) continue;
 
 		if(a.position.distance(b.position) < a.diameter/2 + b.diameter/2)
 		{
 			bool bothAdded=false;
-			foreach(set<Body2D*>&, set, set< set<Body2D*> >, collisions)
+			foreach(list<Body2D*>&, list1, list< list<Body2D*> >, collisions)
 			{
-				if(Collections::containsElement(set, a) && Collections::containsElement(set, b)) //probably a duplicate lookup
+				if(Collections::containsElement(list1, a) && Collections::containsElement(list1, b)) //probably a duplicate lookup
 				{
 					bothAdded = true;
 					break;
 				}
-				else if(Collections::containsElement(set, a) && not Collections::containsElement(set, b)) //append colliding b
+				else if(Collections::containsElement(list1, a) && not Collections::containsElement(list1, b)) //append colliding b
 				{
-					set.insert(&a);
+					list1.push_back(&a);
 					bothAdded = true;
 					break;
 				}
-				else if(!Collections::containsElement(set, a) && Collections::containsElement(set, b)) //append colliding a
+				else if(!Collections::containsElement(list1, a) && Collections::containsElement(list1, b)) //append colliding a
 				{
-					set.insert(&a);
+					list1.push_back(&a);
 					bothAdded = true;
 					break;
 				}
 			}
 			if(!bothAdded) //new colliding pair
 			{
-				set<Body2D*> newSet;
-				newSet.insert(&a);
-				newSet.insert(&b);
-				collisions.insert(newSet);
+				list<Body2D*> newlist1;
+				newlist1.push_back(&a);
+				newlist1.push_back(&b);
+				collisions.push_back(newlist1);
 			}
 		}
 	}
@@ -105,11 +108,12 @@ void Physics2D::resolveCollisions()
 		referenceFrame.bodies.clear();
 
 	//resolve collisions
-	foreach(set<Body2D*>&, collisionSet, set< set<Body2D*> >, collisions)
+	foreach(list<Body2D*>&, collisionList, list< list<Body2D*> >, collisions)
 	{
-		Body2D merger(0, 0, new Vector2D(), new Vector2D(), new Vector2D());
-		foreach(Body2D&, body, set<Body2D*>, collisionSet)
+		Body2D merger(0, 0, Vector2D(), Vector2D(), Vector2D());
+		foreach(Body2D*, body1, list<Body2D*>, collisionList)
 		{
+			Body2D& body = *body1;
 			merger.position.x += body.position.x;
 			merger.position.y += body.position.y;
 
@@ -121,18 +125,18 @@ void Physics2D::resolveCollisions()
 
 			merger.color = (merger.color + body.color)/2;
 
-			universe.bodies.erase(body);
+			universe.bodies.remove(body);
 		}
 
-		if(collisionSet.size() == 0) continue;
+		if(collisionList.size() == 0) continue;
 
-		merger.position.x /= collisionSet.size();
-		merger.position.y /= collisionSet.size();
+		merger.position.x /= collisionList.size();
+		merger.position.y /= collisionList.size();
 
-		universe.bodies.insert(merger);
+		universe.bodies.push_back(merger);
 
 		//notify listeners about the collision
-		foreach(BodyCollisionListener*, listener, set<BodyCollisionListener*>, registeredBodyCollisionListeners)
-			listener->onBodyCollision(collisionSet, merger);
+		foreach(BodyCollisionListener*, listener, list<BodyCollisionListener*>, registeredBodyCollisionListeners)
+			listener->onBodyCollision(collisionList, merger);
 	}
 }

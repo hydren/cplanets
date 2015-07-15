@@ -6,15 +6,15 @@
  */
 
 #include "physics/universe2d.hpp"
-using std::set;
+using std::list;
 
 Universe2D::Universe2D(const Universe2D& u)
 : gravity(1)
 {
 	gravity = u.gravity;
-	for(set<Body2D>::iterator i = u.bodies.begin(); i != u.bodies.end(); ++i)
+	for(list<Body2D>::const_iterator i = u.bodies.begin(); i != u.bodies.end(); ++i)
 	{
-		bodies.insert(Body2D(*i));
+		bodies.push_back(Body2D(*i));
 	}
 }
 
