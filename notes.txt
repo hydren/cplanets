@@ -59,12 +59,13 @@ Plain text (*.txt)
 Comma Separated Values (*.csv)
 XML Universe (*.xml)
 Star System XML (*.ssx)
+Json, yaml, Xupl
 
 --solvers:
 
 Euler method - done
 Leapfrog method - done
-Semi-implicit Euler/Euler-Cromer/Newton–Størmer–Verlet (NSV) - done
+Semi-implicit Euler/Euler-Cromer/Newtonï¿½Stï¿½rmerï¿½Verlet (NSV) - done
 Semi-implicit Euler 2nd variant - done
 Heun/RK2 - done
 RK4 - done
