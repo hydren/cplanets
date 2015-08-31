@@ -2,7 +2,7 @@
  * physics2d.cpp
  *
  *  Created on: 23/06/2015
- *      Author: Visagio
+ *      Author: Carlos Faruolo
  */
 
 #include "physics/physics2d.hpp"

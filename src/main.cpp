@@ -2,7 +2,7 @@
  * main.cpp
  *
  *  Created on: 02/03/2015
- *      Author: Carlos F. M. Faruolo <5carlosfelipe5@gmail.com>
+ *      Author: Carlos Faruolo <5carlosfelipe5@gmail.com>
  */
 
 #include <sdl-widgets/example.hpp>

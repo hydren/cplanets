@@ -2,7 +2,7 @@
  * example.cpp
  *
  *  Created on: 19/06/2015
- *      Author: Visagio
+ *      Author: Carlos Faruolo
  */
 
 #include "sdl-widgets/example.hpp"

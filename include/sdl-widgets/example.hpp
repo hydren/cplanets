@@ -2,7 +2,7 @@
  * example.hpp
  *
  *  Created on: 19/06/2015
- *      Author: Visagio
+ *      Author: Carlos Faruolo
  */
 
 #ifndef SDL_WIDGETS_EXAMPLE_HPP_

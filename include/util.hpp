@@ -2,7 +2,7 @@
  * util.hpp
  *
  *  Created on: 01/03/2015
- *      Author: Carlos F. M. Faruolo <5carlosfelipe5@gmail.com>felipe
+ *      Author: Carlos Faruolo <5carlosfelipe5@gmail.com>felipe
  */
 
 #ifndef UTIL_HPP_

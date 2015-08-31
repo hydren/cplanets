@@ -2,7 +2,7 @@
  * physics2d.hpp
  *
  *  Created on: 20/06/2015
- *      Author: Visagio
+ *      Author: Carlos Faruolo
  */
 
 #ifndef PHYSICS_PHYSICS2D_HPP_

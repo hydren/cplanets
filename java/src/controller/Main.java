@@ -23,7 +23,7 @@ public class Main
 	public final static 
 	String licence = 
 		"Japla, a interactive application to play with gravitation. \n" +
-		"Copyright (C) 2014 Carlos F. M. Faruolo \nE-mail: 5carlosfelipe5@gmail.com\n\n" +
+		"Copyright (C) 2014 Carlos Faruolo \nE-mail: 5carlosfelipe5@gmail.com\n\n" +
 		"This program is free software: you can redistribute it and/or modify\n" +
 		"it under the terms of the GNU General Public License as published by\n" +
 		"the Free Software Foundation, either version 3 of the License, or\n" +

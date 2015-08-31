@@ -2,7 +2,7 @@
  * physics2d_solvers.cpp
  *
  *  Created on: 21/06/2015
- *      Author: Visagio
+ *      Author: Carlos Faruolo
  */
 
 #include "physics/physics2d_solvers.hpp"

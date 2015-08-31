@@ -2,7 +2,7 @@
  * physics2d_solvers.hpp
  *
  *  Created on: 21/06/2015
- *      Author: Visagio
+ *      Author: Carlos Faruolo
  */
 
 #ifndef PHYSICS_PHYSICS2D_SOLVERS_HPP_
