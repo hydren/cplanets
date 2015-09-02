@@ -23,6 +23,8 @@
 #ifndef FUTIL_HPP_
 #define FUTIL_HPP_
 
+#define FUTIL_VERSION "Rev1"
+
 #ifndef FUTIL_DISABLE_CONCEPTUAL_GOODIES
 
 //java hipster things
