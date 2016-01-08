@@ -5,7 +5,7 @@
  *      Author: Carlos Faruolo <5carlosfelipe5@gmail.com>felipe
  */
 
-#include "geometry/vector2d.hpp"
+#include "vector2d.hpp"
 
 #include <math.h>
 

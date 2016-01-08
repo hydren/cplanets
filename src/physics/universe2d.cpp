@@ -5,7 +5,7 @@
  *      Author: felipe
  */
 
-#include "physics/universe2d.hpp"
+#include "universe2d.hpp"
 using std::list;
 
 Universe2D::Universe2D(const Universe2D& u)

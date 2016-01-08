@@ -5,7 +5,7 @@
  *      Author: felipe
  */
 
-#include "physics/body2d.hpp"
+#include "body2d.hpp"
 
 string generateRandomName()
 {

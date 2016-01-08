@@ -7,6 +7,7 @@
 
 #include <sdl-widgets/example.hpp>
 #include <cstdlib>
+
 #include "geometry/vector2d.hpp"
 
 #ifdef _WIN32

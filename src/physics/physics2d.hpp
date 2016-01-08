@@ -8,9 +8,10 @@
 #ifndef PHYSICS_PHYSICS2D_HPP_
 #define PHYSICS_PHYSICS2D_HPP_
 
-#include "universe2d.hpp"
-#include "physics2d_solvers.hpp"
 #include <list>
+
+#include "../../src/physics/physics2d_solvers.hpp"
+#include "../../src/physics/universe2d.hpp"
 using std::list;
 
 struct ReferenceFrame

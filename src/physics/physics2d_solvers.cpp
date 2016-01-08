@@ -5,7 +5,7 @@
  *      Author: Carlos Faruolo
  */
 
-#include "physics/physics2d_solvers.hpp"
+#include "physics2d_solvers.hpp"
 
 #include <list>
 using std::list;

@@ -5,7 +5,8 @@
  *      Author: Carlos Faruolo
  */
 
-#include "physics/physics2d.hpp"
+#include "physics2d.hpp"
+
 #include <iostream>
 #include <cmath>
 

@@ -11,7 +11,7 @@
 #include <string>
 using std::string;
 
-#include "universe2d.hpp"
+#include "../../src/physics/universe2d.hpp"
 
 struct AbstractPhysics2DSolver
 {
