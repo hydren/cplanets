@@ -27,6 +27,9 @@
 *.out
 *.app
 
+# Eclipse annoying file
+language.settings.xml
+
 # Custom
 /bin/
 /japla.properties
