@@ -1,3 +1,6 @@
+#ifndef _SDL_WIDGETS_H
+#define _SDL_WIDGETS_H
+
 /*  Copyright 2011 W.Boeke
 
     This program is free software: you can redistribute it and/or modify
@@ -489,3 +492,5 @@ namespace mwin {
 bool intersects(const Rect& box1 ,const Rect& box2);
 Rect intersection(const Rect& box1 ,const Rect& box2);
 int area(const Rect& box);
+
+#endif /* _SDL_WIDGETS_H */
