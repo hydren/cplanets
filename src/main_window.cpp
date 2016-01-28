@@ -12,7 +12,7 @@ void draw();
 
 void showMainWindow()
 {
-	window = new TopWin("cplanets", Rect(0, 0, 640, 480), SDL_INIT_VIDEO, 0, draw);
+	window = new TopWin("cplanets", Rect(0, 0, 640, 480), SDL_INIT_VIDEO, SDL_RESIZABLE, draw);
 
 	//start
 	get_events();
