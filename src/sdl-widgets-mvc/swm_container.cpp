@@ -24,22 +24,22 @@ SDL_GUIContainer::~SDL_GUIContainer()
 
 void SDL_GUIContainer::add(SDL_GUIComponent* component)
 {
-	childs.insert(component);
+	childs.push_back(component);
 }
 
 void SDL_GUIContainer::remove(SDL_GUIComponent* component)
 {
-	childs.erase(component);
+	childs.push_back(component);
 }
 
-void SDL_GUIContainer::paint()
+void SDL_GUIContainer::paint() const
 {
 	paintComponents();
 }
 
-void SDL_GUIContainer::paintComponents()
+void SDL_GUIContainer::paintComponents() const
 {
-	foreach(SDL_GUIComponent*, child, std::set<SDL_GUIComponent*>, childs)
-		child->paint();
+	const_foreach(const SDL_GUIComponent*, child, std::list<SDL_GUIComponent*>, childs)
+		child->paintComponent();
 }
 
