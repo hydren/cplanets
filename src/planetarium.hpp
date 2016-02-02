@@ -18,9 +18,15 @@ struct Planetarium : public WinBase
 	Vector2D* viewportPosition;
 	SDL_Color bgColor;
 
+	//rendering parameters
+	double zoom, minimumBodyRenderingRadius;
+	int strokeSizeNormal, strokeSizeFocused;
+
 	Planetarium(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~Planetarium();
 	void draw();
+
+	Vector2D getTransposed(const Vector2D& position) const;
 };
 
 

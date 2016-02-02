@@ -21,7 +21,6 @@ FILE* workaround_sdl_stream_file = NULL;// part of workaround
 int main(int arc, char* argv[])
 {
   SDLMAIN_STREAM_WORKAROUND;// part of workaround
-  puts("Program start");
   showMainWindow();
   if(workaround_sdl_stream_file != NULL) fclose(workaround_sdl_stream_file); // part of workaround
   return EXIT_SUCCESS;

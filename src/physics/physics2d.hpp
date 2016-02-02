@@ -10,13 +10,12 @@
 
 #include <list>
 
-#include "../../src/physics/physics2d_solvers.hpp"
-#include "../../src/physics/universe2d.hpp"
-using std::list;
+#include "physics2d_solvers.hpp"
+#include "universe2d.hpp"
 
 struct ReferenceFrame
 {
-	list<Body2D*> bodies;
+	std::list<Body2D*> bodies;
 	Vector2D getPosition() const;
 	Vector2D getVelocity() const;
 };
@@ -27,20 +26,23 @@ struct Physics2D
 	ReferenceFrame referenceFrame;
 	AbstractPhysics2DSolver* physics2DSolver;
 
+	void lock();
+
 	void step();
-	void changeReferenceFrameTo(list<Body2D*>& reference);
+	void changeReferenceFrameTo(std::list<Body2D*>& reference);
+
 
 	/** A struct to notify observers of collision between bodies.
 	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER*/
 	struct BodyCollisionListener
 	{
 		virtual ~BodyCollisionListener() {}
-		virtual void onBodyCollision(list<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
+		virtual void onBodyCollision(std::list<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
 	};
-	list<BodyCollisionListener*> registeredBodyCollisionListeners;
+	std::list<BodyCollisionListener*> registeredBodyCollisionListeners;
 
 	private:
-	list< list<Body2D*> > collisions;
+	std::list< std::list<Body2D*> > collisions;
 	void resolveCollisions();
 };
 
