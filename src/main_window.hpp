@@ -10,6 +10,7 @@
 
 #include "sdl-widgets/sdl-widgets.h"
 
+int colorToInt(SDL_Color color);
 void showMainWindow();
 
 #endif /* MAIN_WINDOW_HPP_ */

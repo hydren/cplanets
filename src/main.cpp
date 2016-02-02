@@ -26,9 +26,3 @@ int main(int arc, char* argv[])
   if(workaround_sdl_stream_file != NULL) fclose(workaround_sdl_stream_file); // part of workaround
   return EXIT_SUCCESS;
 }
-
-
-
-
-
-
