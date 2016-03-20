@@ -70,10 +70,7 @@ void Planetarium::draw()
 		//circleColor(this->surface, x, y, this->strokeSizeNormal, 0xffffff);
 	}
 
-	SDL_Rect* tempRect = new SDL_Rect;
-	tempRect->x = this->area.x; tempRect->y = this->area.y;
-	SDL_BlitSurface(this->surface, null, this->win, tempRect);
-	delete tempRect;
+	SDL_BlitSurface(this->surface, null, this->win, null);
 }
 
 Vector2D Planetarium::getTransposed(const Vector2D& position) const

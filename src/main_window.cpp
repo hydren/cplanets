@@ -41,7 +41,7 @@ void CPlanetsGUI::MainWindow::show()
 
 	//XXX DEBUG CODE START
 
-	Body2D somebody(20, 5, Vector2D(), Vector2D(), Vector2D());
+	Body2D somebody(550, 32, Vector2D(64, 128), Vector2D(), Vector2D());
 	somebody.userObject = getRandomColor();
 	planetarium->physics->universe.bodies.push_back(somebody);
 
