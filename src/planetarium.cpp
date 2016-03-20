@@ -45,29 +45,25 @@ void Planetarium::draw()
 		SDL_Color* bodyColor = (SDL_Color*) body.userObject;
 
 		Vector2D v = this->getTransposed(body.position);
-		int x = (int) round(v.x - size/2.0 );
-		int y = (int) round(v.y - size/2.0 );
 
-		cout << "t(x, y) = " << v.x << ", " << v.y << endl;
-		cout << "(x, y) = " << x << ", " << y << endl;
+		cout << "(x, y) = " << v.x << ", " << v.y << endl;
 
 		cout << "size: " << size << endl;
 
-		//filledCircleColor(this->surface, x, y, round(size*0.5), colorToInt(*bodyColor));
+//		SDL_Rect tmpRect; tmpRect.x = x; tmpRect.y = y; tmpRect.h = size, tmpRect.w = size;
+//		SDL_FillRect(this->surface, &tmpRect, colorToInt(*bodyColor));
 
-		SDL_Rect* tmpRect = new SDL_Rect; tmpRect->x = x; tmpRect->y = y; tmpRect->h = size, tmpRect->w = size;
-		SDL_FillRect(this->surface, tmpRect, colorToInt(*bodyColor));
-		delete tmpRect;
+		filledCircleColor(this->surface, v.x, v.y, round(size*0.5), colorToInt(*bodyColor));
+
+		int borderColor = 0xffffffff;
 
 //		if(focusedBodies.contains(body))
 //		{
 //			graphics2d.setStroke(focusedStroke);
-//			graphics2d.setColor( Color.ORANGE );
+//			borderColor = int value for orange
 //		}
-//		else
-//			graphics2d.setColor( Color.WHITE );
 
-		//circleColor(this->surface, x, y, this->strokeSizeNormal, 0xffffff);
+		circleColor(this->surface, v.x, v.y, round(size*0.5), borderColor);
 	}
 
 	SDL_BlitSurface(this->surface, null, this->win, null);
