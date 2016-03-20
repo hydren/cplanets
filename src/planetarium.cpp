@@ -6,6 +6,10 @@
  */
 
 #include "planetarium.hpp"
+#include "main_window.hpp"
+
+using CPlanetsGUI::colorToInt;
+using CPlanetsGUI::modifyColor;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
@@ -16,6 +20,8 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 {
 	if(this->surface == null)
 		throw_exception("Failed to create Planetarium surface: %s", SDL_GetError());
+
+	modifyColor(bgColor, 0, 0, 0);
 }
 
 Planetarium::~Planetarium()
@@ -27,7 +33,7 @@ Planetarium::~Planetarium()
 void Planetarium::draw()
 {
 	this->init_gui();
-	SDL_FillRect(this->win, null, SDL_MapRGB(win->format, this->bgColor.r, this->bgColor.g, this->bgColor.b)); //clears the screen
+	SDL_FillRect(this->win, null, colorToInt(bgColor)); //clears the screen
 
 	//draw bodies
 	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)

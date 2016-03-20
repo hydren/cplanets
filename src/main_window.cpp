@@ -13,9 +13,16 @@ Planetarium* planetarium;
 
 void draw();
 
-int colorToInt(SDL_Color color)
+int CPlanetsGUI::colorToInt(const SDL_Color& color)
 {
 	return SDL_MapRGB(window->win->format, color.r, color.g, color.b);
+}
+
+void CPlanetsGUI::modifyColor(SDL_Color& color, int r, int g, int b)
+{
+	if(r != -1) color.r = r;
+	if(b != -1) color.b = b;
+	if(g != -1) color.g = g;
 }
 
 void CPlanetsGUI::MainWindow::show()

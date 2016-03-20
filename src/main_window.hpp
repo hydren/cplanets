@@ -16,6 +16,9 @@ namespace CPlanetsGUI
 	{
 		void show();
 	}
+
+	int colorToInt(const SDL_Color& color);
+	void modifyColor(SDL_Color& color, int r, int g, int b);
 }
 
 #endif /* MAIN_WINDOW_HPP_ */
