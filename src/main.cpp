@@ -23,6 +23,7 @@ int main(int arc, char* argv[])
 {
   SDLMAIN_STREAM_WORKAROUND;// part of workaround
 
+  srand(time(null));
   CPlanetsGUI::MainWindow::show();
   //Widgets_RunExample();
 
