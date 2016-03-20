@@ -17,8 +17,6 @@ struct Body2D
 
 	string id;
 
-	int color;
-
 	double mass;
 
 	double diameter;
@@ -39,7 +37,7 @@ struct Body2D
 
 	Body2D();
 	Body2D(double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration);
-	Body2D(string id, int c, double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration);
+	Body2D(string id, double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration);
 
 	/** Copy constructor (deep). Creates a new Body2D instance with the same properties (including ID). */
 	Body2D(const Body2D& b);

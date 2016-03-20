@@ -131,7 +131,7 @@ void Physics2D::resolveCollisions()
 			merger.diameter = sqrt(merger.diameter*merger.diameter + body.diameter*body.diameter);
 			merger.mass += body.mass;
 
-			merger.color = (merger.color + body.color)/2;
+			//merger.color = (merger.color + body.color)/2;
 
 			universe.bodies.remove(body);
 		}

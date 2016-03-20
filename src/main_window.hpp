@@ -19,6 +19,7 @@ namespace CPlanetsGUI
 
 	int colorToInt(const SDL_Color& color);
 	void modifyColor(SDL_Color& color, int r, int g, int b);
+	SDL_Color* getRandomColor();
 }
 
 #endif /* MAIN_WINDOW_HPP_ */

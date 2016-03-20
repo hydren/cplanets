@@ -10,6 +10,7 @@
 
 using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
+using std::cout; using std::endl;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
@@ -38,14 +39,25 @@ void Planetarium::draw()
 	//draw bodies
 	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
 	{
+		cout << "drawing body " << body.id << endl;
 		double size = zoom*body.diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
+		SDL_Color* bodyColor = (SDL_Color*) body.userObject;
 
 		Vector2D v = this->getTransposed(body.position);
-		int x = (int) round(v.x - size/2 );
-		int y = (int) round(v.y - size/2 );
+		int x = (int) round(v.x - size/2.0 );
+		int y = (int) round(v.y - size/2.0 );
 
-		filledCircleColor(this->surface, x, y, round(size*0.5), body.color);
+		cout << "t(x, y) = " << v.x << ", " << v.y << endl;
+		cout << "(x, y) = " << x << ", " << y << endl;
+
+		cout << "size: " << size << endl;
+
+		//filledCircleColor(this->surface, x, y, round(size*0.5), colorToInt(*bodyColor));
+
+		SDL_Rect* tmpRect = new SDL_Rect; tmpRect->x = x; tmpRect->y = y; tmpRect->h = size, tmpRect->w = size;
+		SDL_FillRect(this->surface, tmpRect, colorToInt(*bodyColor));
+		delete tmpRect;
 
 //		if(focusedBodies.contains(body))
 //		{
@@ -55,12 +67,18 @@ void Planetarium::draw()
 //		else
 //			graphics2d.setColor( Color.WHITE );
 
-		circleColor(this->surface, x, y, this->strokeSizeNormal, 0xffffff);
+		//circleColor(this->surface, x, y, this->strokeSizeNormal, 0xffffff);
 	}
+
+	SDL_Rect* tempRect = new SDL_Rect;
+	tempRect->x = this->area.x; tempRect->y = this->area.y;
+	SDL_BlitSurface(this->surface, null, this->win, tempRect);
+	delete tempRect;
 }
 
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
+	cout << "viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
 	return position.difference(*(this->viewportPosition)).scale(zoom);
 }
 
