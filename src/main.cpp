@@ -8,6 +8,7 @@
 #include <cstdlib>
 
 #include "geometry/vector2d.hpp"
+//#include "sdl-widgets/example.hpp"
 #include "main_window.hpp"
 
 #ifdef _WIN32
@@ -21,7 +22,10 @@ FILE* workaround_sdl_stream_file = NULL;// part of workaround
 int main(int arc, char* argv[])
 {
   SDLMAIN_STREAM_WORKAROUND;// part of workaround
+
   showMainWindow();
+  //Widgets_RunExample();
+
   if(workaround_sdl_stream_file != NULL) fclose(workaround_sdl_stream_file); // part of workaround
   return EXIT_SUCCESS;
 }
