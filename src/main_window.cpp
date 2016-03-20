@@ -13,13 +13,12 @@ Planetarium* planetarium;
 
 void draw();
 
-
 int colorToInt(SDL_Color color)
 {
 	return SDL_MapRGB(window->win->format, color.r, color.g, color.b);
 }
 
-void showMainWindow()
+void CPlanetsGUI::MainWindow::show()
 {
 	window = new TopWin("cplanets", Rect(0, 0, 640, 480), SDL_INIT_VIDEO, SDL_RESIZABLE, draw);
 	planetarium = new Planetarium(window, Rect(128, 64, 400, 300));
@@ -32,4 +31,5 @@ void draw()
 {
 	window->clear();
 	draw_title_ttf->draw_string(window->win, "Test", Point(20,40));
+	planetarium->draw();
 }

@@ -8,10 +8,11 @@
 #ifndef PLANETARIUM_HPP_
 #define PLANETARIUM_HPP_
 
+#include "util.hpp"
 #include "physics/physics2d.hpp"
 #include "sdl-widgets/sdl-widgets.h"
 
-struct Planetarium : public WinBase
+struct Planetarium extends WinBase
 {
 	SDL_Surface* surface;
 	Physics2D* physics;

@@ -10,7 +10,12 @@
 
 #include "sdl-widgets/sdl-widgets.h"
 
-int colorToInt(SDL_Color color);
-void showMainWindow();
+namespace CPlanetsGUI
+{
+	namespace MainWindow
+	{
+		void show();
+	}
+}
 
 #endif /* MAIN_WINDOW_HPP_ */

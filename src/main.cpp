@@ -23,7 +23,7 @@ int main(int arc, char* argv[])
 {
   SDLMAIN_STREAM_WORKAROUND;// part of workaround
 
-  showMainWindow();
+  CPlanetsGUI::MainWindow::show();
   //Widgets_RunExample();
 
   if(workaround_sdl_stream_file != NULL) fclose(workaround_sdl_stream_file); // part of workaround
