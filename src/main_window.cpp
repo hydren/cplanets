@@ -15,7 +15,12 @@ void draw();
 
 int CPlanetsGUI::colorToInt(const SDL_Color& color)
 {
-	return SDL_MapRGB(window->win->format, color.r, color.g, color.b);
+	return colorToInt(window->win, color);
+}
+
+int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color)
+{
+	return SDL_MapRGB(surf->format, color.r, color.g, color.b);
 }
 
 void CPlanetsGUI::modifyColor(SDL_Color& color, int r, int g, int b)
