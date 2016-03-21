@@ -12,6 +12,8 @@
 #include <set>
 #include <list>
 
+#include "hotfixes.h"
+
 namespace Collections
 {
 	template<typename T>

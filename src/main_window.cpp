@@ -20,7 +20,12 @@ int CPlanetsGUI::colorToInt(const SDL_Color& color)
 
 int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color)
 {
+#ifdef HOTFIX_FOR_SDL_MAP_RGB_1
+	return 0 + color.r * 0xFF000000 + color.g * 0x00FF0000 + color.b * 0x0000FF00; //FixMe formula not working
+#endif
+#ifndef HOTFIX_FOR_SDL_MAP_RGB_1
 	return SDL_MapRGB(surf->format, color.r, color.g, color.b);
+#endif
 }
 
 void CPlanetsGUI::modifyColor(SDL_Color& color, int r, int g, int b)
