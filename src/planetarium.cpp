@@ -14,7 +14,7 @@ using std::cout; using std::endl;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
-  surface(SDL_CreateRGBSurface(0, rect.w, rect.h, 32, 0, 0, 0, 0)),
+  surface(SDL_CreateRGBSurface(SDL_SWSURFACE, rect.w, rect.h, 32, 0, 0, 0, 0)),
   physics(new Physics2D()), viewportPosition(new Vector2D()), bgColor(SDL_Color()),
   zoom(1.0), minimumBodyRenderingRadius(3.0),
   strokeSizeNormal(1), strokeSizeFocused(2)
@@ -34,7 +34,7 @@ Planetarium::~Planetarium()
 void Planetarium::draw()
 {
 	this->init_gui();
-	SDL_FillRect(this->win, null, colorToInt(bgColor)); //clears the screen
+	SDL_FillRect(this->surface, null, colorToInt(bgColor)); //clears the screen
 
 	//draw bodies
 	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
