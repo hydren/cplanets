@@ -7,6 +7,7 @@
 
 #include "planetarium.hpp"
 #include "main_window.hpp"
+#include "util.hpp"
 
 using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
@@ -17,7 +18,8 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   surface(SDL_CreateRGBSurface(SDL_SWSURFACE, rect.w, rect.h, 32, 0, 0, 0, 0)),
   physics(new Physics2D()), viewportPosition(new Vector2D()), bgColor(SDL_Color()),
   zoom(1.0), minimumBodyRenderingRadius(3.0),
-  strokeSizeNormal(1), strokeSizeFocused(2)
+  strokeSizeNormal(1), strokeSizeFocused(2),
+  running(true), sleepingTime(25)
 {
 	if(this->surface == null)
 		throw_exception("Failed to create Planetarium surface: %s", SDL_GetError());
@@ -73,6 +75,15 @@ Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
 	cout << "viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
 	return position.difference(*(this->viewportPosition)).scale(zoom);
+}
+
+void Planetarium::performPhysics()
+{
+	while(true) if(running)
+	{
+		this->physics->step();
+		//rest(sleepingTime);
+	}
 }
 
 

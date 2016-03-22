@@ -22,12 +22,17 @@ struct Planetarium extends WinBase
 	//rendering parameters
 	double zoom, minimumBodyRenderingRadius;
 	int strokeSizeNormal, strokeSizeFocused;
+	bool running;
+	long sleepingTime;
 
 	Planetarium(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~Planetarium();
 	void draw();
 
 	Vector2D getTransposed(const Vector2D& position) const;
+
+	private:
+	void performPhysics();
 };
 
 
