@@ -10,7 +10,7 @@
 
 #include "util.hpp"
 #include "physics/physics2d.hpp"
-#include "sdl-widgets/sdl-widgets.h"
+#include "SDL_widgets/SDL_widgets.h"
 
 struct Planetarium extends WinBase
 {

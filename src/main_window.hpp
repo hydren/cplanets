@@ -8,7 +8,7 @@
 #ifndef MAIN_WINDOW_HPP_
 #define MAIN_WINDOW_HPP_
 
-#include "sdl-widgets/sdl-widgets.h"
+#include "SDL_widgets/SDL_widgets.h"
 
 namespace CPlanetsGUI
 {

@@ -1,3 +1,6 @@
 [submodule "include/futil"]
 	path = include/futil
 	url = https://github.com/hydren/futil.git
+[submodule "include/SDL_widgets"]
+	path = include/SDL_widgets
+	url = https://github.com/hydren/SDL_widgets.git
