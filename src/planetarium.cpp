@@ -82,7 +82,7 @@ void Planetarium::performPhysics()
 	while(true) if(running)
 	{
 		this->physics->step();
-		//rest(sleepingTime);
+		rest(sleepingTime);
 	}
 }
 
