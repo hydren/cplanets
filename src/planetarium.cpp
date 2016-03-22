@@ -6,6 +6,7 @@
  */
 
 #include "planetarium.hpp"
+
 #include "main_window.hpp"
 #include "util.hpp"
 
@@ -13,18 +14,25 @@ using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
 using std::cout; using std::endl;
 
+void* threadFunction(void* arg)
+{
+	((Planetarium*) arg)->performPhysics();
+	return null;
+}
+
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
   surface(SDL_CreateRGBSurface(SDL_SWSURFACE, rect.w, rect.h, 32, 0, 0, 0, 0)),
   physics(new Physics2D()), viewportPosition(new Vector2D()), bgColor(SDL_Color()),
   zoom(1.0), minimumBodyRenderingRadius(3.0),
   strokeSizeNormal(1), strokeSizeFocused(2),
-  running(true), sleepingTime(25)
+  running(false), sleepingTime(25), physicsThread()
 {
 	if(this->surface == null)
 		throw_exception("Failed to create Planetarium surface: %s", SDL_GetError());
 
 	modifyColor(bgColor, 0, 0, 0);
+	pthread_create(&physicsThread, null, threadFunction, this);
 }
 
 Planetarium::~Planetarium()
@@ -41,16 +49,16 @@ void Planetarium::draw()
 	//draw bodies
 	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
 	{
-		cout << "drawing body " << body.id << endl;
+		cout << "DEBUG: drawing body " << body.id << endl;
 		double size = zoom*body.diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
 		SDL_Color* bodyColor = (SDL_Color*) body.userObject;
 
 		Vector2D v = this->getTransposed(body.position);
 
-		cout << "(x, y) = " << v.x << ", " << v.y << endl;
+		cout << "DEBUG: (x, y) = " << v.x << ", " << v.y << endl;
 
-		cout << "size: " << size << endl;
+		cout << "DEBUG: size: " << size << endl;
 
 //		SDL_Rect tmpRect; tmpRect.x = x; tmpRect.y = y; tmpRect.h = size, tmpRect.w = size;
 //		SDL_FillRect(this->surface, &tmpRect, colorToInt(*bodyColor));
@@ -73,16 +81,25 @@ void Planetarium::draw()
 
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
-	cout << "viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
+	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
 	return position.difference(*(this->viewportPosition)).scale(zoom);
+}
+
+void Planetarium::setRunning(bool run)
+{
+	this->running = run;
 }
 
 void Planetarium::performPhysics()
 {
-	while(true) if(running)
+	for(;true;rest(sleepingTime))
 	{
-		this->physics->step();
-		rest(sleepingTime);
+		if(running)
+		{
+			cout << "DEBUG: performing physics" << endl;
+			this->physics->step();
+		}
+		else cout << "DEBUG: skipping perform physics" << endl;
 	}
 }
 

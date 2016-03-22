@@ -8,9 +8,12 @@
 #ifndef PLANETARIUM_HPP_
 #define PLANETARIUM_HPP_
 
+#include <pthread.h>
+
+#include "SDL_widgets/SDL_widgets.h"
+
 #include "util.hpp"
 #include "physics/physics2d.hpp"
-#include "SDL_widgets/SDL_widgets.h"
 
 struct Planetarium extends WinBase
 {
@@ -31,8 +34,11 @@ struct Planetarium extends WinBase
 
 	Vector2D getTransposed(const Vector2D& position) const;
 
-	private:
+	void setRunning(bool run=true);
 	void performPhysics();
+
+	private:
+	pthread_t physicsThread;
 };
 
 
