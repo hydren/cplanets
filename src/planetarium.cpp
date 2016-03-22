@@ -34,7 +34,7 @@ Planetarium::~Planetarium()
 void Planetarium::draw()
 {
 	this->init_gui();
-	SDL_FillRect(this->surface, null, colorToInt(bgColor)); //clears the screen
+	SDL_FillRect(this->surface, null, colorToInt(this->surface, bgColor)); //clears the screen
 
 	//draw bodies
 	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
@@ -53,7 +53,7 @@ void Planetarium::draw()
 //		SDL_Rect tmpRect; tmpRect.x = x; tmpRect.y = y; tmpRect.h = size, tmpRect.w = size;
 //		SDL_FillRect(this->surface, &tmpRect, colorToInt(*bodyColor));
 
-		filledCircleColor(this->surface, v.x, v.y, round(size*0.5), colorToInt(*bodyColor));
+		filledCircleColor(this->surface, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
 
 		int borderColor = 0xffffffff;
 
