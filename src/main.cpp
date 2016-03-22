@@ -17,7 +17,7 @@
 	#define SDLMAIN_STREAM_WORKAROUND ;
 #endif
 
-FILE* workaround_sdl_stream_file = NULL;// part of workaround
+FILE* workaround_sdl_stream_file = null;// part of workaround
 
 int main(int arc, char* argv[])
 {
@@ -27,6 +27,6 @@ int main(int arc, char* argv[])
   CPlanetsGUI::MainWindow::show();
   //Widgets_RunExample();
 
-  if(workaround_sdl_stream_file != NULL) fclose(workaround_sdl_stream_file); // part of workaround
+  if(workaround_sdl_stream_file != null) fclose(workaround_sdl_stream_file); // part of workaround
   return EXIT_SUCCESS;
 }
