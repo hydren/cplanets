@@ -15,7 +15,6 @@
 
 struct Planetarium extends WinBase
 {
-	SDL_Surface* surface;
 	Physics2D* physics;
 	Vector2D* viewportPosition;
 	SDL_Color bgColor;
