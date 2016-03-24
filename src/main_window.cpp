@@ -6,6 +6,9 @@
  */
 
 #include "main_window.hpp"
+
+#include <cmath>
+
 #include "planetarium.hpp"
 
 TopWin* window;
@@ -71,6 +74,8 @@ void CPlanetsGUI::MainWindow::show()
 void onWindowResize(int dw, int dh)
 {
 	//XXX dummy resizing code, for testing purposes
+	planetarium->area.x = fmax(planetarium->tw_area.w * 0.1, 10);
+	planetarium->area.y = fmax(planetarium->tw_area.h * 0.1, 10);
 	planetarium->widen(dw * 0.75, dh * 0.75);
 }
 
