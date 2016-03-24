@@ -44,6 +44,14 @@ SDL_Color* CPlanetsGUI::getRandomColor()
 	return somecolor;
 }
 
+void CPlanetsGUI::triggerRepaint()
+{
+	SDL_Event repaintEvent;
+	repaintEvent.type = SDL_VIDEOEXPOSE;
+	SDL_PushEvent(&repaintEvent);
+}
+
+
 void CPlanetsGUI::MainWindow::show()
 {
 	window = new TopWin("cplanets", Rect(0, 0, 640, 480), SDL_INIT_VIDEO, SDL_RESIZABLE, draw);

@@ -37,7 +37,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 
 	modifyColor(bgColor, 0, 0, 0);
 	physics->physics2DSolver = new LeapfrogSolver(physics->universe);
-	SDL_CreateThread(&threadFunction, this);
+	SDL_CreateThread(threadFunction, this);
 }
 
 Planetarium::~Planetarium()
@@ -107,6 +107,7 @@ void Planetarium::performPhysics()
 				this->physics->step();
 			}
 			else cout << "DEBUG: skipping perform physics" << endl;
+			CPlanetsGUI::triggerRepaint();
 		}
 	}
 	catch(std::runtime_error& e)
