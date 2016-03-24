@@ -7,8 +7,9 @@
 
 #include "planetarium.hpp"
 
-#include "main_window.hpp"
 #include "util.hpp"
+#include "main_window.hpp"
+#include "physics/physics2d.hpp"
 
 using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
@@ -32,6 +33,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 		throw_exception("Failed to create Planetarium surface: %s", SDL_GetError());
 
 	modifyColor(bgColor, 0, 0, 0);
+	physics->physics2DSolver = new LeapfrogSolver(physics->universe);
 	pthread_create(&physicsThread, null, threadFunction, this);
 }
 
