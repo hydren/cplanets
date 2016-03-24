@@ -17,12 +17,8 @@ int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color, boo
 {
 	#ifdef HOTFIX_FOR_SDL_MAP_RGB_1
 	if(forceRGBA || surf == null)
-	{
-		//XXX Workaround for SDL_MapRGB bug. This way is very slow, there should be a math way.
-		static char hexcol[9];
-		snprintf(hexcol, sizeof hexcol, "%02x%02x%02xFF", color.r, color.g, color.b);
-		return strtoimax(hexcol, null, 16);
-	}
+		return (((int) color.r) << 24) + (((int) color.g) << 16) + (((int) color.b) << 8) + 0x000000FF;
+
 	#endif
 
 	return SDL_MapRGB(surf->format, color.r, color.g, color.b);
