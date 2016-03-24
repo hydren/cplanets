@@ -12,6 +12,7 @@ TopWin* window;
 Planetarium* planetarium;
 
 void draw();
+void onWindowResize(int dw, int dh);
 
 int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
 {
@@ -52,6 +53,7 @@ void CPlanetsGUI::MainWindow::show()
 {
 	window = new TopWin("cplanets", Rect(0, 0, 640, 480), SDL_INIT_VIDEO, SDL_RESIZABLE, draw);
 	planetarium = new Planetarium(window, Rect(128, 64, 400, 300));
+	handle_rsev = onWindowResize;
 
 	//XXX DEBUG CODE START
 
@@ -64,6 +66,12 @@ void CPlanetsGUI::MainWindow::show()
 
 	//start
 	get_events();
+}
+
+void onWindowResize(int dw, int dh)
+{
+	//XXX dummy resizing code, for testing purposes
+	planetarium->widen(dw * 0.75, dh * 0.75);
 }
 
 void draw()
