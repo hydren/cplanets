@@ -7,6 +7,8 @@
 
 #include "planetarium.hpp"
 
+#include <stdexcept>
+
 #include "util.hpp"
 #include "main_window.hpp"
 #include "physics/physics2d.hpp"
@@ -15,10 +17,11 @@ using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
 using std::cout; using std::endl;
 
-void* threadFunction(void* arg)
+int threadFunction(void* arg)
 {
 	((Planetarium*) arg)->performPhysics();
-	return null;
+	cout << "physics thread stopped." << endl;
+	return 0;
 }
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
@@ -27,14 +30,14 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   physics(new Physics2D()), viewportPosition(new Vector2D()), bgColor(SDL_Color()),
   zoom(1.0), minimumBodyRenderingRadius(3.0),
   strokeSizeNormal(1), strokeSizeFocused(2),
-  running(false), sleepingTime(25), physicsThread()
+  running(false), sleepingTime(25)
 {
 	if(this->surface == null)
 		throw_exception("Failed to create Planetarium surface: %s", SDL_GetError());
 
 	modifyColor(bgColor, 0, 0, 0);
 	physics->physics2DSolver = new LeapfrogSolver(physics->universe);
-	pthread_create(&physicsThread, null, threadFunction, this);
+	SDL_CreateThread(&threadFunction, this);
 }
 
 Planetarium::~Planetarium()
@@ -94,14 +97,21 @@ void Planetarium::setRunning(bool run)
 
 void Planetarium::performPhysics()
 {
-	for(;true;rest(sleepingTime))
+	try
 	{
-		if(running)
+		for(;true;rest(sleepingTime))
 		{
-			cout << "DEBUG: performing physics" << endl;
-			this->physics->step();
+			if(running)
+			{
+				cout << "DEBUG: performing physics" << endl;
+				this->physics->step();
+			}
+			else cout << "DEBUG: skipping perform physics" << endl;
 		}
-		else cout << "DEBUG: skipping perform physics" << endl;
+	}
+	catch(std::runtime_error& e)
+	{
+		cout << "bad behavior on physics thread! " << e.what() << endl;
 	}
 }
 

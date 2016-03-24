@@ -8,8 +8,6 @@
 #ifndef PLANETARIUM_HPP_
 #define PLANETARIUM_HPP_
 
-#include <pthread.h>
-
 #include "SDL_widgets/SDL_widgets.h"
 
 #include "util.hpp"
@@ -36,9 +34,6 @@ struct Planetarium extends WinBase
 
 	void setRunning(bool run=true);
 	void performPhysics();
-
-	private:
-	pthread_t physicsThread;
 };
 
 
