@@ -54,16 +54,11 @@ void Planetarium::draw()
 	//draw bodies
 	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
 	{
-		cout << "DEBUG: drawing body " << body.id << endl;
 		double size = zoom*body.diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
 		SDL_Color* bodyColor = (SDL_Color*) body.userObject;
 
 		Vector2D v = this->getTransposed(body.position);
-
-		cout << "DEBUG: (x, y) = " << v.x << ", " << v.y << endl;
-
-		cout << "DEBUG: size: " << size << endl;
 
 //		SDL_Rect tmpRect; tmpRect.x = x; tmpRect.y = y; tmpRect.h = size, tmpRect.w = size;
 //		SDL_FillRect(this->surface, &tmpRect, colorToInt(*bodyColor));
@@ -86,7 +81,7 @@ void Planetarium::draw()
 
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
-	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
+//	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
 	return position.difference(*(this->viewportPosition)).scale(zoom);
 }
 
@@ -102,11 +97,8 @@ void Planetarium::performPhysics()
 		for(;true;rest(sleepingTime))
 		{
 			if(running)
-			{
-				cout << "DEBUG: performing physics" << endl;
 				this->physics->step();
-			}
-			else cout << "DEBUG: skipping perform physics" << endl;
+
 			CPlanetsGUI::triggerRepaint();
 		}
 	}
