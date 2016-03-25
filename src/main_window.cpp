@@ -11,6 +11,10 @@
 
 #include "planetarium.hpp"
 
+const int TOOLBAR_SIZE = 24;
+const int WIDGETS_SPACING = 4;
+const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
+
 TopWin* window;
 Planetarium* planetarium;
 
@@ -54,8 +58,15 @@ void CPlanetsGUI::triggerRepaint()
 
 void CPlanetsGUI::MainWindow::show()
 {
-	window = new TopWin("cplanets", Rect(0, 0, 640, 480), SDL_INIT_VIDEO, SDL_RESIZABLE, draw);
-	planetarium = new Planetarium(window, Rect(128, 64, 400, 300));
+	Rect winSize(0, 0, 640, 480);
+	Rect planetariumSize(
+		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
+		TOOLBAR_SIZE + WIDGETS_SPACING,
+		winSize.w - BODIES_PANEL_WIDTH - TOOLBAR_SIZE - 2*WIDGETS_SPACING,
+		winSize.h - 2*TOOLBAR_SIZE
+	);
+	window = new TopWin("cplanets", winSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw);
+	planetarium = new Planetarium(window, planetariumSize);
 	handle_rsev = onWindowResize;
 
 	//XXX DEBUG CODE START
@@ -73,10 +84,7 @@ void CPlanetsGUI::MainWindow::show()
 
 void onWindowResize(int dw, int dh)
 {
-	//XXX dummy resizing code, for testing purposes
-	planetarium->area.x = fmax(planetarium->tw_area.w * 0.1, 10);
-	planetarium->area.y = fmax(planetarium->tw_area.h * 0.1, 10);
-	planetarium->widen(dw * 0.75, dh * 0.75);
+	planetarium->widen(dw, dh);
 }
 
 void draw()
