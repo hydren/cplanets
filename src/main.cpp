@@ -19,6 +19,8 @@
 
 FILE* workaround_sdl_stream_file = null;// part of workaround
 
+const string CPLANETS_VERSION = "0.1-alpha";
+
 int main(int arc, char* argv[])
 {
   SDLMAIN_STREAM_WORKAROUND;// part of workaround

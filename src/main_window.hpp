@@ -10,6 +10,11 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 
+#include <string>
+
+//needed to display the version
+extern const std::string CPLANETS_VERSION;
+
 namespace CPlanetsGUI
 {
 	namespace MainWindow
