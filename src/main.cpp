@@ -10,6 +10,7 @@
 #include "geometry/vector2d.hpp"
 //#include "sdl-widgets/example.hpp"
 #include "main_window.hpp"
+#include <ctime>
 
 #ifdef _WIN32
 	#define SDLMAIN_STREAM_WORKAROUND workaround_sdl_stream_file = fopen("CON", "w" ); freopen( "CON", "w", stdout ); freopen( "CON", "w", stderr )
