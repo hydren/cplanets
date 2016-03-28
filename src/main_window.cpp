@@ -42,7 +42,6 @@ const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
 const int DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
 
 //  ================ VARIABLES ===============
-Vector2D currentViewportTranlationRate;
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
@@ -140,16 +139,16 @@ void onKeyEvent(SDL_keysym *key,bool down)
 {
 	switch (key->sym) {
 		case SDLK_UP:
-			currentViewportTranlationRate.y = down? 0 : -DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			planetarium->currentViewportTranlationRate.y = down? -DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		case SDLK_DOWN:
-			currentViewportTranlationRate.y = down? 0 :  DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			planetarium->currentViewportTranlationRate.y = down?  DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		case SDLK_LEFT:
-			currentViewportTranlationRate.x = down? 0 : -DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			planetarium->currentViewportTranlationRate.x = down? -DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		case SDLK_RIGHT:
-			currentViewportTranlationRate.x = down? 0 :  DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			planetarium->currentViewportTranlationRate.x = down?  DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		default:
 			break;

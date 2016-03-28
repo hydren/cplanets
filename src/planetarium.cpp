@@ -22,10 +22,10 @@ int threadFunctionPlanetariumUpdate(void* arg);
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
-  physics(new Physics2D()), viewportPosition(new Vector2D()), bgColor(SDL_Color()),
+  physics(new Physics2D()), viewportPosition(), bgColor(SDL_Color()),
   zoom(1.0), minimumBodyRenderingRadius(3.0),
   strokeSizeNormal(1), strokeSizeFocused(2),
-  running(false), sleepingTime(25)
+  running(false), sleepingTime(25), currentViewportTranlationRate()
 {
 	modifyColor(bgColor, 0, 0, 0);
 	physics->physics2DSolver = new LeapfrogSolver(physics->universe);
@@ -35,7 +35,6 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 
 Planetarium::~Planetarium()
 {
-	delete this->viewportPosition;
 }
 
 void Planetarium::draw()
@@ -72,7 +71,7 @@ void Planetarium::draw()
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
 //	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
-	return position.difference(*(this->viewportPosition)).scale(zoom);
+	return position.difference(this->viewportPosition).scale(zoom);
 }
 
 void Planetarium::setRunning(bool run)
@@ -93,6 +92,7 @@ void Planetarium::updateView()
 {
 	for(;true;rest(25)) // XXX Hardcoded time. It should be parameterized.
 	{
+		this->viewportPosition += this->currentViewportTranlationRate;
 		CPlanetsGUI::triggerRepaint();
 	}
 }
