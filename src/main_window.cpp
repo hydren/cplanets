@@ -39,15 +39,20 @@ void workaround_sdl_stream_file_close() // part of workaround
 const int TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
 const int WIDGETS_SPACING = 4;
 const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
+const int DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
+
+//  ================ VARIABLES ===============
+Vector2D currentViewportTranlationRate;
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
 Planetarium* planetarium;
 Button* btnAddBody;
 
-//  ================ PROTOTYPES ================
+//  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
 void onWindowResize(int dw, int dh); // callback for window resizing events
+void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
 
 //  ================ CPlanetsGUI namespace ================
@@ -91,6 +96,7 @@ void CPlanetsGUI::MainWindow::show()
 	Rect windowSize(0, 0, 640, 480);
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
 	handle_rsev = onWindowResize; //set callback for window resize
+	handle_kev = onKeyEvent; //set callback for keyboard events
 
 	Rect planetariumSize(
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
@@ -128,6 +134,26 @@ void draw()
 void onWindowResize(int dw, int dh)
 {
 	planetarium->widen(dw, dh);
+}
+
+void onKeyEvent(SDL_keysym *key,bool down)
+{
+	switch (key->sym) {
+		case SDLK_UP:
+			currentViewportTranlationRate.y = down? 0 : -DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			break;
+		case SDLK_DOWN:
+			currentViewportTranlationRate.y = down? 0 :  DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			break;
+		case SDLK_LEFT:
+			currentViewportTranlationRate.x = down? 0 : -DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			break;
+		case SDLK_RIGHT:
+			currentViewportTranlationRate.x = down? 0 :  DEFAULT_VIEWPORT_TRANSLATE_RATE;
+			break;
+		default:
+			break;
+	}
 }
 
 void onButtonPressed(Button* btn)
