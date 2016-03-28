@@ -11,8 +11,6 @@
 
 #include "planetarium.hpp"
 
-const string VERSION_STRING = ("v"+CPLANETS_VERSION);
-
 const int TOOLBAR_SIZE = 24;
 const int WIDGETS_SPACING = 4;
 const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
@@ -111,5 +109,6 @@ void onWindowResize(int dw, int dh)
 void draw()
 {
 	window->clear();
-	draw_title_ttf->draw_string(window->win, VERSION_STRING.c_str(), Point(window->tw_area.w - draw_title_ttf->text_width(VERSION_STRING.c_str()), 4));
+	const char* versionStr = ("v"+CPLANETS_VERSION).c_str();
+	draw_title_ttf->draw_string(window->win, versionStr, Point(window->tw_area.w - draw_title_ttf->text_width(versionStr), 4));
 }
