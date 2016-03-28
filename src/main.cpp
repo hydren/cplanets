@@ -6,18 +6,27 @@
  */
 
 #include <cstdlib>
+#include <ctime>
+
+#include <stdexcept>
+#include <iostream>
 
 #include "geometry/vector2d.hpp"
-//#include "sdl-widgets/example.hpp"
 #include "main_window.hpp"
-#include <ctime>
 
 const string CPLANETS_VERSION = "0.1.1-alpha";
 
 int main(int arc, char* argv[])
 {
-	srand(time(null));
-	CPlanetsGUI::MainWindow::show();
-	//Widgets_RunExample();
-	return EXIT_SUCCESS;
+	try
+	{
+		srand(time(null));
+		CPlanetsGUI::MainWindow::show();
+		return EXIT_SUCCESS;
+	}
+	catch (std::exception& e)
+	{
+		std::cout << "application exited after uncaught exception: " << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 }
