@@ -36,7 +36,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 #endif
 
 // ================ CONSTANTS ================
-const int TOOLBAR_SIZE = 24; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
+const int TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
 const int WIDGETS_SPACING = 4;
 const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
 
@@ -100,7 +100,8 @@ void CPlanetsGUI::MainWindow::show()
 	);
 	planetarium = new Planetarium(window, planetariumSize);
 
-	btnAddBody = new Button(window, 0, Rect(5,10,60,0), "Add body", onButtonPressed);
+	Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+	btnAddBody = new Button(window, 0, Rect(WIDGETS_SPACING, WIDGETS_SPACING, genericButtonSize.w, genericButtonSize.h), "Add", onButtonPressed);
 
 	//XXX DEBUG CODE START
 
