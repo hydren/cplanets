@@ -9,6 +9,7 @@
 
 #include <cmath>
 
+#include "SDL_widgets/SDL_widgets.h"
 #include "planetarium.hpp"
 
 // workaround to reroute output stream to console
@@ -42,10 +43,12 @@ const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
 Planetarium* planetarium;
+Button* btnAddBody;
 
 //  ================ PROTOTYPES ================
 void draw(); // The drawing function.
 void onWindowResize(int dw, int dh); // callback for window resizing events
+void onButtonPressed(Button* btn);
 
 //  ================ CPlanetsGUI namespace ================
 int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
@@ -97,6 +100,8 @@ void CPlanetsGUI::MainWindow::show()
 	);
 	planetarium = new Planetarium(window, planetariumSize);
 
+	btnAddBody = new Button(window, 0, Rect(5,10,60,0), "Add body", onButtonPressed);
+
 	//XXX DEBUG CODE START
 
 	Body2D somebody(550, 32, Vector2D(64, 128), Vector2D(10, 0), Vector2D());
@@ -112,14 +117,24 @@ void CPlanetsGUI::MainWindow::show()
 }
 
 //  ================ CALLBACK DEFINITIONS ================
-void onWindowResize(int dw, int dh)
-{
-	planetarium->widen(dw, dh);
-}
-
 void draw()
 {
 	window->clear();
 	const char* versionStr = ("v"+CPLANETS_VERSION).c_str();
 	draw_title_ttf->draw_string(window->win, versionStr, Point(window->tw_area.w - draw_title_ttf->text_width(versionStr), 4));
+}
+
+void onWindowResize(int dw, int dh)
+{
+	planetarium->widen(dw, dh);
+}
+
+void onButtonPressed(Button* btn)
+{
+	if(btn == btnAddBody)
+	{
+		Body2D somebody(550, 32, Vector2D(randomBetween(32, 64), randomBetween(64, 128)), Vector2D(randomBetween(0, 8), randomBetween(0, 8)), Vector2D());
+		somebody.userObject = CPlanetsGUI::getRandomColor();
+		planetarium->physics->universe.bodies.push_back(somebody);
+	}
 }
