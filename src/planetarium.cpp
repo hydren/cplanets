@@ -17,12 +17,8 @@ using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
 using std::cout; using std::endl;
 
-int threadFunction(void* arg)
-{
-	((Planetarium*) arg)->performPhysics();
-	cout << "physics thread stopped." << endl;
-	return 0;
-}
+int threadFunctionPhysics(void* arg);
+int threadFunctionPlanetariumUpdate(void* arg);
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
@@ -33,7 +29,8 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 {
 	modifyColor(bgColor, 0, 0, 0);
 	physics->physics2DSolver = new LeapfrogSolver(physics->universe);
-	SDL_CreateThread(threadFunction, this);
+	SDL_CreateThread(threadFunctionPhysics, this);
+	SDL_CreateThread(threadFunctionPlanetariumUpdate, this);
 }
 
 Planetarium::~Planetarium()
@@ -85,20 +82,48 @@ void Planetarium::setRunning(bool run)
 
 void Planetarium::performPhysics()
 {
+	for(;true;rest(sleepingTime))
+	{
+		if(running)
+			this->physics->step();
+	}
+}
+
+void Planetarium::updateView()
+{
+	for(;true;rest(25)) // XXX Hardcoded time. It should be parameterized.
+	{
+		CPlanetsGUI::triggerRepaint();
+	}
+}
+
+//  -----------------------------  thread functions ------------------------------------------------
+int threadFunctionPhysics(void* arg)
+{
 	try
 	{
-		for(;true;rest(sleepingTime))
-		{
-			if(running)
-				this->physics->step();
-
-			CPlanetsGUI::triggerRepaint();
-		}
+		((Planetarium*) arg)->performPhysics();
 	}
-	catch(std::runtime_error& e)
+	catch(std::exception& e)
 	{
 		cout << "bad behavior on physics thread! " << e.what() << endl;
 	}
+	cout << "physics thread stopped." << endl;
+	return 0;
+}
+
+int threadFunctionPlanetariumUpdate(void* arg)
+{
+	try
+	{
+		((Planetarium*) arg)->updateView();
+		cout << "planetarium view update thread stopped." << endl;
+	}
+	catch(std::exception& e)
+	{
+		cout << "bad behavior on planetarium view update thread! " << e.what() << endl;
+	}
+	return 0;
 }
 
 

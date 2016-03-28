@@ -33,6 +33,7 @@ struct Planetarium extends WinBase
 
 	void setRunning(bool run=true);
 	void performPhysics();
+	void updateView();
 };
 
 
