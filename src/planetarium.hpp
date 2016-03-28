@@ -35,8 +35,12 @@ struct Planetarium extends WinBase
 	Vector2D getTransposed(const Vector2D& position) const;
 
 	void setRunning(bool run=true);
+
 	void performPhysics();
 	void updateView();
+
+	private:
+	SDL_Thread* threadPhysics, *threadViewUpdate;
 };
 
 

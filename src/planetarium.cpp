@@ -29,12 +29,14 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 {
 	modifyColor(bgColor, 0, 0, 0);
 	physics->physics2DSolver = new LeapfrogSolver(physics->universe);
-	SDL_CreateThread(threadFunctionPhysics, this);
-	SDL_CreateThread(threadFunctionPlanetariumUpdate, this);
+	this->threadPhysics = SDL_CreateThread(threadFunctionPhysics, this);
+	this->threadViewUpdate = SDL_CreateThread(threadFunctionPlanetariumUpdate, this);
 }
 
 Planetarium::~Planetarium()
 {
+	SDL_KillThread(threadPhysics);
+	SDL_KillThread(threadViewUpdate);
 }
 
 void Planetarium::draw()
