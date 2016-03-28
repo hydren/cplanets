@@ -1,0 +1,86 @@
+
+-------------- Ideas
+
+- Use pixmaps instead of image files as icons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
+
+
+
+
+-------------- Legacy 'japla' milestones
+
+* to do:
+
+- 0.8.x milestone:
+
+control simulation parameters from gui - done
+step size - done
+display time - done
+gravity - done
+new body density - done
+new body diameter ratio - done
+view movement speed - done
+
+- 0.9 milestone:
+
+display period - done
+dynamically change bodies colors - done
+trace orbits - done
+improve physics calculations with some fairly advanced numeric method (rk4, ab, am) - 3/5 done
+capability to change observer's reference frame to the same as the mass center of some arbitrary set of bodies
+show info about system's energy (kinetic, potential, total, etc)
+
+- 1.0 milestone:
+
+add random planet functionality
+add random orbiting planet functionality
+undo functionality
+G exp.
+Bouncing bodies
+basic "help" dialog
+improve "about" dialog
+major graphics overhaul (simplistic buttons-only gui)
+
+- 1.x milestone:
+
+redo functionality
+change background color functionality
+improve bodies list (use table instead of jlist)
+show/edit bodies' tag
+specify mass of created bodies
+show per body info (velocity, acceleration, mass, etc) - a body panel below bodies list
+dynamically change bodies' attributes
+remove a chosen body
+bodies presets
+highlight body when selected on the list - done
+merge universes from different files (superposition, concatenation, etc)
+
+** some ideas (very new features)
+
+adaptive stepsize
+advanced presets (solar systems, planet and moons, galaxy, cluster, etc)
+types of bodies (planet, star, etc)
+chemical evolution of bodies (aging)
+3D mode
+
+** ideas for file types:
+
+Serialized Java Objects (*.sjo)
+Plain text (*.txt)
+Comma Separated Values (*.csv)
+XML Universe (*.xml)
+Star System XML (*.ssx)
+
+** solvers:
+
+Euler method - done
+Leapfrog method - done
+Semi-implicit Euler/Euler-Cromer/Newton-Stormer-Verlet (NSV) - done
+Semi-implicit Euler 2nd variant - done
+Heun/RK2 - done
+RK4 - done
+Midpoint method - pending <see http://en.wikipedia.org/wiki/Midpoint_method>
+Verlet - pending <see en.wikipedia.org/wiki/Verlet_integration>
+
+** other ideas:
+use Launch4j to create executable <http://launch4j.sourceforge.net/>
+
