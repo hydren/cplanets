@@ -23,6 +23,24 @@ Planetarium* planetarium;
 void draw();
 void onWindowResize(int dw, int dh);
 
+// workaround to reroute output stream to console
+FILE* workaround_sdl_stream_file = null;
+#ifdef _WIN32
+	#ifdef HOTFIX_FOR_SDL_OUTPUT_STREAM_1
+		void onSDLInit()
+		{
+			workaround_sdl_stream_file = fopen("CON", "w" );
+			freopen( "CON", "w", stdout );
+			freopen( "CON", "w", stderr );
+		}
+		#define SDLMAIN_STREAM_WORKAROUND onSDLInit
+	#else
+		#define SDLMAIN_STREAM_WORKAROUND null
+	#endif
+#else
+	#define SDLMAIN_STREAM_WORKAROUND null
+#endif
+
 int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
 {
 	#ifdef HOTFIX_FOR_SDL_MAP_RGB_1
@@ -67,7 +85,7 @@ void CPlanetsGUI::MainWindow::show()
 		winSize.w - BODIES_PANEL_WIDTH - TOOLBAR_SIZE - 2*WIDGETS_SPACING,
 		winSize.h - 2*TOOLBAR_SIZE
 	);
-	window = new TopWin("cplanets", winSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw);
+	window = new TopWin("cplanets", winSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
 	planetarium = new Planetarium(window, planetariumSize);
 	handle_rsev = onWindowResize;
 
@@ -82,6 +100,7 @@ void CPlanetsGUI::MainWindow::show()
 
 	//start
 	get_events();
+	if(workaround_sdl_stream_file != null) fclose(workaround_sdl_stream_file); // part of workaround
 }
 
 void onWindowResize(int dw, int dh)
