@@ -11,21 +11,16 @@
 
 #include "planetarium.hpp"
 
-const int TOOLBAR_SIZE = 24;
-const int WIDGETS_SPACING = 4;
-const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
-
-TopWin* window;
-Planetarium* planetarium;
-
-void draw();
-void onWindowResize(int dw, int dh);
-
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
+void workaround_sdl_stream_file_close() // part of workaround
+{
+	if(workaround_sdl_stream_file != null) // if file var was used, close the file
+		fclose(workaround_sdl_stream_file);
+}
 #ifdef _WIN32
 	#ifdef HOTFIX_FOR_SDL_OUTPUT_STREAM_1
-		void onSDLInit()
+		void onSDLInit() // upon sdl init, reroute streams
 		{
 			workaround_sdl_stream_file = fopen("CON", "w" );
 			freopen( "CON", "w", stdout );
@@ -39,6 +34,20 @@ FILE* workaround_sdl_stream_file = null;
 	#define SDLMAIN_STREAM_WORKAROUND null
 #endif
 
+// ================ CONSTANTS ================
+const int TOOLBAR_SIZE = 24; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
+const int WIDGETS_SPACING = 4;
+const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
+
+//  ================ COMPONENTS ================
+TopWin* window; // The program window
+Planetarium* planetarium;
+
+//  ================ PROTOTYPES ================
+void draw(); // The drawing function.
+void onWindowResize(int dw, int dh); // callback for window resizing events
+
+//  ================ CPlanetsGUI namespace ================
 int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
 {
 	#ifdef HOTFIX_FOR_SDL_MAP_RGB_1
@@ -73,19 +82,20 @@ void CPlanetsGUI::triggerRepaint()
 	SDL_PushEvent(&repaintEvent);
 }
 
-
+// ================ CPlanetsGUI::MainWindow namespace ================
 void CPlanetsGUI::MainWindow::show()
 {
-	Rect winSize(0, 0, 640, 480);
+	Rect windowSize(0, 0, 640, 480);
+	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
+	handle_rsev = onWindowResize; //set callback for window resize
+
 	Rect planetariumSize(
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
 		TOOLBAR_SIZE + WIDGETS_SPACING,
-		winSize.w - BODIES_PANEL_WIDTH - TOOLBAR_SIZE - 2*WIDGETS_SPACING,
-		winSize.h - 2*TOOLBAR_SIZE
+		windowSize.w - BODIES_PANEL_WIDTH - TOOLBAR_SIZE - 2*WIDGETS_SPACING,
+		windowSize.h - 2*TOOLBAR_SIZE
 	);
-	window = new TopWin("cplanets", winSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
 	planetarium = new Planetarium(window, planetariumSize);
-	handle_rsev = onWindowResize;
 
 	//XXX DEBUG CODE START
 
@@ -98,9 +108,10 @@ void CPlanetsGUI::MainWindow::show()
 
 	//start
 	get_events();
-	if(workaround_sdl_stream_file != null) fclose(workaround_sdl_stream_file); // part of workaround
+	workaround_sdl_stream_file_close(); // part of workaround
 }
 
+//  ================ CALLBACK DEFINITIONS ================
 void onWindowResize(int dw, int dh)
 {
 	planetarium->widen(dw, dh);
