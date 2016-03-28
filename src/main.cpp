@@ -12,7 +12,7 @@
 #include "main_window.hpp"
 #include <ctime>
 
-const string CPLANETS_VERSION = "0.1-alpha";
+const string CPLANETS_VERSION = "0.1.1-alpha";
 
 int main(int arc, char* argv[])
 {
