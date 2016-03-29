@@ -8,13 +8,16 @@
 #include "universe2d.hpp"
 using std::list;
 
-Universe2D::Universe2D(const Universe2D& u)
+Universe2D::Universe2D()
 : gravity(1)
+{}
+
+Universe2D::Universe2D(const Universe2D& u)
+: gravity(u.gravity)
 {
-	gravity = u.gravity;
-	for(list<Body2D>::const_iterator i = u.bodies.begin(); i != u.bodies.end(); ++i)
+	const_foreach(Body2D*, i, list<Body2D*>, u.bodies)
 	{
-		bodies.push_back(Body2D(*i));
+		bodies.push_back(new Body2D(*i));
 	}
 }
 

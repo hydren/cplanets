@@ -74,9 +74,10 @@ void Physics2D::changeReferenceFrameTo(list<Body2D*>& reference)
 void Physics2D::resolveCollisions()
 {
 	//detect collisions
-	collisions.clear();
-	foreach(Body2D&, a, list<Body2D>, universe.bodies) foreach(Body2D&, b, list<Body2D>, universe.bodies)
+	foreach(Body2D*, ap, list<Body2D*>, universe.bodies) foreach(Body2D*, bp, list<Body2D*>, universe.bodies)
 	{
+		Body2D& a = *ap; Body2D& b = *bp;
+
 		if(a == b) continue;
 
 		if(a.position.distance(b.position) < a.diameter/2 + b.diameter/2)
@@ -121,7 +122,7 @@ void Physics2D::resolveCollisions()
 		Body2D merger(0, 0, Vector2D(), Vector2D(), Vector2D());
 		foreach(Body2D*, body1, list<Body2D*>, collisionList)
 		{
-			Body2D& body = *body1;
+			Body2D& body = *body1; //to simplify formulas
 			merger.position.x += body.position.x;
 			merger.position.y += body.position.y;
 
@@ -133,7 +134,7 @@ void Physics2D::resolveCollisions()
 
 			//merger.color = (merger.color + body.color)/2;
 
-			universe.bodies.remove(body);
+			universe.bodies.remove(body1); //remove actual pointer
 		}
 
 		if(collisionList.size() == 0) continue;
@@ -141,10 +142,16 @@ void Physics2D::resolveCollisions()
 		merger.position.x /= collisionList.size();
 		merger.position.y /= collisionList.size();
 
-		universe.bodies.push_back(merger);
+		universe.bodies.push_back(new Body2D(merger));
 
 		//notify listeners about the collision
 		foreach(BodyCollisionListener*, listener, list<BodyCollisionListener*>, registeredBodyCollisionListeners)
 			listener->onBodyCollision(collisionList, merger);
 	}
+
+	//cleanup
+	foreach(list<Body2D*>&, collisionList, list< list<Body2D*> >, collisions)
+		foreach(Body2D*, trash, list<Body2D*>, collisionList)
+			delete trash;
+	collisions.clear();
 }

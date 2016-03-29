@@ -14,13 +14,12 @@
 struct Universe2D
 {
 	double gravity;
-	std::list<Body2D> bodies;
+	std::list<Body2D*> bodies;
 
-	Universe2D()
-	: gravity(1)
-	{}
+	/** Creates an empty universe with gravity value equal to 1. */
+	Universe2D();
 
-	/* Creates a deep copy of the universe, including bodies' ID. */
+	/** Creates a deep copy of the universe, including bodies' ID. */
 	Universe2D(const Universe2D& u);
 };
 

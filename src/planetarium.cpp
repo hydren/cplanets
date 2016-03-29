@@ -45,13 +45,13 @@ void Planetarium::draw()
 	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
 
 	//draw bodies
-	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
+	foreach(Body2D*, body, std::list<Body2D*>, this->physics->universe.bodies)
 	{
-		double size = zoom*body.diameter;
+		double size = zoom*body->diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
-		SDL_Color* bodyColor = ((PlanetariumUserObject*) body.userObject)->color;
+		SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
 
-		Vector2D v = this->getTransposed(body.position);
+		Vector2D v = this->getTransposed(body->position);
 
 //		SDL_Rect tmpRect; tmpRect.x = x; tmpRect.y = y; tmpRect.h = size, tmpRect.w = size;
 //		SDL_FillRect(this->surface, &tmpRect, colorToInt(*bodyColor));
@@ -101,19 +101,19 @@ void Planetarium::updateView()
 
 void Planetarium::recolorAllBodies()
 {
-	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
+	foreach(Body2D*, body, std::list<Body2D*>, this->physics->universe.bodies)
 	{
-		PlanetariumUserObject* custom = (PlanetariumUserObject*) body.userObject;
+		PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
 		SDL_Color* oldColor = custom->color;
 		custom->color = CPlanetsGUI::getRandomColor();
 		delete oldColor;
 	}
 }
 
-void Planetarium::addCustomBody(Body2D& body, SDL_Color* color)
+void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 {
 	physics->universe.bodies.push_back(body);
-	physics->universe.bodies.back().userObject = new PlanetariumUserObject(color);
+	physics->universe.bodies.back()->userObject = new PlanetariumUserObject(color);
 }
 
 Planetarium::PlanetariumUserObject::PlanetariumUserObject(SDL_Color* color)
