@@ -25,9 +25,9 @@ void CPlanetsGUI::FlowLayoutPanel::addComponent(WinBase& component, int index)
 	CPlanetsGUI::FlowLayoutPanel::addComponent(&component, index);
 }
 
-void CPlanetsGUI::FlowLayoutPanel::removeComponentAt(int index)
+void CPlanetsGUI::FlowLayoutPanel::removeComponentAt(unsigned index)
 {
-	if(index < 0 || index > this->components.size() - 1)
+	if(index > this->components.size() - 1)
 		throw std::out_of_range("out of range: " + index);
 	this->components.erase(components.begin() + index);
 }
@@ -39,15 +39,9 @@ void CPlanetsGUI::FlowLayoutPanel::removeComponent(WinBase& component)
 
 void CPlanetsGUI::FlowLayoutPanel::removeComponent(WinBase* component)
 {
-	int i = 0;
-	foreach(WinBase*, e, std::vector<WinBase*>, this->components)
-	{
-		if(e == component)
-			break;
-		i++;
-	}
-	if(i == this->components.size()) return; // has not found because 'i++' was done 'components.size()' times.
-	CPlanetsGUI::FlowLayoutPanel::removeComponentAt(i);
+	int index = Collections::indexOf(this->components, component);
+	if(index < 0) return;
+	CPlanetsGUI::FlowLayoutPanel::removeComponentAt(index);
 }
 
 void CPlanetsGUI::FlowLayoutPanel::pack()

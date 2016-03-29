@@ -21,7 +21,7 @@ namespace CPlanetsGUI
 		void addComponent(WinBase& component, int index=-1);
 		void addComponent(WinBase* component, int index=-1);
 
-		void removeComponentAt(int index);
+		void removeComponentAt(unsigned index);
 		void removeComponent(WinBase& component);
 		void removeComponent(WinBase* component);
 
