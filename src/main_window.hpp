@@ -8,7 +8,7 @@
 #ifndef MAIN_WINDOW_HPP_
 #define MAIN_WINDOW_HPP_
 
-#include <SDL/SDL.h>
+#include <SDL_widgets/SDL_widgets.h>
 #include <string>
 
 //needed to display the version
@@ -37,6 +37,11 @@ namespace CPlanetsGUI
 
 	//trigger repainting of the whole window. it will be repainted eventually
 	void triggerRepaint();
+
+	void setComponentPosition(WinBase* component, Point& position);
+	void setComponentPosition(WinBase* component, int x, int y);
+	void setComponentPositionX(WinBase* component, int x);
+	void setComponentPositionY(WinBase* component, int y);
 }
 
 #endif /* MAIN_WINDOW_HPP_ */

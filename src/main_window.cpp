@@ -50,7 +50,7 @@ const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
 Planetarium* planetarium;
-Button* btnAddBody;
+Button* btnAddBody, *btnRecolorAll;
 FlowLayoutPanel* toolbarNorth;
 
 //  ================ FUNCTION PROTOTYPES ================
@@ -94,6 +94,41 @@ void CPlanetsGUI::triggerRepaint()
 	SDL_PushEvent(&repaintEvent);
 }
 
+void CPlanetsGUI::setComponentPosition(WinBase* component, Point& position)
+{
+	CPlanetsGUI::setComponentPosition(component, position.x, position.y);
+}
+
+void CPlanetsGUI::setComponentPosition(WinBase* component, int x, int y)
+{
+	CPlanetsGUI::setComponentPositionX(component, x);
+	CPlanetsGUI::setComponentPositionY(component, y);
+}
+
+void CPlanetsGUI::setComponentPositionX(WinBase* component, int x)
+{
+	component->area.x = x;
+	component->tw_area.x = x;
+	component->title_area.x = x;
+	component->title_top.x = x;
+	if (component->parent)
+	{
+		component->tw_area.x=component->area.x+component->parent->tw_area.x;
+	}
+}
+
+void CPlanetsGUI::setComponentPositionY(WinBase* component, int y)
+{
+	component->area.y = y;
+	component->tw_area.y = y;
+	component->title_area.y = y-17;
+	component->title_top.y = y-17;
+	if (component->parent)
+	{
+		component->tw_area.y=component->area.y+component->parent->tw_area.y;
+	}
+}
+
 // ================ CPlanetsGUI::MainWindow namespace ================
 void CPlanetsGUI::MainWindow::show()
 {
@@ -111,10 +146,14 @@ void CPlanetsGUI::MainWindow::show()
 	planetarium = new Planetarium(window, planetariumSize);
 
 	Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
-	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
-
 	toolbarNorth = new FlowLayoutPanel(WIDGETS_SPACING, WIDGETS_SPACING);
+
+	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
 	toolbarNorth->addComponent(btnAddBody);
+
+	btnRecolorAll = new Button(window, 0, genericButtonSize, "Rec.", onButtonPressed);
+	toolbarNorth->addComponent(btnRecolorAll);
+
 	toolbarNorth->pack();
 
 	//XXX DEBUG CODE START

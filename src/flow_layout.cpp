@@ -62,7 +62,7 @@ void CPlanetsGUI::FlowLayoutPanel::pack()
 	Point prevPosition = position;
 	foreach(WinBase*, component, vector<WinBase*>, this->components)
 	{
-		component->area = prevPosition;
-		prevPosition.x = component->area.x + WIDGETS_SPACING;
+		CPlanetsGUI::setComponentPosition(component, prevPosition);
+		prevPosition.x = component->area.x + WIDGETS_SPACING + component->tw_area.w;
 	}
 }
