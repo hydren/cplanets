@@ -12,6 +12,19 @@
 
 #include "futil/futil.hpp"
 
+using std::vector;
+
+CPlanetsGUI::FlowLayoutPanel::FlowLayoutPanel(int x, int y)
+{
+	this->position.x = x;
+	this->position.y = y;
+}
+
+CPlanetsGUI::FlowLayoutPanel::FlowLayoutPanel(Point& p)
+{
+	this->position = p;
+}
+
 void CPlanetsGUI::FlowLayoutPanel::addComponent(WinBase* component, int index)
 {
 	if(index < 0)
@@ -46,5 +59,10 @@ void CPlanetsGUI::FlowLayoutPanel::removeComponent(WinBase* component)
 
 void CPlanetsGUI::FlowLayoutPanel::pack()
 {
-	//ToDo arrange each component's tw_area side-by-side, horizontally.
+	Point prevPosition = position;
+	foreach(WinBase*, component, vector<WinBase*>, this->components)
+	{
+		component->area = prevPosition;
+		prevPosition.x = component->area.x + WIDGETS_SPACING;
+	}
 }

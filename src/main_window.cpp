@@ -10,7 +10,9 @@
 #include <cmath>
 
 #include "SDL_widgets/SDL_widgets.h"
+
 #include "planetarium.hpp"
+#include "flow_layout.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -35,11 +37,13 @@ void workaround_sdl_stream_file_close() // part of workaround
 	#define SDLMAIN_STREAM_WORKAROUND null
 #endif
 
+using CPlanetsGUI::FlowLayoutPanel;
+
 // ================ CONSTANTS ================
-const int TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
-const int WIDGETS_SPACING = 4;
-const int BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
-const int DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
+const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
+const unsigned WIDGETS_SPACING = 4;
+const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
+const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
 
 //  ================ VARIABLES ===============
 
@@ -47,6 +51,7 @@ const int DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
 TopWin* window; // The program window
 Planetarium* planetarium;
 Button* btnAddBody;
+FlowLayoutPanel* toolbarNorth;
 
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
@@ -106,7 +111,11 @@ void CPlanetsGUI::MainWindow::show()
 	planetarium = new Planetarium(window, planetariumSize);
 
 	Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
-	btnAddBody = new Button(window, 0, Rect(WIDGETS_SPACING, WIDGETS_SPACING, genericButtonSize.w, genericButtonSize.h), "Add", onButtonPressed);
+	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
+
+	toolbarNorth = new FlowLayoutPanel(WIDGETS_SPACING, WIDGETS_SPACING);
+	toolbarNorth->addComponent(btnAddBody);
+	toolbarNorth->pack();
 
 	//XXX DEBUG CODE START
 
