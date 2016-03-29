@@ -75,7 +75,7 @@ void Physics2D::resolveCollisions()
 {
 	//detect collisions
 	collisions.clear();
-	foreach(Body2D&, a, list<Body2D>, universe.bodies)	foreach(Body2D&, b, list<Body2D>, universe.bodies)
+	foreach(Body2D&, a, list<Body2D>, universe.bodies) foreach(Body2D&, b, list<Body2D>, universe.bodies)
 	{
 		if(a == b) continue;
 

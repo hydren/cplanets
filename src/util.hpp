@@ -8,10 +8,12 @@
 #ifndef UTIL_HPP_
 #define UTIL_HPP_
 
-#include "futil/futil.hpp"
 #include <set>
 #include <list>
 
+#include "futil/futil.hpp"
+
 #include "hotfixes.h"
+
 
 #endif /* UTIL_HPP_ */
