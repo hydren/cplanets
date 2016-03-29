@@ -52,6 +52,7 @@ TopWin* window; // The program window
 Planetarium* planetarium;
 Button* btnAddBody, *btnRecolorAll;
 FlowLayoutPanel* toolbarNorth;
+TextWin* txtBodies;
 
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
@@ -156,6 +157,14 @@ void CPlanetsGUI::MainWindow::show()
 
 	toolbarNorth->pack();
 
+	Rect txtBodiesSize(
+		WIDGETS_SPACING,
+		TOOLBAR_SIZE + WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font),
+		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
+		windowSize.h - 2*TOOLBAR_SIZE - TTF_FontHeight(draw_title_ttf->ttf_font)
+	);
+	txtBodies = new TextWin(window, 0, txtBodiesSize, 8, "Bodies");
+
 	//XXX DEBUG CODE START
 
 	Body2D somebody(550, 32, Vector2D(64, 128), Vector2D(10, 0), Vector2D());
@@ -181,6 +190,7 @@ void draw()
 void onWindowResize(int dw, int dh)
 {
 	planetarium->widen(dw, dh);
+	txtBodies->widen(0, dh);
 }
 
 void onKeyEvent(SDL_keysym *key,bool down)
