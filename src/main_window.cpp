@@ -201,16 +201,16 @@ void onKeyEvent(SDL_keysym *key,bool down)
 {
 	switch (key->sym) {
 		case SDLK_UP:
-			planetarium->currentViewportTranlationRate.y = down? -DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
+			planetarium->currentViewportTranlationRate.y = down? - (double) DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		case SDLK_DOWN:
-			planetarium->currentViewportTranlationRate.y = down?  DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
+			planetarium->currentViewportTranlationRate.y = down?   (double) DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		case SDLK_LEFT:
-			planetarium->currentViewportTranlationRate.x = down? -DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
+			planetarium->currentViewportTranlationRate.x = down? - (double) DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		case SDLK_RIGHT:
-			planetarium->currentViewportTranlationRate.x = down?  DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
+			planetarium->currentViewportTranlationRate.x = down?   (double) DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
 		default:
 			break;
