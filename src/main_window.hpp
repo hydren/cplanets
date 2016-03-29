@@ -14,6 +14,8 @@
 //needed to display the version
 extern const std::string CPLANETS_VERSION;
 
+extern const unsigned WIDGETS_SPACING;
+
 //contains all cplanets gui related stuff
 namespace CPlanetsGUI
 {
