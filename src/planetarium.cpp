@@ -49,7 +49,7 @@ void Planetarium::draw()
 	{
 		double size = zoom*body.diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
-		SDL_Color* bodyColor = (SDL_Color*) body.userObject;
+		SDL_Color* bodyColor = ((PlanetariumUserObject*) body.userObject)->color;
 
 		Vector2D v = this->getTransposed(body.position);
 
@@ -102,8 +102,23 @@ void Planetarium::updateView()
 void Planetarium::recolorAllBodies()
 {
 	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
-		body.userObject = CPlanetsGUI::getRandomColor();
+	{
+		PlanetariumUserObject* custom = (PlanetariumUserObject*) body.userObject;
+		SDL_Color* oldColor = custom->color;
+		custom->color = CPlanetsGUI::getRandomColor();
+		delete oldColor;
+	}
 }
+
+void Planetarium::addCustomBody(Body2D& body, SDL_Color* color)
+{
+	physics->universe.bodies.push_back(body);
+	physics->universe.bodies.back().userObject = new PlanetariumUserObject(color);
+}
+
+Planetarium::PlanetariumUserObject::PlanetariumUserObject(SDL_Color* color)
+: color(color)
+{}
 
 //  -----------------------------  thread functions ------------------------------------------------
 int threadFunctionPhysics(void* arg)

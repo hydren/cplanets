@@ -171,8 +171,7 @@ void CPlanetsGUI::MainWindow::show()
 	//XXX DEBUG CODE START
 
 	Body2D somebody(550, 32, Vector2D(64, 128), Vector2D(10, 0), Vector2D());
-	somebody.userObject = getRandomColor();
-	planetarium->physics->universe.bodies.push_back(somebody);
+	planetarium->addCustomBody(somebody, getRandomColor());
 	planetarium->running = true;
 
 	//XXX DEBUG CODE END
@@ -222,8 +221,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnAddBody)
 	{
 		Body2D somebody(550, 32, Vector2D(randomBetween(32, 64), randomBetween(64, 128)), Vector2D(randomBetween(0, 8), randomBetween(0, 8)), Vector2D());
-		somebody.userObject = CPlanetsGUI::getRandomColor();
-		planetarium->physics->universe.bodies.push_back(somebody);
+		planetarium->addCustomBody(somebody, CPlanetsGUI::getRandomColor());
 	}
 
 	if(btn == btnRecolorAll)

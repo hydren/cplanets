@@ -40,11 +40,19 @@ struct Planetarium extends WinBase
 	/** Assign a new random color to every body on the current universe */
 	void recolorAllBodies();
 
+	void addCustomBody(Body2D& body, SDL_Color* color);
+
 	void performPhysics();
 	void updateView();
 
 	private:
 	SDL_Thread* threadPhysics, *threadViewUpdate;
+
+	struct PlanetariumUserObject
+	{
+		PlanetariumUserObject(SDL_Color* color);
+		SDL_Color* color;
+	};
 };
 
 
