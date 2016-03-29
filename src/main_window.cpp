@@ -211,4 +211,9 @@ void onButtonPressed(Button* btn)
 		somebody.userObject = CPlanetsGUI::getRandomColor();
 		planetarium->physics->universe.bodies.push_back(somebody);
 	}
+
+	if(btn == btnRecolorAll)
+	{
+		planetarium->recolorAllBodies();
+	}
 }

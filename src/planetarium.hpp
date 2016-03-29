@@ -34,7 +34,11 @@ struct Planetarium extends WinBase
 
 	Vector2D getTransposed(const Vector2D& position) const;
 
+	/** If run is true (default), the physics thread is started/resumed. Otherwise the thread is put to sleep. */
 	void setRunning(bool run=true);
+
+	/** Assign a new random color to every body on the current universe */
+	void recolorAllBodies();
 
 	void performPhysics();
 	void updateView();

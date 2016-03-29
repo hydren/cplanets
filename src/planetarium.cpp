@@ -99,6 +99,12 @@ void Planetarium::updateView()
 	}
 }
 
+void Planetarium::recolorAllBodies()
+{
+	foreach(Body2D&, body, std::list<Body2D>, this->physics->universe.bodies)
+		body.userObject = CPlanetsGUI::getRandomColor();
+}
+
 //  -----------------------------  thread functions ------------------------------------------------
 int threadFunctionPhysics(void* arg)
 {
