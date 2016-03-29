@@ -37,6 +37,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 	#define SDLMAIN_STREAM_WORKAROUND null
 #endif
 
+using std::cout; using std::endl;
 using CPlanetsGUI::FlowLayoutPanel;
 
 // ================ CONSTANTS ================
@@ -90,6 +91,8 @@ SDL_Color* CPlanetsGUI::getRandomColor()
 
 void CPlanetsGUI::triggerRepaint()
 {
+	static SDL_Event* tmp = null;
+	if(SDL_PeepEvents(tmp, 1, SDL_PEEKEVENT, SDL_VIDEOEXPOSEMASK) > 0) return;
 	SDL_Event repaintEvent;
 	repaintEvent.type = SDL_VIDEOEXPOSE;
 	SDL_PushEvent(&repaintEvent);
@@ -189,6 +192,7 @@ void draw()
 
 void onWindowResize(int dw, int dh)
 {
+//	cout << "resize event" << endl;
 	planetarium->widen(dw, dh);
 	txtBodies->widen(0, dh);
 }
