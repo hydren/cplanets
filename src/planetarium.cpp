@@ -179,6 +179,22 @@ void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultin
 	//notify listeners about the collision
 	foreach(Planetarium::UniverseEventListener*, listener, std::vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
 	{
+		if(resultingMerger.userObject == null)
+		{
+			resultingMerger.userObject = new Planetarium::PlanetariumUserObject(new SDL_Color);
+			Planetarium::PlanetariumUserObject* obj = (Planetarium::PlanetariumUserObject*) resultingMerger.userObject;
+			long r=0, g=0, b=0;
+			foreach(Body2D*, body, std::vector<Body2D*>, collidingList)
+			{
+				r += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->r;
+				g += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->g;
+				b += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->b;
+			}
+			obj->color = new SDL_Color;
+			obj->color->r = r/collidingList.size();
+			obj->color->g = g/collidingList.size();
+			obj->color->b = b/collidingList.size();
+		}
 		listener->onBodyCollision(collidingList, resultingMerger);
 	}
 }

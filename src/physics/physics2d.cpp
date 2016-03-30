@@ -79,7 +79,7 @@ void Physics2D::resolveCollisions()
 	{
 		Body2D& a = *ap; Body2D& b = *bp;
 
-		if(a == b) continue;
+		if(a == b) goto continue1;
 
 		if(a.position.distance(b.position) < a.diameter/2 + b.diameter/2)
 		{
@@ -89,21 +89,22 @@ void Physics2D::resolveCollisions()
 				if(Collections::containsElement(list1, a) && Collections::containsElement(list1, b)) //probably a duplicate lookup
 				{
 					bothAdded = true;
-					break;
+					goto break1;
 				}
 				else if(Collections::containsElement(list1, a) && not Collections::containsElement(list1, b)) //append colliding b
 				{
 					list1.push_back(&a);
 					bothAdded = true;
-					break;
+					goto break1;
 				}
 				else if(!Collections::containsElement(list1, a) && Collections::containsElement(list1, b)) //append colliding a
 				{
 					list1.push_back(&a);
 					bothAdded = true;
-					break;
+					goto break1;
 				}
 			}
+			break1:
 			if(!bothAdded) //new colliding pair
 			{
 				vector<Body2D*> newlist1;
@@ -112,6 +113,7 @@ void Physics2D::resolveCollisions()
 				collisions.push_back(newlist1);
 			}
 		}
+		continue1:;
 	}
 
 	if(collisions.empty() == false)
@@ -138,7 +140,7 @@ void Physics2D::resolveCollisions()
 			Collections::removeElement(universe.bodies, body1); //remove actual pointer
 		}
 
-		if(collisionList.size() == 0) continue;
+		if(collisionList.size() == 0) goto continue2;
 
 		merger.position.x /= collisionList.size();
 		merger.position.y /= collisionList.size();
@@ -146,7 +148,8 @@ void Physics2D::resolveCollisions()
 		universe.bodies.push_back(new Body2D(merger));
 
 		//callback for body collision
-		onPhysics2DBodyCollision(collisionList, merger);
+		onPhysics2DBodyCollision(collisionList, *universe.bodies.back());
+		continue2:;
 	}
 
 	//cleanup
