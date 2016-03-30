@@ -9,7 +9,6 @@
 #define UTIL_HPP_
 
 #include <set>
-#include <list>
 
 #include "futil/futil.hpp"
 

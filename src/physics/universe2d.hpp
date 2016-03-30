@@ -8,14 +8,14 @@
 #ifndef PHYSICS_UNIVERSE2D_HPP_
 #define PHYSICS_UNIVERSE2D_HPP_
 
-#include <set>
+#include <vector>
 
 #include "body2d.hpp"
 
 struct Universe2D
 {
 	double gravity;
-	std::list<Body2D*> bodies;
+	std::vector<Body2D*> bodies;
 
 	/** Creates an empty universe with gravity value equal to 1. */
 	Universe2D();

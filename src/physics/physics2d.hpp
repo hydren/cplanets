@@ -8,14 +8,14 @@
 #ifndef PHYSICS_PHYSICS2D_HPP_
 #define PHYSICS_PHYSICS2D_HPP_
 
-#include <list>
+#include <vector>
 
 #include "physics2d_solvers.hpp"
 #include "universe2d.hpp"
 
 struct ReferenceFrame
 {
-	std::list<Body2D*> bodies;
+	std::vector<Body2D*> bodies;
 	Vector2D getPosition() const;
 	Vector2D getVelocity() const;
 };
@@ -29,7 +29,7 @@ struct Physics2D
 	void lock();
 
 	void step();
-	void changeReferenceFrameTo(std::list<Body2D*>& reference);
+	void changeReferenceFrameTo(std::vector<Body2D*>& reference);
 
 
 	/** A struct to notify observers of collision between bodies.
@@ -37,12 +37,12 @@ struct Physics2D
 	struct BodyCollisionListener
 	{
 		virtual ~BodyCollisionListener() {}
-		virtual void onBodyCollision(std::list<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
+		virtual void onBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
 	};
-	std::list<BodyCollisionListener*> registeredBodyCollisionListeners;
+	std::vector<BodyCollisionListener*> registeredBodyCollisionListeners;
 
 	private:
-	std::list< std::list<Body2D*> > collisions;
+	std::vector< std::vector<Body2D*> > collisions;
 	void resolveCollisions();
 };
 

@@ -45,7 +45,7 @@ void Planetarium::draw()
 	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
 
 	//draw bodies
-	foreach(Body2D*, body, std::list<Body2D*>, this->physics->universe.bodies)
+	foreach(Body2D*, body, std::vector<Body2D*>, this->physics->universe.bodies)
 	{
 		double size = zoom*body->diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
@@ -101,7 +101,7 @@ void Planetarium::updateView()
 
 void Planetarium::recolorAllBodies()
 {
-	foreach(Body2D*, body, std::list<Body2D*>, this->physics->universe.bodies)
+	foreach(Body2D*, body, std::vector<Body2D*>, this->physics->universe.bodies)
 	{
 		PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
 		SDL_Color* oldColor = custom->color;

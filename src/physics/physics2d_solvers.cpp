@@ -9,18 +9,18 @@
 
 #include <cmath>
 
-#include <list>
-using std::list;
+#include <vector>
+using std::vector;
 
 
 void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
 {
-	foreach(Body2D*, b1p, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& b1 = *b1p;
 		b1.acceleration.scale(0);
 
-		foreach(Body2D*, b2p, list<Body2D*>, universe.bodies)
+		foreach(Body2D*, b2p, vector<Body2D*>, universe.bodies)
 		{
 			Body2D& b2 = *b2p;
 			if(b1 != b2)
@@ -35,7 +35,7 @@ void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
 Vector2D AbstractPhysics2DSolver::calculateAccelerationDueToNeighborhood(Vector2D position, Body2D body)
 {
 	Vector2D acc;
-	foreach(Body2D*, bodyPtr, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, bodyPtr, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& body = *bodyPtr;
 		if(body != body)
@@ -52,7 +52,7 @@ void EulerSolver::step()
 	computeAllBodiesAccelerations();
 
 	//velocity & position loop
-	foreach(Body2D*, b1p, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& b1 = *b1p;
 		b1.position.add(b1.velocity.times(timestep));
@@ -65,7 +65,7 @@ void EulerSolver::step()
 void SemiImplicitEulerSolver::step()
 {
 	//position loop
-	foreach(Body2D*, b1p, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& b1 = *b1p;
 		b1.position.add(b1.velocity.times(timestep));
@@ -74,7 +74,7 @@ void SemiImplicitEulerSolver::step()
 	computeAllBodiesAccelerations();
 
 	//velocity loop
-	foreach(Body2D*, b1p, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& b1 = *b1p;
 		b1.velocity.add(b1.acceleration.times(timestep));
@@ -89,7 +89,7 @@ void EulerCromerSolver::step()
 	computeAllBodiesAccelerations();
 
 	//velocity & position loop
-	foreach(Body2D*, b1p, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& b1 = *b1p;
 		b1.velocity.add(b1.acceleration.times(timestep));
@@ -103,7 +103,7 @@ void LeapfrogSolver::step()
 {
 	computeAllBodiesAccelerations();
 
-	foreach(Body2D*, b1p, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& b1 = *b1p;
 		if(timeElapsed == 0)

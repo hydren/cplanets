@@ -9,8 +9,9 @@
 
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
-using std::list;
+using std::vector;
 
 void Physics2D::lock()
 {
@@ -21,7 +22,7 @@ Vector2D ReferenceFrame::getPosition() const
 {
 	Vector2D centerOfMass;
 	double totalMass = 0;
-	const_foreach(const Body2D*, body, list<Body2D*>, bodies)
+	const_foreach(const Body2D*, body, vector<Body2D*>, bodies)
 	{
 		const Body2D& b = *body;
 		centerOfMass.add(b.position.times(b.mass));
@@ -37,7 +38,7 @@ Vector2D ReferenceFrame::getVelocity() const
 {
 	Vector2D totalVelocity;
 	double totalMass = 0;
-	const_foreach(const Body2D*, body, list<Body2D*>, bodies)
+	const_foreach(const Body2D*, body, vector<Body2D*>, bodies)
 	{
 		const Body2D& b = *body;
 		totalVelocity.add(b.velocity.times(b.mass));
@@ -63,7 +64,7 @@ void Physics2D::step()
 	resolveCollisions();
 }
 
-void Physics2D::changeReferenceFrameTo(list<Body2D*>& reference)
+void Physics2D::changeReferenceFrameTo(vector<Body2D*>& reference)
 {
 	//FIXME TODO implement Physics2D::changeReferenceFrameTo
 	//compute center of mass of 'reference'
@@ -74,7 +75,7 @@ void Physics2D::changeReferenceFrameTo(list<Body2D*>& reference)
 void Physics2D::resolveCollisions()
 {
 	//detect collisions
-	foreach(Body2D*, ap, list<Body2D*>, universe.bodies) foreach(Body2D*, bp, list<Body2D*>, universe.bodies)
+	foreach(Body2D*, ap, vector<Body2D*>, universe.bodies) foreach(Body2D*, bp, vector<Body2D*>, universe.bodies)
 	{
 		Body2D& a = *ap; Body2D& b = *bp;
 
@@ -83,7 +84,7 @@ void Physics2D::resolveCollisions()
 		if(a.position.distance(b.position) < a.diameter/2 + b.diameter/2)
 		{
 			bool bothAdded=false;
-			foreach(list<Body2D*>&, list1, list< list<Body2D*> >, collisions)
+			foreach(vector<Body2D*>&, list1, vector< vector<Body2D*> >, collisions)
 			{
 				if(Collections::containsElement(list1, a) && Collections::containsElement(list1, b)) //probably a duplicate lookup
 				{
@@ -105,7 +106,7 @@ void Physics2D::resolveCollisions()
 			}
 			if(!bothAdded) //new colliding pair
 			{
-				list<Body2D*> newlist1;
+				vector<Body2D*> newlist1;
 				newlist1.push_back(&a);
 				newlist1.push_back(&b);
 				collisions.push_back(newlist1);
@@ -117,10 +118,10 @@ void Physics2D::resolveCollisions()
 		referenceFrame.bodies.clear();
 
 	//resolve collisions
-	foreach(list<Body2D*>&, collisionList, list< list<Body2D*> >, collisions)
+	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
 	{
 		Body2D merger(0, 0, Vector2D(), Vector2D(), Vector2D());
-		foreach(Body2D*, body1, list<Body2D*>, collisionList)
+		foreach(Body2D*, body1, vector<Body2D*>, collisionList)
 		{
 			Body2D& body = *body1; //to simplify formulas
 			merger.position.x += body.position.x;
@@ -134,7 +135,7 @@ void Physics2D::resolveCollisions()
 
 			//merger.color = (merger.color + body.color)/2;
 
-			universe.bodies.remove(body1); //remove actual pointer
+			Collections::removeElement(universe.bodies, body1); //remove actual pointer
 		}
 
 		if(collisionList.size() == 0) continue;
@@ -145,13 +146,13 @@ void Physics2D::resolveCollisions()
 		universe.bodies.push_back(new Body2D(merger));
 
 		//notify listeners about the collision
-		foreach(BodyCollisionListener*, listener, list<BodyCollisionListener*>, registeredBodyCollisionListeners)
+		foreach(BodyCollisionListener*, listener, vector<BodyCollisionListener*>, registeredBodyCollisionListeners)
 			listener->onBodyCollision(collisionList, merger);
 	}
 
 	//cleanup
-	foreach(list<Body2D*>&, collisionList, list< list<Body2D*> >, collisions)
-		foreach(Body2D*, trash, list<Body2D*>, collisionList)
+	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
+		foreach(Body2D*, trash, vector<Body2D*>, collisionList)
 			delete trash;
 	collisions.clear();
 }
