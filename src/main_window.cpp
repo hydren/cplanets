@@ -60,6 +60,16 @@ void draw(); // The drawing function.
 void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
+void onPlanetariumBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+void onPlanetariumBodyCreation(Body2D& createdBody);
+
+//  ==================== PLANETARIUM LISTENER ===========================
+
+struct CustomUniverseListener extends Planetarium::UniverseEventListener
+{
+	void onBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
+	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
+};
 
 //  ================ CPlanetsGUI namespace ================
 int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
@@ -148,6 +158,7 @@ void CPlanetsGUI::MainWindow::show()
 		windowSize.h - 2*TOOLBAR_SIZE
 	);
 	planetarium = new Planetarium(window, planetariumSize);
+	planetarium->addUniverseEventListener(new CustomUniverseListener());
 
 	Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
 	toolbarNorth = new FlowLayoutPanel(WIDGETS_SPACING, WIDGETS_SPACING);
@@ -226,4 +237,14 @@ void onButtonPressed(Button* btn)
 	{
 		planetarium->recolorAllBodies();
 	}
+}
+
+void onPlanetariumBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger)
+{
+
+}
+
+void onPlanetariumBodyCreation(Body2D& createdBody)
+{
+	txtBodies->add_text(createdBody.id.c_str(), true);
 }
