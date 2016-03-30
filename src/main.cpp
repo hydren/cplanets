@@ -14,7 +14,7 @@
 #include "geometry/vector2d.hpp"
 #include "main_window.hpp"
 
-const string CPLANETS_VERSION = "0.2.0-alpha";
+const string CPLANETS_VERSION = "0.2.1-alpha";
 
 int main(int arc, char* argv[])
 {
