@@ -7,10 +7,11 @@
 
 #include "physics2d_solvers.hpp"
 
+#include <cmath>
+
 #include <list>
 using std::list;
 
-#include <cmath>
 
 void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
 {

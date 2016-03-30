@@ -9,13 +9,12 @@
 #define PHYSICS_PHYSICS2D_SOLVERS_HPP_
 
 #include <string>
-using std::string;
 
-#include "../../src/physics/universe2d.hpp"
+#include "universe2d.hpp"
 
 struct AbstractPhysics2DSolver
 {
-	string displayName;
+	std::string displayName;
 
 	Universe2D& universe;
 

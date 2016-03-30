@@ -8,7 +8,7 @@
 #ifndef VECTOR2D_HPP_
 #define VECTOR2D_HPP_
 
-#include "../util.hpp"
+#include "util.hpp"
 
 struct Vector2D
 {

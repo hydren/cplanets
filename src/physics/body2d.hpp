@@ -8,8 +8,8 @@
 #ifndef PHYSICS_BODY2D_HPP_
 #define PHYSICS_BODY2D_HPP_
 
-#include "../../src/geometry/vector2d.hpp"
-#include "../util.hpp"
+#include "geometry/vector2d.hpp"
+#include "util.hpp"
 
 struct Body2D
 {

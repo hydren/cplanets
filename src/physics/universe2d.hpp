@@ -9,7 +9,8 @@
 #define PHYSICS_UNIVERSE2D_HPP_
 
 #include <set>
-#include "../../src/physics/body2d.hpp"
+
+#include "body2d.hpp"
 
 struct Universe2D
 {

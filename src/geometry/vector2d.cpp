@@ -7,7 +7,7 @@
 
 #include "vector2d.hpp"
 
-#include <math.h>
+#include <cmath>
 
 /** Represents the null/zero vector. It has coordinates (0, 0). */
 const Vector2D Vector2D::NULL_VECTOR (0, 0);
