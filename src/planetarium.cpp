@@ -22,7 +22,7 @@ int threadFunctionPlanetariumUpdate(void* arg);
 void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
 //kinda wrong, all instances of Planetarium will share this
-std::vector<Planetarium::BodyCollisionListener*> registeredBodyCollisionListeners;
+std::vector<Planetarium::UniverseEventListener*> registeredBodyCollisionListeners;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
@@ -101,15 +101,21 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 {
 	physics->universe.bodies.push_back(body);
 	physics->universe.bodies.back()->userObject = new PlanetariumUserObject(color);
+
+	//notify listeners about the body created
+	foreach(Planetarium::UniverseEventListener*, listener, std::vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
+	{
+		listener->onBodyCreation(*physics->universe.bodies.back());
+	}
 }
 
-void Planetarium::addCollisionListener(BodyCollisionListener* listener)
+void Planetarium::addUniverseEventListener(UniverseEventListener* listener)
 {
 	//kinda wrong, all instances of Planetarium will share this
 	registeredBodyCollisionListeners.push_back(listener);
 }
 
-void Planetarium::removeCollisionListener(BodyCollisionListener* listener)
+void Planetarium::removeUniverseEventListener(UniverseEventListener* listener)
 {
 	//kinda wrong, all instances of Planetarium will share this
 	Collections::removeElement(registeredBodyCollisionListeners, listener);
@@ -171,7 +177,7 @@ int threadFunctionPlanetariumUpdate(void* arg)
 void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
 	//notify listeners about the collision
-	foreach(Planetarium::BodyCollisionListener*, listener, std::vector<Planetarium::BodyCollisionListener*>, registeredBodyCollisionListeners)
+	foreach(Planetarium::UniverseEventListener*, listener, std::vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
 	{
 		listener->onBodyCollision(collidingList, resultingMerger);
 	}
