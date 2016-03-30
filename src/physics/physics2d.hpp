@@ -31,15 +31,8 @@ struct Physics2D
 	void step();
 	void changeReferenceFrameTo(std::vector<Body2D*>& reference);
 
-
-	/** A struct to notify observers of collision between bodies.
-	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER*/
-	struct BodyCollisionListener
-	{
-		virtual ~BodyCollisionListener() {}
-		virtual void onBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
-	};
-	std::vector<BodyCollisionListener*> registeredBodyCollisionListeners;
+	//callback when a collision occurs
+	void (*onPhysics2DBodyCollision)(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
 	private:
 	std::vector< std::vector<Body2D*> > collisions;

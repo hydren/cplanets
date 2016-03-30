@@ -145,9 +145,8 @@ void Physics2D::resolveCollisions()
 
 		universe.bodies.push_back(new Body2D(merger));
 
-		//notify listeners about the collision
-		foreach(BodyCollisionListener*, listener, vector<BodyCollisionListener*>, registeredBodyCollisionListeners)
-			listener->onBodyCollision(collisionList, merger);
+		//callback for body collision
+		onPhysics2DBodyCollision(collisionList, merger);
 	}
 
 	//cleanup

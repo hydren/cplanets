@@ -15,6 +15,7 @@
 
 struct Planetarium extends WinBase
 {
+	struct BodyCollisionListener;
 	Physics2D* physics;
 	Vector2D viewportPosition;
 	SDL_Color bgColor;
@@ -42,11 +43,24 @@ struct Planetarium extends WinBase
 
 	void addCustomBody(Body2D* body, SDL_Color* color);
 
+	void addCollisionListener(BodyCollisionListener* listener);
+	void removeCollisionListener(BodyCollisionListener* listener);
+
 	void performPhysics();
 	void updateView();
 
+	/** A struct to notify observers of collision between bodies.
+	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER*/
+	struct BodyCollisionListener
+	{
+		virtual ~BodyCollisionListener() {}
+		virtual void onBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
+	};
+
+	//================================================================================================================================================
 	private:
 	SDL_Thread* threadPhysics, *threadViewUpdate;
+	friend void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
 	struct PlanetariumUserObject
 	{
