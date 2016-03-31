@@ -13,11 +13,6 @@
 
 using std::vector;
 
-void Physics2D::lock()
-{
-	//FixMe Lock this instance!!!
-}
-
 Vector2D ReferenceFrame::getPosition() const
 {
 	Vector2D centerOfMass;

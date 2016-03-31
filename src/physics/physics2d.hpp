@@ -26,8 +26,6 @@ struct Physics2D
 	ReferenceFrame referenceFrame;
 	AbstractPhysics2DSolver* physics2DSolver;
 
-	void lock();
-
 	void step();
 	void changeReferenceFrameTo(std::vector<Body2D*>& reference);
 
