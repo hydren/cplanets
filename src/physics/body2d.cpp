@@ -30,11 +30,6 @@ Body2D::Body2D()
 : id(generateRandomName()), mass(1), diameter(1), position(Vector2D()), velocity(Vector2D()), acceleration(Vector2D()), userObject(NULL)
 {}
 
-/** Copy constructor (deep). Creates a new Body2D instance with the same properties (including ID). */
-Body2D::Body2D(const Body2D& b)
-: id(b.id), mass(b.mass), diameter(b.diameter), position(b.position), velocity(b.velocity), acceleration(b.acceleration), userObject(b.userObject)
-{}
-
 string Body2D::toString()
 {
 	return id + " ("+mass+"Kg, "+diameter+"Km)";

@@ -60,14 +60,14 @@ void draw(); // The drawing function.
 void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
-void onPlanetariumBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
 
 //  ==================== PLANETARIUM LISTENER ===========================
 
 struct CustomUniverseListener extends Planetarium::UniverseEventListener
 {
-	void onBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
+	void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
 	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
 };
 
@@ -239,16 +239,16 @@ void onButtonPressed(Button* btn)
 	}
 }
 
-void onPlanetariumBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger)
+void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger)
 {
 	txtBodies->reset();
-	const_foreach(Body2D*, body, std::vector<Body2D*>, planetarium->getBodies())
+	foreach(Body2D&, body, std::vector<Body2D>, planetarium->getBodies())
 	{
-		txtBodies->add_text(body->id.c_str(), true);
+		txtBodies->add_text(body.toString().c_str(), true);
 	}
 }
 
 void onPlanetariumBodyCreation(Body2D& createdBody)
 {
-	txtBodies->add_text(createdBody.id.c_str(), true);
+	txtBodies->add_text(createdBody.toString().c_str(), true);
 }
