@@ -8,7 +8,7 @@
 #ifndef VECTOR2D_HPP_
 #define VECTOR2D_HPP_
 
-#include "util.hpp"
+#include <string>
 
 struct Vector2D
 {
@@ -42,7 +42,7 @@ struct Vector2D
 	// ------- utils
 
 	/** Creates a string with this vector coordinates (x, y) */
-	string toString() const;
+	std::string toString() const;
 
 	/** Creates and returns an array with this Vectors coordinates, in correct order.  */
 	double* getCoordinates() const;

@@ -11,7 +11,16 @@
 #include <cmath>
 #include <algorithm>
 
+#include "futil/futil.hpp"
+
 using std::vector;
+
+Physics2D::Physics2D()
+: universe(), referenceFrame(),
+  physics2DSolver(null),
+  onPhysics2DBodyCollision(0),
+  collisions()
+{}
 
 Vector2D ReferenceFrame::getPosition() const
 {
@@ -50,6 +59,9 @@ Vector2D ReferenceFrame::getVelocity() const
 
 void Physics2D::step()
 {
+	if(physics2DSolver == null)
+		throw_exception("Can't do step(): No physics solver specified!");
+
 	AbstractPhysics2DSolver& solver = *physics2DSolver;
 
 	//update positions
@@ -143,7 +155,9 @@ void Physics2D::resolveCollisions()
 		universe.bodies.push_back(new Body2D(merger));
 
 		//callback for body collision
-		onPhysics2DBodyCollision(collisionList, *universe.bodies.back());
+		if(onPhysics2DBodyCollision)
+			onPhysics2DBodyCollision(collisionList, *universe.bodies.back());
+
 		continue2:;
 	}
 

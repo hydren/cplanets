@@ -12,17 +12,19 @@
 #include "util.hpp"
 #include "main_window.hpp"
 #include "physics/physics2d.hpp"
+#include "physics/physics2d_solvers.hpp"
 
 using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
 using std::cout; using std::endl;
+using std::vector;
 
 int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
-void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
 //kinda wrong, all instances of Planetarium will share this
-std::vector<Planetarium::UniverseEventListener*> registeredBodyCollisionListeners;
+vector<Planetarium::UniverseEventListener*> registeredBodyCollisionListeners;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
@@ -31,9 +33,9 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   strokeSizeNormal(1), strokeSizeFocused(2),
   running(false), sleepingTime(25), currentViewportTranlationRate()
 {
-	modifyColor(bgColor, 0, 0, 0);
-	physics->physics2DSolver = new LeapfrogSolver(physics->universe);
-	physics->onPhysics2DBodyCollision = bodyCollisionCallback;
+	modifyColor(this->bgColor, 0, 0, 0);
+	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
+	this->physics->onPhysics2DBodyCollision = bodyCollisionCallback;
 	this->threadPhysics = SDL_CreateThread(threadFunctionPhysics, this);
 	this->threadViewUpdate = SDL_CreateThread(threadFunctionPlanetariumUpdate, this);
 }
@@ -50,7 +52,7 @@ void Planetarium::draw()
 	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
 
 	//draw bodies
-	foreach(Body2D*, body, std::vector<Body2D*>, this->physics->universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 	{
 		double size = zoom*body->diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
@@ -86,9 +88,11 @@ void Planetarium::setRunning(bool run)
 	this->running = run;
 }
 
+//--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
+
 void Planetarium::recolorAllBodies()
 {
-	foreach(Body2D*, body, std::vector<Body2D*>, this->physics->universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 	{
 		PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
 		SDL_Color* oldColor = custom->color;
@@ -103,11 +107,18 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 	physics->universe.bodies.back()->userObject = new PlanetariumUserObject(color);
 
 	//notify listeners about the body created
-	foreach(Planetarium::UniverseEventListener*, listener, std::vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
+	foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
 	{
 		listener->onBodyCreation(*physics->universe.bodies.back());
 	}
 }
+
+const vector<Body2D*>& Planetarium::getBodies() const
+{
+	return physics->universe.bodies;
+}
+
+//--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
 
 void Planetarium::addUniverseEventListener(UniverseEventListener* listener)
 {
@@ -138,8 +149,6 @@ void Planetarium::updateView()
 		CPlanetsGUI::triggerRepaint();
 	}
 }
-
-
 
 Planetarium::PlanetariumUserObject::PlanetariumUserObject(SDL_Color* color)
 : color(color)
@@ -174,17 +183,17 @@ int threadFunctionPlanetariumUpdate(void* arg)
 	return 0;
 }
 
-void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger)
+void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
 	//notify listeners about the collision
-	foreach(Planetarium::UniverseEventListener*, listener, std::vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
+	foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
 	{
 		if(resultingMerger.userObject == null)
 		{
 			resultingMerger.userObject = new Planetarium::PlanetariumUserObject(new SDL_Color);
 			Planetarium::PlanetariumUserObject* obj = (Planetarium::PlanetariumUserObject*) resultingMerger.userObject;
 			long r=0, g=0, b=0;
-			foreach(Body2D*, body, std::vector<Body2D*>, collidingList)
+			foreach(Body2D*, body, vector<Body2D*>, collidingList)
 			{
 				r += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->r;
 				g += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->g;

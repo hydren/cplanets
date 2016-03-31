@@ -10,30 +10,9 @@
 
 #include <string>
 
-#include "universe2d.hpp"
+#include "physics2dsolver.hpp"
+#include "futil/futil.hpp"
 
-struct AbstractPhysics2DSolver
-{
-	std::string displayName;
-
-	Universe2D& universe;
-
-	double timeElapsed;
-
-	double timestep;
-
-	AbstractPhysics2DSolver(Universe2D& u)
-	: displayName("Generic solver"), universe(u), timeElapsed(0), timestep(0)
-	{}
-
-	virtual ~AbstractPhysics2DSolver() {}
-
-	virtual void step() abstract;
-
-	protected:
-	void computeAllBodiesAccelerations();
-	Vector2D calculateAccelerationDueToNeighborhood(Vector2D position, Body2D body);
-};
 
 struct EulerSolver extends public AbstractPhysics2DSolver
 {

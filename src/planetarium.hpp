@@ -38,15 +38,26 @@ struct Planetarium extends WinBase
 	/** If run is true (default), the physics thread is started/resumed. Otherwise the thread is put to sleep. */
 	void setRunning(bool run=true);
 
-	/** Assign a new random color to every body on the current universe */
+	//--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
+
+	/** Assign a new random color to every body on the current universe (the safe way) */
 	void recolorAllBodies();
 
+	// Adds a custom body (the safe way)
 	void addCustomBody(Body2D* body, SDL_Color* color);
+
+	// Returns the list of bodies (the safe way)
+	const std::vector<Body2D*>& getBodies() const;
+
+	//--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
 
 	void addUniverseEventListener(UniverseEventListener* listener);
 	void removeUniverseEventListener(UniverseEventListener* listener);
 
+	// Its not recommended to call this directly
 	void performPhysics();
+
+	// Its not recommended to call this directly
 	void updateView();
 
 	/** A struct to notify observers of collision between bodies.

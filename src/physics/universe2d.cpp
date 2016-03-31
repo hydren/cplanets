@@ -6,6 +6,9 @@
  */
 
 #include "universe2d.hpp"
+
+#include "futil/futil.hpp"
+
 using std::vector;
 
 Universe2D::Universe2D()

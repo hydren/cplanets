@@ -7,6 +7,10 @@
 
 #include "body2d.hpp"
 
+#include "futil/futil.hpp"
+
+using std::string;
+
 string generateRandomName()
 {
 	return string("B")+randomBetween(0, 10000);

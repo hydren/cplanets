@@ -10,7 +10,7 @@
 
 #include <vector>
 
-#include "physics2d_solvers.hpp"
+#include "physics2dsolver.hpp"
 #include "universe2d.hpp"
 
 struct ReferenceFrame
@@ -25,6 +25,8 @@ struct Physics2D
 	Universe2D universe;
 	ReferenceFrame referenceFrame;
 	AbstractPhysics2DSolver* physics2DSolver;
+
+	Physics2D();
 
 	void step();
 	void changeReferenceFrameTo(std::vector<Body2D*>& reference);

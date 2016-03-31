@@ -14,13 +14,15 @@
 #include "geometry/vector2d.hpp"
 #include "main_window.hpp"
 
-const string CPLANETS_VERSION = "0.2.1-alpha";
+#include <string>
+
+const std::string CPLANETS_VERSION = "0.2.1-alpha";
 
 int main(int arc, char* argv[])
 {
 	try
 	{
-		srand(time(null));
+		srand(time(NULL));
 		CPlanetsGUI::MainWindow::show();
 		return EXIT_SUCCESS;
 	}

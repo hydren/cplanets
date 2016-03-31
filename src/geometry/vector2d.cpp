@@ -8,6 +8,11 @@
 #include "vector2d.hpp"
 
 #include <cmath>
+#include <string>
+
+#include "futil/futil.hpp"
+
+using std::string;
 
 /** Represents the null/zero vector. It has coordinates (0, 0). */
 const Vector2D Vector2D::NULL_VECTOR (0, 0);
