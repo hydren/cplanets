@@ -12,23 +12,28 @@
 #include <iostream>
 
 #include "geometry/vector2d.hpp"
+
+#include "util.hpp"
 #include "main_window.hpp"
 
 #include <string>
+using std::string;
+using std::exception;
+using std::cout; using std::endl;
 
-const std::string CPLANETS_VERSION = "0.2.2-alpha";
+const string CPLANETS_VERSION = "0.2.2-alpha";
 
 int main(int arc, char* argv[])
 {
 	try
 	{
-		srand(time(NULL));
+		srand(time(null));
 		CPlanetsGUI::MainWindow::show();
 		return EXIT_SUCCESS;
 	}
-	catch (std::exception& e)
+	catch (exception& e)
 	{
-		std::cout << "application exited after uncaught exception: " << e.what() << std::endl;
+		cout << "application exited after uncaught exception: " << e.what() << endl;
 		return EXIT_FAILURE;
 	}
 }

@@ -12,5 +12,8 @@
 
 #include "hotfixes.h"
 
+//needed to display the version
+extern const std::string CPLANETS_VERSION;
+
 
 #endif /* UTIL_HPP_ */

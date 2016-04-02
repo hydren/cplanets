@@ -8,11 +8,11 @@
 #ifndef MAIN_WINDOW_HPP_
 #define MAIN_WINDOW_HPP_
 
-#include <SDL_widgets/SDL_widgets.h>
 #include <string>
 
-//needed to display the version
-extern const std::string CPLANETS_VERSION;
+#include <SDL_widgets/SDL_widgets.h>
+
+#include "util.hpp"
 
 extern const unsigned WIDGETS_SPACING;
 
