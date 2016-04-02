@@ -16,7 +16,7 @@
 
 #include <string>
 
-const std::string CPLANETS_VERSION = "0.2.1-alpha";
+const std::string CPLANETS_VERSION = "0.2.2-alpha";
 
 int main(int arc, char* argv[])
 {
