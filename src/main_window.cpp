@@ -45,6 +45,7 @@ const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for 
 const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
 const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
+string VERSION_TEXT;
 
 //  ================ VARIABLES ===============
 
@@ -184,6 +185,8 @@ void CPlanetsGUI::MainWindow::show()
 	planetarium->addCustomBody(new Body2D(550, 32, Vector2D(64, 128), Vector2D(10, 0), Vector2D()), getRandomColor());
 	planetarium->running = true;
 
+	VERSION_TEXT ="v"+CPLANETS_VERSION;
+
 	//XXX DEBUG CODE END
 
 	//start
@@ -195,8 +198,7 @@ void CPlanetsGUI::MainWindow::show()
 void draw()
 {
 	window->clear();
-	const char* versionStr = ("v"+CPLANETS_VERSION).c_str();
-	draw_title_ttf->draw_string(window->win, versionStr, Point(window->tw_area.w - draw_title_ttf->text_width(versionStr), 4));
+	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), Point(window->tw_area.w - draw_title_ttf->text_width(VERSION_TEXT.c_str()), 4));
 }
 
 void onWindowResize(int dw, int dh)
