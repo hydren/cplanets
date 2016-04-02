@@ -245,7 +245,7 @@ void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resu
 	std::vector<Body2D> bodies = planetarium->getBodies();
 	foreach(Body2D&, body, std::vector<Body2D>, bodies)
 	{
-		txtBodies->add_text(body.toString().c_str(), true);
+		txtBodies->add_text(body.toString().c_str(), false);
 	}
 }
 
