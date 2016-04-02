@@ -242,7 +242,8 @@ void onButtonPressed(Button* btn)
 void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger)
 {
 	txtBodies->reset();
-	foreach(Body2D&, body, std::vector<Body2D>, planetarium->getBodies())
+	std::vector<Body2D> bodies = planetarium->getBodies();
+	foreach(Body2D&, body, std::vector<Body2D>, bodies)
 	{
 		txtBodies->add_text(body.toString().c_str(), true);
 	}
