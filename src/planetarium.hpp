@@ -46,8 +46,8 @@ struct Planetarium extends WinBase
 	// Adds a custom body (the safe way)
 	void addCustomBody(Body2D* body, SDL_Color* color);
 
-	// Returns the list of bodies (the safe way)
-	const std::vector<Body2D*>& getBodies() const;
+	// Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium.
+	std::vector<Body2D> getBodies() const;
 
 	//--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
 
@@ -65,13 +65,15 @@ struct Planetarium extends WinBase
 	struct UniverseEventListener
 	{
 		virtual ~UniverseEventListener() {}
-		virtual void onBodyCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger) abstract;
+		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) abstract;
 		virtual void onBodyCreation(Body2D& createdBody) abstract;
 	};
 
 	//================================================================================================================================================
 	private:
 	SDL_Thread* threadPhysics, *threadViewUpdate;
+	SDL_mutex* physicsAccessMutex;
+	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
 	friend void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
 	struct PlanetariumUserObject
