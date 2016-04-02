@@ -34,6 +34,7 @@ struct UniverseCollisionEvent
 };
 //kinda wrong, all instances of Planetarium will share this
 std::queue<UniverseCollisionEvent> collisionEvents;
+SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
@@ -48,12 +49,14 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 	this->threadPhysics = SDL_CreateThread(threadFunctionPhysics, this);
 	this->threadViewUpdate = SDL_CreateThread(threadFunctionPlanetariumUpdate, this);
 	this->physicsAccessMutex = SDL_CreateMutex();
+	if(collisionEventsMutex == null) collisionEventsMutex = SDL_CreateMutex(); //XXX not thread-safe
 }
 
 Planetarium::~Planetarium()
 {
 	SDL_KillThread(threadPhysics);
 	SDL_KillThread(threadViewUpdate);
+	SDL_DestroyMutex(physicsAccessMutex);
 }
 
 void Planetarium::draw()
@@ -62,29 +65,28 @@ void Planetarium::draw()
 	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
 
 	//draw bodies
+	SDL_mutexP(this->physicsAccessMutex);
 	foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 	{
 		double size = zoom*body->diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
-		SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
 
 		Vector2D v = this->getTransposed(body->position);
 
-//		SDL_Rect tmpRect; tmpRect.x = x; tmpRect.y = y; tmpRect.h = size, tmpRect.w = size;
-//		SDL_FillRect(this->surface, &tmpRect, colorToInt(*bodyColor));
+		if(body->userObject != null)
+		{
+			SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
+			filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
+		}
 
-		filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
-
-		int borderColor = 0xffffffff;
+		int borderColor = 0xffffffff; //XXX should use colorToInt() or be a const
 
 //		if(focusedBodies.contains(body))
-//		{
-//			graphics2d.setStroke(focusedStroke);
 //			borderColor = int value for orange
-//		}
 
 		circleColor(this->win, v.x, v.y, round(size*0.5), borderColor);
 	}
+	SDL_mutexV(this->physicsAccessMutex);
 }
 
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
@@ -133,7 +135,7 @@ vector<Body2D> Planetarium::getBodies() const
 	std::vector<Body2D> bodies;
 	const_foreach(Body2D*, i, vector<Body2D*>, physics->universe.bodies)
 	{
-		bodies.push_back(Body2D(*i));
+		bodies.push_back(Body2D(*i)); //must do deep copy on userObject
 	}
 	SDL_mutexV(this->physicsAccessMutex);
 	return bodies;
@@ -160,7 +162,9 @@ void Planetarium::performPhysics()
 		if(running)
 		{
 			SDL_mutexP(this->physicsAccessMutex);
+
 			this->physics->step();
+
 			SDL_mutexV(this->physicsAccessMutex);
 		}
 	}
@@ -171,9 +175,15 @@ void Planetarium::updateView()
 	for(;true;rest(25)) // XXX Hardcoded time. It should be parameterized.
 	{
 		if(!collisionEvents.empty()) //notify listeners about the collisions
+		{
+			SDL_mutexP(collisionEventsMutex);
+
 			for(UniverseCollisionEvent& ev = collisionEvents.front(); !collisionEvents.empty(); collisionEvents.pop())
 				foreach(UniverseEventListener*, listener, vector<UniverseEventListener*>, registeredBodyCollisionListeners)
 					listener->onBodyCollision(ev.collidingList, ev.resultingMerger);
+
+			SDL_mutexV(collisionEventsMutex);
+		}
 
 		this->viewportPosition += this->currentViewportTranlationRate;
 		CPlanetsGUI::triggerRepaint();
@@ -213,36 +223,37 @@ int threadFunctionPlanetariumUpdate(void* arg)
 	return 0;
 }
 
+// callback called by physics thread
 void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
 	//reconstructs custom data
-	if(resultingMerger.userObject == null)
+	resultingMerger.userObject = new Planetarium::PlanetariumUserObject(new SDL_Color);
+	Planetarium::PlanetariumUserObject* obj = (Planetarium::PlanetariumUserObject*) resultingMerger.userObject;
+	long r=0, g=0, b=0;
+	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
-		resultingMerger.userObject = new Planetarium::PlanetariumUserObject(new SDL_Color);
-		Planetarium::PlanetariumUserObject* obj = (Planetarium::PlanetariumUserObject*) resultingMerger.userObject;
-		long r=0, g=0, b=0;
-		foreach(Body2D*, body, vector<Body2D*>, collidingList)
-		{
-			r += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->r;
-			g += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->g;
-			b += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->b;
-		}
-		obj->color = new SDL_Color;
-		obj->color->r = r/collidingList.size();
-		obj->color->g = g/collidingList.size();
-		obj->color->b = b/collidingList.size();
+		r += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->r;
+		g += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->g;
+		b += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->b;
 	}
+	obj->color = new SDL_Color;
+	obj->color->r = r/collidingList.size();
+	obj->color->g = g/collidingList.size();
+	obj->color->b = b/collidingList.size();
 
 	vector<Body2D> collidingListCopy;
 	foreach(Body2D*, i, vector<Body2D*>, collidingList)
 	{
 		collidingListCopy.push_back(*i);
+		collidingListCopy.back().userObject = new Planetarium::PlanetariumUserObject(new SDL_Color);
 	}
-	Body2D resultingMergerCopy(resultingMerger);
+
+	SDL_mutexP(collisionEventsMutex);
 
 	//add collision event to be consumed
-	collisionEvents.push(UniverseCollisionEvent(collidingListCopy, resultingMergerCopy)); //provided list and merger must be deep copies
-	UniverseCollisionEvent& c = collisionEvents.back(); //FixMe this instance is dirty. why?
+	collisionEvents.push(UniverseCollisionEvent(collidingListCopy, resultingMerger)); //provided list and merger must be copies
+
+	SDL_mutexV(collisionEventsMutex);
 }
 
 
