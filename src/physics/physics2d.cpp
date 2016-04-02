@@ -133,8 +133,8 @@ void Physics2D::resolveCollisions()
 		foreach(Body2D*, body1, vector<Body2D*>, collisionList)
 		{
 			Body2D& body = *body1; //to simplify formulas
-			merger.position.x += body.position.x;
-			merger.position.y += body.position.y;
+			merger.position.x += body.position.x * body.mass;
+			merger.position.y += body.position.y * body.mass;
 
 			merger.velocity.x = (merger.velocity.x*merger.mass + body.velocity.x*body.mass)/(merger.mass + body.mass);
 			merger.velocity.y = (merger.velocity.y*merger.mass + body.velocity.y*body.mass)/(merger.mass + body.mass);
@@ -149,8 +149,8 @@ void Physics2D::resolveCollisions()
 
 		if(collisionList.size() == 0) goto continue2;
 
-		merger.position.x /= collisionList.size();
-		merger.position.y /= collisionList.size();
+		merger.position.x /= merger.mass;
+		merger.position.y /= merger.mass;
 
 		universe.bodies.push_back(new Body2D(merger));
 
