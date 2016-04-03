@@ -109,6 +109,11 @@ void CPlanetsGUI::triggerRepaint()
 	SDL_PushEvent(&repaintEvent);
 }
 
+Rect CPlanetsGUI::getButtonSize(const string& txt)
+{
+	return Rect(0, 0, draw_ttf->text_width(txt.c_str()) + 2*WIDGETS_SPACING, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+}
+
 void CPlanetsGUI::setComponentPosition(WinBase* component, Point& position)
 {
 	CPlanetsGUI::setComponentPosition(component, position.x, position.y);
@@ -161,13 +166,12 @@ void CPlanetsGUI::MainWindow::show()
 	planetarium = new Planetarium(window, planetariumSize);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
 
-	Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
 	toolbarNorth = new FlowLayoutPanel(WIDGETS_SPACING, WIDGETS_SPACING);
 
-	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
+	btnAddBody = new Button(window, 0, getButtonSize("Add"), "Add", onButtonPressed);
 	toolbarNorth->addComponent(btnAddBody);
 
-	btnRecolorAll = new Button(window, 0, genericButtonSize, "Rec.", onButtonPressed);
+	btnRecolorAll = new Button(window, 0, getButtonSize("Recolor all bodies"), "Recolor all bodies", onButtonPressed);
 	toolbarNorth->addComponent(btnRecolorAll);
 
 	toolbarNorth->pack();
