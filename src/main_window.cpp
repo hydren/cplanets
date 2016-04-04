@@ -38,7 +38,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 #endif
 
 using std::cout; using std::endl;
-using CPlanetsGUI::FlowLayoutPanel;
+using CPlanetsGUI::FlowLayout;
 
 // ================ CONSTANTS ================
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
@@ -53,7 +53,7 @@ string VERSION_TEXT;
 TopWin* window; // The program window
 Planetarium* planetarium;
 Button* btnAddBody, *btnRecolorAll;
-FlowLayoutPanel* toolbarNorth;
+FlowLayout* toolbarNorthLayout;
 TextWin* txtBodies;
 
 //  ================ FUNCTION PROTOTYPES ================
@@ -166,15 +166,15 @@ void CPlanetsGUI::MainWindow::show()
 	planetarium = new Planetarium(window, planetariumSize);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
 
-	toolbarNorth = new FlowLayoutPanel(WIDGETS_SPACING, WIDGETS_SPACING);
+	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
 
 	btnAddBody = new Button(window, 0, getButtonSize("Add"), "Add", onButtonPressed);
-	toolbarNorth->addComponent(btnAddBody);
+	toolbarNorthLayout->addComponent(btnAddBody);
 
 	btnRecolorAll = new Button(window, 0, getButtonSize("Recolor all bodies"), "Recolor all bodies", onButtonPressed);
-	toolbarNorth->addComponent(btnRecolorAll);
+	toolbarNorthLayout->addComponent(btnRecolorAll);
 
-	toolbarNorth->pack();
+	toolbarNorthLayout->pack();
 
 	Rect txtBodiesSize(
 		WIDGETS_SPACING,

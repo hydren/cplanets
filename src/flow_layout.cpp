@@ -14,18 +14,18 @@
 
 using std::vector;
 
-CPlanetsGUI::FlowLayoutPanel::FlowLayoutPanel(int x, int y)
+CPlanetsGUI::FlowLayout::FlowLayout(int x, int y)
 {
 	this->position.x = x;
 	this->position.y = y;
 }
 
-CPlanetsGUI::FlowLayoutPanel::FlowLayoutPanel(Point& p)
+CPlanetsGUI::FlowLayout::FlowLayout(Point& p)
 {
 	this->position = p;
 }
 
-void CPlanetsGUI::FlowLayoutPanel::addComponent(WinBase* component, int index)
+void CPlanetsGUI::FlowLayout::addComponent(WinBase* component, int index)
 {
 	if(index < 0)
 		this->components.push_back(component);
@@ -33,31 +33,31 @@ void CPlanetsGUI::FlowLayoutPanel::addComponent(WinBase* component, int index)
 		this->components.insert(components.begin()+index, component);
 }
 
-void CPlanetsGUI::FlowLayoutPanel::addComponent(WinBase& component, int index)
+void CPlanetsGUI::FlowLayout::addComponent(WinBase& component, int index)
 {
-	CPlanetsGUI::FlowLayoutPanel::addComponent(&component, index);
+	CPlanetsGUI::FlowLayout::addComponent(&component, index);
 }
 
-void CPlanetsGUI::FlowLayoutPanel::removeComponentAt(unsigned index)
+void CPlanetsGUI::FlowLayout::removeComponentAt(unsigned index)
 {
 	if(index > this->components.size() - 1)
 		throw std::out_of_range("out of range: " + index);
 	this->components.erase(components.begin() + index);
 }
 
-void CPlanetsGUI::FlowLayoutPanel::removeComponent(WinBase& component)
+void CPlanetsGUI::FlowLayout::removeComponent(WinBase& component)
 {
-	CPlanetsGUI::FlowLayoutPanel::removeComponent(&component);
+	CPlanetsGUI::FlowLayout::removeComponent(&component);
 }
 
-void CPlanetsGUI::FlowLayoutPanel::removeComponent(WinBase* component)
+void CPlanetsGUI::FlowLayout::removeComponent(WinBase* component)
 {
 	int index = Collections::indexOf(this->components, component);
 	if(index < 0) return;
-	CPlanetsGUI::FlowLayoutPanel::removeComponentAt(index);
+	CPlanetsGUI::FlowLayout::removeComponentAt(index);
 }
 
-void CPlanetsGUI::FlowLayoutPanel::pack()
+void CPlanetsGUI::FlowLayout::pack()
 {
 	Point prevPosition = position;
 	foreach(WinBase*, component, vector<WinBase*>, this->components)
