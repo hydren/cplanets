@@ -43,7 +43,7 @@ using CPlanetsGUI::FlowLayoutPanel;
 // ================ CONSTANTS ================
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
 const unsigned WIDGETS_SPACING = 4;
-const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 8;
+const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
 const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
 string VERSION_TEXT;
 
@@ -202,7 +202,8 @@ void CPlanetsGUI::MainWindow::show()
 void draw()
 {
 	window->clear();
-	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), Point(window->tw_area.w - draw_title_ttf->text_width(VERSION_TEXT.c_str()), 4));
+	Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
+	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
 }
 
 void onWindowResize(int dw, int dh)
