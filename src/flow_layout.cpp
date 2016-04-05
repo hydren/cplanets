@@ -14,18 +14,20 @@
 
 using std::vector;
 
-CPlanetsGUI::FlowLayout::FlowLayout(int x, int y)
+CPlanetsGUI::Layout::Layout(int x, int y)
 {
 	this->position.x = x;
 	this->position.y = y;
 }
 
-CPlanetsGUI::FlowLayout::FlowLayout(Point& p)
+CPlanetsGUI::Layout::Layout(Point& p)
 {
 	this->position = p;
 }
 
-void CPlanetsGUI::FlowLayout::addComponent(WinBase* component, int index)
+CPlanetsGUI::Layout::~Layout(){}
+
+void CPlanetsGUI::Layout::addComponent(WinBase* component, int index)
 {
 	if(index < 0)
 		this->components.push_back(component);
@@ -33,29 +35,40 @@ void CPlanetsGUI::FlowLayout::addComponent(WinBase* component, int index)
 		this->components.insert(components.begin()+index, component);
 }
 
-void CPlanetsGUI::FlowLayout::addComponent(WinBase& component, int index)
+void CPlanetsGUI::Layout::addComponent(WinBase& component, int index)
 {
-	CPlanetsGUI::FlowLayout::addComponent(&component, index);
+	CPlanetsGUI::Layout::addComponent(&component, index);
 }
 
-void CPlanetsGUI::FlowLayout::removeComponentAt(unsigned index)
+void CPlanetsGUI::Layout::removeComponentAt(unsigned index)
 {
 	if(index > this->components.size() - 1)
 		throw std::out_of_range("out of range: " + index);
 	this->components.erase(components.begin() + index);
 }
 
-void CPlanetsGUI::FlowLayout::removeComponent(WinBase& component)
+void CPlanetsGUI::Layout::removeComponent(WinBase& component)
 {
-	CPlanetsGUI::FlowLayout::removeComponent(&component);
+	CPlanetsGUI::Layout::removeComponent(&component);
 }
 
-void CPlanetsGUI::FlowLayout::removeComponent(WinBase* component)
+void CPlanetsGUI::Layout::removeComponent(WinBase* component)
 {
 	int index = Collections::indexOf(this->components, component);
 	if(index < 0) return;
-	CPlanetsGUI::FlowLayout::removeComponentAt(index);
+	CPlanetsGUI::Layout::removeComponentAt(index);
 }
+
+CPlanetsGUI::FlowLayout::FlowLayout(int x, int y)
+: CPlanetsGUI::Layout(x, y)
+{}
+
+CPlanetsGUI::FlowLayout::FlowLayout(Point& p)
+: CPlanetsGUI::Layout(p)
+{}
+
+CPlanetsGUI::FlowLayout::~FlowLayout()
+{}
 
 void CPlanetsGUI::FlowLayout::pack()
 {
