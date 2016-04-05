@@ -52,7 +52,7 @@ string VERSION_TEXT;
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
 Planetarium* planetarium;
-Button* btnAddBody, *btnRecolorAll;
+Button* btnAddBody, *btnRecolorAll, *btnRun, *btnPause;
 FlowLayout* toolbarNorthLayout;
 TextWin* txtBodies;
 
@@ -174,6 +174,14 @@ void CPlanetsGUI::MainWindow::show()
 	btnRecolorAll = new Button(window, 0, getButtonSize("Recolor all bodies"), "Recolor all bodies", onButtonPressed);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
 
+	toolbarNorthLayout->addSpacer();
+
+	btnRun = new Button(window, 0, getButtonSize("Run"), "Run", onButtonPressed);
+	toolbarNorthLayout->addComponent(btnRun);
+
+	btnPause = new Button(window, 0, getButtonSize("Pause"), "Pause", onButtonPressed);
+	toolbarNorthLayout->addComponent(btnPause);
+
 	toolbarNorthLayout->pack();
 
 	Rect txtBodiesSize(
@@ -211,6 +219,7 @@ void onWindowResize(int dw, int dh)
 //	cout << "resize event" << endl;
 	planetarium->widen(dw, dh);
 	txtBodies->widen(0, dh);
+	toolbarNorthLayout->pack();
 }
 
 void onKeyEvent(SDL_keysym *key,bool down)
@@ -243,6 +252,16 @@ void onButtonPressed(Button* btn)
 	if(btn == btnRecolorAll)
 	{
 		planetarium->recolorAllBodies();
+	}
+
+	if(btn == btnRun)
+	{
+		planetarium->setRunning();
+	}
+
+	if(btn == btnPause)
+	{
+		planetarium->setRunning(false);
 	}
 }
 
