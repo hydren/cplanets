@@ -226,6 +226,7 @@ void onWindowResize(int dw, int dh)
 void onKeyEvent(SDL_keysym *key, bool down)
 {
 	switch (key->sym) {
+		//translation
 		case SDLK_UP:
 			planetarium->currentViewportTranlationRate.y = down? - (double) DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
@@ -238,6 +239,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_RIGHT:
 			planetarium->currentViewportTranlationRate.x = down?   (double) DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
 			break;
+		//zoom
 		case SDLK_PLUS:
 		case SDLK_KP_PLUS:
 		case SDLK_PAGEUP:
@@ -248,8 +250,17 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_PAGEDOWN:
 			planetarium->currentViewportZoomChangeRate = down? 1.0 - DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE : 1.0;
 			break;
-		default:
+		//key bindings
+		case SDLK_a:
+			if(down) onButtonPressed(btnAddBody);
 			break;
+		case SDLK_o:
+			if(down) onButtonPressed(btnRecolorAll);
+			break;
+		case SDLK_p:
+			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
+			break;
+		default:break;
 	}
 }
 
