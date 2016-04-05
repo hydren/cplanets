@@ -38,10 +38,10 @@ SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
-  physics(new Physics2D()), viewportPosition(), bgColor(SDL_Color()),
-  zoom(1.0), minimumBodyRenderingRadius(3.0),
-  strokeSizeNormal(1), strokeSizeFocused(2),
-  running(false), sleepingTime(25), currentViewportTranlationRate()
+  physics(new Physics2D()), running(false), sleepingTime(25),
+  bgColor(SDL_Color()), strokeSizeNormal(1), strokeSizeFocused(2),
+  viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
+  currentViewportTranlationRate(), currentViewportZoomChangeRate(1)
 {
 	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
@@ -68,7 +68,7 @@ void Planetarium::draw()
 	SDL_mutexP(this->physicsAccessMutex);
 	foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 	{
-		double size = zoom*body->diameter;
+		double size = viewportZoom*body->diameter;
 		if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
 
 		Vector2D v = this->getTransposed(body->position);
@@ -92,7 +92,7 @@ void Planetarium::draw()
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
 //	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
-	return position.difference(this->viewportPosition).scale(zoom);
+	return position.difference(this->viewportPosition).scale(viewportZoom);
 }
 
 void Planetarium::setRunning(bool run)
@@ -185,7 +185,21 @@ void Planetarium::updateView()
 			SDL_mutexV(collisionEventsMutex);
 		}
 
+		//update viewport position
 		this->viewportPosition += this->currentViewportTranlationRate;
+
+		//update zoom
+		if(this->currentViewportZoomChangeRate != 0)
+		{
+			double prevZoom = this->viewportZoom;
+
+			//update zoom
+			this->viewportZoom *= this->currentViewportZoomChangeRate;
+
+			//center after zooming (if zoom changed)
+			this->viewportPosition.x += this->tw_area.w * (1/prevZoom - 1/viewportZoom) * 0.5;
+			this->viewportPosition.y += this->tw_area.h * (1/prevZoom - 1/viewportZoom) * 0.5;
+		}
 		CPlanetsGUI::triggerRepaint();
 	}
 }

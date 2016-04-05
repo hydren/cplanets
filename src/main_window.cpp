@@ -45,6 +45,7 @@ const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for 
 const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
 const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
+const double DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE = 0.1;
 string VERSION_TEXT;
 
 //  ================ VARIABLES ===============
@@ -222,7 +223,7 @@ void onWindowResize(int dw, int dh)
 	toolbarNorthLayout->pack();
 }
 
-void onKeyEvent(SDL_keysym *key,bool down)
+void onKeyEvent(SDL_keysym *key, bool down)
 {
 	switch (key->sym) {
 		case SDLK_UP:
@@ -236,6 +237,16 @@ void onKeyEvent(SDL_keysym *key,bool down)
 			break;
 		case SDLK_RIGHT:
 			planetarium->currentViewportTranlationRate.x = down?   (double) DEFAULT_VIEWPORT_TRANSLATE_RATE : 0;
+			break;
+		case SDLK_PLUS:
+		case SDLK_KP_PLUS:
+		case SDLK_PAGEUP:
+			planetarium->currentViewportZoomChangeRate = down? 1.0 + DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE : 1.0;
+			break;
+		case SDLK_MINUS:
+		case SDLK_KP_MINUS:
+		case SDLK_PAGEDOWN:
+			planetarium->currentViewportZoomChangeRate = down? 1.0 - DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE : 1.0;
 			break;
 		default:
 			break;

@@ -16,18 +16,23 @@
 struct Planetarium extends WinBase
 {
 	struct UniverseEventListener;
-	Physics2D* physics;
-	Vector2D viewportPosition;
-	SDL_Color bgColor;
 
-	//rendering parameters
-	double zoom, minimumBodyRenderingRadius;
-	int strokeSizeNormal, strokeSizeFocused;
+	//model
+	Physics2D* physics;
+
+	//widget parameters
 	bool running;
 	long sleepingTime;
+	SDL_Color bgColor;
+	int strokeSizeNormal, strokeSizeFocused;
+
+	//rendering parameters
+	Vector2D viewportPosition;
+	double viewportZoom, minimumBodyRenderingRadius;
 
 	//interactive parameters
 	Vector2D currentViewportTranlationRate;
+	double currentViewportZoomChangeRate;
 
 	Planetarium(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~Planetarium();
