@@ -20,6 +20,7 @@ struct Planetarium extends WinBase
 	static const double DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE = 0.1;
 	static const unsigned DEFAULT_STROKE_SIZE_NORMAL = 1, DEFAULT_STROKE_SIZE_FOCUSED = 2;
 	static const unsigned DEFAULT_SLEEPING_TIME = 25;
+	static const short DEFAULT_FPS = 60;
 
 	//model
 	Physics2D* physics;
@@ -27,6 +28,7 @@ struct Planetarium extends WinBase
 	//widget parameters
 	bool running;
 	long sleepingTime;
+	short fps;
 	SDL_Color bgColor;
 	int strokeSizeNormal, strokeSizeFocused;
 

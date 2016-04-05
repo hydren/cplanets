@@ -38,7 +38,7 @@ SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
-  physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME),
+  physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   bgColor(SDL_Color()), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
@@ -173,7 +173,8 @@ void Planetarium::performPhysics()
 
 void Planetarium::updateView()
 {
-	for(;true;rest(25)) // XXX Hardcoded time. It should be parameterized.
+	static long lastTime;
+	for(;true;rest(1000/fps - (SDL_GetTicks() - lastTime)))
 	{
 		if(!collisionEvents.empty()) //notify listeners about the collisions
 		{
@@ -202,6 +203,7 @@ void Planetarium::updateView()
 			this->viewportPosition.y += this->tw_area.h * (1/prevZoom - 1/viewportZoom) * 0.5;
 		}
 		CPlanetsGUI::triggerRepaint();
+		lastTime = SDL_GetTicks();
 	}
 }
 
