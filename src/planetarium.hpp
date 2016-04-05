@@ -16,6 +16,10 @@
 struct Planetarium extends WinBase
 {
 	struct UniverseEventListener;
+	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
+	static const double DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE = 0.1;
+	static const unsigned DEFAULT_STROKE_SIZE_NORMAL = 1, DEFAULT_STROKE_SIZE_FOCUSED = 2;
+	static const unsigned DEFAULT_SLEEPING_TIME = 25;
 
 	//model
 	Physics2D* physics;
@@ -31,8 +35,10 @@ struct Planetarium extends WinBase
 	double viewportZoom, minimumBodyRenderingRadius;
 
 	//interactive parameters
-	Vector2D currentViewportTranlationRate;
-	double currentViewportZoomChangeRate;
+	unsigned viewportTranlationRateValue; //the intensity of translation when translating
+	double viewportZoomChangeRateValue; //the intensity of zoom change when zooming
+	Vector2D currentViewportTranlationRate; //non-zero when translating
+	double currentViewportZoomChangeRate; //non-zero when zooming
 
 	Planetarium(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~Planetarium();

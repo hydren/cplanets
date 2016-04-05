@@ -38,9 +38,10 @@ SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
-  physics(new Physics2D()), running(false), sleepingTime(25),
-  bgColor(SDL_Color()), strokeSizeNormal(1), strokeSizeFocused(2),
+  physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME),
+  bgColor(SDL_Color()), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
+  viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1)
 {
 	modifyColor(this->bgColor, 0, 0, 0);
