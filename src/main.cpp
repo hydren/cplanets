@@ -21,7 +21,7 @@ using std::string;
 using std::exception;
 using std::cout; using std::endl;
 
-const string CPLANETS_VERSION = "0.2.4-alpha";
+const string CPLANETS_VERSION = "0.2.5-beta";
 
 int main(int arc, char* argv[])
 {
