@@ -40,6 +40,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
   physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   bgColor(SDL_Color()), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
+  isViewportTranslationRateProportionalToZoom(true),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1)
@@ -171,7 +172,6 @@ void Planetarium::performPhysics()
 				this->physics->step();
 			}
 		}
-
 		SDL_Delay(sleepingTime);
 	}
 }
@@ -192,7 +192,8 @@ void Planetarium::updateView()
 		}
 
 		//update viewport position
-		this->viewportPosition += this->currentViewportTranlationRate;
+		this->viewportPosition.x += this->currentViewportTranlationRate.x * (this->isViewportTranslationRateProportionalToZoom? 1.0/viewportZoom : 1.0);
+		this->viewportPosition.y += this->currentViewportTranlationRate.y * (this->isViewportTranslationRateProportionalToZoom? 1.0/viewportZoom : 1.0);
 
 		//update zoom
 		if(this->currentViewportZoomChangeRate != 0)

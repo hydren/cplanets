@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Scale translation rate when zooming
 
 
 -------------- Ideas

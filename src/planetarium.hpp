@@ -31,6 +31,7 @@ struct Planetarium extends WinBase
 	short fps;
 	SDL_Color bgColor;
 	int strokeSizeNormal, strokeSizeFocused;
+	bool isViewportTranslationRateProportionalToZoom;
 
 	//rendering parameters
 	Vector2D viewportPosition;
