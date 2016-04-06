@@ -158,7 +158,7 @@ void Planetarium::removeUniverseEventListener(UniverseEventListener* listener)
 
 void Planetarium::performPhysics()
 {
-	for(;true;rest(sleepingTime))
+	for(;true;SDL_Delay(sleepingTime))
 	{
 		if(running)
 		{
@@ -174,7 +174,7 @@ void Planetarium::performPhysics()
 void Planetarium::updateView()
 {
 	static long lastTime;
-	for(;true;rest(1000/fps - (SDL_GetTicks() - lastTime)))
+	for(;true;SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime)))
 	{
 		if(!collisionEvents.empty()) //notify listeners about the collisions
 		{

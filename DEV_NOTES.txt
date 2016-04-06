@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Replace rest() with SDL_Delay()
 - Scale translation rate when zooming
 
 
