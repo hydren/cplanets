@@ -54,6 +54,7 @@ Planetarium* planetarium;
 Button* btnAddBody, *btnRecolorAll, *btnRun, *btnPause;
 FlowLayout* toolbarNorthLayout;
 TextWin* txtBodies;
+Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
@@ -108,9 +109,11 @@ void CPlanetsGUI::triggerRepaint()
 	SDL_PushEvent(&repaintEvent);
 }
 
-Rect CPlanetsGUI::getButtonSize(const string& txt)
+void CPlanetsGUI::packButton(Button* btn)
 {
-	return Rect(0, 0, draw_ttf->text_width(txt.c_str()) + 2*WIDGETS_SPACING, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+	int properWidth = btn->label.render_t->text_width(btn->label.str) + 2*WIDGETS_SPACING;
+	int properHeight = TOOLBAR_SIZE - 2*WIDGETS_SPACING;
+	btn->widen(properWidth - btn->tw_area.w, properHeight - btn->tw_area.h);
 }
 
 void CPlanetsGUI::setComponentPosition(WinBase* component, Point& position)
@@ -167,18 +170,22 @@ void CPlanetsGUI::MainWindow::show()
 
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
 
-	btnAddBody = new Button(window, 0, getButtonSize("Add"), "Add", onButtonPressed);
+	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
+	packButton(btnAddBody);
 	toolbarNorthLayout->addComponent(btnAddBody);
 
-	btnRecolorAll = new Button(window, 0, getButtonSize("Recolor all bodies"), "Recolor all bodies", onButtonPressed);
+	btnRecolorAll = new Button(window, 0, genericButtonSize, "Recolor all bodies", onButtonPressed);
+	packButton(btnRecolorAll);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
 
 	toolbarNorthLayout->addSpacer();
 
-	btnRun = new Button(window, 0, getButtonSize("Run"), "Run", onButtonPressed);
+	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
+	packButton(btnRun);
 	toolbarNorthLayout->addComponent(btnRun);
 
-	btnPause = new Button(window, 0, getButtonSize("Pause"), "Pause", onButtonPressed);
+	btnPause = new Button(window, 0, genericButtonSize, "Pause", onButtonPressed);
+	packButton(btnPause);
 	toolbarNorthLayout->addComponent(btnPause);
 
 	toolbarNorthLayout->pack();

@@ -1,7 +1,6 @@
 -------------- To Do
 
 - Replace rest() with SDL_Delay()
-- Create pack() function instead of getButtonSize, to avoid typing the label twice
 - Scale translation rate when zooming
 
 

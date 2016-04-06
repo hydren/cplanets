@@ -38,8 +38,8 @@ namespace CPlanetsGUI
 	//trigger repainting of the whole window. it will be repainted eventually
 	void triggerRepaint();
 
-	//generates a rect with correct size for a button with the given label
-	Rect getButtonSize(const string& txt);
+	//adjusts the given button size according to its label
+	void packButton(Button* btn);
 
 	void setComponentPosition(WinBase* component, Point& position);
 	void setComponentPosition(WinBase* component, int x, int y);
