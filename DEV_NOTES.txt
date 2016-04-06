@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Adjust flow layout: count fixed spacers as components when computing the free space on layout
 - Replace rest() with SDL_Delay()
 - Create pack() function instead of getButtonSize, to avoid typing the label twice
 - Scale translation rate when zooming

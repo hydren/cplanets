@@ -71,6 +71,7 @@ namespace CPlanetsGUI
 		int getSpacerSize(int index);
 		bool needsSpacerStretching() const;
 		unsigned computeFreeSpaceOnLayout() const;
+		unsigned getStretchedSpacersCount() const;
 	};
 }
 
