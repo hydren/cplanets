@@ -12,6 +12,8 @@
 
 #include "hotfixes.h"
 
+#define synchronized(mutex) for(bool mutex##_SYNCHRONIZED=SDL_mutexP(mutex)||true;mutex##_SYNCHRONIZED;mutex##_SYNCHRONIZED=SDL_mutexV(mutex)&&false)
+
 //needed to display the version
 extern const std::string CPLANETS_VERSION;
 
