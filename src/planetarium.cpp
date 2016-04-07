@@ -90,6 +90,19 @@ void Planetarium::draw()
 				switch(this->orbitTracer.style)
 				{
 					case OrbitTracer::LINEAR:
+					{
+						Vector2D previousPosition = trace.front();
+						foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+						{
+							if(recordedPosition != previousPosition) //avoid drawing segments of same points
+							{
+								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
+								lineColor(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), colorToInt(null, *bodyColor, true));
+							}
+							previousPosition = recordedPosition;
+						}
+						break;
+					}
 					case OrbitTracer::POINT:
 					{
 						foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
@@ -97,8 +110,8 @@ void Planetarium::draw()
 							Vector2D pv = this->getTransposed(r);
 							pixelColor(this->win, round(pv.x), round(pv.y), colorToInt(null, *bodyColor, true));
 						}
+						break;
 					}
-					break;
 					default:break;
 				}
 			}
