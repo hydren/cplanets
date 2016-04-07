@@ -76,46 +76,48 @@ void Planetarium::draw()
 	this->init_gui();
 	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
 
-	//draw bodies
+	//draw all stuff
 	synchronized(physicsAccessMutex)
 	{
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 		{
-			double size = viewportZoom*body->diameter;
-			if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
+			SDL_Color* bodyColor = body->userObject != null? ((PlanetariumUserObject*) body->userObject)->color : null;
 
-			Vector2D v = this->getTransposed(body->position);
-
-			if(body->userObject != null)
+			//draw orbit
+			if(this->orbitTracer.isActive && bodyColor != null)
 			{
-				SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
-				filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
-
-				if(this->orbitTracer.isActive)
+				iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
+				switch(this->orbitTracer.style)
 				{
-					iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
-					foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+					case OrbitTracer::LINEAR:
+					case OrbitTracer::POINT:
 					{
-						Vector2D pv = this->getTransposed(r);
-						switch(this->orbitTracer.style)
+						foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 						{
-							case OrbitTracer::LINEAR: //FixMe Should have its own implementation
-							case OrbitTracer::POINT:
-								pixelColor(this->win, pv.x, pv.y, colorToInt(null, *bodyColor, true));
-								break;
-							default:break;
+							Vector2D pv = this->getTransposed(r);
+							pixelColor(this->win, round(pv.x), round(pv.y), colorToInt(null, *bodyColor, true));
 						}
 					}
+					break;
+					default:break;
 				}
 			}
 
-			int borderColor = 0xffffffff; //XXX should use colorToInt() or be a const
+			double size = viewportZoom*body->diameter;
+			Vector2D v = this->getTransposed(body->position);
 
-//			if(focusedBodies.contains(body))
-//				borderColor = int value for orange
+			if(size < this->minimumBodyRenderingRadius)
+				size = this->minimumBodyRenderingRadius;
 
-			circleColor(this->win, v.x, v.y, round(size*0.5), borderColor);
-			if(running)
+			//draw body
+			if(bodyColor != null)
+				filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
+
+			//draw body border
+			circleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255); //ToDo choose other color when focused
+
+			//record position
+			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
 				orbitTracer.record(body, body->position);
 		}
 	}
