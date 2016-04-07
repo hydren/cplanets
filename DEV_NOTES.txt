@@ -1,6 +1,6 @@
 -------------- To Do
 
-
+- Replace colorToInt() calls to xxxRGBA() versions when possible
 
 -------------- Ideas
 
