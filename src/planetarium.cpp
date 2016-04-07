@@ -20,6 +20,8 @@ using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
 using std::cout; using std::endl;
 using std::vector;
+using std::queue;
+using std::iterable_queue;
 
 int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
@@ -41,7 +43,7 @@ struct UniverseCollisionEvent
 	Body2D resultingMerger;
 };
 //kinda wrong, all instances of Planetarium will share this
-std::queue<UniverseCollisionEvent> collisionEvents;
+queue<UniverseCollisionEvent> collisionEvents;
 SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
@@ -88,6 +90,23 @@ void Planetarium::draw()
 			{
 				SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
 				filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
+
+				if(this->orbitTracer.isActive)
+				{
+					iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
+					foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+					{
+						Vector2D pv = this->getTransposed(r);
+						switch(this->orbitTracer.style)
+						{
+							case OrbitTracer::LINEAR: //FixMe Should have its own implementation
+							case OrbitTracer::POINT:
+								pixelColor(this->win, pv.x, pv.y, colorToInt(null, *bodyColor, true));
+								break;
+							default:break;
+						}
+					}
+				}
 			}
 
 			int borderColor = 0xffffffff; //XXX should use colorToInt() or be a const
@@ -96,6 +115,8 @@ void Planetarium::draw()
 //				borderColor = int value for orange
 
 			circleColor(this->win, v.x, v.y, round(size*0.5), borderColor);
+			if(running)
+				orbitTracer.record(body, body->position);
 		}
 	}
 }
@@ -219,6 +240,22 @@ void Planetarium::updateView()
 		lastTime = SDL_GetTicks();
 		SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime));
 	}
+}
+
+Planetarium::OrbitTracer::OrbitTracer()
+: style(POINT), isActive(false), traceLength(20), traces()
+{}
+
+void Planetarium::OrbitTracer::record(Body2D* body, Vector2D& position)
+{
+	this->traces[body].push(position);
+	if(this->traces[body].size() > traceLength)
+		this->traces[body].pop();
+}
+
+std::iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
+{
+	return this->traces[body];
 }
 
 //  -----------------------------  thread functions ------------------------------------------------
