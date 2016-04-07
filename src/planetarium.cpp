@@ -21,7 +21,7 @@ using CPlanetsGUI::modifyColor;
 using std::cout; using std::endl;
 using std::vector;
 using std::queue;
-using std::iterable_queue;
+using futil::iterable_queue;
 
 int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
@@ -253,7 +253,7 @@ void Planetarium::OrbitTracer::record(Body2D* body, Vector2D& position)
 		this->traces[body].pop();
 }
 
-std::iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
+iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
 {
 	return this->traces[body];
 }

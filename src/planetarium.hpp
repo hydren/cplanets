@@ -81,12 +81,12 @@ struct Planetarium extends WinBase
 		enum OrbitTraceStyle { POINT, LINEAR } style;
 		bool isActive;
 		unsigned traceLength;
-		std::map<Body2D*, std::iterable_queue<Vector2D> > traces;
+		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
 
 		OrbitTracer();
 
 		void record(Body2D* body, Vector2D& position);
-		std::iterable_queue<Vector2D> getTrace(Body2D* body);
+		futil::iterable_queue<Vector2D> getTrace(Body2D* body);
 
 	} orbitTracer;
 
