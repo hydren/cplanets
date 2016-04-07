@@ -25,6 +25,14 @@ int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
 void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
+struct PlanetariumUserObject
+{
+	PlanetariumUserObject(SDL_Color* color)
+	: color(color)
+	{}
+	SDL_Color* color;
+};
+
 struct UniverseCollisionEvent
 {
 	UniverseCollisionEvent(vector<Body2D> collidingList, Body2D resultingMerger)
@@ -213,10 +221,6 @@ void Planetarium::updateView()
 	}
 }
 
-Planetarium::PlanetariumUserObject::PlanetariumUserObject(SDL_Color* color)
-: color(color)
-{}
-
 //  -----------------------------  thread functions ------------------------------------------------
 int threadFunctionPhysics(void* arg)
 {
@@ -250,14 +254,14 @@ int threadFunctionPlanetariumUpdate(void* arg)
 void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
 	//reconstructs custom data
-	resultingMerger.userObject = new Planetarium::PlanetariumUserObject(new SDL_Color);
-	Planetarium::PlanetariumUserObject* obj = (Planetarium::PlanetariumUserObject*) resultingMerger.userObject;
+	resultingMerger.userObject = new PlanetariumUserObject(new SDL_Color);
+	PlanetariumUserObject* obj = (PlanetariumUserObject*) resultingMerger.userObject;
 	long r=0, g=0, b=0;
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
-		r += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->r;
-		g += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->g;
-		b += ((Planetarium::PlanetariumUserObject*) body->userObject)->color->b;
+		r += ((PlanetariumUserObject*) body->userObject)->color->r;
+		g += ((PlanetariumUserObject*) body->userObject)->color->g;
+		b += ((PlanetariumUserObject*) body->userObject)->color->b;
 	}
 	obj->color = new SDL_Color;
 	obj->color->r = r/collidingList.size();
@@ -268,7 +272,7 @@ void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerg
 	foreach(Body2D*, i, vector<Body2D*>, collidingList)
 	{
 		collidingListCopy.push_back(*i);
-		collidingListCopy.back().userObject = new Planetarium::PlanetariumUserObject(new SDL_Color);
+		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color);
 	}
 
 	synchronized(collisionEventsMutex)

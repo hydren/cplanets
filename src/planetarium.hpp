@@ -75,7 +75,7 @@ struct Planetarium extends WinBase
 	void updateView();
 
 	/** A struct to notify observers of collision between bodies.
-	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER*/
+	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER */
 	struct UniverseEventListener
 	{
 		virtual ~UniverseEventListener() {}
@@ -89,12 +89,6 @@ struct Planetarium extends WinBase
 	SDL_mutex* physicsAccessMutex;
 	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
 	friend void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
-
-	struct PlanetariumUserObject
-	{
-		PlanetariumUserObject(SDL_Color* color);
-		SDL_Color* color;
-	};
 };
 
 
