@@ -78,7 +78,7 @@ struct Planetarium extends WinBase
 
 	struct OrbitTracer
 	{
-		enum OrbitTraceStyle { POINT, LINEAR } style;
+		enum OrbitTraceStyle { POINT, LINEAR, SPLINE } style;
 		bool isActive;
 		unsigned traceLength;
 		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;

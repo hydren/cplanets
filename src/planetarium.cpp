@@ -89,6 +89,16 @@ void Planetarium::draw()
 				iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
 				switch(this->orbitTracer.style)
 				{
+					case OrbitTracer::POINT:
+					{
+						foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+						{
+							Vector2D pv = this->getTransposed(r);
+							pixelColor(this->win, round(pv.x), round(pv.y), colorToInt(null, *bodyColor, true));
+						}
+						break;
+					}
+
 					case OrbitTracer::LINEAR:
 					{
 						Vector2D previousPosition = trace.front();
@@ -103,15 +113,24 @@ void Planetarium::draw()
 						}
 						break;
 					}
-					case OrbitTracer::POINT:
+
+					case OrbitTracer::SPLINE:
 					{
-						foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+						Vector2D previousPosition = trace.front();
+						foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
 						{
-							Vector2D pv = this->getTransposed(r);
-							pixelColor(this->win, round(pv.x), round(pv.y), colorToInt(null, *bodyColor, true));
+							if(recordedPosition != previousPosition) //avoid drawing segments of same points
+							{
+								//TODO finish spline implementation with bezierColor()
+//								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
+//								Vector2D
+//								lineColor(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), colorToInt(null, *bodyColor, true));
+							}
+							previousPosition = recordedPosition;
 						}
 						break;
 					}
+
 					default:break;
 				}
 			}
