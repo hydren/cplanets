@@ -121,10 +121,12 @@ void Planetarium::draw()
 						{
 							if(recordedPosition != previousPosition) //avoid drawing segments of same points
 							{
-								//TODO finish spline implementation with bezierColor()
-//								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-//								Vector2D
-//								lineColor(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), colorToInt(null, *bodyColor, true));
+								//FixMe Fix quadratic bezier spline implementation
+								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
+								Vector2D supportPoint;// = ???
+								Sint16 pxs[] = {round(prevPosTrans.x), round(supportPoint.x), round(recPosTrans.x)};
+								Sint16 pys[] = {round(prevPosTrans.y), round(supportPoint.y), round(recPosTrans.y)};
+								bezierColor(this->win, pxs, pys, 2, 3, colorToInt(null, *bodyColor, true));
 							}
 							previousPosition = recordedPosition;
 						}
