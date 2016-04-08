@@ -20,6 +20,8 @@ using CPlanetsGUI::colorToInt;
 using CPlanetsGUI::modifyColor;
 using std::cout; using std::endl;
 using std::vector;
+using std::queue;
+using futil::iterable_queue;
 
 int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
@@ -41,7 +43,7 @@ struct UniverseCollisionEvent
 	Body2D resultingMerger;
 };
 //kinda wrong, all instances of Planetarium will share this
-std::queue<UniverseCollisionEvent> collisionEvents;
+queue<UniverseCollisionEvent> collisionEvents;
 SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
@@ -74,28 +76,83 @@ void Planetarium::draw()
 	this->init_gui();
 	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
 
-	//draw bodies
+	//draw all stuff
 	synchronized(physicsAccessMutex)
 	{
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 		{
-			double size = viewportZoom*body->diameter;
-			if(size < this->minimumBodyRenderingRadius) size = this->minimumBodyRenderingRadius;
+			SDL_Color* bodyColor = body->userObject != null? ((PlanetariumUserObject*) body->userObject)->color : null;
 
-			Vector2D v = this->getTransposed(body->position);
-
-			if(body->userObject != null)
+			//draw orbit
+			if(this->orbitTracer.isActive && bodyColor != null)
 			{
-				SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
-				filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
+				iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
+				switch(this->orbitTracer.style)
+				{
+					case OrbitTracer::POINT:
+					{
+						foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+						{
+							Vector2D pv = this->getTransposed(r);
+							pixelColor(this->win, round(pv.x), round(pv.y), colorToInt(null, *bodyColor, true));
+						}
+						break;
+					}
+
+					case OrbitTracer::LINEAR:
+					{
+						Vector2D previousPosition = trace.front();
+						foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+						{
+							if(recordedPosition != previousPosition) //avoid drawing segments of same points
+							{
+								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
+								lineColor(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), colorToInt(null, *bodyColor, true));
+							}
+							previousPosition = recordedPosition;
+						}
+						break;
+					}
+
+					case OrbitTracer::SPLINE:
+					{
+						Vector2D previousPosition = trace.front();
+						foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+						{
+							if(recordedPosition != previousPosition) //avoid drawing segments of same points
+							{
+								//FixMe Fix quadratic bezier spline implementation
+								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
+								Vector2D supportPoint;// = ???
+								Sint16 pxs[] = {round(prevPosTrans.x), round(supportPoint.x), round(recPosTrans.x)};
+								Sint16 pys[] = {round(prevPosTrans.y), round(supportPoint.y), round(recPosTrans.y)};
+								bezierColor(this->win, pxs, pys, 2, 3, colorToInt(null, *bodyColor, true));
+							}
+							previousPosition = recordedPosition;
+						}
+						break;
+					}
+
+					default:break;
+				}
 			}
 
-			int borderColor = 0xffffffff; //XXX should use colorToInt() or be a const
+			double size = viewportZoom*body->diameter;
+			Vector2D v = this->getTransposed(body->position);
 
-//			if(focusedBodies.contains(body))
-//				borderColor = int value for orange
+			if(size < this->minimumBodyRenderingRadius)
+				size = this->minimumBodyRenderingRadius;
 
-			circleColor(this->win, v.x, v.y, round(size*0.5), borderColor);
+			//draw body
+			if(bodyColor != null)
+				filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
+
+			//draw body border
+			circleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255); //ToDo choose other color when focused
+
+			//record position
+			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
+				orbitTracer.record(body, body->position);
 		}
 	}
 }
@@ -219,6 +276,22 @@ void Planetarium::updateView()
 		lastTime = SDL_GetTicks();
 		SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime));
 	}
+}
+
+Planetarium::OrbitTracer::OrbitTracer()
+: style(POINT), isActive(false), traceLength(20), traces()
+{}
+
+void Planetarium::OrbitTracer::record(Body2D* body, Vector2D& position)
+{
+	this->traces[body].push(position);
+	if(this->traces[body].size() > traceLength)
+		this->traces[body].pop();
+}
+
+iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
+{
+	return this->traces[body];
 }
 
 //  -----------------------------  thread functions ------------------------------------------------

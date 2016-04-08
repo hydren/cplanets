@@ -8,6 +8,8 @@
 #ifndef PLANETARIUM_HPP_
 #define PLANETARIUM_HPP_
 
+#include <map>
+
 #include "SDL_widgets/SDL_widgets.h"
 
 #include "util.hpp"
@@ -73,6 +75,20 @@ struct Planetarium extends WinBase
 
 	// Its not recommended to call this directly
 	void updateView();
+
+	struct OrbitTracer
+	{
+		enum OrbitTraceStyle { POINT, LINEAR, SPLINE } style;
+		bool isActive;
+		unsigned traceLength;
+		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
+
+		OrbitTracer();
+
+		void record(Body2D* body, Vector2D& position);
+		futil::iterable_queue<Vector2D> getTrace(Body2D* body);
+
+	} orbitTracer;
 
 	/** A struct to notify observers of collision between bodies.
 	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER */

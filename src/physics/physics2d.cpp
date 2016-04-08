@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include "futil/futil.hpp"
+using futil::throw_exception;
 
 using std::vector;
 

@@ -202,6 +202,9 @@ void CPlanetsGUI::MainWindow::show()
 
 	planetarium->addCustomBody(new Body2D(550, 32, Vector2D(64, 128), Vector2D(10, 0), Vector2D()), getRandomColor());
 	planetarium->running = true;
+	planetarium->orbitTracer.traceLength = 2000;
+	planetarium->orbitTracer.style = Planetarium::OrbitTracer::LINEAR;
+	planetarium->orbitTracer.isActive = true;
 
 	VERSION_TEXT ="v"+CPLANETS_VERSION;
 
