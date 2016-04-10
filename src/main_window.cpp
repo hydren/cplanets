@@ -265,6 +265,15 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_p:
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
 			break;
+		case SDLK_t:
+			if(down) planetarium->orbitTracer.isActive = !planetarium->orbitTracer.isActive;
+			break;
+		case SDLK_d:
+			if(down) planetarium->orbitTracer.traceLength *= 2;
+			break;
+		case SDLK_h:
+			if(down) planetarium->orbitTracer.traceLength *= 0.5;
+			break;
 		default:break;
 	}
 }
