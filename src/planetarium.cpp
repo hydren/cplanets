@@ -279,13 +279,13 @@ void Planetarium::updateView()
 }
 
 Planetarium::OrbitTracer::OrbitTracer()
-: style(POINT), isActive(false), traceLength(20), traces()
+: style(LINEAR), isActive(false), traceLength(20), traces()
 {}
 
 void Planetarium::OrbitTracer::record(Body2D* body, Vector2D& position)
 {
 	this->traces[body].push(position);
-	if(this->traces[body].size() > traceLength)
+	while(this->traces[body].size() > traceLength)
 		this->traces[body].pop();
 }
 
