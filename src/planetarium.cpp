@@ -53,14 +53,16 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   isViewportTranslationRateProportionalToZoom(true),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
-  currentViewportTranlationRate(), currentViewportZoomChangeRate(1)
+  currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
+  orbitTracer(), bodyCreationState(IDLE),
+  threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
+  threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
+  physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
+  bodyCreationPosition(), bodyCreationVelocity()
 {
 	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
 	this->physics->onPhysics2DBodyCollision = bodyCollisionCallback;
-	this->threadPhysics = SDL_CreateThread(threadFunctionPhysics, this);
-	this->threadViewUpdate = SDL_CreateThread(threadFunctionPlanetariumUpdate, this);
-	this->physicsAccessMutex = SDL_CreateMutex();
 	if(collisionEventsMutex == null) collisionEventsMutex = SDL_CreateMutex(); //XXX not thread-safe
 }
 
@@ -153,6 +155,27 @@ void Planetarium::draw()
 			//record position
 			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
 				orbitTracer.record(body, body->position);
+
+			//draw body creation helper stubs
+			if(bodyCreationState != IDLE)
+			{
+				if(bodyCreationState == POSITION_SELECTION)
+				{
+					int mouseX, mouseY;
+					SDL_GetMouseState(&mouseX, &mouseY);
+					mouseX -= this->area.x; mouseY -= this->area.y;
+					circleRGBA(this->win, mouseX, mouseY, 4, 255, 255, 255, 255);
+				}
+				else if(bodyCreationState == VELOCITY_SELECTION)
+				{
+					Vector2D newBodyPos = this->getTransposed(bodyCreationPosition);
+					int mouseX, mouseY;
+					SDL_GetMouseState(&mouseX, &mouseY);
+					mouseX -= this->area.x; mouseY -= this->area.y;
+					circleRGBA(this->win, newBodyPos.x, newBodyPos.y, 4, 255, 255, 255, 255);
+					lineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
+				}
+			}
 		}
 	}
 }

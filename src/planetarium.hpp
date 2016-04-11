@@ -90,6 +90,10 @@ struct Planetarium extends WinBase
 
 	} orbitTracer;
 
+	enum BodyCreationState{
+		IDLE, POSITION_SELECTION, VELOCITY_SELECTION
+	} bodyCreationState; //default is IDLE
+
 	/** A struct to notify observers of collision between bodies.
 	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER */
 	struct UniverseEventListener
@@ -104,6 +108,8 @@ struct Planetarium extends WinBase
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;
 	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
+	Vector2D bodyCreationPosition, bodyCreationVelocity;
+
 	friend void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 };
 
