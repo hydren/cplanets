@@ -19,13 +19,6 @@ extern const unsigned WIDGETS_SPACING;
 //contains all cplanets gui related stuff
 namespace CPlanetsGUI
 {
-	//stuff related to the main window
-	namespace MainWindow
-	{
-		//show the main window and starts all its events treatments
-		void show();
-	}
-
 	//convert the given sdl color to an int color suitable to be used on the given surface
 	int colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA=false);
 
@@ -48,6 +41,29 @@ namespace CPlanetsGUI
 	void setComponentPosition(WinBase* component, int x, int y);
 	void setComponentPositionX(WinBase* component, int x);
 	void setComponentPositionY(WinBase* component, int y);
+
+	template<typename Type>
+	struct Spinner : DialogWin
+	{
+		Button btnInc, btnDec;
+
+		Spinner(WinBase *pw,Rect area,Id id=0);
+		virtual ~Spinner();
+
+		void draw();
+		Type getValue();
+		void setValue(Type val);
+
+		private:
+		Type value;
+	};
+
+	//stuff related to the main window
+	namespace MainWindow
+	{
+		//show the main window and starts all its events treatments
+		void show();
+	}
 }
 
 #endif /* MAIN_WINDOW_HPP_ */

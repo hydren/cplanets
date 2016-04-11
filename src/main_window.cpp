@@ -8,6 +8,7 @@
 #include "main_window.hpp"
 
 #include <cmath>
+#include <cstring>
 
 #include "SDL_widgets/SDL_widgets.h"
 
@@ -39,6 +40,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 
 using std::cout; using std::endl;
 using CPlanetsGUI::FlowLayout;
+using CPlanetsGUI::Spinner;
 
 // ================ CONSTANTS ================
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
@@ -51,9 +53,10 @@ string VERSION_TEXT;
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
 Planetarium* planetarium;
+FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
 CheckBox* chckTraceOrbit;
-FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
+Spinner<int>* spnTraceLength;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
@@ -160,6 +163,46 @@ void CPlanetsGUI::setComponentPositionY(WinBase* component, int y)
 	}
 }
 
+template <typename Type>
+CPlanetsGUI::Spinner<Type>::Spinner(WinBase *pw,Rect area,Id id)
+: DialogWin(pw, Rect(area.x, area.y, area.w - TOOLBAR_SIZE, area.h), id),
+  btnInc(pw, 0, Rect(area.x + area.w, area.y                 , TOOLBAR_SIZE/2, TOOLBAR_SIZE/4), "+", null),
+  btnDec(pw, 0, Rect(area.x + area.w, area.y + TOOLBAR_SIZE/4, TOOLBAR_SIZE/2, TOOLBAR_SIZE/4), "-", null),
+  value()
+{
+	this->add_child(&btnInc);
+	this->add_child(&btnDec);
+}
+
+template <typename Type>
+CPlanetsGUI::Spinner<Type>::~Spinner() {}
+
+template <typename Type>
+void CPlanetsGUI::Spinner<Type>::setValue(Type val)
+{
+	this->value = val;
+	string strValue = string("aa")+val;
+	dialog_def(strValue.c_str(), this->cmd, this->cmd_id);
+}
+
+template <typename Type>
+Type CPlanetsGUI::Spinner<Type>::getValue()
+{
+	return this->value;
+}
+
+template <typename Type>
+void CPlanetsGUI::Spinner<Type>::draw()
+{
+	init_gui();
+	setComponentPosition(&btnInc, this->area.x + this->tw_area.w, this->area.y + TDIST);
+	setComponentPosition(&btnDec, this->area.x + this->tw_area.w, this->area.y + TOOLBAR_SIZE/4 + TDIST);
+	DialogWin::draw();
+}
+
+template class CPlanetsGUI::Spinner<int>;
+template class CPlanetsGUI::Spinner<double>;
+
 // ================ CPlanetsGUI::MainWindow namespace ================
 void CPlanetsGUI::MainWindow::show()
 {
@@ -220,6 +263,8 @@ void CPlanetsGUI::MainWindow::show()
 	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
+	spnTraceLength = new Spinner<int>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE));
+	toolbarSouthLayout->addComponent(spnTraceLength);
 
 	toolbarSouthLayout->pack();
 
@@ -230,11 +275,17 @@ void CPlanetsGUI::MainWindow::show()
 }
 
 //  ================ CALLBACK DEFINITIONS ================
+bool aux_runOnce = false;
 void draw()
 {
 	window->clear();
 	Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
 	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
+	if(aux_runOnce)
+	{
+		spnTraceLength->setValue(planetarium->orbitTracer.traceLength);
+		aux_runOnce = false;
+	}
 }
 
 void onWindowResize(int dw, int dh)
