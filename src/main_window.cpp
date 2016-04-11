@@ -111,14 +111,14 @@ void CPlanetsGUI::triggerRepaint()
 	SDL_PushEvent(&repaintEvent);
 }
 
-void CPlanetsGUI::packButton(Button* btn)
+void CPlanetsGUI::packLabeledComponent(Button* btn)
 {
 	int properWidth = btn->label.render_t->text_width(btn->label.str) + 2*WIDGETS_SPACING;
 	int properHeight = TOOLBAR_SIZE - 2*WIDGETS_SPACING;
 	btn->widen(properWidth - btn->tw_area.w, properHeight - btn->tw_area.h);
 }
 
-void CPlanetsGUI::packCheckbox(CheckBox* btn)
+void CPlanetsGUI::packLabeledComponent(CheckBox* btn)
 {
 	int properHeight = 14;
 	int properWidth = btn->label.render_t->text_width(btn->label.str) + 2*WIDGETS_SPACING + properHeight;
@@ -181,26 +181,26 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
 
 	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
-	packButton(btnAddBody);
+	packLabeledComponent(btnAddBody);
 	toolbarNorthLayout->addComponent(btnAddBody);
 
 	btnAddRandom = new Button(window, 0, genericButtonSize, "Add random", onButtonPressed);
-	packButton(btnAddRandom);
+	packLabeledComponent(btnAddRandom);
 	toolbarNorthLayout->addComponent(btnAddRandom);
 
 
 	btnRecolorAll = new Button(window, 0, genericButtonSize, "Recolor all bodies", onButtonPressed);
-	packButton(btnRecolorAll);
+	packLabeledComponent(btnRecolorAll);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
 
 	toolbarNorthLayout->addSpacer();
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
-	packButton(btnRun);
+	packLabeledComponent(btnRun);
 	toolbarNorthLayout->addComponent(btnRun);
 
 	btnPause = new Button(window, 0, genericButtonSize, "Pause", onButtonPressed);
-	packButton(btnPause);
+	packLabeledComponent(btnPause);
 	toolbarNorthLayout->addComponent(btnPause);
 
 	toolbarNorthLayout->pack();
@@ -217,7 +217,7 @@ void CPlanetsGUI::MainWindow::show()
 
 	chckTraceOrbit = new CheckBox(window, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
-	packCheckbox(chckTraceOrbit);
+	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
 
