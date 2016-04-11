@@ -52,7 +52,8 @@ string VERSION_TEXT;
 TopWin* window; // The program window
 Planetarium* planetarium;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
-FlowLayout* toolbarNorthLayout;
+CheckBox* chckTraceOrbit;
+FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
@@ -61,6 +62,7 @@ void draw(); // The drawing function.
 void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
+void onCheckBoxPressed(CheckBox* chck);
 void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
 
@@ -116,6 +118,13 @@ void CPlanetsGUI::packButton(Button* btn)
 	btn->widen(properWidth - btn->tw_area.w, properHeight - btn->tw_area.h);
 }
 
+void CPlanetsGUI::packCheckbox(CheckBox* btn)
+{
+	int properHeight = 14;
+	int properWidth = btn->label.render_t->text_width(btn->label.str) + 2*WIDGETS_SPACING + properHeight;
+	btn->widen(properWidth - btn->tw_area.w, properHeight - btn->tw_area.h);
+}
+
 void CPlanetsGUI::setComponentPosition(WinBase* component, Point& position)
 {
 	CPlanetsGUI::setComponentPosition(component, position.x, position.y);
@@ -158,12 +167,13 @@ void CPlanetsGUI::MainWindow::show()
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
 	handle_rsev = onWindowResize; //set callback for window resize
 	handle_kev = onKeyEvent; //set callback for keyboard events
+	VERSION_TEXT ="v"+CPLANETS_VERSION;
 
 	Rect planetariumSize(
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
 		TOOLBAR_SIZE + WIDGETS_SPACING,
-		windowSize.w - BODIES_PANEL_WIDTH - TOOLBAR_SIZE - 2*WIDGETS_SPACING,
-		windowSize.h - 2*TOOLBAR_SIZE
+		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
+		windowSize.h - (2*TOOLBAR_SIZE)
 	);
 	planetarium = new Planetarium(window, planetariumSize);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
@@ -203,16 +213,18 @@ void CPlanetsGUI::MainWindow::show()
 	);
 	txtBodies = new TextWin(window, 0, txtBodiesSize, 8, "Bodies");
 
-	//XXX DEBUG CODE START
+	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 
-	planetarium->addCustomBody(new Body2D(550, 32, Vector2D(64, 128), Vector2D(10, 0), Vector2D()), getRandomColor());
-	planetarium->running = true;
+	chckTraceOrbit = new CheckBox(window, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
+	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
+	packCheckbox(chckTraceOrbit);
+	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
-	VERSION_TEXT ="v"+CPLANETS_VERSION;
 
-	//XXX DEBUG CODE END
+	toolbarSouthLayout->pack();
 
 	//start
+	planetarium->setRunning();
 	get_events();
 	workaround_sdl_stream_file_close(); // part of workaround
 }
@@ -231,6 +243,8 @@ void onWindowResize(int dw, int dh)
 	planetarium->widen(dw, dh);
 	txtBodies->widen(0, dh);
 	toolbarNorthLayout->pack();
+	toolbarSouthLayout->position.y = window->tw_area.h - (TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+	toolbarSouthLayout->pack();
 }
 
 void onKeyEvent(SDL_keysym *key, bool down)
@@ -271,7 +285,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
 			break;
 		case SDLK_t:
-			if(down) planetarium->orbitTracer.isActive = !planetarium->orbitTracer.isActive;
+			if(down) onCheckBoxPressed(chckTraceOrbit);
 			break;
 		case SDLK_d:
 			if(down) planetarium->orbitTracer.traceLength *= 2;
@@ -309,6 +323,14 @@ void onButtonPressed(Button* btn)
 	if(btn == btnPause)
 	{
 		planetarium->setRunning(false);
+	}
+}
+
+void onCheckBoxPressed(CheckBox* chck)
+{
+	if(chck == chckTraceOrbit)
+	{
+		//enable tracing parameters editing
 	}
 }
 

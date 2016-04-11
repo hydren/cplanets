@@ -41,6 +41,8 @@ namespace CPlanetsGUI
 	//adjusts the given button size according to its label
 	void packButton(Button* btn);
 
+	void packCheckbox(CheckBox* chck);
+
 	void setComponentPosition(WinBase* component, Point& position);
 	void setComponentPosition(WinBase* component, int x, int y);
 	void setComponentPositionX(WinBase* component, int x);
