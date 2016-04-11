@@ -51,7 +51,7 @@ string VERSION_TEXT;
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
 Planetarium* planetarium;
-Button* btnAddBody, *btnRecolorAll, *btnRun, *btnPause;
+Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
 FlowLayout* toolbarNorthLayout;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
@@ -174,6 +174,11 @@ void CPlanetsGUI::MainWindow::show()
 	packButton(btnAddBody);
 	toolbarNorthLayout->addComponent(btnAddBody);
 
+	btnAddRandom = new Button(window, 0, genericButtonSize, "Add random", onButtonPressed);
+	packButton(btnAddRandom);
+	toolbarNorthLayout->addComponent(btnAddRandom);
+
+
 	btnRecolorAll = new Button(window, 0, genericButtonSize, "Recolor all bodies", onButtonPressed);
 	packButton(btnRecolorAll);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
@@ -281,6 +286,12 @@ void onKeyEvent(SDL_keysym *key, bool down)
 void onButtonPressed(Button* btn)
 {
 	if(btn == btnAddBody)
+	{
+		planetarium->running = false;
+		planetarium->bodyCreationState = Planetarium::POSITION_SELECTION;
+	}
+
+	if(btn == btnAddRandom)
 	{
 		planetarium->addCustomBody(new Body2D(550, 32, Vector2D(randomBetween(32, 64), randomBetween(64, 128)), Vector2D(randomBetween(0, 8), randomBetween(0, 8)), Vector2D()), CPlanetsGUI::getRandomColor());
 	}
