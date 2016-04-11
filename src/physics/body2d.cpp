@@ -13,7 +13,7 @@ using std::string;
 
 string generateRandomName()
 {
-	return string("B")+randomBetween(0, 10000);
+	return string("B")+Math::randomBetween(0, 10000);
 }
 
 Body2D::Body2D(double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration)

@@ -94,9 +94,9 @@ void CPlanetsGUI::modifyColor(SDL_Color& color, int r, int g, int b)
 SDL_Color* CPlanetsGUI::getRandomColor()
 {
 	SDL_Color* somecolor = new SDL_Color;
-	somecolor->r = randomBetween(0, 255);
-	somecolor->g = randomBetween(0, 255);
-	somecolor->b = randomBetween(0, 255);
+	somecolor->r = Math::randomBetween(0, 255);
+	somecolor->g = Math::randomBetween(0, 255);
+	somecolor->b = Math::randomBetween(0, 255);
 	return somecolor;
 }
 
@@ -293,7 +293,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnAddRandom)
 	{
-		planetarium->addCustomBody(new Body2D(550, 32, Vector2D(randomBetween(32, 64), randomBetween(64, 128)), Vector2D(randomBetween(0, 8), randomBetween(0, 8)), Vector2D()), CPlanetsGUI::getRandomColor());
+		planetarium->addCustomBody(new Body2D(550, 32, Vector2D(Math::randomBetween(32, 64), Math::randomBetween(64, 128)), Vector2D(Math::randomBetween(0, 8), Math::randomBetween(0, 8)), Vector2D()), CPlanetsGUI::getRandomColor());
 	}
 
 	if(btn == btnRecolorAll)

@@ -26,6 +26,7 @@ using futil::iterable_queue;
 int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
 void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger);
+Sint16 convertToSint16(double a);
 
 struct PlanetariumUserObject
 {
@@ -96,7 +97,7 @@ void Planetarium::draw()
 						foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 						{
 							Vector2D pv = this->getTransposed(r);
-							pixelColor(this->win, round(pv.x), round(pv.y), colorToInt(null, *bodyColor, true));
+							pixelRGBA(this->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 						}
 						break;
 					}
@@ -109,7 +110,7 @@ void Planetarium::draw()
 							if(recordedPosition != previousPosition) //avoid drawing segments of same points
 							{
 								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-								lineColor(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), colorToInt(null, *bodyColor, true));
+								lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 							}
 							previousPosition = recordedPosition;
 						}
@@ -126,9 +127,9 @@ void Planetarium::draw()
 								//FixMe Fix quadratic bezier spline implementation
 								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
 								Vector2D supportPoint;// = ???
-								Sint16 pxs[] = {round(prevPosTrans.x), round(supportPoint.x), round(recPosTrans.x)};
-								Sint16 pys[] = {round(prevPosTrans.y), round(supportPoint.y), round(recPosTrans.y)};
-								bezierColor(this->win, pxs, pys, 2, 3, colorToInt(null, *bodyColor, true));
+								Sint16 pxs[] = {convertToSint16(prevPosTrans.x), convertToSint16(supportPoint.x), convertToSint16(recPosTrans.x)};
+								Sint16 pys[] = {convertToSint16(prevPosTrans.y), convertToSint16(supportPoint.y), convertToSint16(recPosTrans.y)};
+								bezierRGBA(this->win, pxs, pys, 2, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
 							}
 							previousPosition = recordedPosition;
 						}
@@ -147,7 +148,7 @@ void Planetarium::draw()
 
 			//draw body
 			if(bodyColor != null)
-				filledCircleColor(this->win, v.x, v.y, round(size*0.5), colorToInt(null, *bodyColor, true));
+				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 			//draw body border
 			circleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255); //ToDo choose other color when focused
@@ -378,4 +379,7 @@ void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerg
 	}
 }
 
-
+Sint16 convertToSint16(double value)
+{
+	return static_cast<Sint16>(value);
+}
