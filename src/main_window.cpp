@@ -69,6 +69,7 @@ void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
 void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
+void onReady();
 
 //  ==================== PLANETARIUM LISTENER ===========================
 
@@ -228,6 +229,7 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarSouthLayout->addComponent(spnTraceLength);
 
 	toolbarSouthLayout->pack();
+	spnTraceLength->updateButtonPosition();
 
 	//start
 	planetarium->setRunning();
@@ -242,6 +244,7 @@ void draw()
 	window->clear();
 	Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
 	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
+
 	if(aux_runOnce)
 	{
 		spnTraceLength->setValue(planetarium->orbitTracer.traceLength);
@@ -254,9 +257,12 @@ void onWindowResize(int dw, int dh)
 //	cout << "resize event" << endl;
 	planetarium->widen(dw, dh);
 	txtBodies->widen(0, dh);
+
 	toolbarNorthLayout->pack();
 	toolbarSouthLayout->position.y = window->tw_area.h - (TOOLBAR_SIZE - 2*WIDGETS_SPACING);
 	toolbarSouthLayout->pack();
+
+	spnTraceLength->widen();
 }
 
 void onKeyEvent(SDL_keysym *key, bool down)
@@ -359,4 +365,13 @@ void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resu
 void onPlanetariumBodyCreation(Body2D& createdBody)
 {
 	txtBodies->add_text(createdBody.toString().c_str(), true);
+}
+
+void onReady()
+{
+	static bool ready = true;
+	if(ready)
+	{
+
+	}
 }

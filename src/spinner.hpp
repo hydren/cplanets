@@ -32,8 +32,7 @@ struct Spinner : DialogWin
 	void draw()
 	{
 		init_gui();
-		CPlanetsGUI::setComponentPosition(&btnInc, this->area.x + this->tw_area.w, this->area.y + TDIST);
-		CPlanetsGUI::setComponentPosition(&btnDec, this->area.x + this->tw_area.w, this->area.y + REFERENCE_SIZE/4 + TDIST);
+
 		DialogWin::draw();
 	}
 
@@ -47,6 +46,20 @@ struct Spinner : DialogWin
 		this->value = val;
 		string strValue = string()+val;
 		dialog_def(strValue.c_str(), this->cmd, this->cmd_id);
+	}
+
+	void updateButtonPosition()
+	{
+		CPlanetsGUI::setComponentPosition(&btnInc, this->area.x + this->tw_area.w, this->area.y + TDIST);
+		CPlanetsGUI::setComponentPosition(&btnDec, this->area.x + this->tw_area.w, this->area.y + REFERENCE_SIZE/4 + TDIST);
+	}
+
+	void widen(int dx=0,int dy=0)
+	{
+		if(dx != 0 || dy != 0)
+			DialogWin::widen(dx, dy);
+
+		updateButtonPosition();
 	}
 
 	private:
