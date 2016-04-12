@@ -231,8 +231,7 @@ void CPlanetsGUI::MainWindow::show()
 	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
-	spnTraceLength = new Spinner<int>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE));
-	spnTraceLength->dialog_label("Trace length");
+	spnTraceLength = new Spinner<int>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
 	toolbarSouthLayout->addComponent(spnTraceLength);
 
 	toolbarSouthLayout->pack();
@@ -262,7 +261,7 @@ void onWindowResize(int dw, int dh)
 	toolbarSouthLayout->position.y = window->tw_area.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING);
 	toolbarSouthLayout->pack();
 
-	spnTraceLength->widen();
+	spnTraceLength->validate();
 }
 
 void onKeyEvent(SDL_keysym *key, bool down)
@@ -370,7 +369,7 @@ void onPlanetariumBodyCreation(Body2D& createdBody)
 void onReady()
 {
 	spnTraceLength->init_gui();
-	spnTraceLength->updateButtonPosition();
+	spnTraceLength->validate();
 	spnTraceLength->setValue(planetarium->orbitTracer.traceLength);
-	spnTraceLength->unset_cursor();
+	spnTraceLength->spinner.unset_cursor();
 }

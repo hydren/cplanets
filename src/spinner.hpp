@@ -12,22 +12,32 @@
 #include "futil/futil.hpp"
 
 template<typename Type>
-struct Spinner : DialogWin
+struct Spinner : WinBase
 {
-	static const unsigned REFERENCE_SIZE = 32;
+	static const unsigned BUTTON_SIZE = 16;
+	DialogWin spinner;
 	Button btnInc, btnDec;
 
-	Spinner(WinBase *pw,Rect area,Id id=0)
-	: DialogWin(pw, Rect(area.x, area.y, area.w - REFERENCE_SIZE, area.h), id),
-	  btnInc(pw, 0, Rect(area.x + area.w, area.y                 , REFERENCE_SIZE/2, REFERENCE_SIZE/4), "+", null),
-	  btnDec(pw, 0, Rect(area.x + area.w, area.y + REFERENCE_SIZE/4, REFERENCE_SIZE/2, REFERENCE_SIZE/4), "-", null),
+	Spinner(WinBase *pw,Rect area,const char* txt,Id id=0)
+	: WinBase(pw, null, area.x, area.y, area.w, area.h, 0, id),
+	  spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h), 0),
+	  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", 0),
+	  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", 0),
 	  value()
 	{
+		this->add_child(&spinner);
 		this->add_child(&btnInc);
 		this->add_child(&btnDec);
+		this->spinner.dialog_label(txt);
 	}
 
 	virtual ~Spinner() {}
+
+	void draw()
+	{
+		init_gui();
+		SDL_FillRect(win,0,parent->bgcol);
+	}
 
 	Type getValue()
 	{
@@ -38,21 +48,20 @@ struct Spinner : DialogWin
 	{
 		this->value = val;
 		string strValue = string()+val;
-		dialog_def(strValue.c_str(), this->cmd, this->cmd_id);
+		spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
 	}
 
-	void updateButtonPosition()
+	void validate()
 	{
-		CPlanetsGUI::setComponentPosition(&btnInc, this->area.x + this->tw_area.w, this->area.y + TDIST);
-		CPlanetsGUI::setComponentPosition(&btnDec, this->area.x + this->tw_area.w, this->area.y + REFERENCE_SIZE/4 + TDIST);
+		CPlanetsGUI::setComponentPosition(&spinner,this->area.x, this->area.y);
+		CPlanetsGUI::setComponentPosition(&btnInc, this->area.x + this->tw_area.w - BUTTON_SIZE, this->area.y + TDIST);
+		CPlanetsGUI::setComponentPosition(&btnDec, this->area.x + this->tw_area.w - BUTTON_SIZE, this->area.y + BUTTON_SIZE/2 + TDIST);
 	}
 
 	void widen(int dx=0,int dy=0)
 	{
-		if(dx != 0 || dy != 0)
-			DialogWin::widen(dx, dy);
-
-		updateButtonPosition();
+		WinBase::widen(dx, dy);
+		validate();
 	}
 
 	private:
