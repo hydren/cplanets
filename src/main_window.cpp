@@ -74,6 +74,7 @@ void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
+void onCheckBoxPressed(CheckBox* chck, bool fake);
 void onUserEvent(int cmd,int param,int param2);
 void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
@@ -306,7 +307,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
 			break;
 		case SDLK_t:
-			if(down) { planetarium->orbitTracer.isActive = not planetarium->orbitTracer.isActive; chckTraceOrbit->draw_blit_upd(); }
+			if(down) onCheckBoxPressed(chckTraceOrbit, true);
 			break;
 		case SDLK_d:
 			if(down) planetarium->orbitTracer.traceLength *= 2;
@@ -347,11 +348,16 @@ void onButtonPressed(Button* btn)
 	}
 }
 
-void onCheckBoxPressed(CheckBox* chck)
+void onCheckBoxPressed(CheckBox* chck) { onCheckBoxPressed(chck, false); } //callback matching the function pointer
+
+void onCheckBoxPressed(CheckBox* chck, bool fake)
 {
+	if(fake) *(chck->d) = not *(chck->d); //switch the boolean if the call is a fake-press
+
 	if(chck == chckTraceOrbit)
 	{
 		//enable tracing parameters editing
+		chckTraceOrbit->draw_blit_upd();
 	}
 }
 
