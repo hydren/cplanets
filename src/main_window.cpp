@@ -43,6 +43,12 @@ void workaround_sdl_stream_file_close() // part of workaround
 using std::cout; using std::endl;
 using CPlanetsGUI::FlowLayout;
 
+void runOnce(void(func)(void))
+{
+	static bool once = false;
+	if(not once) { func(); once = true; }
+}
+
 // ================ CONSTANTS ================
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
 const unsigned WIDGETS_SPACING = 4;
@@ -178,7 +184,7 @@ void CPlanetsGUI::MainWindow::show()
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
 		TOOLBAR_SIZE + WIDGETS_SPACING,
 		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
-		windowSize.h - (2*TOOLBAR_SIZE)
+		windowSize.h - (2.25*TOOLBAR_SIZE)
 	);
 	planetarium = new Planetarium(window, planetariumSize);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
@@ -214,11 +220,11 @@ void CPlanetsGUI::MainWindow::show()
 		WIDGETS_SPACING,
 		TOOLBAR_SIZE + WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font),
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		windowSize.h - 2*TOOLBAR_SIZE - TTF_FontHeight(draw_title_ttf->ttf_font)
+		windowSize.h - 2.25*TOOLBAR_SIZE - TTF_FontHeight(draw_title_ttf->ttf_font)
 	);
 	txtBodies = new TextWin(window, 0, txtBodiesSize, 8, "Bodies");
 
-	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (TOOLBAR_SIZE - 2*WIDGETS_SPACING));
+	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 
 	chckTraceOrbit = new CheckBox(window, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
@@ -226,10 +232,10 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<int>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE));
+	spnTraceLength->dialog_label("Trace length");
 	toolbarSouthLayout->addComponent(spnTraceLength);
 
 	toolbarSouthLayout->pack();
-	spnTraceLength->updateButtonPosition();
 
 	//start
 	planetarium->setRunning();
@@ -238,18 +244,12 @@ void CPlanetsGUI::MainWindow::show()
 }
 
 //  ================ CALLBACK DEFINITIONS ================
-bool aux_runOnce = false;
 void draw()
 {
 	window->clear();
 	Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
 	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
-
-	if(aux_runOnce)
-	{
-		spnTraceLength->setValue(planetarium->orbitTracer.traceLength);
-		aux_runOnce = false;
-	}
+	runOnce(onReady);
 }
 
 void onWindowResize(int dw, int dh)
@@ -259,7 +259,7 @@ void onWindowResize(int dw, int dh)
 	txtBodies->widen(0, dh);
 
 	toolbarNorthLayout->pack();
-	toolbarSouthLayout->position.y = window->tw_area.h - (TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+	toolbarSouthLayout->position.y = window->tw_area.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING);
 	toolbarSouthLayout->pack();
 
 	spnTraceLength->widen();
@@ -303,7 +303,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
 			break;
 		case SDLK_t:
-			if(down) onCheckBoxPressed(chckTraceOrbit);
+			if(down) planetarium->orbitTracer.isActive = not planetarium->orbitTracer.isActive;
 			break;
 		case SDLK_d:
 			if(down) planetarium->orbitTracer.traceLength *= 2;
@@ -369,9 +369,8 @@ void onPlanetariumBodyCreation(Body2D& createdBody)
 
 void onReady()
 {
-	static bool ready = true;
-	if(ready)
-	{
-
-	}
+	spnTraceLength->init_gui();
+	spnTraceLength->updateButtonPosition();
+	spnTraceLength->setValue(planetarium->orbitTracer.traceLength);
+	spnTraceLength->unset_cursor();
 }
