@@ -29,13 +29,6 @@ struct Spinner : DialogWin
 
 	virtual ~Spinner() {}
 
-	void draw()
-	{
-		init_gui();
-
-		DialogWin::draw();
-	}
-
 	Type getValue()
 	{
 		return this->value;
