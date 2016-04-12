@@ -53,6 +53,7 @@ void runOnce(void(func)(void))
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
 const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
+const int PLANETARIUM_ID = 959;
 string VERSION_TEXT;
 
 //  ================ VARIABLES ===============
@@ -73,6 +74,7 @@ void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
+void onUserEvent(int cmd,int param,int param2);
 void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
 void onReady();
@@ -178,6 +180,7 @@ void CPlanetsGUI::MainWindow::show()
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
 	handle_rsev = onWindowResize; //set callback for window resize
 	handle_kev = onKeyEvent; //set callback for keyboard events
+	handle_uev = onUserEvent;
 	VERSION_TEXT ="v"+CPLANETS_VERSION;
 
 	Rect planetariumSize(
@@ -186,7 +189,7 @@ void CPlanetsGUI::MainWindow::show()
 		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
 		windowSize.h - (2.25*TOOLBAR_SIZE)
 	);
-	planetarium = new Planetarium(window, planetariumSize);
+	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
 
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
@@ -262,6 +265,7 @@ void onWindowResize(int dw, int dh)
 	toolbarSouthLayout->pack();
 
 	spnTraceLength->validate();
+	window->draw_blit_recur();
 }
 
 void onKeyEvent(SDL_keysym *key, bool down)
@@ -302,7 +306,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
 			break;
 		case SDLK_t:
-			if(down) planetarium->orbitTracer.isActive = not planetarium->orbitTracer.isActive;
+			if(down) { planetarium->orbitTracer.isActive = not planetarium->orbitTracer.isActive; chckTraceOrbit->draw_blit_upd(); }
 			break;
 		case SDLK_d:
 			if(down) planetarium->orbitTracer.traceLength *= 2;
@@ -348,6 +352,18 @@ void onCheckBoxPressed(CheckBox* chck)
 	if(chck == chckTraceOrbit)
 	{
 		//enable tracing parameters editing
+	}
+}
+
+void onUserEvent(int cmd,int param,int param2)
+{
+	if(cmd == CPlanetsGUI::USER_EVENT_ID__REDRAW_COMPONENT)
+	{
+		if(param == PLANETARIUM_ID)
+		{
+			planetarium->draw_blit_upd();
+			planetarium->isUpdating = false;
+		}
 	}
 }
 

@@ -19,6 +19,8 @@ extern const unsigned WIDGETS_SPACING;
 //contains all cplanets gui related stuff
 namespace CPlanetsGUI
 {
+	const int USER_EVENT_ID__REDRAW_COMPONENT = 192;
+
 	//convert the given sdl color to an int color suitable to be used on the given surface
 	int colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA=false);
 

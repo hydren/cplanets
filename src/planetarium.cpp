@@ -59,7 +59,8 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
   physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
-  bodyCreationPosition(), bodyCreationVelocity()
+  bodyCreationPosition(), bodyCreationVelocity(),
+  isUpdating(false)
 {
 	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
@@ -296,7 +297,11 @@ void Planetarium::updateView()
 			this->viewportPosition.x += this->tw_area.w * (1/prevZoom - 1/viewportZoom) * 0.5;
 			this->viewportPosition.y += this->tw_area.h * (1/prevZoom - 1/viewportZoom) * 0.5;
 		}
-		CPlanetsGUI::triggerRepaint();
+		if(not isUpdating)
+		{
+			isUpdating = true;
+			send_uev(CPlanetsGUI::USER_EVENT_ID__REDRAW_COMPONENT, this->id.id1);
+		}
 		lastTime = SDL_GetTicks();
 		SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime));
 	}

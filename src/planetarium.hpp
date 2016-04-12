@@ -109,7 +109,8 @@ struct Planetarium extends WinBase
 	SDL_mutex* physicsAccessMutex;
 	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
 	Vector2D bodyCreationPosition, bodyCreationVelocity;
-
+	bool isUpdating;
+	friend void onUserEvent(int cmd,int param,int param2);
 	friend void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 };
 
