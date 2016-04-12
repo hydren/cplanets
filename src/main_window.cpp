@@ -11,9 +11,11 @@
 #include <cstring>
 
 #include "SDL_widgets/SDL_widgets.h"
+#include "futil/futil.hpp"
 
 #include "planetarium.hpp"
 #include "flow_layout.hpp"
+#include "spinner.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -40,7 +42,6 @@ void workaround_sdl_stream_file_close() // part of workaround
 
 using std::cout; using std::endl;
 using CPlanetsGUI::FlowLayout;
-using CPlanetsGUI::Spinner;
 
 // ================ CONSTANTS ================
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
@@ -162,46 +163,6 @@ void CPlanetsGUI::setComponentPositionY(WinBase* component, int y)
 		component->tw_area.y=component->area.y+component->parent->tw_area.y;
 	}
 }
-
-template <typename Type>
-CPlanetsGUI::Spinner<Type>::Spinner(WinBase *pw,Rect area,Id id)
-: DialogWin(pw, Rect(area.x, area.y, area.w - TOOLBAR_SIZE, area.h), id),
-  btnInc(pw, 0, Rect(area.x + area.w, area.y                 , TOOLBAR_SIZE/2, TOOLBAR_SIZE/4), "+", null),
-  btnDec(pw, 0, Rect(area.x + area.w, area.y + TOOLBAR_SIZE/4, TOOLBAR_SIZE/2, TOOLBAR_SIZE/4), "-", null),
-  value()
-{
-	this->add_child(&btnInc);
-	this->add_child(&btnDec);
-}
-
-template <typename Type>
-CPlanetsGUI::Spinner<Type>::~Spinner() {}
-
-template <typename Type>
-void CPlanetsGUI::Spinner<Type>::setValue(Type val)
-{
-	this->value = val;
-	string strValue = string("aa")+val;
-	dialog_def(strValue.c_str(), this->cmd, this->cmd_id);
-}
-
-template <typename Type>
-Type CPlanetsGUI::Spinner<Type>::getValue()
-{
-	return this->value;
-}
-
-template <typename Type>
-void CPlanetsGUI::Spinner<Type>::draw()
-{
-	init_gui();
-	setComponentPosition(&btnInc, this->area.x + this->tw_area.w, this->area.y + TDIST);
-	setComponentPosition(&btnDec, this->area.x + this->tw_area.w, this->area.y + TOOLBAR_SIZE/4 + TDIST);
-	DialogWin::draw();
-}
-
-template class CPlanetsGUI::Spinner<int>;
-template class CPlanetsGUI::Spinner<double>;
 
 // ================ CPlanetsGUI::MainWindow namespace ================
 void CPlanetsGUI::MainWindow::show()
