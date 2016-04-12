@@ -21,8 +21,8 @@ struct Spinner : WinBase
 	Spinner(WinBase *pw,Rect area,const char* txt,Id id=0)
 	: WinBase(pw, null, area.x, area.y, area.w, area.h, 0, id),
 	  spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h), 0),
-	  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", 0),
-	  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", 0),
+	  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
+	  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue),
 	  value()
 	{
 		this->add_child(&spinner);
@@ -65,6 +65,10 @@ struct Spinner : WinBase
 	}
 
 	private:
+	static void changeValue(Button*)
+	{
+		//fixme need to deference the Spinner... how?
+	}
 	Type value;
 };
 
