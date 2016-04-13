@@ -31,7 +31,7 @@ struct Spinner : WinBase
 	  spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h), 0),
 	  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
 	  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue),
-	  value(new Type(1.0)), step(1.0)
+	  value(new Type(1)), step(1), min(0), max(9999)
 	{
 		this->add_child(&spinner);
 		this->add_child(&btnInc);
@@ -85,14 +85,19 @@ struct Spinner : WinBase
 	}
 
 	private:
-	Type* value, step;
+	Type* value, step, min, max;
 
 	static void changeValue(Button* btn)
 	{
 		Spinner* sp = ((Spinner*) SpinnerUtil::references[btn]); //kludged reference to the button's spinner
-		if(string(btn->label.str) == string("+"))
+		if(string(btn->label.str) == string("+") //if + do increment
+			 && *(sp->value) + sp->step < sp->max //user bounds check
+			 && *(sp->value) + sp->step > *(sp->value)) //overflow check
 			*(sp->value) += sp->step;
-		else
+
+		//else do decrement
+		else if(*(sp->value) - sp->step > sp->min //user bounds check
+			 && *(sp->value) - sp->step < *(sp->value)) //overflow check
 			*(sp->value) -= sp->step;
 
 		sp->setValue(sp->getValue());
