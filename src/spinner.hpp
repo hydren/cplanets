@@ -30,13 +30,13 @@ namespace SpinnerUtil
 			Spinner<Type>* spinner = (Spinner<Type>*) pair.second;
 			if(spinner != null && spinner->spinner.cmd_id == kludgyId)
 			{
-				return spinner;
+				return spinner; //kludged reference to the button's spinner
 			}
 		}
 		return null;
 	}
 
-	int nextId=0; //xxx kludge-type references. do not modify it!!!
+	int nextId=0; //xxx Id sequence for Spinners. Do not modify it!!!
 }
 
 /** A widget like Java's JSpinner. It is a template, which means the value on the spinner field can be (theorectically) of any typename.
@@ -92,7 +92,24 @@ struct Spinner : WinBase
 
 	void setStepValue(Type v=1.0)
 	{
-		this->step = v;
+		if(v > 0) //step value must be non-negative
+			this->step = v;
+	}
+
+	void incrementValue()
+	{
+		if(isValidValue(*(this->value) + this->step) && *(this->value) + this->step >= *(this->value)) //second clausule checks for overflow
+		{
+			*(this->value) += this->step;
+		}
+	}
+
+	void decrementValue()
+	{
+		if(isValidValue(*(this->value) - this->step) && *(this->value) - this->step <= *(this->value))
+		{
+			*(this->value) -= this->step;
+		}
 	}
 
 	void validate()
@@ -111,18 +128,19 @@ struct Spinner : WinBase
 	private:
 	Type* value, step, min, max;
 
+	bool isValidValue(Type val)
+	{
+		return (val >= this->min) && (val <= this->max);
+	}
+
 	static void changeValue(Button* btn)
 	{
 		Spinner* sp = SpinnerUtil::getSpinner<Type>(btn); //kludged reference to the button's spinner
-		if(string(btn->label.str) == string("+") //if + do increment
-			 && *(sp->value) + sp->step < sp->max //user bounds check
-			 && *(sp->value) + sp->step > *(sp->value)) //overflow check
-			*(sp->value) += sp->step;
+		if(string(btn->label.str) == string("+")) //if '+' do increment
+			sp->incrementValue();
 
-		//else do decrement
-		else if(*(sp->value) - sp->step > sp->min //user bounds check
-			 && *(sp->value) - sp->step < *(sp->value)) //overflow check
-			*(sp->value) -= sp->step;
+		if(string(btn->label.str) == string("-")) //if '-' do decrement
+			sp->decrementValue();
 
 		sp->setValue(sp->getValue());
 	}
@@ -130,11 +148,14 @@ struct Spinner : WinBase
 	static void validateField(const char* text,int cmd_id)
 	{
 		Spinner* sp = SpinnerUtil::getSpinner<Type>(cmd_id); //kludged reference to the button's spinner
-		if(String::parseable<Type>(string(text)))
+		if(String::parseable<Type>(string(text))) //if we can figure out something from the field
 		{
-			sp->value = new Type(String::parse<Type>(string(text)));
+			Type val = String::parse<Type>(string(text));
+			if(sp->isValidValue(val)) //if value type is inside bounds
+				sp->value = new Type(val); //change only the pointer
 		}
-		else sp->setValue(sp->getValue());
+
+		sp->setValue(sp->getValue()); //do the real deal. if everything was alright, sp->getValue() is already the new value
 	}
 };
 
