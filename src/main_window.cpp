@@ -15,8 +15,8 @@
 #include "SDL_util.hpp"
 
 #include "planetarium.hpp"
-#include "flow_layout.hpp"
-#include "spinner.hpp"
+#include "widgets/flow_layout.hpp"
+#include "widgets/spinner.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
