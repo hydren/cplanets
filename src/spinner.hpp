@@ -18,7 +18,7 @@ namespace SpinnerUtil
 
 /** A widget like Java's JSpinner. It is a template, which means the value on the spinner field can be (theorectically) of any typename.
  * Currently it works with 'int'-like typenames.
- * The Type must have an empty constructor, operator + and -, and be able to cast from double/float.*/
+ * The Type must have operator + and -, and be able to cast from double/float.*/
 template<typename Type>
 struct Spinner : WinBase
 {
@@ -31,7 +31,7 @@ struct Spinner : WinBase
 	  spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h), 0),
 	  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
 	  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue),
-	  value(1.0), step(1.0)
+	  value(new Type(1.0)), step(1.0)
 	{
 		this->add_child(&spinner);
 		this->add_child(&btnInc);
@@ -49,15 +49,15 @@ struct Spinner : WinBase
 		SDL_FillRect(win,0,parent->bgcol);
 	}
 
-	Type getValue()
+	Type* getValue()
 	{
 		return this->value;
 	}
 
-	void setValue(Type val)
+	void setValue(Type* val)
 	{
 		this->value = val;
-		string strValue = string()+val;
+		string strValue = string()+*val;
 		spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
 	}
 
@@ -85,15 +85,17 @@ struct Spinner : WinBase
 	}
 
 	private:
-	Type value, step;
+	Type* value, step;
 
 	static void changeValue(Button* btn)
 	{
 		Spinner* sp = ((Spinner*) SpinnerUtil::references[btn]); //kludged reference to the button's spinner
 		if(string(btn->label.str) == string("+"))
-			sp->setValue(sp->getValue() + sp->step);
+			*(sp->value) += sp->step;
 		else
-			sp->setValue(sp->getValue() - sp->step);
+			*(sp->value) -= sp->step;
+
+		sp->setValue(sp->getValue());
 	}
 };
 

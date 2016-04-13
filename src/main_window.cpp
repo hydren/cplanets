@@ -64,7 +64,7 @@ Planetarium* planetarium;
 FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
 CheckBox* chckTraceOrbit;
-Spinner<int>* spnTraceLength;
+Spinner<unsigned>* spnTraceLength;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
@@ -235,7 +235,7 @@ void CPlanetsGUI::MainWindow::show()
 	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
-	spnTraceLength = new Spinner<int>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
+	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
 	toolbarSouthLayout->addComponent(spnTraceLength);
 
 	toolbarSouthLayout->pack();
@@ -392,6 +392,6 @@ void onReady()
 {
 	spnTraceLength->init_gui();
 	spnTraceLength->validate();
-	spnTraceLength->setValue(planetarium->orbitTracer.traceLength);
+	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
 	spnTraceLength->spinner.unset_cursor();
 }
