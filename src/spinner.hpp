@@ -11,6 +11,14 @@
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
 
+namespace SpinnerUtil
+{
+	std::map<Button*, void*> references; //xxx kludge-type references. do not modify it!!!
+}
+
+/** A widget like Java's JSpinner. It is a template, which means the value on the spinner field can be (theorectically) of any typename.
+ * Currently it works with 'int'-like typenames.
+ * The Type must have an empty constructor, operator + and -, and be able to cast from double/float.*/
 template<typename Type>
 struct Spinner : WinBase
 {
@@ -23,12 +31,14 @@ struct Spinner : WinBase
 	  spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h), 0),
 	  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
 	  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue),
-	  value()
+	  value(1.0), step(1.0)
 	{
 		this->add_child(&spinner);
 		this->add_child(&btnInc);
 		this->add_child(&btnDec);
 		this->spinner.dialog_label(txt);
+		SpinnerUtil::references[&btnInc] = this; //register kludge-type reference to this spinner
+		SpinnerUtil::references[&btnDec] = this; //register kludge-type reference to this spinner
 	}
 
 	virtual ~Spinner() {}
@@ -51,6 +61,16 @@ struct Spinner : WinBase
 		spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
 	}
 
+	Type getStepValue()
+	{
+		return this->step;
+	}
+
+	void setStepValue(Type v=1.0)
+	{
+		this->step = v;
+	}
+
 	void validate()
 	{
 		CPlanetsGUI::setComponentPosition(&spinner,this->area.x, this->area.y);
@@ -65,11 +85,16 @@ struct Spinner : WinBase
 	}
 
 	private:
-	static void changeValue(Button*)
+	Type value, step;
+
+	static void changeValue(Button* btn)
 	{
-		//fixme need to deference the Spinner... how?
+		Spinner* sp = ((Spinner*) SpinnerUtil::references[btn]); //kludged reference to the button's spinner
+		if(string(btn->label.str) == string("+"))
+			sp->setValue(sp->getValue() + sp->step);
+		else
+			sp->setValue(sp->getValue() - sp->step);
 	}
-	Type value;
 };
 
 #endif /* SPINNER_HPP_ */
