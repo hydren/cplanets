@@ -12,6 +12,7 @@
 #include <queue>
 
 #include "util.hpp"
+#include "SDL_util.hpp"
 #include "main_window.hpp"
 #include "physics/physics2d.hpp"
 #include "physics/physics2d_solvers.hpp"
