@@ -81,8 +81,7 @@ struct Spinner : WinBase
 	void setValue(Type* val)
 	{
 		this->value = val;
-		string strValue = string()+*val;
-		spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
+		refresh();
 	}
 
 	Type getStepValue()
@@ -102,6 +101,7 @@ struct Spinner : WinBase
 		{
 			*(this->value) += this->step;
 		}
+		this->refresh();
 	}
 
 	void decrementValue()
@@ -110,8 +110,18 @@ struct Spinner : WinBase
 		{
 			*(this->value) -= this->step;
 		}
+		this->refresh();
 	}
 
+	/** Refresh the text according to this spinner's value */
+	void refresh()
+	{
+		string strValue = string() + *(this->value);
+		spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
+		spinner.unset_cursor();
+	}
+
+	/** Revalidates the this widgets' positions */
 	void validate()
 	{
 		CPlanetsGUI::setComponentPosition(&spinner,this->area.x, this->area.y);
@@ -141,8 +151,6 @@ struct Spinner : WinBase
 
 		if(string(btn->label.str) == string("-")) //if '-' do decrement
 			sp->decrementValue();
-
-		sp->setValue(sp->getValue());
 	}
 
 	static void validateField(const char* text,int cmd_id)
@@ -155,7 +163,7 @@ struct Spinner : WinBase
 				sp->value = new Type(val); //change only the pointer
 		}
 
-		sp->setValue(sp->getValue()); //do the real deal. if everything was alright, sp->getValue() is already the new value
+		sp->refresh(); //do the real deal. if everything was alright, sp->getValue() is already the new value
 	}
 };
 

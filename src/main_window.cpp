@@ -310,10 +310,18 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onCheckBoxPressed(chckTraceOrbit, true);
 			break;
 		case SDLK_d:
-			if(down) planetarium->orbitTracer.traceLength *= 2;
+			if(down)
+			{
+				planetarium->orbitTracer.traceLength *= 2;
+				spnTraceLength->refresh();
+			}
 			break;
 		case SDLK_h:
-			if(down) planetarium->orbitTracer.traceLength *= 0.5;
+			if(down)
+			{
+				planetarium->orbitTracer.traceLength *= 0.5;
+				spnTraceLength->refresh();
+			}
 			break;
 		default:break;
 	}
