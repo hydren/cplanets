@@ -21,18 +21,6 @@ namespace CPlanetsGUI
 {
 	const int USER_EVENT_ID__REDRAW_COMPONENT = 192;
 
-	//convert the given sdl color to an int color suitable to be used on the given surface
-	int colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA=false);
-
-	//set the color components of the given sdl color. use -1 to leave the component unchanged (i.e. modifyColor(-1,224,-1) only sets the green component to 224)
-	void modifyColor(SDL_Color& color, int r, int g, int b);
-
-	//creates a random color
-	SDL_Color* getRandomColor();
-
-	//trigger repainting of the whole window. it will be repainted eventually
-	void triggerRepaint();
-
 	//adjusts the given button size according to its label
 	void packLabeledComponent(Button* btn);
 

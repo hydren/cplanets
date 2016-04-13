@@ -17,8 +17,9 @@
 #include "physics/physics2d.hpp"
 #include "physics/physics2d_solvers.hpp"
 
-using CPlanetsGUI::colorToInt;
-using CPlanetsGUI::modifyColor;
+using SDL_util::colorToInt;
+using SDL_util::modifyColor;
+using SDL_util::getRandomColor;
 using std::cout; using std::endl;
 using std::vector;
 using std::queue;
@@ -204,7 +205,7 @@ void Planetarium::recolorAllBodies()
 		{
 			PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
 			SDL_Color* oldColor = custom->color;
-			custom->color = CPlanetsGUI::getRandomColor();
+			custom->color = getRandomColor();
 			delete oldColor;
 		}
 	}

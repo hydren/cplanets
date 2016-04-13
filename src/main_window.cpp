@@ -12,6 +12,7 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
+#include "SDL_util.hpp"
 
 #include "planetarium.hpp"
 #include "flow_layout.hpp"
@@ -41,6 +42,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 #endif
 
 using std::cout; using std::endl;
+using std::vector;
 using CPlanetsGUI::FlowLayout;
 
 void runOnce(void(func)(void))
@@ -76,7 +78,7 @@ void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
 void onCheckBoxPressed(CheckBox* chck, bool fake);
 void onUserEvent(int cmd,int param,int param2);
-void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger);
+void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
 void onReady();
 
@@ -84,47 +86,11 @@ void onReady();
 
 struct CustomUniverseListener extends Planetarium::UniverseEventListener
 {
-	void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
+	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
 	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
 };
 
 //  ================ CPlanetsGUI namespace ================
-int CPlanetsGUI::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
-{
-	#ifdef HOTFIX_FOR_SDL_MAP_RGB_1
-	if(forceRGBA || surf == null)
-		return (((int) color.r) << 24) + (((int) color.g) << 16) + (((int) color.b) << 8) + 0x000000FF;
-
-	#endif
-
-	return SDL_MapRGB(surf->format, color.r, color.g, color.b);
-}
-
-void CPlanetsGUI::modifyColor(SDL_Color& color, int r, int g, int b)
-{
-	if(r != -1) color.r = r;
-	if(b != -1) color.b = b;
-	if(g != -1) color.g = g;
-}
-
-SDL_Color* CPlanetsGUI::getRandomColor()
-{
-	SDL_Color* somecolor = new SDL_Color;
-	somecolor->r = Math::randomBetween(0, 255);
-	somecolor->g = Math::randomBetween(0, 255);
-	somecolor->b = Math::randomBetween(0, 255);
-	return somecolor;
-}
-
-void CPlanetsGUI::triggerRepaint()
-{
-	static SDL_Event* tmp = null;
-	if(SDL_PeepEvents(tmp, 1, SDL_PEEKEVENT, SDL_VIDEOEXPOSEMASK) > 0) return;
-	SDL_Event repaintEvent;
-	repaintEvent.type = SDL_VIDEOEXPOSE;
-	SDL_PushEvent(&repaintEvent);
-}
-
 void CPlanetsGUI::packLabeledComponent(Button* btn)
 {
 	int properWidth = btn->label.render_t->text_width(btn->label.str) + 2*WIDGETS_SPACING;
@@ -141,13 +107,13 @@ void CPlanetsGUI::packLabeledComponent(CheckBox* btn)
 
 void CPlanetsGUI::setComponentPosition(WinBase* component, Point& position)
 {
-	CPlanetsGUI::setComponentPosition(component, position.x, position.y);
+	setComponentPosition(component, position.x, position.y);
 }
 
 void CPlanetsGUI::setComponentPosition(WinBase* component, int x, int y)
 {
-	CPlanetsGUI::setComponentPositionX(component, x);
-	CPlanetsGUI::setComponentPositionY(component, y);
+	setComponentPositionX(component, x);
+	setComponentPositionY(component, y);
 }
 
 void CPlanetsGUI::setComponentPositionX(WinBase* component, int x)
@@ -337,7 +303,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnAddRandom)
 	{
-		planetarium->addCustomBody(new Body2D(550, 32, Vector2D(Math::randomBetween(32, 64), Math::randomBetween(64, 128)), Vector2D(Math::randomBetween(0, 8), Math::randomBetween(0, 8)), Vector2D()), CPlanetsGUI::getRandomColor());
+		planetarium->addCustomBody(new Body2D(550, 32, Vector2D(Math::randomBetween(32, 64), Math::randomBetween(64, 128)), Vector2D(Math::randomBetween(0, 8), Math::randomBetween(0, 8)), Vector2D()), SDL_util::getRandomColor());
 	}
 
 	if(btn == btnRecolorAll)
@@ -381,11 +347,11 @@ void onUserEvent(int cmd,int param,int param2)
 	}
 }
 
-void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger)
+void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger)
 {
 	txtBodies->reset();
-	std::vector<Body2D> bodies = planetarium->getBodies();
-	foreach(Body2D&, body, std::vector<Body2D>, bodies)
+	vector<Body2D> bodies = planetarium->getBodies();
+	foreach(Body2D&, body, vector<Body2D>, bodies)
 	{
 		txtBodies->add_text(body.toString().c_str(), false);
 	}
