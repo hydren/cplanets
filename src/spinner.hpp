@@ -160,7 +160,7 @@ struct Spinner : WinBase
 		{
 			Type val = String::parse<Type>(string(text));
 			if(sp->isValidValue(val)) //if value type is inside bounds
-				sp->value = new Type(val); //change only the pointer
+				*sp->value = val; //change only the pointer
 		}
 
 		sp->refresh(); //do the real deal. if everything was alright, sp->getValue() is already the new value
