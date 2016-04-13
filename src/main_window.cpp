@@ -8,11 +8,14 @@
 #include "main_window.hpp"
 
 #include <cmath>
+#include <cstring>
 
 #include "SDL_widgets/SDL_widgets.h"
+#include "futil/futil.hpp"
 
 #include "planetarium.hpp"
 #include "flow_layout.hpp"
+#include "spinner.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -40,10 +43,17 @@ void workaround_sdl_stream_file_close() // part of workaround
 using std::cout; using std::endl;
 using CPlanetsGUI::FlowLayout;
 
+void runOnce(void(func)(void))
+{
+	static bool once = false;
+	if(not once) { func(); once = true; }
+}
+
 // ================ CONSTANTS ================
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
 const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
+const int PLANETARIUM_ID = 959;
 string VERSION_TEXT;
 
 //  ================ VARIABLES ===============
@@ -51,9 +61,10 @@ string VERSION_TEXT;
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
 Planetarium* planetarium;
+FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
 CheckBox* chckTraceOrbit;
-FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
+Spinner<unsigned>* spnTraceLength;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
@@ -63,8 +74,11 @@ void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
+void onCheckBoxPressed(CheckBox* chck, bool fake);
+void onUserEvent(int cmd,int param,int param2);
 void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
+void onReady();
 
 //  ==================== PLANETARIUM LISTENER ===========================
 
@@ -167,15 +181,16 @@ void CPlanetsGUI::MainWindow::show()
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
 	handle_rsev = onWindowResize; //set callback for window resize
 	handle_kev = onKeyEvent; //set callback for keyboard events
+	handle_uev = onUserEvent;
 	VERSION_TEXT ="v"+CPLANETS_VERSION;
 
 	Rect planetariumSize(
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
 		TOOLBAR_SIZE + WIDGETS_SPACING,
 		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
-		windowSize.h - (2*TOOLBAR_SIZE)
+		windowSize.h - (2.25*TOOLBAR_SIZE)
 	);
-	planetarium = new Planetarium(window, planetariumSize);
+	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
 
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
@@ -209,17 +224,19 @@ void CPlanetsGUI::MainWindow::show()
 		WIDGETS_SPACING,
 		TOOLBAR_SIZE + WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font),
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		windowSize.h - 2*TOOLBAR_SIZE - TTF_FontHeight(draw_title_ttf->ttf_font)
+		windowSize.h - 2.25*TOOLBAR_SIZE - TTF_FontHeight(draw_title_ttf->ttf_font)
 	);
 	txtBodies = new TextWin(window, 0, txtBodiesSize, 8, "Bodies");
 
-	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (TOOLBAR_SIZE - 2*WIDGETS_SPACING));
+	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 
 	chckTraceOrbit = new CheckBox(window, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
 	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
+	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
+	toolbarSouthLayout->addComponent(spnTraceLength);
 
 	toolbarSouthLayout->pack();
 
@@ -235,6 +252,7 @@ void draw()
 	window->clear();
 	Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
 	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
+	runOnce(onReady);
 }
 
 void onWindowResize(int dw, int dh)
@@ -242,9 +260,13 @@ void onWindowResize(int dw, int dh)
 //	cout << "resize event" << endl;
 	planetarium->widen(dw, dh);
 	txtBodies->widen(0, dh);
+
 	toolbarNorthLayout->pack();
-	toolbarSouthLayout->position.y = window->tw_area.h - (TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+	toolbarSouthLayout->position.y = window->tw_area.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING);
 	toolbarSouthLayout->pack();
+
+	spnTraceLength->validate();
+	window->draw_blit_recur();
 }
 
 void onKeyEvent(SDL_keysym *key, bool down)
@@ -285,13 +307,21 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
 			break;
 		case SDLK_t:
-			if(down) onCheckBoxPressed(chckTraceOrbit);
+			if(down) onCheckBoxPressed(chckTraceOrbit, true);
 			break;
 		case SDLK_d:
-			if(down) planetarium->orbitTracer.traceLength *= 2;
+			if(down)
+			{
+				planetarium->orbitTracer.traceLength *= 2;
+				spnTraceLength->refresh();
+			}
 			break;
 		case SDLK_h:
-			if(down) planetarium->orbitTracer.traceLength *= 0.5;
+			if(down)
+			{
+				planetarium->orbitTracer.traceLength *= 0.5;
+				spnTraceLength->refresh();
+			}
 			break;
 		default:break;
 	}
@@ -326,11 +356,28 @@ void onButtonPressed(Button* btn)
 	}
 }
 
-void onCheckBoxPressed(CheckBox* chck)
+void onCheckBoxPressed(CheckBox* chck) { onCheckBoxPressed(chck, false); } //callback matching the function pointer
+
+void onCheckBoxPressed(CheckBox* chck, bool fake)
 {
+	if(fake) *(chck->d) = not *(chck->d); //switch the boolean if the call is a fake-press
+
 	if(chck == chckTraceOrbit)
 	{
 		//enable tracing parameters editing
+		chckTraceOrbit->draw_blit_upd();
+	}
+}
+
+void onUserEvent(int cmd,int param,int param2)
+{
+	if(cmd == CPlanetsGUI::USER_EVENT_ID__REDRAW_COMPONENT)
+	{
+		if(param == PLANETARIUM_ID)
+		{
+			planetarium->draw_blit_upd();
+			planetarium->isUpdating = false;
+		}
 	}
 }
 
@@ -347,4 +394,12 @@ void onPlanetariumBodyCollision(std::vector<Body2D>& collidingList, Body2D& resu
 void onPlanetariumBodyCreation(Body2D& createdBody)
 {
 	txtBodies->add_text(createdBody.toString().c_str(), true);
+}
+
+void onReady()
+{
+	spnTraceLength->init_gui();
+	spnTraceLength->validate();
+	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
+	spnTraceLength->spinner.unset_cursor();
 }
