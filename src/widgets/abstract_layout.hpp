@@ -15,8 +15,41 @@
 
 namespace CPlanetsGUI
 {
+	/** An abstract layout manager. */
 	struct Layout
 	{
+		/** An abstract layout element. It defines basic manipulations. */
+		struct Element
+		{
+			virtual ~Element() {}
+			virtual Point getPosition() abstract;
+			virtual void setPosition(Point position) abstract;
+			virtual void setPosition(int x, int y) abstract;
+			virtual void setX(int x) abstract;
+			virtual void setY(int y) abstract;
+			virtual Rect getSize() abstract;
+			virtual void setSize(Rect size) abstract;
+			virtual bool isStretched() abstract;
+			virtual bool operator == (const Element& b) abstract;
+		};
+
+		/** A WinBase element. It knows how to manipulate WinBase elements. */
+		struct WinBaseWrapper extends Element
+		{
+			WinBase* base;
+			WinBaseWrapper(WinBase* winBase);
+			virtual ~WinBaseWrapper();
+			virtual Point getPosition() abstract;
+			virtual void setPosition(Point position) abstract;
+			virtual void setPosition(int x, int y);
+			virtual void setX(int x);
+			virtual void setY(int y);
+			virtual Rect getSize() abstract;
+			virtual void setSize(Rect size) abstract;
+			virtual bool isStretched() abstract;
+			virtual bool operator == (const Element& b);
+		};
+
 		Point position;
 		std::vector<WinBase*> components;
 
