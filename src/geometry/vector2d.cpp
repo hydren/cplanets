@@ -307,6 +307,6 @@ Vector2D& Vector2D::operator <<(const double& radians)
 
 Vector2D Vector2D::perpendicular() const
 {
-	return rotation(M_PI);
+	return rotation(Math::PI);
 }
 
