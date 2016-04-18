@@ -34,12 +34,12 @@ void CPlanetsGUI::FlowLayout::pack()
 	int currentStretchedSpacerSize = this->needsSpacerStretching()? this->computeFreeSpaceOnLayout() / this->getStretchedSpacersCount() : -1 ;
 	int i = 0;
 	Point prevPosition = position;
-	foreach(WinBase*, component, vector<WinBase*>, this->components)
+	foreach(Element*, component, vector<Element*>, this->components)
 	{
 		int spacer = getSpacerSize(i++);
 		prevPosition.x += spacer == -1? currentStretchedSpacerSize : spacer; //adds the spacer size as offset
-		CPlanetsGUI::setComponentPosition(component, prevPosition);
-		prevPosition.x = component->area.x + WIDGETS_SPACING + component->tw_area.w; //adds the current component width and global spacing
+		component->setPosition(prevPosition);
+		prevPosition.x = component->getPosition().x + WIDGETS_SPACING + component->getSize().w; //adds the current component width and global spacing
 	}
 }
 
@@ -89,8 +89,8 @@ bool CPlanetsGUI::FlowLayout::needsSpacerStretching() const
 unsigned CPlanetsGUI::FlowLayout::computeFreeSpaceOnLayout() const
 {
 	int space = SDL_GetVideoInfo()->current_w - this->position.x;
-	const_foreach(const WinBase*, component, vector<WinBase*>, this->components)
-		space -= component->tw_area.w; //subtract each component size
+	const_foreach(const Element*, component, vector<Element*>, this->components)
+		space -= const_cast<Element*>(component)->getSize().w; //subtract each component size
 
 	space -= WIDGETS_SPACING * (1 + this->components.size()); //subtract each spacing between components
 

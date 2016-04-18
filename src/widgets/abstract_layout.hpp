@@ -24,9 +24,6 @@ namespace CPlanetsGUI
 			virtual ~Element() {}
 			virtual Point getPosition() abstract;
 			virtual void setPosition(Point position) abstract;
-			virtual void setPosition(int x, int y) abstract;
-			virtual void setX(int x) abstract;
-			virtual void setY(int y) abstract;
 			virtual Rect getSize() abstract;
 			virtual void setSize(Rect size) abstract;
 			virtual bool isStretched() abstract;
@@ -39,19 +36,18 @@ namespace CPlanetsGUI
 			WinBase* base;
 			WinBaseWrapper(WinBase* winBase);
 			virtual ~WinBaseWrapper();
-			virtual Point getPosition() abstract;
-			virtual void setPosition(Point position) abstract;
+			virtual Point getPosition();
+			virtual void setPosition(Point position);
 			virtual void setPosition(int x, int y);
 			virtual void setX(int x);
 			virtual void setY(int y);
-			virtual Rect getSize() abstract;
-			virtual void setSize(Rect size) abstract;
-			virtual bool isStretched() abstract;
+			virtual Rect getSize();
+			virtual void setSize(Rect size);
+			virtual bool isStretched();
 			virtual bool operator == (const Element& b);
 		};
 
 		Point position;
-		std::vector<WinBase*> components;
 
 		/** Creates a layout panel that sits its components from the given coordinates */
 		Layout(int x, int y);
@@ -65,6 +61,11 @@ namespace CPlanetsGUI
 		void addComponent(WinBase& component, int index=-1);
 		/** Add a component to the layout */
 		void addComponent(WinBase* component, int index=-1);
+		/** Add a component to the layout */
+		void addComponent(Element& component, int index=-1);
+		/** Add a component to the layout */
+		void addComponent(Element* component, int index=-1);
+
 
 		/** Remove the component at the specified index (but does not delete or hides it from the window) */
 		void removeComponentAt(unsigned index);
@@ -72,9 +73,20 @@ namespace CPlanetsGUI
 		void removeComponent(WinBase& component);
 		/** Remove the specified component (but does not free or hides it from the window) */
 		void removeComponent(WinBase* component);
+		/** Remove the specified component (but does not free or hides it from the window) */
+		void removeComponent(Element& component);
+		/** Remove the specified component (but does not free or hides it from the window) */
+		void removeComponent(Element* component);
 
 		/** Organizes the position of the components on this layout */
 		virtual void pack() abstract;
+
+		protected:
+		std::vector<Element*> components;
+
+		private:
+		std::vector<WinBaseWrapper*> innerWrappers;
+		void removeIfInnerWrapper(Element* element);
 	};
 }
 

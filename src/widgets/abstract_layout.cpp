@@ -10,6 +10,8 @@
 
 using std::vector;
 
+// WinBaseWrapper =================================================================
+
 CPlanetsGUI::Layout::WinBaseWrapper::WinBaseWrapper(WinBase* winBase)
 : base(winBase)
 {}
@@ -82,6 +84,8 @@ bool CPlanetsGUI::Layout::WinBaseWrapper::operator==(const Element& someElement)
 	else return true;
 }
 
+// Layout ========================================================================================
+
 CPlanetsGUI::Layout::Layout(int x, int y)
 {
 	this->position.x = x;
@@ -95,7 +99,24 @@ CPlanetsGUI::Layout::Layout(Point& p)
 
 CPlanetsGUI::Layout::~Layout(){}
 
-void CPlanetsGUI::Layout::addComponent(WinBase* component, int index)
+void CPlanetsGUI::Layout::addComponent(WinBase& base, int index)
+{
+	addComponent(&base, index);
+}
+
+void CPlanetsGUI::Layout::addComponent(WinBase* base, int index)
+{
+	WinBaseWrapper* component = new WinBaseWrapper(base); //creater wrapper for winbase
+	innerWrappers.push_back(component); //register the layout-created wrapper
+	addComponent(reinterpret_cast<Element*>(component));
+}
+
+void CPlanetsGUI::Layout::addComponent(Element& component, int index)
+{
+	addComponent(&component, index);
+}
+
+void CPlanetsGUI::Layout::addComponent(Element* component, int index)
 {
 	if(index < 0)
 		this->components.push_back(component);
@@ -103,15 +124,19 @@ void CPlanetsGUI::Layout::addComponent(WinBase* component, int index)
 		this->components.insert(components.begin()+index, component);
 }
 
-void CPlanetsGUI::Layout::addComponent(WinBase& component, int index)
-{
-	CPlanetsGUI::Layout::addComponent(&component, index);
-}
-
 void CPlanetsGUI::Layout::removeComponentAt(unsigned index)
 {
 	if(index > this->components.size() - 1)
 		throw std::out_of_range("out of range: " + index);
+
+	//if there is a pointer to the element on innerWrappers, then it is a WinBaseWrapper created by this layout
+	for(int w = Collections::indexOf(this->innerWrappers, reinterpret_cast<WinBaseWrapper*>(this->components[index])); w != -1; w = -1)
+	{
+		delete this->innerWrappers[w]; //delete the wrapper
+		this->innerWrappers.erase(this->innerWrappers.begin() + w); //remove the pointer
+	}
+
+	//remove the pointer
 	this->components.erase(components.begin() + index);
 }
 
@@ -122,10 +147,26 @@ void CPlanetsGUI::Layout::removeComponent(WinBase& component)
 
 void CPlanetsGUI::Layout::removeComponent(WinBase* component)
 {
+	for(unsigned i = 0; i < this->components.size(); i++)
+	{
+		WinBaseWrapper* wrapper = dynamic_cast<WinBaseWrapper*>(this->components.at(i));
+		if(wrapper != null && wrapper->base == component)
+		{
+			CPlanetsGUI::Layout::removeComponentAt(i);
+			break;
+		}
+	}
+}
+
+void CPlanetsGUI::Layout::removeComponent(Element& component)
+{
+	CPlanetsGUI::Layout::removeComponent(&component);
+}
+
+void CPlanetsGUI::Layout::removeComponent(Element* component)
+{
 	int index = Collections::indexOf(this->components, component);
 	if(index < 0) return;
 	CPlanetsGUI::Layout::removeComponentAt(index);
 }
-
-
 
