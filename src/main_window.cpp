@@ -174,7 +174,7 @@ void CPlanetsGUI::MainWindow::show()
 	packLabeledComponent(btnRecolorAll);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
 
-	toolbarNorthLayout->addSpacer();
+	toolbarNorthLayout->addComponent(new CPlanetsGUI::Layout::Spacer(toolbarNorthLayout));
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
 	packLabeledComponent(btnRun);
@@ -200,9 +200,11 @@ void CPlanetsGUI::MainWindow::show()
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
 	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
+	toolbarSouthLayout->getWrapperComponent(chckTraceOrbit)->offset.y += TDIST*0.5;
 
 	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
 	toolbarSouthLayout->addComponent(spnTraceLength);
+	toolbarSouthLayout->getWrapperComponent(spnTraceLength)->offset.y -= 2;
 
 	toolbarSouthLayout->pack();
 
