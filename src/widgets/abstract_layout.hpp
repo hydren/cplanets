@@ -48,6 +48,8 @@ namespace CPlanetsGUI
 			virtual bool operator == (const Element& b) const;
 		};
 
+		/** An empty element to provide a way to offset elements.
+		 *  If width and height are set to zero, it can stretch, effectively pushing elements after it aside. */
 		struct Spacer extends Element
 		{
 			Rect bounds;
@@ -63,6 +65,7 @@ namespace CPlanetsGUI
 			virtual bool operator == (const Element& b) const;
 		};
 
+		/** The position of this layout */
 		Point position;
 
 		/** Creates a layout panel that sits its components from the given coordinates */
@@ -103,11 +106,8 @@ namespace CPlanetsGUI
 		virtual void pack() abstract;
 
 		protected:
-		std::vector<Element*> components;
-
-		private:
-		std::vector<WinBaseWrapper*> innerWrappers;
-		void removeIfInnerWrapper(Element* element);
+		std::vector<Element*> components; //all components on this layout
+		std::vector<WinBaseWrapper*> innerWrappers; //a vector containing all WinBaseWrappers created by this layout.
 	};
 }
 

@@ -15,6 +15,9 @@
 
 namespace CPlanetsGUI
 {
+	/** A layout that places its elements side by side, with a minimum spacing.
+	 *  If it contains a stretching component, the component is stretch until reach this layout maxSize.
+	 *  If maxSize is zero, the layout uses all the space after its position.*/
 	struct FlowLayout extends Layout
 	{
 		unsigned maxSize;
@@ -28,9 +31,9 @@ namespace CPlanetsGUI
 		void pack();
 
 		private:
-		bool needsStretching() const;
-		unsigned computeFreeSpaceOnLayout() const;
-		unsigned getStretchingElementsCount() const;
+		bool needsStretching() const; //check if there is a stretching element
+		unsigned computeFreeSpaceOnLayout() const; //computes the free space to stretch-out
+		unsigned getStretchingElementsCount() const; //counts the number of stretching elements
 	};
 }
 
