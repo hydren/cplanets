@@ -33,7 +33,10 @@ void CPlanetsGUI::FlowLayout::pack()
 	Point prevPosition = position;
 	foreach(Element*, component, vector<Element*>, this->components)
 	{
-		component->setPosition(prevPosition);
+		prevPosition.x += component->offset.x; //adds the offset to the position (to consume the space)
+		Point actualPosition = prevPosition;
+		actualPosition.y += component->offset.y;
+		component->setPosition(actualPosition); //sends a copy rect with the y axis offset'd by the component's y-offset
 		prevPosition.x += WIDGETS_SPACING + (component->isStretched()? currentStretchedSpacerSize : component->getSize().w); //adds the current component width and global spacing
 	}
 }

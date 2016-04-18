@@ -21,6 +21,7 @@ namespace CPlanetsGUI
 		/** An abstract layout element. It defines basic manipulations. */
 		struct Element
 		{
+			Point offset;
 			virtual ~Element() {}
 			virtual Point getPosition() const abstract;
 			virtual void setPosition(Point position) abstract;
@@ -81,6 +82,11 @@ namespace CPlanetsGUI
 		/** Add a component to the layout */
 		void addComponent(Element* component, int index=-1);
 
+		/** Returns a pointer to the component at the specified index */
+		Element* getComponentAt(unsigned index);
+
+		/** Returns a pointer to the wrapper component corresponding to the given WinBase */
+		WinBaseWrapper* getWrapperComponent(WinBase* base);
 
 		/** Remove the component at the specified index (but does not delete or hides it from the window) */
 		void removeComponentAt(unsigned index);

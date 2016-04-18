@@ -169,6 +169,27 @@ void CPlanetsGUI::Layout::addComponent(Element* component, int index)
 		this->components.insert(components.begin()+index, component);
 }
 
+/** Returns a pointer to the component at the specified index */
+CPlanetsGUI::Layout::Element* CPlanetsGUI::Layout::getComponentAt(unsigned index)
+{
+	if(index > this->components.size() - 1)
+		throw std::out_of_range("out of range: " + index);
+
+	return this->components[index];
+}
+
+/** Returns a pointer to the wrapper component corresponding to the given WinBase */
+CPlanetsGUI::Layout::WinBaseWrapper* CPlanetsGUI::Layout::getWrapperComponent(WinBase* base)
+{
+	for(unsigned i = 0; i < this->components.size(); i++)
+	{
+		WinBaseWrapper* wrapper = dynamic_cast<WinBaseWrapper*>(this->components.at(i));
+		if(wrapper != null && wrapper->base == base)
+			return wrapper;
+	}
+	return null;
+}
+
 void CPlanetsGUI::Layout::removeComponentAt(unsigned index)
 {
 	if(index > this->components.size() - 1)
