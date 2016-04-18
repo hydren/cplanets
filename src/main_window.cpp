@@ -174,7 +174,7 @@ void CPlanetsGUI::MainWindow::show()
 	packLabeledComponent(btnRecolorAll);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
 
-	toolbarNorthLayout->addSpacer();
+	toolbarNorthLayout->addComponent(new CPlanetsGUI::Layout::Spacer(toolbarNorthLayout));
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
 	packLabeledComponent(btnRun);

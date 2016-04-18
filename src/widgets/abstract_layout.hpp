@@ -22,12 +22,12 @@ namespace CPlanetsGUI
 		struct Element
 		{
 			virtual ~Element() {}
-			virtual Point getPosition() abstract;
+			virtual Point getPosition() const abstract;
 			virtual void setPosition(Point position) abstract;
-			virtual Rect getSize() abstract;
+			virtual Rect getSize() const abstract;
 			virtual void setSize(Rect size) abstract;
-			virtual bool isStretched() abstract;
-			virtual bool operator == (const Element& b) abstract;
+			virtual bool isStretched() const abstract;
+			virtual bool operator == (const Element& b) const abstract;
 		};
 
 		/** A WinBase element. It knows how to manipulate WinBase elements. */
@@ -36,15 +36,30 @@ namespace CPlanetsGUI
 			WinBase* base;
 			WinBaseWrapper(WinBase* winBase);
 			virtual ~WinBaseWrapper();
-			virtual Point getPosition();
+			virtual Point getPosition() const;
 			virtual void setPosition(Point position);
 			virtual void setPosition(int x, int y);
 			virtual void setX(int x);
 			virtual void setY(int y);
-			virtual Rect getSize();
+			virtual Rect getSize() const;
 			virtual void setSize(Rect size);
-			virtual bool isStretched();
-			virtual bool operator == (const Element& b);
+			virtual bool isStretched() const;
+			virtual bool operator == (const Element& b) const;
+		};
+
+		struct Spacer extends Element
+		{
+			Rect bounds;
+			bool stretched;
+			Spacer(Layout* layout, Rect size=Rect());
+			Spacer(Rect bounds);
+			virtual ~Spacer();
+			virtual Point getPosition() const;
+			virtual void setPosition(Point position);
+			virtual Rect getSize() const;
+			virtual void setSize(Rect size);
+			virtual bool isStretched() const;
+			virtual bool operator == (const Element& b) const;
 		};
 
 		Point position;

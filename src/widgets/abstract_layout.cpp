@@ -19,7 +19,7 @@ CPlanetsGUI::Layout::WinBaseWrapper::WinBaseWrapper(WinBase* winBase)
 CPlanetsGUI::Layout::WinBaseWrapper::~WinBaseWrapper()
 {}
 
-Point CPlanetsGUI::Layout::WinBaseWrapper::getPosition()
+Point CPlanetsGUI::Layout::WinBaseWrapper::getPosition() const
 {
 	return base->area;
 }
@@ -58,7 +58,7 @@ void CPlanetsGUI::Layout::WinBaseWrapper::setY(int y)
 	}
 }
 
-Rect CPlanetsGUI::Layout::WinBaseWrapper::getSize()
+Rect CPlanetsGUI::Layout::WinBaseWrapper::getSize() const
 {
 	return base->tw_area;
 }
@@ -68,12 +68,12 @@ void CPlanetsGUI::Layout::WinBaseWrapper::setSize(Rect size)
 	base->widen(size.w - base->tw_area.w, size.h - base->tw_area.h);
 }
 
-bool CPlanetsGUI::Layout::WinBaseWrapper::isStretched()
+bool CPlanetsGUI::Layout::WinBaseWrapper::isStretched() const
 {
 	return false;
 }
 
-bool CPlanetsGUI::Layout::WinBaseWrapper::operator==(const Element& someElement)
+bool CPlanetsGUI::Layout::WinBaseWrapper::operator==(const Element& someElement) const
 {
 	if(typeid(someElement) != typeid(WinBaseWrapper))
 		return false;
@@ -82,6 +82,51 @@ bool CPlanetsGUI::Layout::WinBaseWrapper::operator==(const Element& someElement)
 		return false;
 
 	else return true;
+}
+
+// Spacer ========================================================================================
+
+CPlanetsGUI::Layout::Spacer::Spacer(Layout* layout, Rect size)
+: bounds(layout->position.x, layout->position.y, size.w, size.h),
+  stretched(size.w == 0 && size.h == 0)
+{}
+
+CPlanetsGUI::Layout::Spacer::Spacer(Rect bounds)
+: bounds(bounds), stretched(bounds.w == 0 && bounds.h == 0)
+{}
+
+CPlanetsGUI::Layout::Spacer::~Spacer() {}
+
+Point CPlanetsGUI::Layout::Spacer::getPosition() const
+{
+	return Point(this->bounds.x, this->bounds.y);
+}
+
+void CPlanetsGUI::Layout::Spacer::setPosition(Point position)
+{
+	this->bounds.x = position.x;
+	this->bounds.y = position.y;
+}
+
+Rect CPlanetsGUI::Layout::Spacer::getSize() const
+{
+	return Rect(0, 0, this->bounds.w, this->bounds.h);
+}
+
+void CPlanetsGUI::Layout::Spacer::setSize(Rect size)
+{
+	this->bounds.w = size.w;
+	this->bounds.h = size.h;
+}
+
+bool CPlanetsGUI::Layout::Spacer::isStretched() const
+{
+	return this->stretched;
+}
+
+bool CPlanetsGUI::Layout::Spacer::operator == (const Element& b) const
+{
+	return &b == this;
 }
 
 // Layout ========================================================================================
