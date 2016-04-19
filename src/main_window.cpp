@@ -196,12 +196,12 @@ void CPlanetsGUI::MainWindow::show()
 	txtBodies = new TextWin(window, 0, txtBodiesSize, 8, "Bodies");
 
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
+	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
 
 	chckTraceOrbit = new CheckBox(window, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
 	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
-	toolbarSouthLayout->getWrapperComponent(chckTraceOrbit)->offset.y += TDIST*0.5;
 
 	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
 	toolbarSouthLayout->addComponent(spnTraceLength);
