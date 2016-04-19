@@ -11,7 +11,11 @@ using std::vector;
 
 // DropDownMenu ===========================================================================================
 
-DropDownMenu::~DropDownMenu(){}
+DropDownMenu::~DropDownMenu()
+{
+	//fixme needs a way to delete the buttons inside
+	delete cmdMenu;
+}
 
 Point DropDownMenu::getPosition() const
 {
@@ -51,7 +55,7 @@ struct DropDownMenuButton extends Button
 	DropDownMenuFactory::Implementation* factory;
 	DropDownMenuButton(WinBase *pw, Style st, Rect rt, Label lab, void (*someCmd)(Button*), Id id=0)
 	: Button(pw, st, rt, lab, someCmd, id), menu(null), factory(null) {}
-	virtual ~DropDownMenuButton(){} //just to shut up
+	virtual ~DropDownMenuButton(){ delete factory; }
 };
 
 // DropDownMenuFactory (encapsulation) ==========================================================================================
@@ -106,6 +110,11 @@ encapsulation(DropDownMenuFactory)
 DropDownMenuFactory::DropDownMenuFactory()
 : implementation(new Implementation()) {}
 
+DropDownMenuFactory::~DropDownMenuFactory()
+{
+	delete implementation;
+}
+
 void DropDownMenuFactory::setLabel(Label lbl)
 {
 	this->implementation->lb = lbl;
@@ -152,6 +161,7 @@ DropDownMenu* DropDownMenuFactory::createAt(WinBase* pw, Id id)
 	this->implementation->id = id;
 	DropDownMenu* ddmenu = new DropDownMenu();
 	ddmenu->cmdMenu = new CmdMenu(this->implementation->createButton(ddmenu));
+	this->implementation = new Implementation(); //the previous is being used by the DropDownMenu
 	return ddmenu;
 }
 

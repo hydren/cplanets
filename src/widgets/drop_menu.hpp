@@ -26,6 +26,7 @@ struct DropDownMenu extends CPlanetsGUI::Layout::Element
 struct DropDownMenuFactory
 {
 	DropDownMenuFactory();
+	~DropDownMenuFactory();
 	enum Appearance { BUTTON, COMBOBOX, MENU };
 
 	void setLabel(Label label);
