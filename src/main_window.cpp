@@ -213,8 +213,8 @@ void CPlanetsGUI::MainWindow::show()
 	factory.setSize(Rect(40, 40, 100, 20));
 	factory.addItem("Linear");
 	factory.addItem("Point");
-
 	DropDownMenu* ddmTraceStyle = factory.createAt(window);
+	toolbarSouthLayout->addComponent(ddmTraceStyle);
 
 	toolbarSouthLayout->pack();
 

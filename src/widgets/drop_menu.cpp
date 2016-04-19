@@ -24,7 +24,7 @@ Point DropDownMenu::getPosition() const
 
 void DropDownMenu::setPosition(Point position)
 {
-	//todo
+	CPlanetsGUI::Layout::WinBaseWrapper::setWinBasePosition(this->cmdMenu->src, position);
 }
 
 Rect DropDownMenu::getSize() const
@@ -34,7 +34,7 @@ Rect DropDownMenu::getSize() const
 
 void DropDownMenu::setSize(Rect size)
 {
-	//todo
+	this->cmdMenu->src->widen(size.w - this->cmdMenu->src->tw_area.w, size.h - this->cmdMenu->src->tw_area.h);
 }
 
 bool DropDownMenu::isStretched() const

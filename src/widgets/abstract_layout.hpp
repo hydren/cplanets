@@ -46,6 +46,10 @@ namespace CPlanetsGUI
 			virtual void setSize(Rect size);
 			virtual bool isStretched() const;
 			virtual bool operator == (const Element& b) const;
+
+			static void setWinBasePosition(WinBase* wb, Point pos);
+			static void setWinBasePositionX(WinBase* wb, int x);
+			static void setWinBasePositionY(WinBase* wb, int y);
 		};
 
 		/** An empty element to provide a way to offset elements.
