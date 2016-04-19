@@ -210,13 +210,14 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarSouthLayout->getWrapperComponent(spnTraceLength)->offset.y -= 2;
 
 	DropDownMenuFactory factory;
-	factory.setLabel("Linear");
+	factory.setLabel("Trace length: ", true);
 	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
 	factory.setSize(Rect(40, 40, 100, 20));
 	factory.addItem("Linear");
 	factory.addItem("Point");
 	factory.setCallback(onDropDownMenuButton);
 	ddmTraceStyle = factory.createAt(window);
+	ddmTraceStyle->offset.y = -9;
 	toolbarSouthLayout->addComponent(ddmTraceStyle);
 
 	toolbarSouthLayout->pack();

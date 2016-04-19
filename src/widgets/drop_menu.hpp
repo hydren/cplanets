@@ -9,10 +9,14 @@
 #define WIDGETS_DROP_MENU_HPP_
 
 #include "abstract_layout.hpp"
+#include "label_win.hpp"
 
 struct DropDownMenu extends CPlanetsGUI::Layout::Element
 {
 	CmdMenu* cmdMenu;
+	LabelWin* label;
+	bool isLabelOnTop;
+
 	virtual ~DropDownMenu();
 
 	virtual Point getPosition() const;
@@ -29,7 +33,7 @@ struct DropDownMenuFactory
 	~DropDownMenuFactory();
 	enum Appearance { BUTTON, COMBOBOX, MENU };
 
-	void setLabel(Label label);
+	void setLabel(Label label, bool onTop=false);
 	void setCallback(void (*menu_cmd)(RButWin*,int nr,int fire));
 	void setAppearance(Appearance apre);
 	void setSize(Rect rt);

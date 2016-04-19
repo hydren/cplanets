@@ -24,17 +24,39 @@ Point DropDownMenu::getPosition() const
 
 void DropDownMenu::setPosition(Point position)
 {
+	if(this->isLabelOnTop) position.y += this->label->tw_area.h; //offset by widget
+	else position.x += this->label->tw_area.w;
+
 	CPlanetsGUI::Layout::WinBaseWrapper::setWinBasePosition(this->cmdMenu->src, position);
+
+	if(this->isLabelOnTop) position.y -= this->label->tw_area.h; //offset by widget;
+	else position.x -= this->label->tw_area.w;
+
+	CPlanetsGUI::Layout::WinBaseWrapper::setWinBasePosition(this->label, position);
 }
 
 Rect DropDownMenu::getSize() const
 {
+	Rect rt;
+
+	if(this->isLabelOnTop)
+	{
+		rt.w = Math::max(cmdMenu->src->tw_area.w, this->label->tw_area.w);
+		rt.h = cmdMenu->src->tw_area.h + this->label->tw_area.h;
+	}
+	else
+	{
+		rt.w = cmdMenu->src->tw_area.w + this->label->tw_area.w;
+		rt.h = Math::max(cmdMenu->src->tw_area.h, this->label->tw_area.h);
+	}
+
 	return cmdMenu->src->tw_area;
 }
 
 void DropDownMenu::setSize(Rect size)
 {
 	this->cmdMenu->src->widen(size.w - this->cmdMenu->src->tw_area.w, size.h - this->cmdMenu->src->tw_area.h);
+	//todo think if label should resize with DropDownMenu
 }
 
 bool DropDownMenu::isStretched() const
@@ -63,12 +85,12 @@ struct DropDownMenuButton extends Button
 encapsulation(DropDownMenuFactory)
 {
 	Implementation()
-	: pw(null), apre(), rt(), lb(""), id(0), items(), menuItemCmd(null) {}
+	: pw(null), apre(), rt(), lb(""), onTop(false), id(0), items(), menuItemCmd(null) {}
 
 	WinBase* pw;
 	Appearance apre;
 	Rect rt;
-	Label lb;
+	Label lb; bool onTop;
 	Id id;
 	vector<Label> items;
 	void (*menuItemCmd)(RButWin*,int nr,int fire);
@@ -98,7 +120,7 @@ encapsulation(DropDownMenuFactory)
 	//crafts a button that initializes a CmdMenu with this' parameters
 	DropDownMenuButton* createButton(DropDownMenu* owner)
 	{
-		DropDownMenuButton* ddmb = new DropDownMenuButton(pw, toStyle(apre), rt, lb, buildCallback, id);
+		DropDownMenuButton* ddmb = new DropDownMenuButton(pw, toStyle(apre), rt, items[0], buildCallback, id);
 		ddmb->menu = owner;
 		ddmb->factory = this;
 		return ddmb;
@@ -115,9 +137,10 @@ DropDownMenuFactory::~DropDownMenuFactory()
 	delete implementation;
 }
 
-void DropDownMenuFactory::setLabel(Label lbl)
+void DropDownMenuFactory::setLabel(Label lbl, bool onTop)
 {
 	this->implementation->lb = lbl;
+	this->implementation->onTop = onTop;
 }
 
 void DropDownMenuFactory::setCallback(void (*menu_cmd)(RButWin*,int nr,int fire))
@@ -159,8 +182,21 @@ DropDownMenu* DropDownMenuFactory::createAt(WinBase* pw, Id id)
 {
 	this->implementation->pw = pw;
 	this->implementation->id = id;
+
 	DropDownMenu* ddmenu = new DropDownMenu();
+
+	ddmenu->isLabelOnTop = this->implementation->onTop;
+	if(ddmenu->isLabelOnTop) this->implementation->rt.y += TTF_FontHeight(draw_ttf->ttf_font); //offset by widget
+	else this->implementation->rt.x += draw_ttf->text_width(this->implementation->lb.str); //offset by widget
+
 	ddmenu->cmdMenu = new CmdMenu(this->implementation->createButton(ddmenu));
+
+	if(ddmenu->isLabelOnTop) this->implementation->rt.y -= TTF_FontHeight(draw_ttf->ttf_font); //offset by widget
+	else this->implementation->rt.x -= draw_ttf->text_width(this->implementation->lb.str); //offset by widget
+
+	this->implementation->rt.w = draw_ttf->text_width(this->implementation->lb.str);
+	this->implementation->rt.h = TTF_FontHeight(draw_ttf->ttf_font);
+	ddmenu->label = new LabelWin(pw, this->implementation->rt, this->implementation->lb.str);
 	this->implementation = new Implementation(); //the previous is being used by the DropDownMenu
 	return ddmenu;
 }
