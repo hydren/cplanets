@@ -16,6 +16,7 @@
 
 #include "planetarium.hpp"
 #include "widgets/flow_layout.hpp"
+#include "widgets/drop_menu.hpp"
 #include "widgets/spinner.hpp"
 
 // workaround to reroute output stream to console
@@ -205,6 +206,15 @@ void CPlanetsGUI::MainWindow::show()
 	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
 	toolbarSouthLayout->addComponent(spnTraceLength);
 	toolbarSouthLayout->getWrapperComponent(spnTraceLength)->offset.y -= 2;
+
+	DropDownMenuFactory factory;
+	factory.setLabel("Trace style");
+	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
+	factory.setSize(Rect(40, 40, 100, 20));
+	factory.addItem("Linear");
+	factory.addItem("Point");
+
+	DropDownMenu* ddmTraceStyle = factory.createAt(window);
 
 	toolbarSouthLayout->pack();
 
