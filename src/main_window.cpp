@@ -68,6 +68,7 @@ FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
+DropDownMenu* ddmTraceStyle;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
@@ -78,6 +79,7 @@ void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
 void onCheckBoxPressed(CheckBox* chck, bool fake);
+void onDropDownMenuButton(RButWin*,int nr,int fire);
 void onUserEvent(int cmd,int param,int param2);
 void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
@@ -208,12 +210,13 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarSouthLayout->getWrapperComponent(spnTraceLength)->offset.y -= 2;
 
 	DropDownMenuFactory factory;
-	factory.setLabel("Trace style");
+	factory.setLabel("Linear");
 	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
 	factory.setSize(Rect(40, 40, 100, 20));
 	factory.addItem("Linear");
 	factory.addItem("Point");
-	DropDownMenu* ddmTraceStyle = factory.createAt(window);
+	factory.setCallback(onDropDownMenuButton);
+	ddmTraceStyle = factory.createAt(window);
 	toolbarSouthLayout->addComponent(ddmTraceStyle);
 
 	toolbarSouthLayout->pack();
@@ -344,6 +347,26 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 	{
 		//enable tracing parameters editing
 		chckTraceOrbit->draw_blit_upd();
+	}
+}
+
+void onDropDownMenuButton(RButWin* btn, int nr, int fire)
+{
+	if(btn == ddmTraceStyle->cmdMenu->buttons && fire)
+	{
+		RButton* rbtn = btn->act_button();
+		if(string(rbtn->label.str) == "Linear")
+		{
+			planetarium->orbitTracer.style = Planetarium::OrbitTracer::LINEAR;
+			ddmTraceStyle->cmdMenu->src->label = "Linear";
+			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
+		}
+		if(string(rbtn->label.str) == "Point")
+		{
+			planetarium->orbitTracer.style = Planetarium::OrbitTracer::POINT;
+			ddmTraceStyle->cmdMenu->src->label = "Point";
+			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
+		}
 	}
 }
 
