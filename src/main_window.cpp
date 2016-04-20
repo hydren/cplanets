@@ -205,19 +205,19 @@ void CPlanetsGUI::MainWindow::show()
 	packLabeledComponent(chckTraceOrbit);
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
-	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Length:");
+	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
 	toolbarSouthLayout->addComponent(spnTraceLength);
 	toolbarSouthLayout->getWrapperComponent(spnTraceLength)->offset.y -= 2;
 
 	DropDownMenuFactory factory;
-	factory.setLabel("Trace length: ", true);
+	factory.setLabel("Trace style: ", true);
 	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
 	factory.setSize(Rect(40, 40, 100, 20));
 	factory.addItem("Linear");
 	factory.addItem("Point");
 	factory.setCallback(onDropDownMenuButton);
 	ddmTraceStyle = factory.createAt(window);
-	ddmTraceStyle->offset.y = -9;
+	ddmTraceStyle->offset.y = -10;
 	toolbarSouthLayout->addComponent(ddmTraceStyle);
 
 	toolbarSouthLayout->pack();
