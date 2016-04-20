@@ -136,7 +136,7 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 
 	static Spinner<Type>* getSpinner(Button* btn)
 	{
-		return (Spinner<Type>*) Spinner_static::references[btn]; //kludged reference to the button's spinner
+		return reinterpret_cast<Spinner<Type>*> (Spinner_static::references[btn]); //kludged reference to the button's spinner
 	}
 
 	static Spinner<Type>* getSpinner(int kludgyId)
@@ -145,7 +145,7 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 		typedef std::map<Button*, void*> MapOfButtonPtrAndVoidPtr;
 		const_foreach(const PairOfButtonPtrAndVoidPtr, pair, MapOfButtonPtrAndVoidPtr, Spinner_static::references)
 		{
-			Spinner<Type>* spinner = (Spinner<Type>*) pair.second;
+			Spinner<Type>* spinner = reinterpret_cast<Spinner<Type>*> (pair.second);
 			if(spinner != null && spinner->spinner.cmd_id == kludgyId)
 			{
 				return spinner; //kludged reference to the button's spinner
