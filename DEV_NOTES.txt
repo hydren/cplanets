@@ -1,12 +1,14 @@
 -------------- To Do
 
-- Try (but ok if fail) to not use std::map reference kludge on Spinner
-- Revise kludges on DropDownMenu and try to reduce them
 - Resume developing graphical body creation
 
 -------------- Ideas
 
 - Use pixmaps instead of image files as icons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
+
+-------------- Backlog
+
+- Try to not use a std::map for keeping references to Spinners on Spinner class (big time kludge)
 
 
 -------------- Legacy 'japla' milestones
