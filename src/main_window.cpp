@@ -206,8 +206,8 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
-	toolbarSouthLayout->addComponent(spnTraceLength);
-	toolbarSouthLayout->getWrapperComponent(spnTraceLength)->offset.y -= 2;
+	spnTraceLength->offset.y -= 2;
+	toolbarSouthLayout->addComponent((CPlanetsGUI::Layout::Element*) spnTraceLength);
 
 	DropDownMenuFactory factory;
 	factory.setLabel("Trace style: ", true);
@@ -247,7 +247,6 @@ void onWindowResize(int dw, int dh)
 	toolbarSouthLayout->position.y = window->tw_area.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING);
 	toolbarSouthLayout->pack();
 
-	spnTraceLength->validate();
 	window->draw_blit_recur();
 }
 
@@ -401,8 +400,6 @@ void onPlanetariumBodyCreation(Body2D& createdBody)
 
 void onReady()
 {
-	spnTraceLength->init_gui();
-	spnTraceLength->validate();
 	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
 	spnTraceLength->spinner.unset_cursor();
 }

@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Make spinner not extend WinBase but Layout::Element instead (like DropDownMenu)
 - Make the font on LabelWin interchangeable (make it not hard-coded to draw_ttf)
 - Replace C-style casts on Spinner with reinterpret_cast.
 - Try (but ok if fail) to not use std::map reference kludge on Spinner
