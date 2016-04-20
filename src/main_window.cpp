@@ -313,6 +313,7 @@ void onButtonPressed(Button* btn)
 {
 	if(btn == btnAddBody)
 	{
+		alert("Not implemented yet!"); return; //todo remove this alert
 		planetarium->running = false;
 		planetarium->bodyCreationState = Planetarium::POSITION_SELECTION;
 	}
