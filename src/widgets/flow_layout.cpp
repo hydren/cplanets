@@ -76,6 +76,9 @@ int CPlanetsGUI::FlowLayout::computeAlignment(Element* e, int pos) const
 
 	else if(this->alignment == MIDDLE)
 		return space * 0.5;
+
+	//be careful to not fall into this one
+	return 0;
 }
 
 unsigned CPlanetsGUI::FlowLayout::getStretchingElementsCount() const
