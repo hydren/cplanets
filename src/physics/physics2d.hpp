@@ -31,11 +31,22 @@ struct Physics2D
 	void step();
 	void changeReferenceFrameTo(std::vector<Body2D*>& reference);
 
-	//callback when a collision occurs
-	void (*onPhysics2DBodyCollision)(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+	//callback when a collision occurs. ignored if null (default).
+	void (*onCollision)(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+
+	//a collision listener. this should be subclassed and registered with addCollisionListener()
+	struct CollisionListener
+	{
+		virtual ~CollisionListener(){}
+		virtual void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger)=0;
+	};
+
+	void addCollisionListener(CollisionListener* listener);
+	void removeCollisionListener(CollisionListener* listener);
 
 	private:
 	std::vector< std::vector<Body2D*> > collisions;
+	std::vector<CollisionListener*>* collisionListeners; //null unless any listener is registered
 	void resolveCollisions();
 };
 

@@ -72,7 +72,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 {
 	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
-	this->physics->onPhysics2DBodyCollision = bodyCollisionCallback;
+	this->physics->onCollision = bodyCollisionCallback;
 	if(collisionEventsMutex == null) collisionEventsMutex = SDL_CreateMutex(); //XXX not thread-safe
 }
 

@@ -19,8 +19,8 @@ using std::vector;
 Physics2D::Physics2D()
 : universe(), referenceFrame(),
   physics2DSolver(null),
-  onPhysics2DBodyCollision(0),
-  collisions()
+  onCollision(null),
+  collisions(), collisionListeners(null)
 {}
 
 Vector2D ReferenceFrame::getPosition() const
@@ -78,6 +78,26 @@ void Physics2D::changeReferenceFrameTo(vector<Body2D*>& reference)
 	//compute center of mass of 'reference'
 	//compute total momentum for 'reference'
 	//subtract from all bodies the position and speed
+}
+
+void Physics2D::addCollisionListener(CollisionListener* listener)
+{
+	if(listener == null) return;
+	if(this->collisionListeners == null) //instantiate on demand
+		this->collisionListeners = new vector<CollisionListener*>();
+
+	this->collisionListeners->push_back(listener);
+}
+
+void Physics2D::removeCollisionListener(CollisionListener* listener)
+{
+	if(listener == null) return;
+	if(this->collisionListeners != null)
+	{
+		int index = Collections::indexOf(*(this->collisionListeners), listener);
+		if(index >= 0) //found it
+			this->collisionListeners->erase(this->collisionListeners->begin() + index);
+	}
 }
 
 void Physics2D::resolveCollisions()
@@ -156,8 +176,13 @@ void Physics2D::resolveCollisions()
 		universe.bodies.push_back(new Body2D(merger));
 
 		//callback for body collision
-		if(onPhysics2DBodyCollision)
-			onPhysics2DBodyCollision(collisionList, *universe.bodies.back());
+		if(onCollision != null)
+			onCollision(collisionList, *universe.bodies.back());
+
+		//also notify if there are any listeners
+		if(collisionListeners != null)
+			foreach(CollisionListener*, listener, vector<CollisionListener*>, *(this->collisionListeners))
+				listener->onCollision(collisionList, *(universe.bodies.back()));
 
 		continue2:;
 	}
