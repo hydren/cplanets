@@ -15,7 +15,7 @@
 #include "util.hpp"
 #include "physics/physics2d.hpp"
 
-struct Planetarium extends WinBase
+struct Planetarium extends BgrWin
 {
 	struct UniverseEventListener;
 	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
@@ -110,8 +110,11 @@ struct Planetarium extends WinBase
 	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
 	Vector2D bodyCreationPosition, bodyCreationVelocity;
 	bool isUpdating;
+	Uint32 lastMouseLeftButtonDown;
 	friend void onUserEvent(int cmd,int param,int param2);
 	friend void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+	static void onMouseDown(BgrWin*,int x,int y,int but);
+	static void onMouseUp(BgrWin*,int x,int y,int but);
 };
 
 

@@ -28,7 +28,13 @@ using futil::iterable_queue;
 int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
 void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger);
-Sint16 convertToSint16(double a);
+
+//helper function
+Sint16 convertToSint16(double value)
+{
+	return static_cast<Sint16>(value);
+}
+
 
 struct PlanetariumUserObject
 {
@@ -50,7 +56,7 @@ queue<UniverseCollisionEvent> collisionEvents;
 SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
-: WinBase(parentWidget, 0, rect.x, rect.y, rect.w, rect.h, 0, _id),
+: BgrWin(parentWidget, rect, null, null, Planetarium::onMouseDown, null, Planetarium::onMouseUp, 0, _id),
   physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   bgColor(SDL_Color()), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true),
@@ -62,7 +68,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
   physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
   bodyCreationPosition(), bodyCreationVelocity(),
-  isUpdating(false)
+  isUpdating(false), lastMouseLeftButtonDown(0)
 {
 	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
@@ -159,27 +165,27 @@ void Planetarium::draw()
 			//record position
 			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
 				orbitTracer.record(body, body->position);
+		}
+	} // end synchronized(physicsAccessMutex)
 
-			//draw body creation helper stubs
-			if(bodyCreationState != IDLE)
-			{
-				if(bodyCreationState == POSITION_SELECTION)
-				{
-					int mouseX, mouseY;
-					SDL_GetMouseState(&mouseX, &mouseY);
-					mouseX -= this->area.x; mouseY -= this->area.y;
-					circleRGBA(this->win, mouseX, mouseY, 4, 255, 255, 255, 255);
-				}
-				else if(bodyCreationState == VELOCITY_SELECTION)
-				{
-					Vector2D newBodyPos = this->getTransposed(bodyCreationPosition);
-					int mouseX, mouseY;
-					SDL_GetMouseState(&mouseX, &mouseY);
-					mouseX -= this->area.x; mouseY -= this->area.y;
-					circleRGBA(this->win, newBodyPos.x, newBodyPos.y, 4, 255, 255, 255, 255);
-					lineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
-				}
-			}
+	//draw body creation helper stubs
+	if(bodyCreationState != IDLE)
+	{
+		if(bodyCreationState == POSITION_SELECTION)
+		{
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			mouseX -= this->area.x; mouseY -= this->area.y;
+			circleRGBA(this->win, mouseX, mouseY, 4, 255, 255, 255, 255);
+		}
+		else if(bodyCreationState == VELOCITY_SELECTION)
+		{
+			Vector2D newBodyPos = this->getTransposed(bodyCreationPosition);
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			mouseX -= this->area.x; mouseY -= this->area.y;
+			circleRGBA(this->win, newBodyPos.x, newBodyPos.y, 4, 255, 255, 255, 255);
+			lineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
 		}
 	}
 }
@@ -386,7 +392,42 @@ void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerg
 	}
 }
 
-Sint16 convertToSint16(double value)
+void Planetarium::onMouseDown(BgrWin* bgr, int x, int y, int but)
 {
-	return static_cast<Sint16>(value);
+	if(but == SDL_BUTTON_LEFT)
+	{
+		Planetarium* planetarium = dynamic_cast<Planetarium*>(bgr);
+		planetarium->lastMouseLeftButtonDown = SDL_GetTicks();
+	}
+
 }
+
+void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
+{
+	if(but == SDL_BUTTON_LEFT)
+	{
+		Planetarium* planetarium = dynamic_cast<Planetarium*>(bgr);
+		Vector2D pointedPosition = Vector2D(x, y).scale(1.0/planetarium->viewportZoom).add(planetarium->viewportPosition);
+		if(SDL_GetTicks() - planetarium->lastMouseLeftButtonDown < 250) //click event
+		{
+			if(planetarium->bodyCreationState == POSITION_SELECTION)
+			{
+				planetarium->bodyCreationPosition = pointedPosition;
+				planetarium->bodyCreationState = VELOCITY_SELECTION;
+				return;
+			}
+			if(planetarium->bodyCreationState == VELOCITY_SELECTION)
+			{
+				Vector2D selectedVelocity = pointedPosition.difference(planetarium->bodyCreationPosition);
+				Body2D* newBody = new Body2D(550, 32, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
+				planetarium->addCustomBody(newBody, SDL_util::getRandomColor());
+				planetarium->bodyCreationState = IDLE;
+				planetarium->setRunning();
+			}
+		}
+		else //mouse up after holding down
+		{}
+	}
+}
+
+
