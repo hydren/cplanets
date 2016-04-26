@@ -57,7 +57,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
-  bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO),
+  bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
   orbitTracer(), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
@@ -415,7 +415,9 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			if(planetarium->bodyCreationState == VELOCITY_SELECTION)
 			{
 				Vector2D selectedVelocity = pointedPosition.difference(planetarium->bodyCreationPosition);
-				Body2D* newBody = new Body2D(550, planetarium->bodyCreationDiameter, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
+				double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter;
+				//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
+				Body2D* newBody = new Body2D(mass, planetarium->bodyCreationDiameter, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
 				planetarium->addCustomBody(newBody, SDL_util::getRandomColor());
 				planetarium->bodyCreationState = IDLE;
 				planetarium->setRunning();
