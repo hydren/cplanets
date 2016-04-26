@@ -389,6 +389,7 @@ void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resulting
 	{
 		txtBodies->add_text(body.toString().c_str(), false);
 	}
+	txtBodies->draw_blit_upd(); //xxx call to draw_blit_upd() here may cause race conditions
 }
 
 void onPlanetariumBodyCreation(Body2D& createdBody)
