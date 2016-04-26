@@ -1,6 +1,11 @@
 -------------- To Do
 
-- Resume developing graphical body creation
+- Create spinners for body density and diameter
+- Add spinners for simulation parameters
+- Add option to use AA (planetarium api and gui)
+- Implement choosing display period (something like sleeping time for updateView())
+- Add optional single-threaded mode (iterations per display, etc)
+- Fix bezier spline
 
 -------------- Ideas
 
