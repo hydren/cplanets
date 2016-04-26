@@ -85,63 +85,68 @@ void Planetarium::draw()
 	//draw all stuff
 	synchronized(physicsAccessMutex)
 	{
+		//draw all traced orbits (only if tracer is active)
+		if(this->orbitTracer.isActive) foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
+		{
+			if(body->userObject == null) goto break1; //if there isn't body data, there isn't body color. leave.
+			SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
+
+			iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
+			switch(this->orbitTracer.style)
+			{
+				case OrbitTracer::POINT:
+				{
+					foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+					{
+						Vector2D pv = this->getTransposed(r);
+						pixelRGBA(this->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+					}
+					break;
+				}
+
+				case OrbitTracer::LINEAR:
+				{
+					Vector2D previousPosition = trace.front();
+					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+					{
+						if(recordedPosition != previousPosition) //avoid drawing segments of same points
+						{
+							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
+							lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+						}
+						previousPosition = recordedPosition;
+					}
+					break;
+				}
+
+				case OrbitTracer::SPLINE:
+				{
+					Vector2D previousPosition = trace.front();
+					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+					{
+						if(recordedPosition != previousPosition) //avoid drawing segments of same points
+						{
+							//FixMe Fix quadratic bezier spline implementation
+							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
+							Vector2D supportPoint;// = ???
+							Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
+							Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
+							bezierRGBA(this->win, pxs, pys, 2, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+						}
+						previousPosition = recordedPosition;
+					}
+					break;
+				}
+
+				default:break;
+			}
+		}
+		break1:
+
+		//draw all bodies
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 		{
 			SDL_Color* bodyColor = body->userObject != null? ((PlanetariumUserObject*) body->userObject)->color : null;
-
-			//draw orbit
-			if(this->orbitTracer.isActive && bodyColor != null)
-			{
-				iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
-				switch(this->orbitTracer.style)
-				{
-					case OrbitTracer::POINT:
-					{
-						foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
-						{
-							Vector2D pv = this->getTransposed(r);
-							pixelRGBA(this->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
-						}
-						break;
-					}
-
-					case OrbitTracer::LINEAR:
-					{
-						Vector2D previousPosition = trace.front();
-						foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
-						{
-							if(recordedPosition != previousPosition) //avoid drawing segments of same points
-							{
-								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-								lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
-							}
-							previousPosition = recordedPosition;
-						}
-						break;
-					}
-
-					case OrbitTracer::SPLINE:
-					{
-						Vector2D previousPosition = trace.front();
-						foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
-						{
-							if(recordedPosition != previousPosition) //avoid drawing segments of same points
-							{
-								//FixMe Fix quadratic bezier spline implementation
-								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-								Vector2D supportPoint;// = ???
-								Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
-								Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
-								bezierRGBA(this->win, pxs, pys, 2, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
-							}
-							previousPosition = recordedPosition;
-						}
-						break;
-					}
-
-					default:break;
-				}
-			}
 
 			double size = viewportZoom*body->diameter;
 			Vector2D v = this->getTransposed(body->position);
