@@ -104,6 +104,9 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 	//================================================================================================================================================
 	protected:
+	struct Physics2DEventsManager;
+	Physics2DEventsManager* physicsEventsManager;
+
 	bool isUpdating;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;

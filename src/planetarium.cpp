@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <vector>
 #include <queue>
+#include <map>
+#include <utility>
 
 #include "util.hpp"
 #include "SDL_util.hpp"
@@ -20,6 +22,8 @@
 using std::cout; using std::endl;
 using std::vector;
 using std::queue;
+using std::pair;
+using std::map;
 using SDL_util::colorToInt;
 using SDL_util::modifyColor;
 using SDL_util::getRandomColor;
@@ -34,16 +38,31 @@ struct PlanetariumUserObject
 	SDL_Color* color;
 };
 
-struct UniverseCollisionEvent
+// Physics2DEventsManager
+class Planetarium::Physics2DEventsManager
 {
-	UniverseCollisionEvent(vector<Body2D> collidingList, Body2D resultingMerger)
-	: collidingList(collidingList), resultingMerger(resultingMerger) {}
-	vector<Body2D> collidingList;
-	Body2D resultingMerger;
+	queue< pair<vector<Body2D>, Body2D> > collisionEvents;
+	public:
+	SDL_mutex* mutex;
+	Physics2DEventsManager() : collisionEvents(), mutex(SDL_CreateMutex()) {}
+	~Physics2DEventsManager() { SDL_DestroyMutex(mutex); }
+	void pushCollisionEvent(vector<Body2D> collidingList, Body2D resultingMerger)
+	{
+		collisionEvents.push(pair<vector<Body2D>, Body2D>(collidingList, resultingMerger));
+	}
+
+	pair<vector<Body2D>, Body2D> popCollisionEvent()
+	{
+		pair<vector<Body2D>, Body2D> result = collisionEvents.front();
+		collisionEvents.pop();
+		return result;
+	}
+
+	bool hasCollisionEvents()
+	{
+		return not collisionEvents.empty();
+	}
 };
-//xxx kinda wrong, all instances of Planetarium will share this
-queue<UniverseCollisionEvent> collisionEvents;
-SDL_mutex* collisionEventsMutex = null;
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : BgrWin(parentWidget, rect, null, null, Planetarium::onMouseDown, null, Planetarium::onMouseUp, 0, _id),
@@ -54,7 +73,8 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   orbitTracer(), bodyCreationState(IDLE),
-  //private stuff
+  //protected stuff
+  physicsEventsManager(new Physics2DEventsManager()),
   isUpdating(false),
   threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
@@ -65,7 +85,6 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
 	this->physics->addCollisionListener(this);
-	if(collisionEventsMutex == null) collisionEventsMutex = SDL_CreateMutex(); //XXX not thread-safe
 }
 
 Planetarium::~Planetarium()
@@ -296,13 +315,14 @@ void Planetarium::updateView()
 	static long lastTime;
 	while(true)
 	{
-		if(!collisionEvents.empty()) //notify listeners about the collisions
+		if(physicsEventsManager->hasCollisionEvents()) //notify listeners about the collisions
 		{
+			SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 			synchronized(collisionEventsMutex)
 			{
-				for(UniverseCollisionEvent& ev = collisionEvents.front(); !collisionEvents.empty(); collisionEvents.pop())
+				for(pair<vector<Body2D>, Body2D> ev = physicsEventsManager->popCollisionEvent(); physicsEventsManager->hasCollisionEvents(); ev = physicsEventsManager->popCollisionEvent())
 					foreach(UniverseEventListener*, listener, vector<UniverseEventListener*>, registeredBodyCollisionListeners)
-						listener->onBodyCollision(ev.collidingList, ev.resultingMerger);
+						listener->onBodyCollision(ev.first, ev.second);
 			}
 		}
 
@@ -357,10 +377,11 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color);
 	}
 
+	SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 	synchronized(collisionEventsMutex)
 	{
 		//add collision event to be consumed
-		collisionEvents.push(UniverseCollisionEvent(collidingListCopy, resultingMerger)); //provided list and merger must be copies
+		physicsEventsManager->pushCollisionEvent(collidingListCopy, resultingMerger); //provided list and merger must be copies
 	}
 }
 
@@ -431,5 +452,4 @@ int Planetarium::threadFunctionPlanetariumUpdate(void* arg)
 	}
 	return 0;
 }
-
 
