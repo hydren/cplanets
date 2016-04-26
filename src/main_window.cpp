@@ -376,8 +376,7 @@ void onUserEvent(int cmd,int param,int param2)
 	{
 		if(param == PLANETARIUM_ID)
 		{
-			planetarium->draw_blit_upd();
-			planetarium->isUpdating = false;
+			planetarium->doRefresh();
 		}
 	}
 }

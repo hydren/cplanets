@@ -17,12 +17,12 @@
 #include "physics/physics2d.hpp"
 #include "physics/physics2d_solvers.hpp"
 
-using SDL_util::colorToInt;
-using SDL_util::modifyColor;
-using SDL_util::getRandomColor;
 using std::cout; using std::endl;
 using std::vector;
 using std::queue;
+using SDL_util::colorToInt;
+using SDL_util::modifyColor;
+using SDL_util::getRandomColor;
 using futil::iterable_queue;
 
 //custom data to be carried by each Body2D
@@ -41,7 +41,7 @@ struct UniverseCollisionEvent
 	vector<Body2D> collidingList;
 	Body2D resultingMerger;
 };
-//kinda wrong, all instances of Planetarium will share this
+//xxx kinda wrong, all instances of Planetarium will share this
 queue<UniverseCollisionEvent> collisionEvents;
 SDL_mutex* collisionEventsMutex = null;
 
@@ -193,6 +193,12 @@ void Planetarium::setRunning(bool run)
 	this->running = run;
 }
 
+void Planetarium::doRefresh()
+{
+	draw_blit_upd();
+	isUpdating = false;
+}
+
 //--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
 
 void Planetarium::recolorAllBodies()
@@ -251,6 +257,25 @@ void Planetarium::removeUniverseEventListener(UniverseEventListener* listener)
 	Collections::removeElement(this->registeredBodyCollisionListeners, listener);
 }
 
+Planetarium::OrbitTracer::OrbitTracer()
+: style(LINEAR), isActive(false), traceLength(20), traces()
+{}
+
+void Planetarium::OrbitTracer::record(Body2D* body, Vector2D& position)
+{
+	this->traces[body].push(position);
+	while(this->traces[body].size() > traceLength)
+		this->traces[body].pop();
+}
+
+iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
+{
+	return this->traces[body];
+}
+
+
+// ===========================  protected stuff =====================================================================================
+
 void Planetarium::performPhysics()
 {
 	while(true)
@@ -305,51 +330,6 @@ void Planetarium::updateView()
 		lastTime = SDL_GetTicks();
 		SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime));
 	}
-}
-
-Planetarium::OrbitTracer::OrbitTracer()
-: style(LINEAR), isActive(false), traceLength(20), traces()
-{}
-
-void Planetarium::OrbitTracer::record(Body2D* body, Vector2D& position)
-{
-	this->traces[body].push(position);
-	while(this->traces[body].size() > traceLength)
-		this->traces[body].pop();
-}
-
-iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
-{
-	return this->traces[body];
-}
-
-//  -----------------------------  thread functions ------------------------------------------------
-int Planetarium::threadFunctionPhysics(void* arg)
-{
-	try
-	{
-		((Planetarium*) arg)->performPhysics();
-	}
-	catch(std::exception& e)
-	{
-		cout << "bad behavior on physics thread! " << e.what() << endl;
-	}
-	cout << "physics thread stopped." << endl;
-	return 0;
-}
-
-int Planetarium::threadFunctionPlanetariumUpdate(void* arg)
-{
-	try
-	{
-		((Planetarium*) arg)->updateView();
-		cout << "planetarium view update thread stopped." << endl;
-	}
-	catch(std::exception& e)
-	{
-		cout << "bad behavior on planetarium view update thread! " << e.what() << endl;
-	}
-	return 0;
 }
 
 // callback called by physics thread
@@ -420,6 +400,36 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 		else //mouse up after holding down
 		{}
 	}
+}
+
+//  -----------------------------  thread functions ------------------------------------------------
+
+int Planetarium::threadFunctionPhysics(void* arg)
+{
+	try
+	{
+		((Planetarium*) arg)->performPhysics();
+	}
+	catch(std::exception& e)
+	{
+		cout << "bad behavior on physics thread! " << e.what() << endl;
+	}
+	cout << "physics thread stopped." << endl;
+	return 0;
+}
+
+int Planetarium::threadFunctionPlanetariumUpdate(void* arg)
+{
+	try
+	{
+		((Planetarium*) arg)->updateView();
+		cout << "planetarium view update thread stopped." << endl;
+	}
+	catch(std::exception& e)
+	{
+		cout << "bad behavior on planetarium view update thread! " << e.what() << endl;
+	}
+	return 0;
 }
 
 

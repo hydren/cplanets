@@ -45,6 +45,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	Vector2D currentViewportTranlationRate; //non-zero when translating
 	double currentViewportZoomChangeRate; //non-zero when zooming
 
+
 	Planetarium(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~Planetarium();
 	void draw();
@@ -54,22 +55,35 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** If run is true (default), the physics thread is started/resumed. Otherwise the thread is put to sleep. */
 	void setRunning(bool run=true);
 
-	//--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
+	/** It's not recommended to call this directly. */
+	void doRefresh();
+
+	//synchronized methods
 
 	/** Assign a new random color to every body on the current universe (the safe way) */
 	void recolorAllBodies();
 
-	// Adds a custom body (the safe way)
+	/** Adds a custom body (the safe way) */
 	void addCustomBody(Body2D* body, SDL_Color* color);
 
-	// Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium.
+	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2D> getBodies() const;
 
-	//--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
+
+	// :::::::::::::::::::::: Inner classes ::::::::::::::::::::::::::::::::
+
+	/** A struct to be subclassed to be able to listen to interesting universe events. */
+	struct UniverseEventListener
+	{
+		virtual ~UniverseEventListener() {}
+		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) abstract;
+		virtual void onBodyCreation(Body2D& createdBody) abstract;
+	};
 
 	void addUniverseEventListener(UniverseEventListener* listener);
 	void removeUniverseEventListener(UniverseEventListener* listener);
 
+	/** A struct to record orbits. */
 	struct OrbitTracer
 	{
 		enum OrbitTraceStyle { POINT, LINEAR, SPLINE } style;
@@ -84,15 +98,9 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 	} orbitTracer;
 
-	enum BodyCreationState { IDLE, POSITION_SELECTION, VELOCITY_SELECTION } bodyCreationState; //default is IDLE
 
-	/** A struct to be subclassed to be able to listen to interesting universe events. */
-	struct UniverseEventListener
-	{
-		virtual ~UniverseEventListener() {}
-		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) abstract;
-		virtual void onBodyCreation(Body2D& createdBody) abstract;
-	};
+	/** Informs about visual body creation mode state. default is IDLE */
+	enum BodyCreationState { IDLE, POSITION_SELECTION, VELOCITY_SELECTION } bodyCreationState;
 
 	//================================================================================================================================================
 	protected:
@@ -112,8 +120,6 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 	static int threadFunctionPhysics(void* arg); //thread function
 	static int threadFunctionPlanetariumUpdate(void* arg); //thread function
-
-	friend void onUserEvent(int cmd,int param,int param2); //from main_window.cpp fixme remove this dependency
 };
 
 
