@@ -25,9 +25,6 @@ using std::vector;
 using std::queue;
 using futil::iterable_queue;
 
-int threadFunctionPhysics(void* arg);
-int threadFunctionPlanetariumUpdate(void* arg);
-
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
 {
@@ -327,7 +324,7 @@ iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
 }
 
 //  -----------------------------  thread functions ------------------------------------------------
-int threadFunctionPhysics(void* arg)
+int Planetarium::threadFunctionPhysics(void* arg)
 {
 	try
 	{
@@ -341,7 +338,7 @@ int threadFunctionPhysics(void* arg)
 	return 0;
 }
 
-int threadFunctionPlanetariumUpdate(void* arg)
+int Planetarium::threadFunctionPlanetariumUpdate(void* arg)
 {
 	try
 	{

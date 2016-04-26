@@ -70,12 +70,6 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	void addUniverseEventListener(UniverseEventListener* listener);
 	void removeUniverseEventListener(UniverseEventListener* listener);
 
-	// Its not recommended to call this directly
-	void performPhysics();
-
-	// Its not recommended to call this directly
-	void updateView();
-
 	struct OrbitTracer
 	{
 		enum OrbitTraceStyle { POINT, LINEAR, SPLINE } style;
@@ -108,10 +102,18 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
 	Vector2D bodyCreationPosition, bodyCreationVelocity;
 	Uint32 lastMouseLeftButtonDown;
-	friend void onUserEvent(int cmd,int param,int param2);
+
+	void performPhysics(); //updates physics
+	void updateView(); //updates view
+	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
+
 	static void onMouseDown(BgrWin*,int x,int y,int but);
 	static void onMouseUp(BgrWin*,int x,int y,int but);
-	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
+
+	static int threadFunctionPhysics(void* arg); //thread function
+	static int threadFunctionPlanetariumUpdate(void* arg); //thread function
+
+	friend void onUserEvent(int cmd,int param,int param2); //from main_window.cpp fixme remove this dependency
 };
 
 
