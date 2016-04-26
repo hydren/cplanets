@@ -38,30 +38,13 @@ struct PlanetariumUserObject
 	SDL_Color* color;
 };
 
-// Physics2DEventsManager
-class Planetarium::Physics2DEventsManager
+// helper struct to buffer collision events
+struct Planetarium::Physics2DEventsManager
 {
-	queue< pair<vector<Body2D>, Body2D> > collisionEvents;
-	public:
+	queue< pair<vector<Body2D>, Body2D>* > collisionEvents;
 	SDL_mutex* mutex;
 	Physics2DEventsManager() : collisionEvents(), mutex(SDL_CreateMutex()) {}
 	~Physics2DEventsManager() { SDL_DestroyMutex(mutex); }
-	void pushCollisionEvent(vector<Body2D> collidingList, Body2D resultingMerger)
-	{
-		collisionEvents.push(pair<vector<Body2D>, Body2D>(collidingList, resultingMerger));
-	}
-
-	pair<vector<Body2D>, Body2D> popCollisionEvent()
-	{
-		pair<vector<Body2D>, Body2D> result = collisionEvents.front();
-		collisionEvents.pop();
-		return result;
-	}
-
-	bool hasCollisionEvents()
-	{
-		return not collisionEvents.empty();
-	}
 };
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
@@ -315,14 +298,21 @@ void Planetarium::updateView()
 	static long lastTime;
 	while(true)
 	{
-		if(physicsEventsManager->hasCollisionEvents()) //notify listeners about the collisions
+		if(not physicsEventsManager->collisionEvents.empty()) //notify listeners about the collisions
 		{
 			SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 			synchronized(collisionEventsMutex)
 			{
-				for(pair<vector<Body2D>, Body2D> ev = physicsEventsManager->popCollisionEvent(); physicsEventsManager->hasCollisionEvents(); ev = physicsEventsManager->popCollisionEvent())
-					foreach(UniverseEventListener*, listener, vector<UniverseEventListener*>, registeredBodyCollisionListeners)
-						listener->onBodyCollision(ev.first, ev.second);
+				pair<vector<Body2D>, Body2D>* ev; //event
+				while(not physicsEventsManager->collisionEvents.empty()) //has collision events
+				{
+					ev = physicsEventsManager->collisionEvents.front(); //gets first
+					foreach(UniverseEventListener*, listener, vector<UniverseEventListener*>, registeredBodyCollisionListeners) //for each listener
+						listener->onBodyCollision(ev->first, ev->second); //notify
+
+					physicsEventsManager->collisionEvents.pop();//after using, unregister event
+					delete ev; //and delete event object
+				}
 			}
 		}
 
@@ -370,18 +360,22 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	obj->color->g = g/collidingList.size();
 	obj->color->b = b/collidingList.size();
 
-	vector<Body2D> collidingListCopy;
+	typedef pair<vector<Body2D>, Body2D> Event;
+	Event* ev = new Event();
+
+	vector<Body2D>& collidingListCopy = ev->first;
 	foreach(Body2D*, i, vector<Body2D*>, collidingList)
 	{
 		collidingListCopy.push_back(*i);
 		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color);
 	}
+	ev->second = resultingMerger;
 
 	SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 	synchronized(collisionEventsMutex)
 	{
 		//add collision event to be consumed
-		physicsEventsManager->pushCollisionEvent(collidingListCopy, resultingMerger); //provided list and merger must be copies
+		physicsEventsManager->collisionEvents.push(ev); //provided list and merger must be copies
 	}
 }
 
