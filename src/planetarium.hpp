@@ -15,7 +15,7 @@
 #include "util.hpp"
 #include "physics/physics2d.hpp"
 
-struct Planetarium extends BgrWin
+struct Planetarium extends BgrWin, Physics2D::CollisionListener
 {
 	struct UniverseEventListener;
 	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
@@ -90,12 +90,9 @@ struct Planetarium extends BgrWin
 
 	} orbitTracer;
 
-	enum BodyCreationState{
-		IDLE, POSITION_SELECTION, VELOCITY_SELECTION
-	} bodyCreationState; //default is IDLE
+	enum BodyCreationState { IDLE, POSITION_SELECTION, VELOCITY_SELECTION } bodyCreationState; //default is IDLE
 
-	/** A struct to notify observers of collision between bodies.
-	 * XXX REMEBER TO UNREGISTER AN UNUSED LISTENER */
+	/** A struct to be subclassed to be able to listen to interesting universe events. */
 	struct UniverseEventListener
 	{
 		virtual ~UniverseEventListener() {}
@@ -104,17 +101,17 @@ struct Planetarium extends BgrWin
 	};
 
 	//================================================================================================================================================
-	private:
+	protected:
+	bool isUpdating;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;
 	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
 	Vector2D bodyCreationPosition, bodyCreationVelocity;
-	bool isUpdating;
 	Uint32 lastMouseLeftButtonDown;
 	friend void onUserEvent(int cmd,int param,int param2);
-	friend void bodyCollisionCallback(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 	static void onMouseDown(BgrWin*,int x,int y,int but);
 	static void onMouseUp(BgrWin*,int x,int y,int but);
+	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
 };
 
 

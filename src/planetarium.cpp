@@ -27,15 +27,8 @@ using futil::iterable_queue;
 
 int threadFunctionPhysics(void* arg);
 int threadFunctionPlanetariumUpdate(void* arg);
-void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
-//helper function
-Sint16 convertToSint16(double value)
-{
-	return static_cast<Sint16>(value);
-}
-
-
+//custom data to be carried by each Body2D
 struct PlanetariumUserObject
 {
 	PlanetariumUserObject(SDL_Color* color)
@@ -64,15 +57,17 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   orbitTracer(), bodyCreationState(IDLE),
+  //private stuff
+  isUpdating(false),
   threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
   physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
   bodyCreationPosition(), bodyCreationVelocity(),
-  isUpdating(false), lastMouseLeftButtonDown(0)
+  lastMouseLeftButtonDown(0)
 {
 	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
-	this->physics->onCollision = bodyCollisionCallback;
+	this->physics->addCollisionListener(this);
 	if(collisionEventsMutex == null) collisionEventsMutex = SDL_CreateMutex(); //XXX not thread-safe
 }
 
@@ -136,8 +131,8 @@ void Planetarium::draw()
 								//FixMe Fix quadratic bezier spline implementation
 								Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
 								Vector2D supportPoint;// = ???
-								Sint16 pxs[] = {convertToSint16(prevPosTrans.x), convertToSint16(supportPoint.x), convertToSint16(recPosTrans.x)};
-								Sint16 pys[] = {convertToSint16(prevPosTrans.y), convertToSint16(supportPoint.y), convertToSint16(recPosTrans.y)};
+								Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
+								Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
 								bezierRGBA(this->win, pxs, pys, 2, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
 							}
 							previousPosition = recordedPosition;
@@ -361,7 +356,7 @@ int threadFunctionPlanetariumUpdate(void* arg)
 }
 
 // callback called by physics thread
-void bodyCollisionCallback(vector<Body2D*>& collidingList, Body2D& resultingMerger)
+void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
 	//reconstructs custom data
 	resultingMerger.userObject = new PlanetariumUserObject(new SDL_Color);
