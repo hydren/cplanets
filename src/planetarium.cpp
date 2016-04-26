@@ -29,6 +29,8 @@ using SDL_util::modifyColor;
 using SDL_util::getRandomColor;
 using futil::iterable_queue;
 
+const double BODY_CREATION_DIAMETER_FACTOR = 32.0;
+
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
 {
@@ -55,6 +57,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
+  bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO),
   orbitTracer(), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
@@ -62,7 +65,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
   physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
-  bodyCreationPosition(), bodyCreationVelocity(),
+  bodyCreationPosition(), bodyCreationVelocity(), bodyCreationDiameter(),
   lastMouseLeftButtonDown(0)
 {
 	modifyColor(this->bgColor, 0, 0, 0);
@@ -175,7 +178,7 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->area.x; mouseY -= this->area.y;
-			circleRGBA(this->win, mouseX, mouseY, 4, 255, 255, 255, 255);
+			circleRGBA(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
 		}
 		else if(bodyCreationState == VELOCITY_SELECTION)
 		{
@@ -183,7 +186,7 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->area.x; mouseY -= this->area.y;
-			circleRGBA(this->win, newBodyPos.x, newBodyPos.y, 4, 255, 255, 255, 255);
+			circleRGBA(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
 			lineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
 		}
 	}
@@ -405,13 +408,14 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			if(planetarium->bodyCreationState == POSITION_SELECTION)
 			{
 				planetarium->bodyCreationPosition = pointedPosition;
+				planetarium->bodyCreationDiameter = (planetarium->bodyCreationDiameterRatio/planetarium->viewportZoom) * BODY_CREATION_DIAMETER_FACTOR;
 				planetarium->bodyCreationState = VELOCITY_SELECTION;
 				return;
 			}
 			if(planetarium->bodyCreationState == VELOCITY_SELECTION)
 			{
 				Vector2D selectedVelocity = pointedPosition.difference(planetarium->bodyCreationPosition);
-				Body2D* newBody = new Body2D(550, 32, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
+				Body2D* newBody = new Body2D(550, planetarium->bodyCreationDiameter, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
 				planetarium->addCustomBody(newBody, SDL_util::getRandomColor());
 				planetarium->bodyCreationState = IDLE;
 				planetarium->setRunning();
