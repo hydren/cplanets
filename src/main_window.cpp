@@ -75,6 +75,9 @@ Spinner<unsigned>* spnTraceLength;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity;
 DropDownMenu* ddmTraceStyle;
 TextWin* txtBodies;
+RExtButton* rbBodies, *rbOptions;
+ExtRButCtrl* rbcTabControl;
+
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
 //  ================ FUNCTION PROTOTYPES ================
@@ -85,6 +88,7 @@ void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
 void onCheckBoxPressed(CheckBox* chck, bool fake);
 void onDropDownMenuButton(RButWin*,int nr,int fire);
+void onTabPressed(RExtButton*,bool is_act);
 void onUserEvent(int cmd,int param,int param2);
 void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
@@ -193,6 +197,21 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnBodyDensity));
 
 	toolbarSouthLayout->pack();
+
+//	FlowLayout tabLayout(WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING);
+//	tabLayout.spacing_h = 1;
+//	rbcTabControl = new ExtRButCtrl(Style(0, calc_color(0xe0e0e0)), onTabPressed);
+//	rbcTabControl->maybe_z = false;
+//
+//	rbBodies = rbcTabControl->add_extrbut(window, Rect(0,0,1,1), "Bodies", 1);
+//	packLabeledComponent(rbBodies);
+//	tabLayout.addComponent(rbBodies);
+//
+//	rbOptions = rbcTabControl->add_extrbut(window, Rect(0,0,1,1), "Options", 1);
+//	packLabeledComponent(rbOptions);
+//	tabLayout.addComponent(rbOptions);
+//
+//	tabLayout.pack();
 
 	//start
 	planetarium->setRunning();
@@ -351,6 +370,11 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
 		}
 	}
+}
+
+void onTabPressed(RExtButton*,bool is_act)
+{
+
 }
 
 void onUserEvent(int cmd,int param,int param2)
