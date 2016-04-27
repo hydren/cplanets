@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Create spinners for body density and diameter
 - Add spinners for simulation parameters
 - Add option to use AA (planetarium api and gui)
 - Implement choosing display period (something like sleeping time for updateView())

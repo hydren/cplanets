@@ -68,7 +68,7 @@ FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
-Spinner<double>* spnBodyDiameter;
+Spinner<double>* spnBodyDiameter, *spnBodyDensity;
 DropDownMenu* ddmTraceStyle;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
@@ -222,11 +222,17 @@ void CPlanetsGUI::MainWindow::show()
 	ddmTraceStyle->offset.y = -10;
 	toolbarSouthLayout->addComponent(ddmTraceStyle);
 
-	spnBodyDiameter = new Spinner<double>(window, Rect(0,0,2.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter");
+	spnBodyDiameter = new Spinner<double>(window, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
 	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio));
 	spnBodyDiameter->setStepValue(0.1);
 	spnBodyDiameter->offset.y -= 2;
 	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnBodyDiameter));
+
+	spnBodyDensity = new Spinner<double>(window, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
+	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity));
+	spnBodyDensity->setStepValue(0.1);
+	spnBodyDensity->offset.y -= 2;
+	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnBodyDensity));
 
 	toolbarSouthLayout->pack();
 
@@ -409,4 +415,5 @@ void onReady()
 {
 	spnTraceLength->refresh();
 	spnBodyDiameter->refresh();
+	spnBodyDensity->refresh();
 }
