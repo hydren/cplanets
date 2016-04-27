@@ -20,13 +20,6 @@ int SDL_util::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool f
 	return SDL_MapRGB(surf->format, color.r, color.g, color.b);
 }
 
-void SDL_util::modifyColor(SDL_Color& color, int r, int g, int b)
-{
-	if(r != -1) color.r = r;
-	if(b != -1) color.b = b;
-	if(g != -1) color.g = g;
-}
-
 SDL_Color* SDL_util::getRandomColor()
 {
 	SDL_Color* somecolor = new SDL_Color;

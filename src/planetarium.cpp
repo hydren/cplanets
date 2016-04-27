@@ -25,7 +25,6 @@ using std::queue;
 using std::pair;
 using std::map;
 using SDL_util::colorToInt;
-using SDL_util::modifyColor;
 using SDL_util::getRandomColor;
 using futil::iterable_queue;
 
@@ -50,7 +49,7 @@ struct Planetarium::Physics2DEventsManager
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : BgrWin(parentWidget, rect, null, null, Planetarium::onMouseDown, null, Planetarium::onMouseUp, 0, _id),
   physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
-  bgColor(SDL_Color()), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
+  bgColor(SDL_util::Color::BLACK), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
@@ -66,7 +65,6 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   bodyCreationPosition(), bodyCreationVelocity(), bodyCreationDiameter(),
   lastMouseLeftButtonDown(0)
 {
-	modifyColor(this->bgColor, 0, 0, 0);
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
 	this->physics->addCollisionListener(this);
 }

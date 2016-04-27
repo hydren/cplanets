@@ -19,11 +19,21 @@
 
 namespace SDL_util
 {
+	namespace Color
+	{
+		const SDL_Color
+			BLACK 	= {  0,  0,  0,0},
+			RED   	= {255,  0,  0,0},
+			GREEN 	= {  0,255,  0,0},
+			BLUE  	= {  0,  0,255,0},
+			YELLOW	= {255,255,  0,0},
+			CYAN 	= {  0,255,255,0},
+			MAGENTA	= {255,  0,255,0},
+			WHITE 	= {255,255,255,0};
+	}
+
 	//convert the given sdl color to an int color suitable to be used on the given surface
 	int colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA=false);
-
-	//set the color components of the given sdl color. use -1 to leave the component unchanged (i.e. modifyColor(-1,224,-1) only sets the green component to 224)
-	void modifyColor(SDL_Color& color, int r, int g, int b);
 
 	//creates a random color
 	SDL_Color* getRandomColor();
