@@ -29,8 +29,6 @@ using SDL_util::modifyColor;
 using SDL_util::getRandomColor;
 using futil::iterable_queue;
 
-const double BODY_CREATION_DIAMETER_FACTOR = 32.0;
-
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
 {
