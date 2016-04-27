@@ -45,6 +45,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 using std::cout; using std::endl;
 using std::vector;
 using CPlanetsGUI::FlowLayout;
+using Math::randomBetween;
 
 void runOnce(void(func)(void))
 {
@@ -297,6 +298,9 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_a:
 			if(down) onButtonPressed(btnAddBody);
 			break;
+		case SDLK_r:
+			if(down) onButtonPressed(btnAddRandom);
+			break;
 		case SDLK_o:
 			if(down) onButtonPressed(btnRecolorAll);
 			break;
@@ -334,7 +338,15 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnAddRandom)
 	{
-		planetarium->addCustomBody(new Body2D(550, 32, Vector2D(Math::randomBetween(32, 64), Math::randomBetween(64, 128)), Vector2D(Math::randomBetween(0, 8), Math::randomBetween(0, 8)), Vector2D()), SDL_util::getRandomColor());
+		double az = 1/planetarium->viewportZoom;
+		double diameter = (planetarium->bodyCreationDiameterRatio * az) * Planetarium::BODY_CREATION_DIAMETER_FACTOR;
+		double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * diameter * diameter * diameter;
+		double speed = 10; //this should be parametrized
+		Vector2D randomPosition(randomBetween(0, planetarium->tw_area.w), randomBetween(0, planetarium->tw_area.h));
+		Vector2D randomVelocity(randomBetween(-speed * az, speed * az), randomBetween(-speed * az, speed * az));
+		randomPosition.scale(az).add(planetarium->viewportPosition);
+
+		planetarium->addCustomBody(new Body2D(mass, diameter, randomPosition, randomVelocity, Vector2D::NULL_VECTOR), SDL_util::getRandomColor());
 	}
 
 	if(btn == btnRecolorAll)
