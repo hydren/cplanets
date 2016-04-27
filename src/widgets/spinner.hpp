@@ -8,6 +8,8 @@
 #ifndef WIDGETS_SPINNER_HPP_
 #define WIDGETS_SPINNER_HPP_
 
+#include <stdexcept>
+
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
 #include "abstract_layout.hpp"
@@ -28,13 +30,13 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 	DialogWin spinner;
 	Button btnInc, btnDec;
 
-	Spinner(WinBase *pw,Rect area,const char* txt)
+	Spinner(WinBase *pw, Rect area, const char* label=null, Type* value=null)
 	: spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h), ++Spinner_static::nextId),
 	  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
 	  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue),
-	  value(new Type(1)), step(1), min(0), max(9999)
+	  value(value==null? new Type(1) : value), step(1), min(0), max(9999)
 	{
-		this->spinner.dialog_label(txt);
+		if(label != null) this->spinner.dialog_label(label);
 		this->spinner.cmd = validateField;
 		Spinner_static::references[&btnInc] = this; //register kludge-type reference to this spinner
 		Spinner_static::references[&btnDec] = this; //register kludge-type reference to this spinner
@@ -84,7 +86,8 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 	void setValue(Type* val)
 	{
 		this->value = val;
-		refresh();
+		if(sdl_running)
+			refresh();
 	}
 
 	Type getStepValue()
@@ -92,10 +95,12 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 		return this->step;
 	}
 
-	void setStepValue(Type v=1.0)
+	void setStepValue(Type v)
 	{
-		if(v > 0) //step value must be non-negative
-			this->step = v;
+		if(v < 0) //step value must be non-negative
+			throw std::invalid_argument("Specified step value in Spinner is negative");
+
+		this->step = v;
 	}
 
 	void incrementValue()
@@ -116,7 +121,12 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 		this->refresh();
 	}
 
-	/** Refresh the text according to this spinner's value */
+	void setLabel(const char* lbl)
+	{
+		this->spinner.dialog_label(lbl);
+	}
+
+	/** Refresh the text according to this spinner's value.  */
 	void refresh()
 	{
 		string strValue = string() + *(this->value);
@@ -126,7 +136,7 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 		btnDec.draw_blit_upd();
 	}
 
-	private:
+	protected:
 	Type* value, step, min, max;
 
 	bool isValidValue(Type val)
