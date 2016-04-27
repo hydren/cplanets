@@ -68,6 +68,7 @@ FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
+Spinner<double>* spnBodyDiameter;
 DropDownMenu* ddmTraceStyle;
 TextWin* txtBodies;
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
@@ -206,8 +207,9 @@ void CPlanetsGUI::MainWindow::show()
 	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
+	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
 	spnTraceLength->offset.y -= 2;
-	toolbarSouthLayout->addComponent((CPlanetsGUI::Layout::Element*) spnTraceLength);
+	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnTraceLength));
 
 	DropDownMenuFactory factory;
 	factory.setLabel("Trace style: ", true);
@@ -219,6 +221,12 @@ void CPlanetsGUI::MainWindow::show()
 	ddmTraceStyle = factory.createAt(window);
 	ddmTraceStyle->offset.y = -10;
 	toolbarSouthLayout->addComponent(ddmTraceStyle);
+
+	spnBodyDiameter = new Spinner<double>(window, Rect(0,0,2.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter");
+	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio));
+	spnBodyDiameter->setStepValue(0.1);
+	spnBodyDiameter->offset.y -= 2;
+	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnBodyDiameter));
 
 	toolbarSouthLayout->pack();
 
@@ -399,6 +407,6 @@ void onPlanetariumBodyCreation(Body2D& createdBody)
 
 void onReady()
 {
-	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
-	spnTraceLength->spinner.unset_cursor();
+	spnTraceLength->refresh();
+	spnBodyDiameter->refresh();
 }
