@@ -12,8 +12,6 @@
 
 #include "futil/futil.hpp"
 
-#include "main_window.hpp"
-
 using std::vector;
 
 CPlanetsGUI::FlowLayout::FlowLayout(int x, int y, Rect max)

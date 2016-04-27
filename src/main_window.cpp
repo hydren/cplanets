@@ -18,6 +18,7 @@
 #include "widgets/flow_layout.hpp"
 #include "widgets/drop_menu.hpp"
 #include "widgets/spinner.hpp"
+#include "widgets/widgets_util.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -46,6 +47,8 @@ using std::cout; using std::endl;
 using std::vector;
 using CPlanetsGUI::FlowLayout;
 using Math::randomBetween;
+using SDL_util::LabeledComponentPacker;
+using SDL_util::packLabeledComponent;
 
 void runOnce(void(func)(void))
 {
@@ -95,56 +98,6 @@ struct CustomUniverseListener extends Planetarium::UniverseEventListener
 	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
 };
 
-//  ================ CPlanetsGUI namespace ================
-void CPlanetsGUI::packLabeledComponent(Button* btn)
-{
-	int properWidth = btn->label.render_t->text_width(btn->label.str) + 2*WIDGETS_SPACING;
-	int properHeight = TOOLBAR_SIZE - 2*WIDGETS_SPACING;
-	btn->widen(properWidth - btn->tw_area.w, properHeight - btn->tw_area.h);
-}
-
-void CPlanetsGUI::packLabeledComponent(CheckBox* btn)
-{
-	int properHeight = 14;
-	int properWidth = btn->label.render_t->text_width(btn->label.str) + 2*WIDGETS_SPACING + properHeight;
-	btn->widen(properWidth - btn->tw_area.w, properHeight - btn->tw_area.h);
-}
-
-void CPlanetsGUI::setComponentPosition(WinBase* component, Point& position)
-{
-	setComponentPosition(component, position.x, position.y);
-}
-
-void CPlanetsGUI::setComponentPosition(WinBase* component, int x, int y)
-{
-	setComponentPositionX(component, x);
-	setComponentPositionY(component, y);
-}
-
-void CPlanetsGUI::setComponentPositionX(WinBase* component, int x)
-{
-	component->area.x = x;
-	component->tw_area.x = x;
-	component->title_area.x = x;
-	component->title_top.x = x;
-	if (component->parent)
-	{
-		component->tw_area.x=component->area.x+component->parent->tw_area.x;
-	}
-}
-
-void CPlanetsGUI::setComponentPositionY(WinBase* component, int y)
-{
-	component->area.y = y;
-	component->tw_area.y = y;
-	component->title_area.y = y-17;
-	component->title_top.y = y-17;
-	if (component->parent)
-	{
-		component->tw_area.y=component->area.y+component->parent->tw_area.y;
-	}
-}
-
 // ================ CPlanetsGUI::MainWindow namespace ================
 void CPlanetsGUI::MainWindow::show()
 {
@@ -166,27 +119,29 @@ void CPlanetsGUI::MainWindow::show()
 
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
 
+	LabeledComponentPacker packer(TOOLBAR_SIZE-2*WIDGETS_SPACING);
+
 	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
-	packLabeledComponent(btnAddBody);
+	packer.pack(btnAddBody);
 	toolbarNorthLayout->addComponent(btnAddBody);
 
 	btnAddRandom = new Button(window, 0, genericButtonSize, "Add random", onButtonPressed);
-	packLabeledComponent(btnAddRandom);
+	packer.pack(btnAddRandom);
 	toolbarNorthLayout->addComponent(btnAddRandom);
 
 
 	btnRecolorAll = new Button(window, 0, genericButtonSize, "Recolor all bodies", onButtonPressed);
-	packLabeledComponent(btnRecolorAll);
+	packer.pack(btnRecolorAll);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
 
 	toolbarNorthLayout->addComponent(new CPlanetsGUI::Layout::Spacer(toolbarNorthLayout));
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
-	packLabeledComponent(btnRun);
+	packer.pack(btnRun);
 	toolbarNorthLayout->addComponent(btnRun);
 
 	btnPause = new Button(window, 0, genericButtonSize, "Pause", onButtonPressed);
-	packLabeledComponent(btnPause);
+	packer.pack(btnPause);
 	toolbarNorthLayout->addComponent(btnPause);
 
 	toolbarNorthLayout->pack();

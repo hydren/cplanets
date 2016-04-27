@@ -21,17 +21,6 @@ namespace CPlanetsGUI
 {
 	const int USER_EVENT_ID__REDRAW_COMPONENT = 192;
 
-	//adjusts the given button size according to its label
-	void packLabeledComponent(Button* btn);
-
-	//adjusts the given checkbox size according to its label
-	void packLabeledComponent(CheckBox* chck);
-
-	void setComponentPosition(WinBase* component, Point& position);
-	void setComponentPosition(WinBase* component, int x, int y);
-	void setComponentPositionX(WinBase* component, int x);
-	void setComponentPositionY(WinBase* component, int y);
-
 	//stuff related to the main window
 	namespace MainWindow
 	{

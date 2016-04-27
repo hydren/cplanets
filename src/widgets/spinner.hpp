@@ -12,7 +12,9 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
+
 #include "abstract_layout.hpp"
+#include "widgets_util.hpp"
 
 namespace Spinner_static
 {
@@ -51,9 +53,9 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 
 	virtual void setPosition(Point position)
 	{
-		CPlanetsGUI::setComponentPosition(&spinner, position.x, position.y);
-		CPlanetsGUI::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
-		CPlanetsGUI::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
+		SDL_util::setComponentPosition(&spinner, position.x, position.y);
+		SDL_util::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
+		SDL_util::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
 	}
 
 	virtual Rect getSize() const
@@ -64,8 +66,8 @@ struct Spinner extends CPlanetsGUI::Layout::Element
 	virtual void setSize(Rect size)
 	{
 		spinner.widen(size.w - spinner.tw_area.w, size.h - spinner.tw_area.h);
-		CPlanetsGUI::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
-		CPlanetsGUI::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
+		SDL_util::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
+		SDL_util::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
 	}
 
 	virtual bool isStretched() const
