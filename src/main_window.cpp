@@ -222,6 +222,8 @@ void CPlanetsGUI::MainWindow::show()
 	ddmTraceStyle->offset.y = -10;
 	toolbarSouthLayout->addComponent(ddmTraceStyle);
 
+	toolbarSouthLayout->addComponent(new Layout::Spacer(Rect(0,0,8,0)));
+
 	spnBodyDiameter = new Spinner<double>(window, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
 	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio));
 	spnBodyDiameter->setStepValue(0.1);
