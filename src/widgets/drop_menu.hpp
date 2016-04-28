@@ -11,10 +11,10 @@
 #include "abstract_layout.hpp"
 #include "label_win.hpp"
 
-struct DropDownMenu extends CPlanetsGUI::Layout::Element
+struct DropDownMenu extends SDL_util::Layout::Element
 {
 	CmdMenu* cmdMenu;
-	LabelWin* label;
+	SDL_util::LabelWin* label;
 	bool isLabelOnTop;
 
 	virtual ~DropDownMenu();

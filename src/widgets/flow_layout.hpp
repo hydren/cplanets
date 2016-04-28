@@ -13,7 +13,7 @@
 
 #include "abstract_layout.hpp"
 
-namespace CPlanetsGUI
+namespace SDL_util
 {
 	/** A layout that places its elements side by side, with a minimum spacing.
 	 *  If it contains a stretching component, the component is stretch until reach this layout maxSize.

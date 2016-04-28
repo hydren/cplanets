@@ -9,6 +9,8 @@
 
 using std::vector;
 
+using SDL_util::LabelWin;
+
 // DropDownMenu ===========================================================================================
 
 DropDownMenu::~DropDownMenu()
@@ -24,13 +26,13 @@ Point DropDownMenu::getPosition() const
 
 void DropDownMenu::setPosition(Point position)
 {
-	CPlanetsGUI::Layout::WinBaseWrapper::setWinBasePosition(this->label, position);
+	SDL_util::Layout::WinBaseWrapper::setWinBasePosition(this->label, position);
 
 	//apply offset due to label
 	if(this->isLabelOnTop) position.y += this->label->tw_area.h;
 	else position.x += this->label->tw_area.w;
 
-	CPlanetsGUI::Layout::WinBaseWrapper::setWinBasePosition(this->cmdMenu->src, position);
+	SDL_util::Layout::WinBaseWrapper::setWinBasePosition(this->cmdMenu->src, position);
 }
 
 Rect DropDownMenu::getSize() const

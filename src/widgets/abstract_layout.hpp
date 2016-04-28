@@ -13,7 +13,7 @@
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
 
-namespace CPlanetsGUI
+namespace SDL_util
 {
 	/** An abstract layout manager. */
 	struct Layout

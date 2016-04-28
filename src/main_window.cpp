@@ -45,10 +45,12 @@ void workaround_sdl_stream_file_close() // part of workaround
 
 using std::cout; using std::endl;
 using std::vector;
-using CPlanetsGUI::FlowLayout;
 using Math::randomBetween;
+using SDL_util::FlowLayout;
 using SDL_util::LabeledComponentPacker;
 using SDL_util::packLabeledComponent;
+using SDL_util::Spinner;
+using SDL_util::Layout;
 
 void runOnce(void(func)(void))
 {
@@ -138,7 +140,7 @@ void CPlanetsGUI::MainWindow::show()
 	packer.pack(btnRecolorAll);
 	toolbarNorthLayout->addComponent(btnRecolorAll);
 
-	toolbarNorthLayout->addComponent(new CPlanetsGUI::Layout::Spacer(toolbarNorthLayout));
+	toolbarNorthLayout->addComponent(new SDL_util::Layout::Spacer(toolbarNorthLayout));
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
 	packer.pack(btnRun);
@@ -169,7 +171,7 @@ void CPlanetsGUI::MainWindow::show()
 	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
 	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
 	spnTraceLength->offset.y -= 2;
-	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnTraceLength));
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(spnTraceLength));
 
 	DropDownMenuFactory factory;
 	factory.setLabel("Trace style: ", true);
@@ -188,13 +190,13 @@ void CPlanetsGUI::MainWindow::show()
 	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio));
 	spnBodyDiameter->setStepValue(0.1);
 	spnBodyDiameter->offset.y -= 2;
-	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnBodyDiameter));
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(spnBodyDiameter));
 
 	spnBodyDensity = new Spinner<double>(window, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
 	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity));
 	spnBodyDensity->setStepValue(0.1);
 	spnBodyDensity->offset.y -= 2;
-	toolbarSouthLayout->addComponent(static_cast<CPlanetsGUI::Layout::Element*>(spnBodyDensity));
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(spnBodyDensity));
 
 	toolbarSouthLayout->pack();
 
