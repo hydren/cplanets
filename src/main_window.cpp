@@ -15,10 +15,11 @@
 #include "SDL_util.hpp"
 
 #include "planetarium.hpp"
-#include "widgets/flow_layout.hpp"
-#include "widgets/drop_menu.hpp"
-#include "widgets/spinner.hpp"
 #include "widgets/widgets_util.hpp"
+#include "widgets/flow_layout.hpp"
+#include "widgets/spinner.hpp"
+#include "widgets/drop_menu.hpp"
+#include "widgets/tab_set.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -51,6 +52,7 @@ using SDL_util::LabeledComponentPacker;
 using SDL_util::packLabeledComponent;
 using SDL_util::Spinner;
 using SDL_util::Layout;
+using SDL_util::TabSet;
 
 void runOnce(void(func)(void))
 {
@@ -77,8 +79,8 @@ Spinner<unsigned>* spnTraceLength;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity;
 DropDownMenu* ddmTraceStyle;
 TextWin* txtBodies;
-RExtButton* rbBodies, *rbOptions;
-ExtRButCtrl* rbcTabControl;
+TabSet* tabs;
+BgrWin* tabBodies, *tabOptions;
 
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
@@ -90,7 +92,6 @@ void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
 void onCheckBoxPressed(CheckBox* chck, bool fake);
 void onDropDownMenuButton(RButWin*,int nr,int fire);
-void onTabPressed(RExtButton*,bool is_act);
 void onUserEvent(int cmd,int param,int param2);
 void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
@@ -152,13 +153,29 @@ void CPlanets::showMainWindow()
 
 	toolbarNorthLayout->pack();
 
-	Rect txtBodiesSize(
-		WIDGETS_SPACING,
-		TOOLBAR_SIZE + WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font),
+	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING, Rect(0,0,0,22));
+
+	Rect sizeTab(
+		tabs->position.x,
+		tabs->position.y + tabs->maxSize.h,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		windowSize.h - 2.25*TOOLBAR_SIZE - TTF_FontHeight(draw_title_ttf->ttf_font)
+		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->maxSize.h
 	);
-	txtBodies = new TextWin(window, 0, txtBodiesSize, 8, "Bodies");
+	tabBodies = new BgrWin(window, sizeTab, null, null, null, null, null, window->bgcol);
+	tabs->addTab("Bodies", tabBodies);
+
+	Rect txtBodiesSize(
+			0.5*WIDGETS_SPACING,
+			0.5*WIDGETS_SPACING,
+			sizeTab.w - WIDGETS_SPACING,
+			sizeTab.h - WIDGETS_SPACING);
+	txtBodies = new TextWin(tabBodies, 0, txtBodiesSize, 8, null);
+
+	tabOptions = new BgrWin(window, sizeTab, null, null, null, null, null, window->bgcol);
+	tabs->addTab("Options", tabOptions);
+
+	tabs->pack();
+	tabs->setActiveTab(tabBodies);
 
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
@@ -200,21 +217,6 @@ void CPlanets::showMainWindow()
 
 	toolbarSouthLayout->pack();
 
-//	FlowLayout tabLayout(WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING);
-//	tabLayout.spacing_h = 1;
-//	rbcTabControl = new ExtRButCtrl(Style(0, calc_color(0xe0e0e0)), onTabPressed);
-//	rbcTabControl->maybe_z = false;
-//
-//	rbBodies = rbcTabControl->add_extrbut(window, Rect(0,0,1,1), "Bodies", 1);
-//	packLabeledComponent(rbBodies);
-//	tabLayout.addComponent(rbBodies);
-//
-//	rbOptions = rbcTabControl->add_extrbut(window, Rect(0,0,1,1), "Options", 1);
-//	packLabeledComponent(rbOptions);
-//	tabLayout.addComponent(rbOptions);
-//
-//	tabLayout.pack();
-
 	//start
 	planetarium->setRunning();
 	get_events();
@@ -234,7 +236,12 @@ void onWindowResize(int dw, int dh)
 {
 //	cout << "resize event" << endl;
 	planetarium->widen(dw, dh);
+
+	tabBodies->widen(0, dh);
 	txtBodies->widen(0, dh);
+
+	tabOptions->widen(0, dh);
+
 
 	toolbarNorthLayout->pack();
 	toolbarSouthLayout->position.y = window->tw_area.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING);
@@ -372,11 +379,6 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
 		}
 	}
-}
-
-void onTabPressed(RExtButton*,bool is_act)
-{
-
 }
 
 void onUserEvent(int cmd,int param,int param2)
