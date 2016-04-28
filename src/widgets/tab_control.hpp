@@ -16,15 +16,16 @@ namespace SDL_util
 {
 	struct TabController
 	{
-		WinBase* const commonParent;
 		ExtRButCtrl* tabButtonsController;
 		std::vector<RExtButton*> tabButtons;
 		std::vector<BgrWin*> tabsPanels;
 
-		TabController(WinBase* parent);
+		TabController();
 
 		/// The safe way to add tabs with this controller.
-		void addTab(Rect tabButtonRect, Label lab, BgrWin* content);
+		/// Creates a button with the given parameters and register it in the controller.
+		/// The button is associated to the given BgrWin* and will make it visible when clicked.
+		RExtButton* addTab(WinBase* parent, Rect tabButtonRect, Label lab, BgrWin* content);
 //		void removeTab(unsigned index); //todo do a removeTab() on TabController
 
 		/// Sets the active (visible) tab.

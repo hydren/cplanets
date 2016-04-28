@@ -18,6 +18,7 @@ namespace SDL_util
 	/// A set of tab buttons arranged together. It also contains an inner tab controller.
 	struct TabSet
 	{
+		WinBase* const commonParent;
 		TabController controller;
 		FlowLayout layout;
 
