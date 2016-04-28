@@ -21,7 +21,6 @@ namespace SDL_util
 		std::string txt;
 		RenderText* textRenderer;
 
-		//WinBase *pw,const char *t,int x,int y,int dx,int dy,Uint32 bgcol,Id id
 		LabelWin(WinBase *pw, Rect bounds, std::string str, Id id=0);
 
 		virtual ~LabelWin();

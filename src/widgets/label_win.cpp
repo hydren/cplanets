@@ -22,5 +22,5 @@ void LabelWin::draw()
 void LabelWin::setTextRenderer(RenderText* txtrnd)
 {
 	this->textRenderer = txtrnd;
-	this->widen(this->tw_area.w - txtrnd->text_width(this->txt.c_str()), this->tw_area.h - TTF_FontHeight(txtrnd->ttf_font));
+	this->widen(this->tw_area.w - txtrnd->text_width(this->txt.c_str()), this->tw_area.h - TTF_FontHeight(txtrnd->ttf_font)); //fixme this overrides user-specified size
 }
