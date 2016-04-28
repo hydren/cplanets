@@ -16,9 +16,10 @@
 namespace SDL_util
 {
 	/// A set of tab buttons arranged together. It also contains an inner tab controller.
-	struct TabSet extends FlowLayout
+	struct TabSet
 	{
 		TabController controller;
+		FlowLayout layout;
 
 		/// Creates a TabSet on the specified position. See FlowLayout for more info on its behavior.
 		TabSet(WinBase* parent, int x, int y, Rect maxSize=Rect(-1,-1,0,0));

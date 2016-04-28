@@ -14,8 +14,8 @@ using SDL_util::TabSet;
 using SDL_util::FlowLayout;
 
 TabSet::TabSet(WinBase* parent, int x, int y, Rect maxSize)
-: FlowLayout(x, y, maxSize),
-  controller(parent)
+: controller(parent),
+  layout(x, y, maxSize)
 {}
 
 void TabSet::addTab(Label lab, BgrWin* content)
@@ -23,8 +23,8 @@ void TabSet::addTab(Label lab, BgrWin* content)
 	controller.addTab(Rect(0,0,1,1), lab, content);
 	RExtButton* tabBtn = controller.tabButtons.back();
 	SDL_util::packLabeledComponent(tabBtn);
-	addComponent(tabBtn);
-	pack();
+	layout.addComponent(tabBtn);
+	layout.pack();
 }
 
 void TabSet::setActiveTab(BgrWin* tabContent)

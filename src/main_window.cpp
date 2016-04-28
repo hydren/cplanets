@@ -156,10 +156,10 @@ void CPlanets::showMainWindow()
 	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING, Rect(0,0,0,22));
 
 	Rect sizeTab(
-		tabs->position.x,
-		tabs->position.y + tabs->maxSize.h,
+		tabs->layout.position.x,
+		tabs->layout.position.y + tabs->layout.maxSize.h,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->maxSize.h
+		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->layout.maxSize.h
 	);
 	tabBodies = new BgrWin(window, sizeTab, null, SDL_util::drawDefaultBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Bodies", tabBodies);
@@ -174,7 +174,7 @@ void CPlanets::showMainWindow()
 	tabOptions = new BgrWin(window, sizeTab, null, SDL_util::drawDefaultBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Options", tabOptions);
 
-	tabs->pack();
+	tabs->layout.pack();
 	tabs->setActiveTab(tabBodies);
 
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
