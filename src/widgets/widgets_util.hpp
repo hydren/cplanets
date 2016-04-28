@@ -40,6 +40,9 @@ namespace SDL_util
 		void pack(RExtButton* rebt) { packLabeledComponent(rebt, height, padding); }
 		void pack(WinBase* wb, Label& lbl) { packLabeledComponent(wb, lbl, height, padding); }
 	};
+
+	/// Default draw() function for BgrWin's. Fills its area with parent's background color.
+	void drawDefaultBgrWin(BgrWin* bgrWin);
 }
 
 #endif /* WIDGETS_WIDGETS_UTIL_HPP_ */

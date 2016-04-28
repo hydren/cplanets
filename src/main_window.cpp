@@ -161,7 +161,7 @@ void CPlanets::showMainWindow()
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
 		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->maxSize.h
 	);
-	tabBodies = new BgrWin(window, sizeTab, null, null, null, null, null, window->bgcol);
+	tabBodies = new BgrWin(window, sizeTab, null, SDL_util::drawDefaultBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Bodies", tabBodies);
 
 	Rect txtBodiesSize(
@@ -171,7 +171,7 @@ void CPlanets::showMainWindow()
 			sizeTab.h - WIDGETS_SPACING);
 	txtBodies = new TextWin(tabBodies, 0, txtBodiesSize, 8, null);
 
-	tabOptions = new BgrWin(window, sizeTab, null, null, null, null, null, window->bgcol);
+	tabOptions = new BgrWin(window, sizeTab, null, SDL_util::drawDefaultBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Options", tabOptions);
 
 	tabs->pack();
