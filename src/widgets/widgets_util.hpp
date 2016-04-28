@@ -41,7 +41,7 @@ namespace SDL_util
 		void pack(WinBase* wb, Label& lbl) { packLabeledComponent(wb, lbl, height, padding); }
 	};
 
-	/// Default draw() function for BgrWin's. Fills its area with parent's background color.
+	/// Default draw() function for BgrWin's. Fills its area with background color.
 	void drawDefaultBgrWin(BgrWin* bgrWin);
 }
 

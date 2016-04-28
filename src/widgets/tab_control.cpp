@@ -20,9 +20,8 @@ using SDL_util::TabController;
 map<RExtButton*, TabController*> references; //xxx kludge to maintain references to TabController's
 
 TabController::TabController()
-: tabButtonsController(null)
+: tabButtonsController(new ExtRButCtrl(Style(0, calc_color(0xe0e0e0)), onTabButtonClicked))
 {
-	tabButtonsController = new ExtRButCtrl(Style(0, calc_color(0xe0e0e0)), onTabButtonClicked);
 	tabButtonsController->maybe_z = false;
 }
 
@@ -53,7 +52,7 @@ void TabController::setActiveTab(BgrWin* tabContent)
 
 void TabController::onTabButtonClicked(RExtButton* rbTab, bool is_act)
 {
-	TabController* controller = references[rbTab];
+	TabController* controller = references[rbTab]; //xxx kludge to maintain references to TabController's
 	foreach(BgrWin*, panel, vector<BgrWin*>, controller->tabsPanels)
 	{
 		panel->hide();

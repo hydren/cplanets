@@ -71,5 +71,5 @@ void SDL_util::packLabeledComponent(RExtButton* btn, unsigned height, int paddin
 void SDL_util::drawDefaultBgrWin(BgrWin* bgrWin)
 {
 	bgrWin->init_gui();
-	SDL_FillRect(bgrWin->win, null, bgrWin->parent->bgcol); //clears the screen
+	SDL_FillRect(bgrWin->win, null, bgrWin->bgcol); //clears the screen
 }
