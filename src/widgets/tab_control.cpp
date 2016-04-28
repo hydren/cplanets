@@ -23,6 +23,7 @@ TabController::TabController(WinBase* parent)
 : commonParent(parent), tabButtonsController(null)
 {
 	tabButtonsController = new ExtRButCtrl(Style(0, calc_color(0xe0e0e0)), onTabButtonClicked);
+	tabButtonsController->maybe_z = false;
 }
 
 void TabController::addTab(Rect tabButtonRect, Label lab, BgrWin* content)
@@ -30,6 +31,7 @@ void TabController::addTab(Rect tabButtonRect, Label lab, BgrWin* content)
 	this->tabButtons.push_back(this->tabButtonsController->add_extrbut(this->commonParent, tabButtonRect, lab, Id(this->tabButtons.size())));
 	this->tabsPanels.push_back(content);
 	references[this->tabButtons.back()] = this; //xxx kludge to maintain references to TabController's
+	this->setActiveTab(static_cast<unsigned>(0));
 }
 
 /// Sets the active (visible) tab.
