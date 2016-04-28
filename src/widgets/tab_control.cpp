@@ -59,6 +59,7 @@ void TabController::onTabButtonClicked(RExtButton* rbTab, bool is_act)
 	}
 
 	int index = Collections::indexOf(controller->tabButtons, rbTab);
+	controller->tabsPanels[index]->draw_blit_recur();
 	controller->tabsPanels[index]->show();
 }
 
