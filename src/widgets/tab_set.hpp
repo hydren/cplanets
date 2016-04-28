@@ -30,6 +30,8 @@ namespace SDL_util
 		/// Sets the active (visible) tab.
 		void setActiveTab(unsigned index);
 		void setActiveTab(BgrWin* tabContent);
+
+		static void drawTabStyleBgrWin(BgrWin* bgrWin);
 	};
 }
 
