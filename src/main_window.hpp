@@ -17,16 +17,12 @@
 extern const unsigned WIDGETS_SPACING;
 
 //contains all cplanets gui related stuff
-namespace CPlanetsGUI
+namespace CPlanets
 {
 	const int USER_EVENT_ID__REDRAW_COMPONENT = 192;
 
-	//stuff related to the main window
-	namespace MainWindow
-	{
-		//show the main window and starts all its events treatments
-		void show();
-	}
+	//show the main window and starts all its events treatments
+	void showMainWindow();
 }
 
 #endif /* MAIN_WINDOW_HPP_ */

@@ -1,8 +1,6 @@
 -------------- To Do
 
-- Move FlowLayout to SDL_util namespace
 - Do tabs for bodies list/options. Move parameters controls to Options tab (in place of them, put quick-action buttons, i.e. double trace length, decrement density)
-- Rename CPlanetsGUI namespace to CPlanets. Abolish CPlanetsGUI::MainWindow namespace.
 - Add spinners for simulation parameters
 - Add option to use AA (planetarium api and gui)
 - Implement choosing display period (something like sleeping time for updateView())

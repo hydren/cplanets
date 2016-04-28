@@ -105,7 +105,7 @@ struct CustomUniverseListener extends Planetarium::UniverseEventListener
 };
 
 // ================ CPlanetsGUI::MainWindow namespace ================
-void CPlanetsGUI::MainWindow::show()
+void CPlanets::showMainWindow()
 {
 	Rect windowSize(0, 0, 640, 480);
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
@@ -381,7 +381,7 @@ void onTabPressed(RExtButton*,bool is_act)
 
 void onUserEvent(int cmd,int param,int param2)
 {
-	if(cmd == CPlanetsGUI::USER_EVENT_ID__REDRAW_COMPONENT)
+	if(cmd == CPlanets::USER_EVENT_ID__REDRAW_COMPONENT)
 	{
 		if(param == PLANETARIUM_ID)
 		{

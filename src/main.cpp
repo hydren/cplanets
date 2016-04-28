@@ -28,7 +28,7 @@ int main(int arc, char* argv[])
 	try
 	{
 		srand(time(null));
-		CPlanetsGUI::MainWindow::show();
+		CPlanets::showMainWindow();
 		return EXIT_SUCCESS;
 	}
 	catch (exception& e)
