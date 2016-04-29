@@ -20,6 +20,7 @@
 #include "widgets/spinner.hpp"
 #include "widgets/drop_menu.hpp"
 #include "widgets/tab_set.hpp"
+#include "widgets/label_win.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -50,9 +51,11 @@ using Math::randomBetween;
 using SDL_util::FlowLayout;
 using SDL_util::LabeledComponentPacker;
 using SDL_util::packLabeledComponent;
+using SDL_util::setComponentPosition;
 using SDL_util::Spinner;
 using SDL_util::Layout;
 using SDL_util::TabSet;
+using SDL_util::LabelWin;
 
 void runOnce(void(func)(void))
 {
@@ -177,18 +180,18 @@ void CPlanets::showMainWindow()
 	tabs->layout.pack();
 	tabs->setActiveTab(tabBodies);
 
-	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
-	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
+	LabelWin lblOrbitTracing(tabOptions, Rect(), "Orbit tracing");
+	lblOrbitTracing.setTextRenderer(draw_title_ttf);
+	setComponentPosition(&lblOrbitTracing, Point(WIDGETS_SPACING, WIDGETS_SPACING));
 
-	chckTraceOrbit = new CheckBox(window, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
+	chckTraceOrbit = new CheckBox(tabOptions, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
+	setComponentPosition(chckTraceOrbit, Point(lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + WIDGETS_SPACING));
 	packLabeledComponent(chckTraceOrbit);
-	toolbarSouthLayout->addComponent(chckTraceOrbit);
 
-	spnTraceLength = new Spinner<unsigned>(window, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
+	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
+	spnTraceLength->setPosition(Point(chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + WIDGETS_SPACING));
 	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
-	spnTraceLength->offset.y -= 2;
-	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(spnTraceLength));
 
 	DropDownMenuFactory factory;
 	factory.setLabel("Trace style: ", true);
@@ -197,23 +200,29 @@ void CPlanets::showMainWindow()
 	factory.addItem("Linear");
 	factory.addItem("Point");
 	factory.setCallback(onDropDownMenuButton);
-	ddmTraceStyle = factory.createAt(window);
+	ddmTraceStyle = factory.createAt(tabOptions);
+	ddmTraceStyle->setPosition(Point(spnTraceLength->getPosition().x + spnTraceLength->getSize().w + WIDGETS_SPACING, spnTraceLength->getPosition().y));
 	ddmTraceStyle->offset.y = -10;
-	toolbarSouthLayout->addComponent(ddmTraceStyle);
 
-	toolbarSouthLayout->addComponent(new Layout::Spacer(Rect(0,0,8,0)));
+	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
+	lblBodyCreation.setTextRenderer(draw_title_ttf);
+	setComponentPosition(&lblBodyCreation, Point(spnTraceLength->getPosition().x, ddmTraceStyle->getPosition().y + ddmTraceStyle->getSize().h + 2*WIDGETS_SPACING));
 
-	spnBodyDiameter = new Spinner<double>(window, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
+	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
+	spnBodyDiameter->setPosition(Point(lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING));
 	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio));
 	spnBodyDiameter->setStepValue(0.1);
 	spnBodyDiameter->offset.y -= 2;
-	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(spnBodyDiameter));
 
-	spnBodyDensity = new Spinner<double>(window, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
+	spnBodyDensity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
+	spnBodyDensity->setPosition(Point(spnBodyDiameter->getPosition().x + spnBodyDiameter->getSize().w + WIDGETS_SPACING, spnBodyDiameter->getPosition().y));
 	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity));
 	spnBodyDensity->setStepValue(0.1);
 	spnBodyDensity->offset.y -= 2;
-	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(spnBodyDensity));
+
+
+	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
+	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
 
 	toolbarSouthLayout->pack();
 
