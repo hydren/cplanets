@@ -13,7 +13,7 @@
 ///Utilities for SDL_widgets
 namespace SDL_util
 {
-	void setComponentPosition(WinBase* component, Point& position);
+	void setComponentPosition(WinBase* component, const Point& position);
 	void setComponentPosition(WinBase* component, int x, int y);
 	void setComponentPositionX(WinBase* component, int x);
 	void setComponentPositionY(WinBase* component, int y);

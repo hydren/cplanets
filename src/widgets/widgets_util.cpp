@@ -9,7 +9,7 @@
 
 #include "futil/futil.hpp"
 
-void SDL_util::setComponentPosition(WinBase* component, Point& position)
+void SDL_util::setComponentPosition(WinBase* component, const Point& position)
 {
 	setComponentPosition(component, position.x, position.y);
 }
