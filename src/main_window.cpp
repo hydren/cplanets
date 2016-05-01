@@ -21,6 +21,7 @@
 #include "widgets/drop_menu.hpp"
 #include "widgets/tab_set.hpp"
 #include "widgets/label_win.hpp"
+#include "widgets/toogle_button.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -56,6 +57,7 @@ using SDL_util::Spinner;
 using SDL_util::Layout;
 using SDL_util::TabSet;
 using SDL_util::LabelWin;
+using SDL_util::ToogleButton;
 
 void runOnce(void(func)(void))
 {
@@ -68,24 +70,32 @@ const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for 
 const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
 const int PLANETARIUM_ID = 959;
-string VERSION_TEXT;
+string VERSION_TEXT; //not really a constant, but still
 
 //  ================ VARIABLES ===============
+Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
-Planetarium* planetarium;
-FlowLayout* toolbarNorthLayout, *toolbarSouthLayout;
+
+FlowLayout* toolbarNorthLayout;
 Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
+
+TabSet* tabs;
+
+BgrWin* tabBodies;
+TextWin* txtBodies;
+
+BgrWin* tabOptions;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity;
 DropDownMenu* ddmTraceStyle;
-TextWin* txtBodies;
-TabSet* tabs;
-BgrWin* tabBodies, *tabOptions;
 
-Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
+Planetarium* planetarium;
+
+FlowLayout* toolbarSouthLayout;
+ToogleButton* tgbTraceOrbit;
 
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
@@ -223,6 +233,11 @@ void CPlanets::showMainWindow()
 
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
+
+	tgbTraceOrbit = new ToogleButton(window, 0, genericButtonSize, "Trace orbit", onCheckBoxPressed);
+	tgbTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
+	packer.pack(tgbTraceOrbit, tgbTraceOrbit->label);
+	toolbarSouthLayout->addComponent(tgbTraceOrbit);
 
 	toolbarSouthLayout->pack();
 
@@ -363,10 +378,11 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 {
 	if(fake) *(chck->d) = not *(chck->d); //switch the boolean if the call is a fake-press
 
-	if(chck == chckTraceOrbit)
+	if(chck == chckTraceOrbit || chck == tgbTraceOrbit)
 	{
 		//enable tracing parameters editing
 		chckTraceOrbit->draw_blit_upd();
+		tgbTraceOrbit->draw_blit_upd();
 	}
 }
 
