@@ -96,6 +96,7 @@ Planetarium* planetarium;
 
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
+Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
 
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
@@ -239,6 +240,14 @@ void CPlanets::showMainWindow()
 	packer.pack(tgbTraceOrbit, tgbTraceOrbit->label);
 	toolbarSouthLayout->addComponent(tgbTraceOrbit);
 
+	btnDoubleTraceLength = new Button(window, 0, genericButtonSize, "Db.T", onButtonPressed);
+	packer.pack(btnDoubleTraceLength);
+	toolbarSouthLayout->addComponent(btnDoubleTraceLength);
+
+	btnHalveTraceLentgh = new Button(window, 0, genericButtonSize, "Hv.T", onButtonPressed);
+	packer.pack(btnHalveTraceLentgh);
+	toolbarSouthLayout->addComponent(btnHalveTraceLentgh);
+
 	toolbarSouthLayout->pack();
 
 	//start
@@ -318,18 +327,10 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onCheckBoxPressed(chckTraceOrbit, true);
 			break;
 		case SDLK_d:
-			if(down)
-			{
-				planetarium->orbitTracer.traceLength *= 2;
-				spnTraceLength->refresh();
-			}
+			if(down) onButtonPressed(btnDoubleTraceLength);
 			break;
 		case SDLK_h:
-			if(down)
-			{
-				planetarium->orbitTracer.traceLength *= 0.5;
-				spnTraceLength->refresh();
-			}
+			if(down) onButtonPressed(btnHalveTraceLentgh);
 			break;
 		default:break;
 	}
@@ -369,6 +370,17 @@ void onButtonPressed(Button* btn)
 	if(btn == btnPause)
 	{
 		planetarium->setRunning(false);
+	}
+
+	if(btn == btnDoubleTraceLength)
+	{
+		planetarium->orbitTracer.traceLength *= 2;
+		spnTraceLength->refresh();
+	}
+	if(btn == btnHalveTraceLentgh)
+	{
+		planetarium->orbitTracer.traceLength *= 0.5;
+		spnTraceLength->refresh();
 	}
 }
 
