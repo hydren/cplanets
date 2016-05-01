@@ -13,10 +13,10 @@
 using SDL_util::TabSet;
 using SDL_util::FlowLayout;
 
-TabSet::TabSet(WinBase* parent, int x, int y, Rect maxSize)
+TabSet::TabSet(WinBase* parent, int x, int y, unsigned w, unsigned h)
 : commonParent(parent),
   controller(),
-  layout(x, y, maxSize)
+  layout(x, y, w, h)
 {}
 
 void TabSet::addTab(Label lab, BgrWin* content)

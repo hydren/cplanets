@@ -23,7 +23,7 @@ namespace SDL_util
 		FlowLayout layout;
 
 		/// Creates a TabSet on the specified position. See FlowLayout for more info on its behavior.
-		TabSet(WinBase* parent, int x, int y, Rect maxSize=Rect(-1,-1,0,0));
+		TabSet(WinBase* parent, int x, int y, unsigned maxWidth=0, unsigned maxHeight=0);
 
 		/// Adds a new tab with the given label and content.
 		void addTab(Label lab, BgrWin* content);

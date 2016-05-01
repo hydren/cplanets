@@ -16,12 +16,12 @@ using std::vector;
 
 using SDL_util::FlowLayout;
 
-FlowLayout::FlowLayout(int x, int y, Rect max)
-: SDL_util::Layout(x, y), maxSize(max), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING), alignment(BEFORE)
+FlowLayout::FlowLayout(int x, int y, unsigned w, unsigned h)
+: SDL_util::Layout(x, y), maxWidth(w), maxHeight(h), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING), alignment(BEFORE)
 {}
 
 FlowLayout::FlowLayout(Point p)
-: SDL_util::Layout(p), maxSize(Rect(-1,-1,0,0)), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING), alignment(BEFORE)
+: SDL_util::Layout(p), maxWidth(0), maxHeight(0), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING), alignment(BEFORE)
 {}
 
 FlowLayout::~FlowLayout()
@@ -52,7 +52,7 @@ bool FlowLayout::needsStretching() const
 
 unsigned FlowLayout::computeFreeSpaceOnLayout() const
 {
-	int space = this->maxSize.w == 0? SDL_GetVideoInfo()->current_w - this->position.x : this->maxSize.w;
+	int space = this->maxWidth == 0? SDL_GetVideoInfo()->current_w - this->position.x : this->maxWidth;
 	const_foreach(const Element*, component, vector<Element*>, this->components)
 	{
 		if(not component->isStretched())
@@ -68,7 +68,7 @@ int FlowLayout::computeAlignment(Element* e, int pos) const
 {
 	if(this->alignment == BEFORE) return 0;
 
-	int space = this->maxSize.h == 0? SDL_GetVideoInfo()->current_h - this->position.y : this->maxSize.h;
+	int space = this->maxHeight == 0? SDL_GetVideoInfo()->current_h - this->position.y : this->maxHeight;
 	space -= e->getSize().h;
 
 	if(this->alignment == AFTER)

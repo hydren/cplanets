@@ -166,13 +166,13 @@ void CPlanets::showMainWindow()
 
 	toolbarNorthLayout->pack();
 
-	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING, Rect(0,0,0,22));
+	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING, 0, 22);
 
 	Rect sizeTab(
 		tabs->layout.position.x,
-		tabs->layout.position.y + tabs->layout.maxSize.h,
+		tabs->layout.position.y + tabs->layout.maxHeight,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->layout.maxSize.h
+		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->layout.maxHeight
 	);
 	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Bodies", tabBodies);

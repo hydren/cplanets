@@ -20,12 +20,19 @@ namespace SDL_util
 	 *  If maxSize is zero, the layout uses all the space after its position.*/
 	struct FlowLayout extends Layout
 	{
-		//this layout bound. x and y attributes are ignored. If w==0, then it goes until the right border. If h==0, then it goes until the bottom.
-		Rect maxSize;
-		unsigned spacing_h, spacing_v; //the spacing between components. default is DEFAULT_SPACING.
-		enum Alignment {BEFORE, MIDDLE, AFTER} alignment; //the alignment of the components on the perpendicular axis.
+		static const unsigned DEFAULT_SPACING = 4;
 
-		FlowLayout(int x, int y, Rect max=Rect(-1,-1,0,0));
+		//The max size that this layout expands to.
+		//If w==0, then it goes until the right window border. If h==0, then it goes until the window bottom.
+		unsigned maxWidth, maxHeight;
+
+		//the spacing between components. default is DEFAULT_SPACING.
+		unsigned spacing_h, spacing_v;
+
+		//the alignment of the components on the perpendicular axis.
+		enum Alignment {BEFORE, MIDDLE, AFTER} alignment;
+
+		FlowLayout(int x, int y, unsigned w=0, unsigned h=0);
 
 		FlowLayout(Point p);
 
@@ -33,9 +40,7 @@ namespace SDL_util
 
 		void pack();
 
-		static const unsigned DEFAULT_SPACING = 4;
-
-		private:
+		protected:
 		bool needsStretching() const; //check if there is a stretching element
 		unsigned computeFreeSpaceOnLayout() const; //computes the free space to stretch-out
 		unsigned getStretchingElementsCount() const; //counts the number of stretching elements
