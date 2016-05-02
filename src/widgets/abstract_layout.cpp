@@ -6,60 +6,62 @@
  */
 
 #include "abstract_layout.hpp"
+
 #include <typeinfo>
 
 using std::vector;
+using SDL_util::Layout;
 
 // WinBaseWrapper =================================================================
 
-SDL_util::Layout::WinBaseWrapper::WinBaseWrapper(WinBase* winBase)
+Layout::WinBaseWrapper::WinBaseWrapper(WinBase* winBase)
 : base(winBase)
 {}
 
-SDL_util::Layout::WinBaseWrapper::~WinBaseWrapper()
+Layout::WinBaseWrapper::~WinBaseWrapper()
 {}
 
-Point SDL_util::Layout::WinBaseWrapper::getPosition() const
+Point Layout::WinBaseWrapper::getPosition() const
 {
 	return base->area;
 }
 
-void SDL_util::Layout::WinBaseWrapper::setPosition(Point position)
+void Layout::WinBaseWrapper::setPosition(Point position)
 {
 	setWinBasePosition(this->base, position);
 }
 
-void SDL_util::Layout::WinBaseWrapper::setPosition(int x, int y)
+void Layout::WinBaseWrapper::setPosition(int x, int y)
 {
 	setX(x); setY(y);
 }
 
-void SDL_util::Layout::WinBaseWrapper::setX(int x)
+void Layout::WinBaseWrapper::setX(int x)
 {
 	setWinBasePositionX(this->base, x);
 }
 
-void SDL_util::Layout::WinBaseWrapper::setY(int y)
+void Layout::WinBaseWrapper::setY(int y)
 {
 	setWinBasePositionY(this->base, y);
 }
 
-Rect SDL_util::Layout::WinBaseWrapper::getSize() const
+Rect Layout::WinBaseWrapper::getSize() const
 {
 	return base->tw_area;
 }
 
-void SDL_util::Layout::WinBaseWrapper::setSize(Rect size)
+void Layout::WinBaseWrapper::setSize(Rect size)
 {
 	base->widen(size.w - base->tw_area.w, size.h - base->tw_area.h);
 }
 
-bool SDL_util::Layout::WinBaseWrapper::isStretched() const
+bool Layout::WinBaseWrapper::isStretched() const
 {
 	return false;
 }
 
-bool SDL_util::Layout::WinBaseWrapper::operator==(const Element& someElement) const
+bool Layout::WinBaseWrapper::operator==(const Element& someElement) const
 {
 	if(typeid(someElement) != typeid(WinBaseWrapper))
 		return false;
@@ -70,13 +72,13 @@ bool SDL_util::Layout::WinBaseWrapper::operator==(const Element& someElement) co
 	else return true;
 }
 
-void SDL_util::Layout::WinBaseWrapper::setWinBasePosition(WinBase* wb, Point pos)
+void Layout::WinBaseWrapper::setWinBasePosition(WinBase* wb, Point pos)
 {
 	setWinBasePositionX(wb, pos.x);
 	setWinBasePositionY(wb, pos.y);
 }
 
-void SDL_util::Layout::WinBaseWrapper::setWinBasePositionX(WinBase* wb, int x)
+void Layout::WinBaseWrapper::setWinBasePositionX(WinBase* wb, int x)
 {
 	wb->area.x = x;
 	wb->tw_area.x = x;
@@ -88,7 +90,7 @@ void SDL_util::Layout::WinBaseWrapper::setWinBasePositionX(WinBase* wb, int x)
 	}
 }
 
-void SDL_util::Layout::WinBaseWrapper::setWinBasePositionY(WinBase* wb, int y)
+void Layout::WinBaseWrapper::setWinBasePositionY(WinBase* wb, int y)
 {
 	wb->area.y = y;
 	wb->tw_area.y = y;
@@ -102,82 +104,82 @@ void SDL_util::Layout::WinBaseWrapper::setWinBasePositionY(WinBase* wb, int y)
 
 // Spacer ========================================================================================
 
-SDL_util::Layout::Spacer::Spacer(Layout* layout, Rect size)
+Layout::Spacer::Spacer(Layout* layout, Rect size)
 : bounds(layout->position.x, layout->position.y, size.w, size.h),
   stretched(size.w == 0 && size.h == 0)
 {}
 
-SDL_util::Layout::Spacer::Spacer(Rect bounds)
+Layout::Spacer::Spacer(Rect bounds)
 : bounds(bounds), stretched(bounds.w == 0 && bounds.h == 0)
 {}
 
-SDL_util::Layout::Spacer::~Spacer() {}
+Layout::Spacer::~Spacer() {}
 
-Point SDL_util::Layout::Spacer::getPosition() const
+Point Layout::Spacer::getPosition() const
 {
 	return Point(this->bounds.x, this->bounds.y);
 }
 
-void SDL_util::Layout::Spacer::setPosition(Point position)
+void Layout::Spacer::setPosition(Point position)
 {
 	this->bounds.x = position.x;
 	this->bounds.y = position.y;
 }
 
-Rect SDL_util::Layout::Spacer::getSize() const
+Rect Layout::Spacer::getSize() const
 {
 	return Rect(0, 0, this->bounds.w, this->bounds.h);
 }
 
-void SDL_util::Layout::Spacer::setSize(Rect size)
+void Layout::Spacer::setSize(Rect size)
 {
 	this->bounds.w = size.w;
 	this->bounds.h = size.h;
 }
 
-bool SDL_util::Layout::Spacer::isStretched() const
+bool Layout::Spacer::isStretched() const
 {
 	return this->stretched;
 }
 
-bool SDL_util::Layout::Spacer::operator == (const Element& b) const
+bool Layout::Spacer::operator == (const Element& b) const
 {
 	return &b == this;
 }
 
 // Layout ========================================================================================
 
-SDL_util::Layout::Layout(int x, int y)
+Layout::Layout(int x, int y)
 {
 	this->position.x = x;
 	this->position.y = y;
 }
 
-SDL_util::Layout::Layout(Point& p)
+Layout::Layout(Point& p)
 {
 	this->position = p;
 }
 
-SDL_util::Layout::~Layout(){}
+Layout::~Layout(){}
 
-void SDL_util::Layout::addComponent(WinBase& base, int index)
+void Layout::addComponent(WinBase& base, int index)
 {
 	addComponent(&base, index);
 }
 
-void SDL_util::Layout::addComponent(WinBase* base, int index)
+void Layout::addComponent(WinBase* base, int index)
 {
 	WinBaseWrapper* component = new WinBaseWrapper(base); //creater wrapper for winbase
 	innerWrappers.push_back(component); //register the layout-created wrapper
 	addComponent(reinterpret_cast<Element*>(component));
 }
 
-void SDL_util::Layout::addComponent(Element& component, int index)
+void Layout::addComponent(Element& component, int index)
 {
 	addComponent(&component, index);
 }
 
-void SDL_util::Layout::addComponent(Element* component, int index)
+void Layout::addComponent(Element* component, int index)
 {
 	if(index < 0)
 		this->components.push_back(component);
@@ -186,7 +188,7 @@ void SDL_util::Layout::addComponent(Element* component, int index)
 }
 
 /** Returns a pointer to the component at the specified index */
-SDL_util::Layout::Element* SDL_util::Layout::getComponentAt(unsigned index)
+Layout::Element* Layout::getComponentAt(unsigned index)
 {
 	if(index > this->components.size() - 1)
 		throw std::out_of_range("out of range: " + index);
@@ -195,7 +197,7 @@ SDL_util::Layout::Element* SDL_util::Layout::getComponentAt(unsigned index)
 }
 
 /** Returns a pointer to the wrapper component corresponding to the given WinBase */
-SDL_util::Layout::WinBaseWrapper* SDL_util::Layout::getWrapperComponent(WinBase* base)
+Layout::WinBaseWrapper* Layout::getWrapperComponent(WinBase* base)
 {
 	for(unsigned i = 0; i < this->components.size(); i++)
 	{
@@ -206,7 +208,7 @@ SDL_util::Layout::WinBaseWrapper* SDL_util::Layout::getWrapperComponent(WinBase*
 	return null;
 }
 
-void SDL_util::Layout::removeComponentAt(unsigned index)
+void Layout::removeComponentAt(unsigned index)
 {
 	if(index > this->components.size() - 1)
 		throw std::out_of_range("out of range: " + index);
@@ -222,33 +224,33 @@ void SDL_util::Layout::removeComponentAt(unsigned index)
 	this->components.erase(components.begin() + index);
 }
 
-void SDL_util::Layout::removeComponent(WinBase& component)
+void Layout::removeComponent(WinBase& component)
 {
-	SDL_util::Layout::removeComponent(&component);
+	Layout::removeComponent(&component);
 }
 
-void SDL_util::Layout::removeComponent(WinBase* component)
+void Layout::removeComponent(WinBase* component)
 {
 	for(unsigned i = 0; i < this->components.size(); i++)
 	{
 		WinBaseWrapper* wrapper = dynamic_cast<WinBaseWrapper*>(this->components.at(i));
 		if(wrapper != null && wrapper->base == component)
 		{
-			SDL_util::Layout::removeComponentAt(i);
+			Layout::removeComponentAt(i);
 			break;
 		}
 	}
 }
 
-void SDL_util::Layout::removeComponent(Element& component)
+void Layout::removeComponent(Element& component)
 {
-	SDL_util::Layout::removeComponent(&component);
+	Layout::removeComponent(&component);
 }
 
-void SDL_util::Layout::removeComponent(Element* component)
+void Layout::removeComponent(Element* component)
 {
 	int index = Collections::indexOf(this->components, component);
 	if(index < 0) return;
-	SDL_util::Layout::removeComponentAt(index);
+	Layout::removeComponentAt(index);
 }
 
