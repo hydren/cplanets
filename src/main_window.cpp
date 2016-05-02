@@ -145,7 +145,6 @@ void CPlanets::showMainWindow()
 	);
 	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
-	planetarium->tryAA = true;
 
 	//+++++++++++++++ North toolbar
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
