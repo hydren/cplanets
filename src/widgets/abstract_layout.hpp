@@ -57,7 +57,7 @@ namespace SDL_util
 		struct Spacer extends Element
 		{
 			Rect bounds;
-			bool stretched;
+
 			Spacer(Layout* layout, Rect size=Rect());
 			Spacer(Rect bounds);
 			virtual ~Spacer();
@@ -67,6 +67,9 @@ namespace SDL_util
 			virtual void setSize(Rect size);
 			virtual bool isStretched() const;
 			virtual bool operator == (const Element& b) const;
+
+			protected:
+			bool stretched;
 		};
 
 		/** The position of this layout */
