@@ -135,9 +135,9 @@ void CPlanets::showMainWindow()
 
 	Rect planetariumSize(
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
-		TOOLBAR_SIZE + WIDGETS_SPACING,
+		TOOLBAR_SIZE + 0.5*WIDGETS_SPACING,
 		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
-		windowSize.h - (2.25*TOOLBAR_SIZE)
+		windowSize.h - (2.1*TOOLBAR_SIZE)
 	);
 	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
@@ -172,12 +172,12 @@ void CPlanets::showMainWindow()
 
 
 	//+++++++++++++++ Tabs
-	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING, 0, 22);
+	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING, 0, 22);
 	Rect sizeTab(
 		tabs->layout.position.x,
 		tabs->layout.position.y + tabs->layout.maxHeight,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->layout.maxHeight
+		planetariumSize.h - tabs->layout.maxHeight
 	);
 
 	// Tab bodies
