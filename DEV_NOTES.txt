@@ -1,14 +1,20 @@
 -------------- To Do
 
-- Add optional single-threaded mode (iterations per display, etc)
+- Implement vertical flow layout
+- Move interactive controls to the right toolbar
+- Implement universe storage and loading functions
+- Create new, load and save universe buttons
+- Create Spinner to select physics2dsolver's
 - Fix bezier spline
+- Implement body selection (single click, rectangle area, etc)
+- Implement "view movement speed"
 
--------------- Ideas
-
-- Use pixmaps instead of image files as icons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 
 -------------- Backlog
 
+- Show icon on About dialog.
+- Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
+- Add optional single-threaded mode (iterations per display, etc)
 - Try to not use a std::map for keeping references to Spinners on Spinner class (big time kludge)
 
 
