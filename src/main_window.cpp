@@ -70,7 +70,7 @@ const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for 
 const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
 const int PLANETARIUM_ID = 959;
-string VERSION_TEXT; //not really a constant, but still
+string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
 
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
@@ -79,7 +79,7 @@ Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
-Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause;
+Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause, *btnAbout;
 
 TabSet* tabs;
 
@@ -101,8 +101,11 @@ ToogleButton* tgbTraceOrbit;
 Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
 ToogleButton* tgbAA;
 
+BgrWin* dialogAbout;
+
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
+void drawAboutDialog(BgrWin* dialog);
 void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
@@ -169,6 +172,10 @@ void CPlanets::showMainWindow()
 	btnPause = new Button(window, 0, genericButtonSize, "Pause", onButtonPressed);
 	packer.pack(btnPause);
 	toolbarNorthLayout->addComponent(btnPause);
+
+	btnAbout = new Button(window, 0, genericButtonSize, "About", onButtonPressed);
+	packer.pack(btnAbout);
+	toolbarNorthLayout->addComponent(btnAbout);
 
 	toolbarNorthLayout->pack();
 
@@ -288,6 +295,9 @@ void CPlanets::showMainWindow()
 
 	toolbarSouthLayout->pack();
 
+	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
+	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
+
 	//start
 	planetarium->setRunning();
 	get_events();
@@ -303,9 +313,47 @@ void draw()
 	runOnce(onReady);
 }
 
+void drawAboutDialog(BgrWin* dialog)
+{
+	dialog->init_gui();
+	dialog->draw_raised(0, dialog->bgcol, true);
+
+	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(WIDGETS_SPACING, WIDGETS_SPACING));
+
+	unsigned lf = 0, cr = 0, ln = 2;
+
+	while( lf + cr < FULL_ABOUT_TEXT.size() )
+	{
+		bool exceed = false;
+
+		if(FULL_ABOUT_TEXT.c_str()[lf+cr] == '\n' ||  lf + cr == FULL_ABOUT_TEXT.size()-1) // line feed or last draw
+			exceed = true;
+		else
+		{
+			string substr = String::replaceAll(FULL_ABOUT_TEXT.substr(lf, cr+1), "\n", " ");
+			if((unsigned) draw_ttf->text_width(substr.c_str()) > (dialog->tw_area.w - 2*WIDGETS_SPACING))
+				exceed = true;
+		}
+
+		if(exceed)
+		{
+			//draw from text pointer, 'cr' caracters
+			string substr = String::replaceAll(FULL_ABOUT_TEXT.substr(lf, cr), "\n", " ");
+			draw_ttf->draw_string(dialog->win, substr.c_str(), Point(WIDGETS_SPACING, ln*TTF_FontHeight(draw_ttf->ttf_font)));
+			lf += cr; //increase text pointer
+			cr = 0; //"caret" position is reset
+			ln++; //line number incremented
+		}
+
+		cr++; //increase caret position
+	}
+}
+
 void onWindowResize(int dw, int dh)
 {
 //	cout << "resize event" << endl;
+	if(dialogAbout->parent != null) dialogAbout->hide();
+
 	planetarium->widen(dw, dh);
 
 	tabBodies->widen(0, dh);
@@ -376,6 +424,21 @@ void onKeyEvent(SDL_keysym *key, bool down)
 
 void onButtonPressed(Button* btn)
 {
+	if(btn == btnAbout)
+	{
+		setComponentPosition(dialogAbout, Point(window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150));
+		if(dialogAbout->parent == null)
+		{
+			dialogAbout->keep_on_top();
+			dialogAbout->draw_blit_recur();
+			dialogAbout->upd();
+		}
+		else if(dialogAbout->hidden)
+			dialogAbout->show();
+		else
+			dialogAbout->hide();
+	}
+
 	if(btn == btnAddBody)
 	{
 		planetarium->running = false;
