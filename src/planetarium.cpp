@@ -51,7 +51,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   bgColor(SDL_util::Color::BLACK), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true),
-  viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0),
+  viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0), tryAA(false),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
@@ -111,7 +111,10 @@ void Planetarium::draw()
 						if(recordedPosition != previousPosition) //avoid drawing segments of same points
 						{
 							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-							lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+							if(not tryAA)
+								lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+							else
+								aalineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 						}
 						previousPosition = recordedPosition;
 					}
@@ -157,8 +160,11 @@ void Planetarium::draw()
 			if(bodyColor != null)
 				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
-			//draw body border
-			circleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255); //ToDo choose other color when focused
+			//draw body border. todo choose other body border color when focused
+			if(not tryAA)
+				circleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255);
+			else
+				aacircleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255);
 
 			//record position
 			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
@@ -174,7 +180,10 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->area.x; mouseY -= this->area.y;
-			circleRGBA(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
+			if(not tryAA)
+				circleRGBA(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
+			else
+				aacircleRGBA(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
 		}
 		else if(bodyCreationState == VELOCITY_SELECTION)
 		{
@@ -182,8 +191,16 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->area.x; mouseY -= this->area.y;
-			circleRGBA(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
-			lineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
+			if(not tryAA)
+			{
+				circleRGBA(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
+				lineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
+			}
+			else
+			{
+				aacircleRGBA(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
+				aalineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
+			}
 		}
 	}
 }

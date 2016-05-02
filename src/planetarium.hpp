@@ -40,6 +40,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	//rendering parameters
 	Vector2D viewportPosition;
 	double viewportZoom, minimumBodyRenderingRadius;
+	bool tryAA;
 
 	//interactive parameters
 	unsigned viewportTranlationRateValue; //the intensity of translation when translating
