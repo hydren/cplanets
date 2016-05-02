@@ -35,13 +35,14 @@ namespace SDL_util
 		Button btnInc, btnDec;
 
 		Spinner(WinBase *pw, Rect area, const char* label=null, Type* value=null)
-		: spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h), ++Spinner_static::nextId),
+		: spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h)),
 		  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
 		  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue),
 		  value(value==null? new Type(1) : value), step(1), min(0), max(9999)
 		{
 			if(label != null) this->spinner.dialog_label(label);
 			this->spinner.cmd = validateField;
+			this->spinner.cmd_id = Spinner_static::nextId++;
 			Spinner_static::references[&btnInc] = this; //register kludge-type reference to this spinner
 			Spinner_static::references[&btnDec] = this; //register kludge-type reference to this spinner
 		}
