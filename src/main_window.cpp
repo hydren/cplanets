@@ -99,6 +99,7 @@ Planetarium* planetarium;
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
 Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
+ToogleButton* tgbAA;
 
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
@@ -141,6 +142,7 @@ void CPlanets::showMainWindow()
 	);
 	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
+	planetarium->tryAA = true;
 
 	//+++++++++++++++ North toolbar
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
@@ -278,6 +280,11 @@ void CPlanets::showMainWindow()
 	toolbarSouthLayout->addComponent(btnHalveTraceLentgh);
 
 	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::Separator::HORIZONTAL, TOOLBAR_SIZE)));
+
+	tgbAA = new ToogleButton(window, 0, genericButtonSize, "Smooth", onCheckBoxPressed);
+	tgbAA->d = &(planetarium->tryAA);
+	packer.pack(tgbAA, tgbAA->label);
+	toolbarSouthLayout->addComponent(tgbAA);
 
 	toolbarSouthLayout->pack();
 
