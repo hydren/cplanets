@@ -90,6 +90,8 @@ BgrWin* tabOptions;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity;
+Spinner<double>* spnTimeStep, *spnGravity;
+Spinner<long>* spnDisplayPeriod;
 DropDownMenu* ddmTraceStyle;
 
 Planetarium* planetarium;
@@ -129,6 +131,8 @@ void CPlanets::showMainWindow()
 	handle_uev = onUserEvent;
 	VERSION_TEXT ="v"+CPLANETS_VERSION;
 
+	LabeledComponentPacker packer(TOOLBAR_SIZE-2*WIDGETS_SPACING);
+
 	Rect planetariumSize(
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
 		TOOLBAR_SIZE + WIDGETS_SPACING,
@@ -138,9 +142,8 @@ void CPlanets::showMainWindow()
 	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
 
+	//+++++++++++++++ North toolbar
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
-
-	LabeledComponentPacker packer(TOOLBAR_SIZE-2*WIDGETS_SPACING);
 
 	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
 	packer.pack(btnAddBody);
@@ -167,14 +170,17 @@ void CPlanets::showMainWindow()
 
 	toolbarNorthLayout->pack();
 
-	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING, 0, 22);
 
+	//+++++++++++++++ Tabs
+	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + WIDGETS_SPACING, 0, 22);
 	Rect sizeTab(
 		tabs->layout.position.x,
 		tabs->layout.position.y + tabs->layout.maxHeight,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
 		windowSize.h - 2.25*TOOLBAR_SIZE - tabs->layout.maxHeight
 	);
+
+	// Tab bodies
 	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Bodies", tabBodies);
 
@@ -185,6 +191,7 @@ void CPlanets::showMainWindow()
 			sizeTab.h - WIDGETS_SPACING);
 	txtBodies = new TextWin(tabBodies, 0, txtBodiesSize, 8, null);
 
+	// Tab options
 	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Options", tabOptions);
 
@@ -231,7 +238,29 @@ void CPlanets::showMainWindow()
 	spnBodyDensity->setStepValue(0.1);
 	spnBodyDensity->offset.y -= 2;
 
+	LabelWin lblSimulationParameters(tabOptions, Rect(), "Simulation parameters");
+	lblSimulationParameters.setTextRenderer(draw_title_ttf);
+	setComponentPosition(&lblSimulationParameters, Point(spnBodyDiameter->getPosition().x, spnBodyDiameter->getPosition().y + spnBodyDiameter->getSize().h + 3*WIDGETS_SPACING));
 
+	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
+	spnTimeStep->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
+	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
+	spnTimeStep->setStepValue(0.1);
+	spnTimeStep->offset.y -= 2;
+
+	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
+	spnGravity->setPosition(Point(spnTimeStep->getPosition().x + spnTimeStep->getSize().w + WIDGETS_SPACING, spnTimeStep->getPosition().y));
+	spnGravity->setValue(&(planetarium->physics->universe.gravity));
+	spnGravity->setStepValue(0.1);
+	spnGravity->offset.y -= 2;
+
+	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Display period:");
+	spnDisplayPeriod->setPosition(Point(spnTimeStep->getPosition().x, spnTimeStep->getPosition().y + spnTimeStep->getSize().h + WIDGETS_SPACING));
+	spnDisplayPeriod->setValue(&(planetarium->sleepingTime));
+	spnDisplayPeriod->offset.y -= 2;
+
+
+	//+++++++++++++++ South toolbar
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
 
@@ -452,4 +481,7 @@ void onReady()
 	spnTraceLength->refresh();
 	spnBodyDiameter->refresh();
 	spnBodyDensity->refresh();
+	spnTimeStep->refresh();
+	spnGravity->refresh();
+	spnDisplayPeriod->refresh();
 }
