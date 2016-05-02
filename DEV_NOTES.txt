@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Add option to use AA (planetarium api and gui)
 - Add optional single-threaded mode (iterations per display, etc)
 - Fix bezier spline
 
