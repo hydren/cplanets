@@ -248,6 +248,8 @@ void CPlanets::showMainWindow()
 	packer.pack(btnHalveTraceLentgh);
 	toolbarSouthLayout->addComponent(btnHalveTraceLentgh);
 
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::Separator::HORIZONTAL, TOOLBAR_SIZE)));
+
 	toolbarSouthLayout->pack();
 
 	//start
