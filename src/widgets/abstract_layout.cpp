@@ -147,6 +147,37 @@ bool Layout::Spacer::operator == (const Element& b) const
 	return &b == this;
 }
 
+// Separator =====================================================================================
+
+Layout::Separator::Separator(WinBase* parent, Orientation orient, unsigned size, unsigned thick)
+: WinBase(parent, null, 0, 0, orient == VERTICAL? size : thick!=0? thick : size/4, orient == HORIZONTAL? size : thick!=0? thick : size/4, parent->bgcol, 0),
+  Layout::WinBaseWrapper(this),
+  orientation(orient)
+{}
+
+#include <iostream>
+void Layout::Separator::draw()
+{
+	this->init_gui();
+	SDL_FillRect(this->win, null, this->bgcol); //clears the screen
+	if(orientation == HORIZONTAL)
+	{
+		filledCircleColor(this->win, this->tw_area.w * 0.5, this->tw_area.h * (0.250), 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * 0.5, this->tw_area.h * (0.375), 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * 0.5, this->tw_area.h * (0.500), 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * 0.5, this->tw_area.h * (0.625), 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * 0.5, this->tw_area.h * (0.750), 1, 0x606060ff);
+	}
+	else
+	{
+		filledCircleColor(this->win, this->tw_area.w * (0.250), this->tw_area.h * 0.5, 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * (0.375), this->tw_area.h * 0.5, 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * (0.500), this->tw_area.h * 0.5, 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * (0.625), this->tw_area.h * 0.5, 1, 0x606060ff);
+		filledCircleColor(this->win, this->tw_area.w * (0.750), this->tw_area.h * 0.5, 1, 0x606060ff);
+	}
+}
+
 // Layout ========================================================================================
 
 Layout::Layout(int x, int y)

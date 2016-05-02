@@ -72,6 +72,13 @@ namespace SDL_util
 			bool stretched;
 		};
 
+		struct Separator extends WinBase, WinBaseWrapper
+		{
+			enum Orientation {HORIZONTAL, VERTICAL} orientation;
+			Separator(WinBase* parent, Orientation orient, unsigned size, unsigned thick=0);
+			virtual void draw();
+		};
+
 		/** The position of this layout */
 		Point position;
 
