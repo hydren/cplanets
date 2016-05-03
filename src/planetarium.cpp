@@ -403,7 +403,7 @@ void Planetarium::onMouseDown(BgrWin* bgr, int x, int y, int but)
 {
 	if(but == SDL_BUTTON_LEFT)
 	{
-		Planetarium* planetarium = dynamic_cast<Planetarium*>(bgr);
+		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
 		planetarium->lastMouseLeftButtonDown = SDL_GetTicks();
 	}
 
@@ -413,7 +413,7 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 {
 	if(but == SDL_BUTTON_LEFT)
 	{
-		Planetarium* planetarium = dynamic_cast<Planetarium*>(bgr);
+		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
 		Vector2D pointedPosition = Vector2D(x, y).scale(1.0/planetarium->viewportZoom).add(planetarium->viewportPosition);
 		if(SDL_GetTicks() - planetarium->lastMouseLeftButtonDown < 250) //click event
 		{
