@@ -171,13 +171,13 @@ void CPlanets::showMainWindow()
 
 
 	//+++++++++++++++ Tabs
-	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING, 0, 22);
+	tabs = new TabSet(window, WIDGETS_SPACING, /*TOOLBAR_SIZE*/ (8) + 0.5*WIDGETS_SPACING, 0, 22);
 	Rect sizeTab(
 		tabs->layout.position.x,
 		tabs->layout.position.y + tabs->layout.maxHeight,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		planetariumSize.h - tabs->layout.maxHeight
-	);
+		planetariumSize.h - tabs->layout.maxHeight + (TOOLBAR_SIZE - 8)
+	); //todo Rearrange tabs position, (8) and (TOOLBAR_SIZE - 8) should be removed
 
 	// Tab bodies
 	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
