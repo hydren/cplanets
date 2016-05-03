@@ -501,13 +501,16 @@ void onCheckBoxPressed(CheckBox* chck) { onCheckBoxPressed(chck, false); } //cal
 
 void onCheckBoxPressed(CheckBox* chck, bool fake)
 {
-	if(fake) *(chck->d) = not *(chck->d); //switch the boolean if the call is a fake-press
-
-	if(chck == chckTraceOrbit || chck == tgbTraceOrbit)
+	if(fake) //fake means not triggered by the user action on the given CheckBox
 	{
-		//enable tracing parameters editing
-		chckTraceOrbit->draw_blit_upd();
+		*(chck->d) = not *(chck->d); //switch the boolean if the call is a fake-press
+		chck->draw_blit_upd(); //update the widget graphics
+	}
+
+	if(chck == chckTraceOrbit || tgbTraceOrbit) //update each other graphics as they share value
+	{
 		tgbTraceOrbit->draw_blit_upd();
+		chckTraceOrbit->draw_blit_upd();
 	}
 }
 
