@@ -96,6 +96,8 @@ DropDownMenu* ddmTraceStyle;
 
 Planetarium* planetarium;
 
+FlowLayout* toolbarRight;
+
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
 Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
@@ -137,30 +139,8 @@ void CPlanets::showMainWindow()
 
 	LabeledComponentPacker packer(TOOLBAR_SIZE-2*WIDGETS_SPACING);
 
-	Rect planetariumSize(
-		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
-		TOOLBAR_SIZE + 0.5*WIDGETS_SPACING,
-		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
-		windowSize.h - (2.1*TOOLBAR_SIZE)
-	);
-	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
-	planetarium->addUniverseEventListener(new CustomUniverseListener());
-
 	//+++++++++++++++ North toolbar
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
-
-	btnAddBody = new Button(window, 0, genericButtonSize, "Add", onButtonPressed);
-	packer.pack(btnAddBody);
-	toolbarNorthLayout->addComponent(btnAddBody);
-
-	btnAddRandom = new Button(window, 0, genericButtonSize, "Add random", onButtonPressed);
-	packer.pack(btnAddRandom);
-	toolbarNorthLayout->addComponent(btnAddRandom);
-
-
-	btnRecolorAll = new Button(window, 0, genericButtonSize, "Recolor all bodies", onButtonPressed);
-	packer.pack(btnRecolorAll);
-	toolbarNorthLayout->addComponent(btnRecolorAll);
 
 	toolbarNorthLayout->addComponent(new SDL_util::Layout::Spacer(toolbarNorthLayout));
 
@@ -177,6 +157,17 @@ void CPlanets::showMainWindow()
 	toolbarNorthLayout->addComponent(btnAbout);
 
 	toolbarNorthLayout->pack();
+
+
+	// ****Planetarium****
+	Rect planetariumSize(
+		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
+		TOOLBAR_SIZE + 0.5*WIDGETS_SPACING,
+		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
+		windowSize.h - (2.1*TOOLBAR_SIZE)
+	);
+	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
+	planetarium->addUniverseEventListener(new CustomUniverseListener());
 
 
 	//+++++++++++++++ Tabs
@@ -267,6 +258,26 @@ void CPlanets::showMainWindow()
 	spnDisplayPeriod->setValue(&(planetarium->sleepingTime));
 	spnDisplayPeriod->offset.y -= 2;
 
+	//+++++++++++++++ East (right) toolbar
+	toolbarRight = new FlowLayout(planetariumSize.x + planetariumSize.w + WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING);
+	toolbarRight->orientation = Layout::VERTICAL;
+
+	Rect sideButtonSize(0, 0, TOOLBAR_SIZE - WIDGETS_SPACING, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+
+	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
+
+	btnAddBody = new Button(window, 0, sideButtonSize, "Add", onButtonPressed);
+	toolbarRight->addComponent(btnAddBody);
+
+	btnAddRandom = new Button(window, 0, sideButtonSize, "AdR", onButtonPressed);
+	toolbarRight->addComponent(btnAddRandom);
+
+	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
+
+	btnRecolorAll = new Button(window, 0, sideButtonSize, "Rcl", onButtonPressed);
+	toolbarRight->addComponent(btnRecolorAll);
+
+	toolbarRight->pack();
 
 	//+++++++++++++++ South toolbar
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
@@ -353,16 +364,18 @@ void onWindowResize(int dw, int dh)
 //	cout << "resize event" << endl;
 	if(dialogAbout->parent != null) dialogAbout->hide();
 
+	toolbarNorthLayout->pack();
+
 	planetarium->widen(dw, dh);
 
-	tabBodies->widen(0, dh);
-	txtBodies->widen(0, dh);
-
+	//todo make a widenAll() method on TabSet
+	tabBodies->widen(0, dh); txtBodies->widen(0, dh);
 	tabOptions->widen(0, dh);
 
+	toolbarRight->position.x += dw;
+	toolbarRight->pack();
 
-	toolbarNorthLayout->pack();
-	toolbarSouthLayout->position.y = window->tw_area.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING);
+	toolbarSouthLayout->position.y += dh;
 	toolbarSouthLayout->pack();
 
 	window->draw_blit_recur();
