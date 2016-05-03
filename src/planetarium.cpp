@@ -15,7 +15,6 @@
 
 #include "util.hpp"
 #include "SDL_util.hpp"
-#include "main_window.hpp"
 #include "physics/physics2d.hpp"
 #include "physics/physics2d_solvers.hpp"
 
@@ -356,7 +355,7 @@ void Planetarium::updateView()
 		if(not isUpdating)
 		{
 			isUpdating = true;
-			send_uev(CPlanets::USER_EVENT_ID__REDRAW_COMPONENT, this->id.id1);
+			send_uev(USER_EVENT_ID__REDRAW_COMPONENT, this->id.id1);
 		}
 		lastTime = SDL_GetTicks();
 		SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime));

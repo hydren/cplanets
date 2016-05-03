@@ -539,7 +539,7 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 
 void onUserEvent(int cmd,int param,int param2)
 {
-	if(cmd == CPlanets::USER_EVENT_ID__REDRAW_COMPONENT)
+	if(cmd == Planetarium::USER_EVENT_ID__REDRAW_COMPONENT)
 	{
 		if(param == PLANETARIUM_ID)
 		{

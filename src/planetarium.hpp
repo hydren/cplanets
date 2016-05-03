@@ -12,12 +12,14 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 
-#include "util.hpp"
+#include "futil/futil.hpp"
 #include "physics/physics2d.hpp"
 
 struct Planetarium extends BgrWin, Physics2D::CollisionListener
 {
+	static const int USER_EVENT_ID__REDRAW_COMPONENT = 192; /// SDL_widgets user event ID hinting that it should be redrawed. Catch such events with a 'handle_uev' function and call 'doRefresh()'.
 	static const double BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
+
 	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
 	static const double DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE = 0.1;
 	static const double DEFAULT_BODY_CREATION_DIAMETER_RATIO = 1.0;
