@@ -18,6 +18,8 @@ namespace SDL_util
 	/** An abstract layout manager. */
 	struct Layout
 	{
+		enum Orientation {HORIZONTAL, VERTICAL};
+
 		/** An abstract layout element. It defines basic manipulations. */
 		struct Element
 		{
@@ -74,7 +76,7 @@ namespace SDL_util
 
 		struct Separator extends WinBase, WinBaseWrapper
 		{
-			enum Orientation {HORIZONTAL, VERTICAL} orientation;
+			Orientation orientation;
 			Separator(WinBase* parent, Orientation orient, unsigned size, unsigned thick=0);
 			virtual void draw();
 		};

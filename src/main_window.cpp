@@ -285,7 +285,7 @@ void CPlanets::showMainWindow()
 	packer.pack(btnHalveTraceLentgh);
 	toolbarSouthLayout->addComponent(btnHalveTraceLentgh);
 
-	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::Separator::HORIZONTAL, TOOLBAR_SIZE)));
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 
 	tgbAA = new ToogleButton(window, 0, genericButtonSize, "Smooth", onCheckBoxPressed);
 	tgbAA->d = &(planetarium->tryAA);

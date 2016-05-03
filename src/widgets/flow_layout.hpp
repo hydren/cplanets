@@ -32,6 +32,8 @@ namespace SDL_util
 		//the alignment of the components on the perpendicular axis.
 		enum Alignment {BEFORE, MIDDLE, AFTER} alignment;
 
+		Orientation orientation;
+
 		FlowLayout(int x, int y, unsigned w=0, unsigned h=0);
 
 		FlowLayout(Point p);
@@ -41,8 +43,11 @@ namespace SDL_util
 		void pack();
 
 		protected:
+		void packHorizontal();
+		void packVertical();
 		bool needsStretching() const; //check if there is a stretching element
-		unsigned computeFreeSpaceOnLayout() const; //computes the free space to stretch-out
+		unsigned computeFreeHorizontalSpaceOnLayout() const; //computes the free space to stretch-out
+		unsigned computeFreeVerticalSpaceOnLayout() const; //computes the free space to stretch-out
 		unsigned getStretchingElementsCount() const; //counts the number of stretching elements
 		int computeAlignment(Element* e, int pos) const;
 	};

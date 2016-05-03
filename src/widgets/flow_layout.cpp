@@ -17,11 +17,13 @@ using std::vector;
 using SDL_util::FlowLayout;
 
 FlowLayout::FlowLayout(int x, int y, unsigned w, unsigned h)
-: SDL_util::Layout(x, y), maxWidth(w), maxHeight(h), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING), alignment(BEFORE)
+: SDL_util::Layout(x, y), maxWidth(w), maxHeight(h), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING),
+  alignment(BEFORE), orientation(HORIZONTAL)
 {}
 
 FlowLayout::FlowLayout(Point p)
-: SDL_util::Layout(p), maxWidth(0), maxHeight(0), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING), alignment(BEFORE)
+: SDL_util::Layout(p), maxWidth(0), maxHeight(0), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING),
+  alignment(BEFORE), orientation(HORIZONTAL)
 {}
 
 FlowLayout::~FlowLayout()
@@ -29,7 +31,16 @@ FlowLayout::~FlowLayout()
 
 void FlowLayout::pack()
 {
-	int currentStretchedSpacerSize = this->needsStretching()? this->computeFreeSpaceOnLayout() / this->getStretchingElementsCount() : -1 ;
+	if(orientation == HORIZONTAL)
+		packHorizontal();
+	else
+		packVertical();
+}
+
+
+void FlowLayout::packHorizontal()
+{
+	int currentStretchedSpacerSize = this->needsStretching()? this->computeFreeHorizontalSpaceOnLayout() / this->getStretchingElementsCount() : -1 ;
 	Point prevPosition = position;
 	foreach(Element*, component, vector<Element*>, this->components)
 	{
@@ -38,6 +49,20 @@ void FlowLayout::pack()
 		actualPosition.y += component->offset.y + computeAlignment(component, actualPosition.y);
 		component->setPosition(actualPosition); //sends a copy rect with the y axis offset'd by the component's y-offset
 		prevPosition.x += spacing_h + (component->isStretched()? currentStretchedSpacerSize : component->getSize().w); //adds the current component width and global spacing
+	}
+}
+
+void FlowLayout::packVertical()
+{
+	int currentStretchedSpacerSize = this->needsStretching()? this->computeFreeVerticalSpaceOnLayout() / this->getStretchingElementsCount() : -1 ;
+	Point prevPosition = position;
+	foreach(Element*, component, vector<Element*>, this->components)
+	{
+		prevPosition.y += component->offset.y; //adds the offset to the position (to consume the space)
+		Point actualPosition = prevPosition;
+		actualPosition.x += component->offset.x + computeAlignment(component, actualPosition.x);
+		component->setPosition(actualPosition); //sends a copy rect with the y axis offset'd by the component's y-offset
+		prevPosition.y += spacing_v + (component->isStretched()? currentStretchedSpacerSize : component->getSize().h); //adds the current component width and global spacing
 	}
 }
 
@@ -50,7 +75,7 @@ bool FlowLayout::needsStretching() const
 	return false;
 }
 
-unsigned FlowLayout::computeFreeSpaceOnLayout() const
+unsigned FlowLayout::computeFreeHorizontalSpaceOnLayout() const
 {
 	int space = this->maxWidth == 0? SDL_GetVideoInfo()->current_w - this->position.x : this->maxWidth;
 	const_foreach(const Element*, component, vector<Element*>, this->components)
@@ -64,11 +89,30 @@ unsigned FlowLayout::computeFreeSpaceOnLayout() const
 	return space > 0 ? space : 0;
 }
 
+unsigned FlowLayout::computeFreeVerticalSpaceOnLayout() const
+{
+	int space = this->maxHeight == 0? SDL_GetVideoInfo()->current_h - this->position.y : this->maxHeight;
+	const_foreach(const Element*, component, vector<Element*>, this->components)
+	{
+		if(not component->isStretched())
+			space -= component->getSize().h; //subtract each non-stretched component size
+	}
+
+	space -= spacing_v * (1 + this->components.size()); //subtract each spacing between components
+
+	return space > 0 ? space : 0;
+}
+
 int FlowLayout::computeAlignment(Element* e, int pos) const
 {
 	if(this->alignment == BEFORE) return 0;
 
-	int space = this->maxHeight == 0? SDL_GetVideoInfo()->current_h - this->position.y : this->maxHeight;
+	int space;
+	if(orientation == HORIZONTAL)
+		space = this->maxHeight == 0? SDL_GetVideoInfo()->current_h - this->position.y : this->maxHeight;
+	else
+		space = this->maxWidth == 0? SDL_GetVideoInfo()->current_w - this->position.x : this->maxWidth;
+
 	space -= e->getSize().h;
 
 	if(this->alignment == AFTER)

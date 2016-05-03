@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Implement vertical flow layout
 - Move interactive controls to the right toolbar
 - Implement universe storage and loading functions
 - Create new, load and save universe buttons
