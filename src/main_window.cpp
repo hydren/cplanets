@@ -430,6 +430,9 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_h:
 			if(down) onButtonPressed(btnHalveTraceLentgh);
 			break;
+		case SDLK_s:
+			if(down) onCheckBoxPressed(tgbAA, true);
+			break;
 		default:break;
 	}
 }
