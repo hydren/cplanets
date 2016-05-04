@@ -21,7 +21,7 @@ map<ApplicationIO::FileFormat, vector<string> > extensionOf;
 
 void put(const char* ext, ApplicationIO::FileFormat ff)
 {
-	formatOf[ext] == ff;
+	formatOf[ext] = ff;
 	extensionOf[ff].push_back(ext);
 }
 

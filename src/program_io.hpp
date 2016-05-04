@@ -15,15 +15,15 @@ namespace ApplicationIO
 	enum FileFormat {
 		FORMAT_DEFAULT,
 
-//		FORMAT_SER,
+//		FORMAT_SER, //Java Serialized Object File
 
-//		FORMAT_CSV,
+//		FORMAT_CSV, //Comma separated values
 //		FORMAT_XML,
 //		FORMAT_ODS,
 
-		FORMAT_TXT,
+		FORMAT_TXT,  //Plain text
 
-//		FORMAT_PROP,
+//		FORMAT_PROP, //.properties file
 //		FORMAT_JSON,
 //		FORMAT_YAML,
 	};
