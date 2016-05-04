@@ -15,6 +15,7 @@
 #include "SDL_util.hpp"
 
 #include "planetarium.hpp"
+#include "program_io.hpp"
 #include "widgets/widgets_util.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/spinner.hpp"
@@ -79,7 +80,7 @@ Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
 TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
-Button* btnAddBody, *btnAddRandom, *btnRecolorAll, *btnRun, *btnPause, *btnAbout;
+Button* btnNew, *btnLoad, *btnSave, *btnRun, *btnPause, *btnAbout;
 
 TabSet* tabs;
 
@@ -97,6 +98,7 @@ DropDownMenu* ddmTraceStyle;
 Planetarium* planetarium;
 
 FlowLayout* toolbarRight;
+Button* btnAddBody, *btnAddRandom, *btnRecolorAll;
 
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
@@ -142,6 +144,18 @@ void CPlanets::showMainWindow()
 	//+++++++++++++++ North toolbar
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
 
+	btnNew = new Button(window, 0, genericButtonSize, "New", onButtonPressed);
+	packer.pack(btnNew);
+	toolbarNorthLayout->addComponent(btnNew);
+
+	btnLoad = new Button(window, 0, genericButtonSize, "Load", onButtonPressed);
+	packer.pack(btnLoad);
+	toolbarNorthLayout->addComponent(btnLoad);
+
+	btnSave = new Button(window, 0, genericButtonSize, "Save", onButtonPressed);
+	packer.pack(btnSave);
+	toolbarNorthLayout->addComponent(btnSave);
+
 	toolbarNorthLayout->addComponent(new SDL_util::Layout::Spacer(toolbarNorthLayout));
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
@@ -171,12 +185,12 @@ void CPlanets::showMainWindow()
 
 
 	//+++++++++++++++ Tabs
-	tabs = new TabSet(window, WIDGETS_SPACING, /*TOOLBAR_SIZE*/ (8) + 0.5*WIDGETS_SPACING, 0, 22);
+	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING, 0, 22);
 	Rect sizeTab(
 		tabs->layout.position.x,
 		tabs->layout.position.y + tabs->layout.maxHeight,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		planetariumSize.h - tabs->layout.maxHeight + (TOOLBAR_SIZE - 8)
+		planetariumSize.h - tabs->layout.maxHeight
 	); //todo Rearrange tabs position, (8) and (TOOLBAR_SIZE - 8) should be removed
 
 	// Tab bodies
@@ -486,6 +500,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnPause)
 	{
 		planetarium->setRunning(false);
+
 	}
 
 	if(btn == btnDoubleTraceLength)
@@ -497,6 +512,19 @@ void onButtonPressed(Button* btn)
 	{
 		planetarium->orbitTracer.traceLength *= 0.5;
 		spnTraceLength->refresh();
+	}
+
+	if(btn == btnLoad)
+	{
+		//xxx temporary code for debug
+		Universe2D* u = ApplicationIO::load("test.txt");
+		cout << (u==null) << endl;
+	}
+
+	if(btn == btnSave)
+	{
+		//xxx temporary code for debug
+		ApplicationIO::save(planetarium->physics->universe, "test.txt");
 	}
 }
 
