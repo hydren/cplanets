@@ -43,6 +43,24 @@ namespace SDL_util
 
 	/// Default draw() function for BgrWin's. Fills its area with background color.
 	void drawDefaultBgrWin(BgrWin* bgrWin);
+
+	// Holds a gradient of 5 colors (copied from SDL_widgets.cpp)
+	struct Color5 {
+		Uint32 c[5];
+		Color5(Uint32 fst,Uint32 lst);
+		void set_col(Uint32 fst,Uint32 lst);  // input like: 0x102030ff
+		void draw_gradient(WinBase* wb,Rect rect,bool vertical=false,bool hollow=false) const;
+
+		static const Color5
+			GradientBlue, GradientDarkBlue, GradientRose, GradientWheat, GradientGreen,
+			GradientGrey, GradientDarkGrey;
+
+		protected:
+		bool ready;
+		void setup();
+	};
+
+
 }
 
 #endif /* WIDGETS_WIDGETS_UTIL_HPP_ */
