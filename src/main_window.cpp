@@ -121,6 +121,8 @@ void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resulting
 void onPlanetariumBodyCreation(Body2D& createdBody);
 void onReady();
 
+void onFileChosenOpenUniverse(const char* f_name, Id id);
+
 void refreshAllTxtBodies();
 
 //  ==================== PLANETARIUM LISTENER ===========================
@@ -518,15 +520,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnLoad)
 	{
-		//xxx temporary code for debug
-		Universe2D* u = ApplicationIO::load("test.txt", ApplicationIO::FORMAT_DEFAULT);
-		if(u != null)
-		{
-			onButtonPressed(btnPause);
-			planetarium->setUniverse(u);
-			refreshAllTxtBodies();
-			spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
-		}
+		file_chooser(onFileChosenOpenUniverse);
 	}
 
 	if(btn == btnSave)
@@ -602,6 +596,25 @@ void onReady()
 	spnTimeStep->refresh();
 	spnGravity->refresh();
 	spnDisplayPeriod->refresh();
+}
+
+
+void onFileChosenOpenUniverse(const char* f_name, Id id)
+{
+	if(FileInputStream(f_name).good())
+	{
+		Universe2D* u = ApplicationIO::load(f_name, ApplicationIO::FORMAT_DEFAULT);
+		if(u != null)
+		{
+			onButtonPressed(btnPause);
+			planetarium->setUniverse(u);
+			refreshAllTxtBodies();
+			spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
+		}
+		else alert("Invalid file!");
+	}
+	else alert("File doesn't exist or isn't readable.");
+	SDL_util::setWindowTitle("cplanets"); //todo maybe put filename on title
 }
 
 void refreshAllTxtBodies()

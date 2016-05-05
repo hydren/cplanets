@@ -28,3 +28,17 @@ SDL_Color* SDL_util::getRandomColor()
 	somecolor->b = Math::randomBetween(0, 255);
 	return somecolor;
 }
+
+void SDL_util::setWindowTitle(const char* title)
+{
+	static char* icon;
+	SDL_WM_GetCaption(null, &icon);
+	SDL_WM_SetCaption(title, icon);
+}
+
+void SDL_util::setWindowIcon(const char* icon)
+{
+	static char* title;
+	SDL_WM_GetCaption(&title, null);
+	SDL_WM_SetCaption(title, icon);
+}
