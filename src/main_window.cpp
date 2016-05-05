@@ -124,6 +124,7 @@ void onReady();
 void onFileChosenOpenUniverse(const char* f_name, Id id);
 
 void refreshAllTxtBodies();
+void replaceUniverse(Universe2D* universe);
 
 //  ==================== PLANETARIUM LISTENER ===========================
 
@@ -518,6 +519,11 @@ void onButtonPressed(Button* btn)
 		spnTraceLength->refresh();
 	}
 
+	if(btn == btnNew)
+	{
+		replaceUniverse(new Universe2D());
+	}
+
 	if(btn == btnLoad)
 	{
 		file_chooser(onFileChosenOpenUniverse);
@@ -604,13 +610,10 @@ void onFileChosenOpenUniverse(const char* f_name, Id id)
 	if(FileInputStream(f_name).good())
 	{
 		Universe2D* u = ApplicationIO::load(f_name, ApplicationIO::FORMAT_DEFAULT);
+
 		if(u != null)
-		{
-			onButtonPressed(btnPause);
-			planetarium->setUniverse(u);
-			refreshAllTxtBodies();
-			spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
-		}
+			replaceUniverse(u);
+
 		else alert("Invalid file!");
 	}
 	else alert("File doesn't exist or isn't readable.");
@@ -626,4 +629,12 @@ void refreshAllTxtBodies()
 		txtBodies->add_text(body.toString().c_str(), false);
 	}
 	txtBodies->draw_blit_upd(); //xxx call to draw_blit_upd() here may cause race conditions
+}
+
+void replaceUniverse(Universe2D* universe)
+{
+	onButtonPressed(btnPause);
+	planetarium->setUniverse(universe);
+	refreshAllTxtBodies();
+	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
 }
