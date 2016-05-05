@@ -75,6 +75,8 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2D> getBodies() const;
 
+	void setUniverse(Universe2D* u);
+
 
 	// :::::::::::::::::::::: Inner classes ::::::::::::::::::::::::::::::::
 

@@ -265,6 +265,21 @@ vector<Body2D> Planetarium::getBodies() const
 	return bodies;
 }
 
+void Planetarium::setUniverse(Universe2D* u)
+{
+	const_foreach(Body2D*, i, vector<Body2D*>, u->bodies)
+		i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
+
+	synchronized(physicsAccessMutex)
+	{
+		double timeStep = physics->physics2DSolver->timestep; //record current timestep
+		physics->universe = *u; //overwrite instance
+		delete physics->physics2DSolver; //delete older solver
+		physics->physics2DSolver = new LeapfrogSolver(physics->universe); //create new solver
+		physics->physics2DSolver->timestep = timeStep; //use previously defined timestep
+	}
+}
+
 //--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
 
 void Planetarium::addUniverseEventListener(UniverseEventListener* listener)
