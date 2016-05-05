@@ -23,6 +23,7 @@
 #include "widgets/tab_set.hpp"
 #include "widgets/label_win.hpp"
 #include "widgets/toogle_button.hpp"
+#include "widgets/file_chooser.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -532,7 +533,9 @@ void onButtonPressed(Button* btn)
 	if(btn == btnSave)
 	{
 		//xxx temporary code for debug
-		ApplicationIO::save(planetarium->physics->universe, "test.txt");
+		FileChooserDialog* dialog = new FileChooserDialog();
+		dialog->setVisible();
+//		ApplicationIO::save(planetarium->physics->universe, "test.txt");
 	}
 }
 
