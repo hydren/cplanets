@@ -121,6 +121,8 @@ void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resulting
 void onPlanetariumBodyCreation(Body2D& createdBody);
 void onReady();
 
+void refreshAllTxtBodies();
+
 //  ==================== PLANETARIUM LISTENER ===========================
 
 struct CustomUniverseListener extends Planetarium::UniverseEventListener
@@ -517,8 +519,14 @@ void onButtonPressed(Button* btn)
 	if(btn == btnLoad)
 	{
 		//xxx temporary code for debug
-		Universe2D* u = ApplicationIO::load("test.txt");
-		cout << (u==null) << endl;
+		Universe2D* u = ApplicationIO::load("test.txt", ApplicationIO::FORMAT_DEFAULT);
+		if(u != null)
+		{
+			onButtonPressed(btnPause);
+			planetarium->setUniverse(u);
+			refreshAllTxtBodies();
+			spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
+		}
 	}
 
 	if(btn == btnSave)
@@ -578,13 +586,7 @@ void onUserEvent(int cmd,int param,int param2)
 
 void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger)
 {
-	txtBodies->reset();
-	vector<Body2D> bodies = planetarium->getBodies();
-	foreach(Body2D&, body, vector<Body2D>, bodies)
-	{
-		txtBodies->add_text(body.toString().c_str(), false);
-	}
-	txtBodies->draw_blit_upd(); //xxx call to draw_blit_upd() here may cause race conditions
+	refreshAllTxtBodies();
 }
 
 void onPlanetariumBodyCreation(Body2D& createdBody)
@@ -600,4 +602,15 @@ void onReady()
 	spnTimeStep->refresh();
 	spnGravity->refresh();
 	spnDisplayPeriod->refresh();
+}
+
+void refreshAllTxtBodies()
+{
+	txtBodies->reset();
+	vector<Body2D> bodies = planetarium->getBodies();
+	foreach(Body2D&, body, vector<Body2D>, bodies)
+	{
+		txtBodies->add_text(body.toString().c_str(), false);
+	}
+	txtBodies->draw_blit_upd(); //xxx call to draw_blit_upd() here may cause race conditions
 }

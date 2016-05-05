@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Implement universe storage and loading functions
 - Create new, load and save universe buttons
 - Create Spinner to select physics2dsolver's
 - Fix bezier spline
