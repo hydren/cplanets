@@ -9,13 +9,24 @@
 
 #include <unistd.h>
 
+using SDL_util::LabelWin;
+
 
 FileChooserDialog::FileChooserDialog()
 : BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, null, null, null, 0),
-  titleBarArea(Rect(1, 1, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2))
+  titleBarArea(Rect(1, 1, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
+  closeButton(this, 0, Rect(titleBarArea.w - titleBarArea.h + 2, 3, titleBarArea.h-4, titleBarArea.h-4), "X", null),
+  lblLookIn(this, Rect(4, titleBarArea.h + 4, 0, 0), "Look in:"),
+  cbLookIn(null)
 {
 	static char buffer[1024];
 	this->currentDirectory = getcwd(buffer, 1024);
+	DropDownMenuFactory dfactory;
+	dfactory.setAppearance(DropDownMenuFactory::COMBOBOX);
+	dfactory.setCallback(null);
+	dfactory.addItem(currentDirectory.c_str());
+	dfactory.setSize(Rect(0, 0, titleBarArea.w*0.6, TTF_FontHeight(draw_title_ttf->ttf_font)));
+	cbLookIn = dfactory.createAt(this, Point(lblLookIn.area.x + lblLookIn.tw_area.w + 4, lblLookIn.area.y));
 }
 
 FileChooserDialog::~FileChooserDialog()
