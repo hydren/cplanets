@@ -13,7 +13,7 @@
 #include "widgets_util.hpp"
 #include "label_win.hpp"
 #include "drop_menu.hpp"
-#include "abstract_layout.hpp"
+#include "flow_layout.hpp"
 
 struct FileChooserDialog extends BgrWin, SDL_util::Layout::WinBaseWrapper
 {
@@ -27,9 +27,11 @@ struct FileChooserDialog extends BgrWin, SDL_util::Layout::WinBaseWrapper
 
 	protected:
 	Rect titleBarArea;
-	Button closeButton;
+	Button btnClose;
+	SDL_util::FlowLayout layoutNorth;
 	SDL_util::LabelWin lblLookIn;
 	DropDownMenu* cbLookIn;
+	Button btnFolderUp, btnHome, btnNewFolder;
 	static void draw(BgrWin*);
 	static void close(Button* btn);
 };
