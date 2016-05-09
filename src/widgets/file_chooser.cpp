@@ -13,9 +13,9 @@ using SDL_util::LabelWin;
 
 
 FileChooserDialog::FileChooserDialog()
-: BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, null, null, null, 0),
+: BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, mwin::down, mwin::move, mwin::up, 0),
   titleBarArea(Rect(1, 1, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
-  closeButton(this, 0, Rect(titleBarArea.w - titleBarArea.h + 2, 3, titleBarArea.h-4, titleBarArea.h-4), "X", null),
+  closeButton(this, 0, Rect(titleBarArea.w - titleBarArea.h + 2, 3, titleBarArea.h-4, titleBarArea.h-4), "X", FileChooserDialog::close),
   lblLookIn(this, Rect(4, titleBarArea.h + 4, 0, 0), "Look in:"),
   cbLookIn(null)
 {
@@ -27,6 +27,12 @@ FileChooserDialog::FileChooserDialog()
 	dfactory.addItem(currentDirectory.c_str());
 	dfactory.setSize(Rect(0, 0, titleBarArea.w*0.6, TTF_FontHeight(draw_title_ttf->ttf_font)));
 	cbLookIn = dfactory.createAt(this, Point(lblLookIn.area.x + lblLookIn.tw_area.w + 4, lblLookIn.area.y));
+
+	this->keep_on_top(); //binds to main window
+	this->bgcol = parent->bgcol; //inherit background color
+	SDL_util::setComponentPosition(this, Point(this->parent->tw_area.w*0.5-this->tw_area.w*0.5, this->parent->tw_area.h*0.5-this->tw_area.h*0.5)); //centers the dialog
+	this->draw_blit_recur();
+	this->upd();
 }
 
 FileChooserDialog::~FileChooserDialog()
@@ -34,23 +40,8 @@ FileChooserDialog::~FileChooserDialog()
 
 void FileChooserDialog::setVisible(bool visible)
 {
-	if(visible)
-	{
-		if(this->parent == null)
-		{
-			this->keep_on_top(); //binds to main window
-			SDL_util::setComponentPosition(this, Point(this->parent->tw_area.w*0.5-this->tw_area.w*0.5, this->parent->tw_area.h*0.5-this->tw_area.h*0.5)); //centers the dialog
-			this->bgcol = parent->bgcol; //inherit background color
-			this->draw_blit_recur();
-			this->upd();
-		}
-		else this->show();
-	}
-	else
-	{
-		if(this->parent != null)
-			this->hide();
-	}
+	if(visible && this->hidden) this->show();
+	else if(not visible && not this->hidden) this->hide();
 }
 
 void FileChooserDialog::draw(BgrWin* bwSelf)
@@ -63,4 +54,10 @@ void FileChooserDialog::draw(BgrWin* bwSelf)
 	SDL_util::Color5::GradientBlue.draw_gradient(self, self->titleBarArea);
 
 	draw_title_ttf->draw_string(self->win, "Choose file", Point(4, 4));
+}
+
+void FileChooserDialog::close(Button* btn)
+{
+	FileChooserDialog* self = static_cast<FileChooserDialog*>(btn->parent);
+	self->setVisible(false);
 }

@@ -29,6 +29,7 @@ struct FileChooserDialog extends BgrWin
 	SDL_util::LabelWin lblLookIn;
 	DropDownMenu* cbLookIn;
 	static void draw(BgrWin*);
+	static void close(Button* btn);
 };
 
 

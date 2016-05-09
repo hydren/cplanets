@@ -533,7 +533,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnSave)
 	{
 		//xxx temporary code for debug
-		FileChooserDialog* dialog = new FileChooserDialog();
+		static FileChooserDialog* dialog = new FileChooserDialog();
 		dialog->setVisible();
 //		ApplicationIO::save(planetarium->physics->universe, "test.txt");
 	}
