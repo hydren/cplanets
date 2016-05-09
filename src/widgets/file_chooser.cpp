@@ -15,7 +15,7 @@ using SDL_util::LabelWin;
 FileChooserDialog::FileChooserDialog()
 : BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, mwin::down, mwin::move, mwin::up, 0),
   titleBarArea(Rect(1, 1, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
-  closeButton(this, 0, Rect(titleBarArea.w - titleBarArea.h + 2, 3, titleBarArea.h-4, titleBarArea.h-4), "X", FileChooserDialog::close),
+  closeButton(this, Style(0,1), Rect(titleBarArea.w - titleBarArea.h + 2, 3, titleBarArea.h-4, titleBarArea.h-4), "X", FileChooserDialog::close),
   lblLookIn(this, Rect(4, titleBarArea.h + 4, 0, 0), "Look in:"),
   cbLookIn(null)
 {
@@ -31,6 +31,8 @@ FileChooserDialog::FileChooserDialog()
 	this->keep_on_top(); //binds to main window
 	this->bgcol = parent->bgcol; //inherit background color
 	SDL_util::setComponentPosition(this, Point(this->parent->tw_area.w*0.5-this->tw_area.w*0.5, this->parent->tw_area.h*0.5-this->tw_area.h*0.5)); //centers the dialog
+	SDL_util::setComponentPosition(&closeButton, Point(titleBarArea.w - titleBarArea.h + 2, 3)); //centers the dialog
+	cbLookIn->setPosition(Point(lblLookIn.area.x + lblLookIn.tw_area.w + 4, lblLookIn.area.y));
 	this->draw_blit_recur();
 	this->upd();
 }
