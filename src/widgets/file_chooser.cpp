@@ -32,15 +32,17 @@ FileChooserDialog::FileChooserDialog()
   btnHome(this, 0, Rect(0, 0, NAV_BTN_SIZE, NAV_BTN_SIZE), "H", null),
   btnNewFolder(this, 0, Rect(0, 0, NAV_BTN_SIZE, NAV_BTN_SIZE), "*", null)
 {
-	static char buffer[1024];
-	currentDirectory = getcwd(buffer, 1024);
+	fillEntries();
+
 	if(currentDirectory.size() > LOOK_IN_COMBOBOX_MAX_CHARS)
-		currentDirectory = "..." + currentDirectory.substr(currentDirectory.size() - LOOK_IN_COMBOBOX_MAX_CHARS);
+		currentDirectoryAux = "..." + currentDirectory.substr(currentDirectory.size() - LOOK_IN_COMBOBOX_MAX_CHARS);
+	else
+		currentDirectoryAux = currentDirectory;
 
 	DropDownMenuFactory dfactory;
 	dfactory.setAppearance(DropDownMenuFactory::COMBOBOX);
 	dfactory.setCallback(null);
-	dfactory.addItem(currentDirectory.c_str());
+	dfactory.addItem(currentDirectoryAux.c_str());
 	//todo add all parent hierarchy on file dialog
 	dfactory.setSize(Rect(0, 0, titleBarArea.w*0.65, 1.25*TTF_FontHeight(draw_title_ttf->ttf_font)));
 	cbLookIn = dfactory.createAt(this, Point(lblLookIn.area.x + lblLookIn.tw_area.w + 4, lblLookIn.area.y));
@@ -82,14 +84,14 @@ void FileChooserDialog::setPosition(Point position)
 
 	layoutNorth.position = Point(12, titleBarArea.h + 12);
 	layoutNorth.pack();
+
+	setComponentPosition(entries, Point(12, titleBarArea.h + 24));
 }
 
 void FileChooserDialog::fillEntries()
 {
 	static char buffer[1024];
 	currentDirectory = getcwd(buffer, 1024);
-	if(currentDirectory.size() > LOOK_IN_COMBOBOX_MAX_CHARS)
-		currentDirectory = "..." + currentDirectory.substr(currentDirectory.size() - LOOK_IN_COMBOBOX_MAX_CHARS);
 
 	currentDirectoryFiles = getFilenamesWithinDirectory(currentDirectory);
 	entries = new RButWin(this, 0, Rect(), null, false, null);

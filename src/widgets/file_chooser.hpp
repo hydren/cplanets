@@ -28,10 +28,13 @@ struct FileChooserDialog extends BgrWin, SDL_util::Layout::WinBaseWrapper
 	protected:
 	Rect titleBarArea;
 	Button btnClose;
+
 	SDL_util::FlowLayout layoutNorth;
 	SDL_util::LabelWin lblLookIn;
 	DropDownMenu* cbLookIn;
 	Button btnFolderUp, btnHome, btnNewFolder;
+
+	string currentDirectoryAux;
 	std::vector<string> currentDirectoryFiles;
 	RButWin *entries;
 	void fillEntries();
