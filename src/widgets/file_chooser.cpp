@@ -13,7 +13,7 @@ using SDL_util::LabelWin;
 
 using SDL_util::setComponentPosition;
 
-int NAVIGATION_BUTTONS_SIZE = 18;
+int NAV_BTN_SIZE = 18;
 
 FileChooserDialog::FileChooserDialog()
 : BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, mwin::down, mwin::move, mwin::up, 0),
@@ -23,9 +23,9 @@ FileChooserDialog::FileChooserDialog()
   layoutNorth(4, titleBarArea.h + 4, 400),
   lblLookIn(this, Rect(), "Look in:"),
   cbLookIn(null),
-  btnFolderUp(this, 0, Rect(0, 0, NAVIGATION_BUTTONS_SIZE, NAVIGATION_BUTTONS_SIZE), "Up", null),
-  btnHome(this, 0, Rect(0, 0, NAVIGATION_BUTTONS_SIZE, NAVIGATION_BUTTONS_SIZE), "H", null),
-  btnNewFolder(this, 0, Rect(0, 0, NAVIGATION_BUTTONS_SIZE, NAVIGATION_BUTTONS_SIZE), "*", null)
+  btnFolderUp(this, 0, Rect(0, 0, NAV_BTN_SIZE, NAV_BTN_SIZE), "/\\", null),
+  btnHome(this, 0, Rect(0, 0, NAV_BTN_SIZE, NAV_BTN_SIZE), "H", null),
+  btnNewFolder(this, 0, Rect(0, 0, NAV_BTN_SIZE, NAV_BTN_SIZE), "*", null)
 {
 	static char buffer[1024];
 	currentDirectory = getcwd(buffer, 1024);
