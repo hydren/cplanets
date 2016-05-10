@@ -14,7 +14,7 @@ using SDL_util::LabelWin;
 using SDL_util::setComponentPosition;
 
 const int NAV_BTN_SIZE = 18;
-const unsigned LOOK_IN_COMBOBOX_MAX_CHARS = 38;
+const unsigned LOOK_IN_COMBOBOX_MAX_CHARS = 36;
 
 FileChooserDialog::FileChooserDialog()
 : BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, FileChooserDialog::custom_mwin_down, mwin::move, mwin::up, 0),
@@ -38,11 +38,14 @@ FileChooserDialog::FileChooserDialog()
 	dfactory.setCallback(null);
 	dfactory.addItem(currentDirectory.c_str());
 	//todo add all parent hierarchy on file dialog
-	dfactory.setSize(Rect(0, 0, titleBarArea.w*0.67, 1.25*TTF_FontHeight(draw_title_ttf->ttf_font)));
+	dfactory.setSize(Rect(0, 0, titleBarArea.w*0.65, 1.25*TTF_FontHeight(draw_title_ttf->ttf_font)));
 	cbLookIn = dfactory.createAt(this, Point(lblLookIn.area.x + lblLookIn.tw_area.w + 4, lblLookIn.area.y));
+	cbLookIn->cmdMenu->sticky = false;
+	cbLookIn->offset.y -= 1;
 
 	layoutNorth.addComponent(lblLookIn);
 	layoutNorth.addComponent(cbLookIn);
+	layoutNorth.addComponent(new SDL_util::Layout::Spacer(Rect(0,0,4,0)));
 	layoutNorth.addComponent(btnFolderUp);
 	layoutNorth.addComponent(btnHome);
 	layoutNorth.addComponent(btnNewFolder);
@@ -70,10 +73,10 @@ void FileChooserDialog::setPosition(Point position)
 	WinBaseWrapper::setPosition(position); //set bgrwin position as a WinBaseWrapper
 
 	//shift properly all components inside it
-	titleBarArea = Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2);
-	setComponentPosition(&btnClose, Point(titleBarArea.w - titleBarArea.h + 2, 3));
+	titleBarArea = Rect(1, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) - 2);
+	setComponentPosition(&btnClose, Point(titleBarArea.w - titleBarArea.h + 2, 2));
 
-	layoutNorth.position = Point(4, titleBarArea.h + 4);
+	layoutNorth.position = Point(12, titleBarArea.h + 12);
 	layoutNorth.pack();
 }
 
