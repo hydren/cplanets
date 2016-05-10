@@ -32,6 +32,9 @@ struct FileChooserDialog extends BgrWin, SDL_util::Layout::WinBaseWrapper
 	SDL_util::LabelWin lblLookIn;
 	DropDownMenu* cbLookIn;
 	Button btnFolderUp, btnHome, btnNewFolder;
+	std::vector<string> currentDirectoryFiles;
+	RButWin *entries;
+	void fillEntries();
 	static void draw(BgrWin*);
 	static void close(Button* btn);
 	static void custom_mwin_down(BgrWin* bgr,int x,int y,int but);

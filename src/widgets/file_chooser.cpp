@@ -8,10 +8,14 @@
 #include "file_chooser.hpp"
 
 #include <unistd.h>
+#include <dirent.h>
+#include <string>
 
 using SDL_util::LabelWin;
-
 using SDL_util::setComponentPosition;
+using std::vector;
+
+vector<string> getFilenamesWithinDirectory(const string& directoryPath);
 
 const int NAV_BTN_SIZE = 18;
 const unsigned LOOK_IN_COMBOBOX_MAX_CHARS = 36;
@@ -80,6 +84,19 @@ void FileChooserDialog::setPosition(Point position)
 	layoutNorth.pack();
 }
 
+void FileChooserDialog::fillEntries()
+{
+	static char buffer[1024];
+	currentDirectory = getcwd(buffer, 1024);
+	if(currentDirectory.size() > LOOK_IN_COMBOBOX_MAX_CHARS)
+		currentDirectory = "..." + currentDirectory.substr(currentDirectory.size() - LOOK_IN_COMBOBOX_MAX_CHARS);
+
+	currentDirectoryFiles = getFilenamesWithinDirectory(currentDirectory);
+	entries = new RButWin(this, 0, Rect(), null, false, null);
+
+	for(unsigned i = 0; i < currentDirectoryFiles.size(); i++)
+		entries->add_rbut(currentDirectoryFiles[i].c_str());
+}
 
 void FileChooserDialog::draw(BgrWin* bwSelf)
 {
@@ -106,3 +123,23 @@ void FileChooserDialog::custom_mwin_down(BgrWin* bgr,int x,int y,int but)
 	&& y > titleBarArea.y && y < titleBarArea.y + titleBarArea.h)
 		mwin::down(bgr, x, y, but);
 }
+
+vector<string> getFilenamesWithinDirectory(const string& directoryPath)
+{
+	vector<string> filenames;
+
+	DIR *dir;
+	struct dirent *ent;
+	if((dir = opendir (directoryPath.c_str())) != NULL)
+	{
+		while((ent = readdir (dir)) != NULL)
+		{
+			if(string(ent->d_name).compare("..") != 0 && string(ent->d_name).compare(".") != 0)  // exclude . and ..
+				filenames.push_back(directoryPath+"/"+string(ent->d_name));
+		}
+		closedir (dir);
+	}
+	else futil::throw_exception("Could not open directory \"%s\"", directoryPath.c_str());
+	return filenames;
+}
+
