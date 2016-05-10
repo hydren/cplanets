@@ -13,7 +13,8 @@ using SDL_util::LabelWin;
 
 using SDL_util::setComponentPosition;
 
-int NAV_BTN_SIZE = 18;
+const int NAV_BTN_SIZE = 18;
+const unsigned LOOK_IN_COMBOBOX_MAX_CHARS = 38;
 
 FileChooserDialog::FileChooserDialog()
 : BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, mwin::down, mwin::move, mwin::up, 0),
@@ -29,7 +30,9 @@ FileChooserDialog::FileChooserDialog()
 {
 	static char buffer[1024];
 	currentDirectory = getcwd(buffer, 1024);
-	this->currentDirectory = "..." + currentDirectory.substr(Math::max(0, (int)currentDirectory.size()-36));
+	if(currentDirectory.size() > LOOK_IN_COMBOBOX_MAX_CHARS)
+		currentDirectory = "..." + currentDirectory.substr(currentDirectory.size() - LOOK_IN_COMBOBOX_MAX_CHARS);
+
 	DropDownMenuFactory dfactory;
 	dfactory.setAppearance(DropDownMenuFactory::COMBOBOX);
 	dfactory.setCallback(null);
@@ -90,10 +93,4 @@ void FileChooserDialog::setPosition(Point position)
 
 	layoutNorth.position = Point(4, titleBarArea.h + 4);
 	layoutNorth.pack();
-
-//	setComponentPosition(&lblLookIn, Point(4, titleBarArea.h + 4));
-//	cbLookIn->setPosition(Point(lblLookIn.area.x + lblLookIn.tw_area.w + 4, lblLookIn.area.y));
-//	setComponentPosition(&btnFolderUp, Point(cbLookIn->getPosition().x + cbLookIn->getSize().w + 4, cbLookIn->getPosition().y));
-//	setComponentPosition(&btnHome, Point(btnFolderUp.area.x + btnFolderUp.tw_area.w + 4, btnFolderUp.area.y));
-//	setComponentPosition(&btnNewFolder, Point(btnHome.area.x + btnHome.tw_area.w + 4, btnHome.area.y));
 }
