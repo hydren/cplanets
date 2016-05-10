@@ -34,6 +34,7 @@ struct FileChooserDialog extends BgrWin, SDL_util::Layout::WinBaseWrapper
 	Button btnFolderUp, btnHome, btnNewFolder;
 	static void draw(BgrWin*);
 	static void close(Button* btn);
+	static void custom_mwin_down(BgrWin* bgr,int x,int y,int but);
 };
 
 

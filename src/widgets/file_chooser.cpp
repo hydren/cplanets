@@ -17,7 +17,7 @@ const int NAV_BTN_SIZE = 18;
 const unsigned LOOK_IN_COMBOBOX_MAX_CHARS = 38;
 
 FileChooserDialog::FileChooserDialog()
-: BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, mwin::down, mwin::move, mwin::up, 0),
+: BgrWin(null, Rect(0, 0, 400, 300), null, FileChooserDialog::draw, FileChooserDialog::custom_mwin_down, mwin::move, mwin::up, 0),
   WinBaseWrapper(this),
   titleBarArea(Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
   btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), "X", FileChooserDialog::close),
@@ -65,6 +65,19 @@ void FileChooserDialog::setVisible(bool visible)
 	else if(not visible && not this->hidden) this->hide();
 }
 
+void FileChooserDialog::setPosition(Point position)
+{
+	WinBaseWrapper::setPosition(position); //set bgrwin position as a WinBaseWrapper
+
+	//shift properly all components inside it
+	titleBarArea = Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2);
+	setComponentPosition(&btnClose, Point(titleBarArea.w - titleBarArea.h + 2, 3));
+
+	layoutNorth.position = Point(4, titleBarArea.h + 4);
+	layoutNorth.pack();
+}
+
+
 void FileChooserDialog::draw(BgrWin* bwSelf)
 {
 	FileChooserDialog* self = static_cast<FileChooserDialog*>(bwSelf);
@@ -83,14 +96,10 @@ void FileChooserDialog::close(Button* btn)
 	self->setVisible(false);
 }
 
-void FileChooserDialog::setPosition(Point position)
+void FileChooserDialog::custom_mwin_down(BgrWin* bgr,int x,int y,int but)
 {
-	WinBaseWrapper::setPosition(position); //set bgrwin position as a WinBaseWrapper
-
-	//shift properly all components inside it
-	titleBarArea = Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2);
-	setComponentPosition(&btnClose, Point(titleBarArea.w - titleBarArea.h + 2, 3));
-
-	layoutNorth.position = Point(4, titleBarArea.h + 4);
-	layoutNorth.pack();
+	Rect& titleBarArea = static_cast<FileChooserDialog*>(bgr)->titleBarArea;
+	if(x > titleBarArea.x && x < titleBarArea.x + titleBarArea.w
+	&& y > titleBarArea.y && y < titleBarArea.y + titleBarArea.h)
+		mwin::down(bgr, x, y, but);
 }
