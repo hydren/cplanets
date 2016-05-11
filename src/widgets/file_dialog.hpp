@@ -10,13 +10,17 @@
 
 #include "dialog_bgrwin.hpp"
 #include "label_win.hpp"
+#include "flow_layout.hpp"
 
 namespace WidgetsExtra
 {
 	struct FileDialog extends WidgetsExtra::DialogBgrWin
 	{
+		void (*onFinishedCallback)(FileDialog* dialog);
+		string* selectedFilename;
+
 		enum FileDialogMode { SELECT_FILE, SAVE_FILE, SELECT_FOLDER };
-		FileDialog(FileDialogMode mode=SELECT_FILE);
+		FileDialog(FileDialogMode mode=SELECT_FILE, void (*onFinished)(FileDialog* dialog)=null);
 		virtual ~FileDialog();
 
 		virtual void setPosition(Point position);
@@ -28,11 +32,16 @@ namespace WidgetsExtra
 		Button btnGoHome;
 		LabelWin lblFilename;
 		DialogWin dlgwFilenameField;
+		FlowLayout layoutSouthButtons;
+		Button btnOk, btnCancel;
+
+		void replaceSelectedFilename(const char* path, const char* filename="");
 
 		static void triggerNavigation(Button*);
 		static void fileSelected(const char* path,Id);
 		static void folderOpened(const char* path,Id);
 		static void navigateToHome(Button*);
+		static void confirmation(Button*);
 	};
 }
 

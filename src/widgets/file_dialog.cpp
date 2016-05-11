@@ -56,13 +56,17 @@ namespace FileDialog_static
 	}
 }
 
-FileDialog::FileDialog(FileDialogMode mode)
-: DialogBgrWin(Rect(0, 0, 400, 120), FileDialog_static::modeTitle(mode)), mode(mode),
+FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
+: DialogBgrWin(Rect(0, 0, 400, 150), FileDialog_static::modeTitle(mode)),
+  onFinishedCallback(onFinished), mode(mode),
   lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
   cmdmCurrentDirectoryField(new Button(this, Style(4,0), Rect(0, 0, titleBarArea.w * 0.75, 1.5 * TTF_FontHeight(draw_ttf->ttf_font)), getcwd(buffer, 1024), FileDialog::triggerNavigation)),
   btnGoHome(this, 0, Rect(), " H ", FileDialog::navigateToHome),
   lblFilename(this, Rect(), FileDialog_static::modeFilename(mode)),
-  dlgwFilenameField(this, Rect(0, 0, titleBarArea.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)))
+  dlgwFilenameField(this, Rect(0, 0, titleBarArea.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font))),
+  layoutSouthButtons(0, 0, 400),
+  btnOk(this, 0, Rect(), "  Ok  ", FileDialog::confirmation),
+  btnCancel(this, 0, Rect(), "Cancel", DialogBgrWin::close)
 {
 	this->id = FileDialog_static::lastId++;
 	FileDialog_static::references[id.id1] = this;
@@ -72,6 +76,10 @@ FileDialog::FileDialog(FileDialogMode mode)
 		lblFilename.hidden = true;
 		dlgwFilenameField.hidden = true;
 	}
+	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect()));
+	layoutSouthButtons.addComponent(btnOk); packLabeledComponent(&btnOk);
+	layoutSouthButtons.addComponent(btnCancel); packLabeledComponent(&btnCancel);
+	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect(0,0,8,0)));
 	setPosition(Point());
 //	setPosition(Point(SDL_GetVideoSurface()->w - 200, SDL_GetVideoSurface()->h - 150));
 }
@@ -86,12 +94,24 @@ void FileDialog::setPosition(Point position)
 	setComponentPosition(&btnGoHome, Point(cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3));
 	setComponentPosition(&lblFilename, Point(8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 32));
 	setComponentPosition(&dlgwFilenameField, Point(lblFilename.area.x + lblFilename.tw_area.w + 6, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font)));
+	layoutSouthButtons.position.y = 120;
+	layoutSouthButtons.pack();
 
 	lblCurrentDirectory.draw_blit_upd();
 	cmdmCurrentDirectoryField.src->draw_blit_upd();
 	btnGoHome.draw_blit_upd();
 	lblFilename.draw_blit_upd();
 	dlgwFilenameField.draw_blit_upd();
+	btnOk.draw_blit_upd();
+	btnCancel.draw_blit_upd();
+}
+
+void FileDialog::replaceSelectedFilename(const char* path, const char* filename)
+{
+	string str = path;
+	str += filename;
+	if(this->selectedFilename != null) delete selectedFilename;
+	this->selectedFilename = new string(str);
 }
 
 void FileDialog::triggerNavigation(Button* navButton)
@@ -111,6 +131,7 @@ void FileDialog::fileSelected(const char* path, Id id)
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
 	self->dlgwFilenameField.dialog_def(path, self->dlgwFilenameField.cmd, self->dlgwFilenameField.cmd_id);
+	self->replaceSelectedFilename(getcwd(buffer, 1024), path);
 }
 
 void FileDialog::folderOpened(const char* path, Id id)
@@ -120,6 +141,7 @@ void FileDialog::folderOpened(const char* path, Id id)
 
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
+	self->replaceSelectedFilename(getcwd(buffer, 1024));
 }
 
 void FileDialog::navigateToHome(Button* navButton) //fixme FileDialog::navigateToHome doesn't update file_chooser() bgr
@@ -129,5 +151,12 @@ void FileDialog::navigateToHome(Button* navButton) //fixme FileDialog::navigateT
 	chdir(getenv("HOME")!=null? getenv("HOME") : getenv("USERPROFILE"));
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
+}
+
+void FileDialog::confirmation(Button* okBtn)
+{
+	FileDialog* self = static_cast<FileDialog*>(okBtn->parent);
+	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
+	DialogBgrWin::close(okBtn);
 }
 
