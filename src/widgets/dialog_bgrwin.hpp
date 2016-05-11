@@ -22,9 +22,9 @@ namespace WidgetsExtra
 		DialogBgrWin(Rect bounds, string title="");
 		virtual ~DialogBgrWin();
 
-		void setVisible(bool visible=true);
-		void setPosition(Point position);
-		void setPositionOnCenter();
+		virtual void setVisible(bool visible=true);
+		virtual void setPosition(Point position);
+		virtual void setPositionOnCenter();
 
 		protected:
 		Rect titleBarArea;
