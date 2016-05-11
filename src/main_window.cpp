@@ -540,7 +540,7 @@ void onButtonPressed(Button* btn)
 		//xxx temporary code for debug
 		//ApplicationIO::save(planetarium->physics->universe, "test.txt");
 //		alert("Save dialog not implemented yet!");
-		WidgetsExtra::FileDialog* dialog = new WidgetsExtra::FileDialog();
+		WidgetsExtra::FileDialog* dialog = new WidgetsExtra::FileDialog(WidgetsExtra::FileDialog::SAVE_FILE);
 		dialog->setVisible();
 	}
 }
