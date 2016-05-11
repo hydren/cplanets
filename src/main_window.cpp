@@ -532,7 +532,8 @@ void onButtonPressed(Button* btn)
 	if(btn == btnSave)
 	{
 		//xxx temporary code for debug
-		ApplicationIO::save(planetarium->physics->universe, "test.txt");
+		//ApplicationIO::save(planetarium->physics->universe, "test.txt");
+		alert("Save dialog not implemented yet!");
 	}
 }
 
