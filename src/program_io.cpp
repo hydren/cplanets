@@ -89,11 +89,10 @@ void ApplicationIO::save(const Universe2D& universe, const std::string& barefile
 			content = content + ", position_y " + body->position.y;
 			content = content + ", velocity_x " + body->velocity.x;
 			content = content + ", velocity_y " + body->velocity.y;
-			FileOutputStream fos(filename.c_str(), FileOutputStream::out);
-			fos << content;
-			fos.close();
 		}
-
+		FileOutputStream fos(filename.c_str(), FileOutputStream::out);
+		fos << content;
+		fos.close();
 		return;
 	}
 
