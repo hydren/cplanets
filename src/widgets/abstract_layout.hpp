@@ -13,7 +13,7 @@
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
 
-namespace SDL_util
+namespace WidgetsExtra
 {
 	/** An abstract layout manager. */
 	struct Layout
@@ -126,7 +126,5 @@ namespace SDL_util
 		std::vector<WinBaseWrapper*> innerWrappers; //a vector containing all WinBaseWrappers created by this layout.
 	};
 }
-
-
 
 #endif /* WIDGETS_ABSTRACT_LAYOUT_HPP_ */

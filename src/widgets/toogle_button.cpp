@@ -9,7 +9,7 @@
 
 #include "widgets/widgets_util.hpp"
 
-using SDL_util::ToogleButton;
+using WidgetsExtra::ToogleButton;
 
 ToogleButton::ToogleButton(WinBase *pw,Style st,Rect rect,Label lab,void (*_cmd)(CheckBox*),Id _id)
 : CheckBox(pw, st, rect, lab, _cmd, _id)

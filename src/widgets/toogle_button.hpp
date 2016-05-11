@@ -11,7 +11,7 @@
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
 
-namespace SDL_util
+namespace WidgetsExtra
 {
 	struct ToogleButton extends CheckBox
 	{

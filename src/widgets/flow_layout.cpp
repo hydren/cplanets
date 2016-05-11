@@ -14,15 +14,15 @@
 
 using std::vector;
 
-using SDL_util::FlowLayout;
+using WidgetsExtra::FlowLayout;
 
 FlowLayout::FlowLayout(int x, int y, unsigned w, unsigned h)
-: SDL_util::Layout(x, y), maxWidth(w), maxHeight(h), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING),
+: WidgetsExtra::Layout(x, y), maxWidth(w), maxHeight(h), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING),
   alignment(BEFORE), orientation(HORIZONTAL)
 {}
 
 FlowLayout::FlowLayout(Point p)
-: SDL_util::Layout(p), maxWidth(0), maxHeight(0), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING),
+: WidgetsExtra::Layout(p), maxWidth(0), maxHeight(0), spacing_h(DEFAULT_SPACING), spacing_v(DEFAULT_SPACING),
   alignment(BEFORE), orientation(HORIZONTAL)
 {}
 

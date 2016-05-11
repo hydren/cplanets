@@ -15,7 +15,7 @@
 using std::vector;
 using std::map;
 
-using SDL_util::TabController;
+using WidgetsExtra::TabController;
 
 map<RExtButton*, TabController*> references; //xxx kludge to maintain references to TabController's
 

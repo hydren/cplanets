@@ -11,41 +11,45 @@
 #include "abstract_layout.hpp"
 #include "label_win.hpp"
 
-struct DropDownMenu extends SDL_util::Layout::Element
+namespace WidgetsExtra
 {
-	CmdMenu* cmdMenu;
-	SDL_util::LabelWin* label;
-	bool isLabelOnTop;
+	struct DropDownMenu extends WidgetsExtra::Layout::Element
+	{
+		CmdMenu* cmdMenu;
+		WidgetsExtra::LabelWin* label;
+		bool isLabelOnTop;
 
-	virtual ~DropDownMenu();
+		virtual ~DropDownMenu();
 
-	virtual Point getPosition() const;
-	virtual void setPosition(Point position);
-	virtual Rect getSize() const;
-	virtual void setSize(Rect size);
-	virtual bool isStretched() const;
-	virtual bool operator == (const Element& b) const;
-};
+		virtual Point getPosition() const;
+		virtual void setPosition(Point position);
+		virtual Rect getSize() const;
+		virtual void setSize(Rect size);
+		virtual bool isStretched() const;
+		virtual bool operator == (const Element& b) const;
+	};
 
-struct DropDownMenuFactory
-{
-	DropDownMenuFactory();
-	~DropDownMenuFactory();
-	enum Appearance { BUTTON, COMBOBOX, MENU };
+	struct DropDownMenuFactory
+	{
+		DropDownMenuFactory();
+		~DropDownMenuFactory();
+		enum Appearance { BUTTON, COMBOBOX, MENU };
 
-	void setLabel(Label label, bool onTop=false);
-	void setCallback(void (*menu_cmd)(RButWin*,int nr,int fire));
-	void setAppearance(Appearance apre);
-	void setSize(Rect rt);
+		void setLabel(Label label, bool onTop=false);
+		void setCallback(void (*menu_cmd)(RButWin*,int nr,int fire));
+		void setAppearance(Appearance apre);
+		void setSize(Rect rt);
 
-	void addItem(Label label, short index=-1);
-	Label itemAt(unsigned index);
+		void addItem(Label label, short index=-1);
+		Label itemAt(unsigned index);
 
-	DropDownMenu* createAt(WinBase* pw, Point pt, Id id=0);
-	DropDownMenu* createAt(WinBase* pw, Id id=0);
-	friend class DropDownMenuButton;
-	private:encapsulated;
-};
+		DropDownMenu* createAt(WinBase* pw, Point pt, Id id=0);
+		DropDownMenu* createAt(WinBase* pw, Id id=0);
+		friend class DropDownMenuButton;
+		private:encapsulated;
+	};
+}
+
 
 
 

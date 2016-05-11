@@ -11,11 +11,18 @@
 #include "SDL_widgets/SDL_widgets.h"
 
 ///Utilities for SDL_widgets
-namespace SDL_util
+namespace WidgetsExtra
 {
+	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
 	void setComponentPosition(WinBase* component, const Point& position);
+
+	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
 	void setComponentPosition(WinBase* component, int x, int y);
+
+	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
 	void setComponentPositionX(WinBase* component, int x);
+
+	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
 	void setComponentPositionY(WinBase* component, int y);
 
 	/// Adjusts the given button size according to its label
@@ -35,16 +42,16 @@ namespace SDL_util
 	{
 		unsigned height; int padding;
 		LabeledComponentPacker(unsigned height=0, int padding=4) : height(height), padding(padding) {}
-		void pack(Button* btn) { packLabeledComponent(btn, height, padding); }
-		void pack(CheckBox* chck) { packLabeledComponent(chck, height, padding); }
-		void pack(RExtButton* rebt) { packLabeledComponent(rebt, height, padding); }
-		void pack(WinBase* wb, Label& lbl) { packLabeledComponent(wb, lbl, height, padding); }
+		void pack(Button* btn) const { packLabeledComponent(btn, height, padding); }
+		void pack(CheckBox* chck) const { packLabeledComponent(chck, height, padding); }
+		void pack(RExtButton* rebt) const { packLabeledComponent(rebt, height, padding); }
+		void pack(WinBase* wb, Label& lbl) const { packLabeledComponent(wb, lbl, height, padding); }
 	};
 
-	/// Default draw() function for BgrWin's. Fills its area with background color.
+	/// A (proposed) default draw() function for BgrWin's. Fills its area with background color.
 	void drawDefaultBgrWin(BgrWin* bgrWin);
 
-	// Holds a gradient of 5 colors (copied from SDL_widgets.cpp)
+	/// Holds a gradient of 5 colors (copied from SDL_widgets.cpp)
 	struct Color5 {
 		Uint32 c[5];
 		Color5(Uint32 fst,Uint32 lst);
