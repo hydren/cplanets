@@ -17,9 +17,10 @@ namespace WidgetsExtra
 {
 	struct DialogBgrWin extends BgrWin, Layout::WinBaseWrapper
 	{
+		void (*onClosedCallback)(DialogBgrWin*);
 		string titleStr;
 
-		DialogBgrWin(Rect bounds, string title="");
+		DialogBgrWin(Rect bounds, string title="", void (*onClosed)(DialogBgrWin*)=null);
 		virtual ~DialogBgrWin();
 
 		virtual void setVisible(bool visible=true);

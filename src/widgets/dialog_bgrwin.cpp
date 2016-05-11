@@ -11,9 +11,10 @@
 
 using WidgetsExtra::DialogBgrWin;
 
-DialogBgrWin::DialogBgrWin(Rect bounds, string txt)
+DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWin*))
 : BgrWin(null, bounds, null, DialogBgrWin::draw, DialogBgrWin::custom_mwin_down, mwin::move, mwin::up, 0),
   WinBaseWrapper(this),
+  onClosedCallback(onClosed),
   titleStr(txt),
   titleBarArea(Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
   titleStrOffset(0),
@@ -66,6 +67,8 @@ void DialogBgrWin::close(Button* btn)
 {
 	DialogBgrWin* self = static_cast<DialogBgrWin*>(btn->parent);
 	self->setVisible(false);
+	if(self->onClosedCallback != null)
+		self->onClosedCallback(self);
 }
 
 void DialogBgrWin::custom_mwin_down(BgrWin* bgr,int x,int y,int but)
