@@ -65,6 +65,7 @@ using WidgetsExtra::DropDownMenuFactory;
 using WidgetsExtra::TabSet;
 using WidgetsExtra::LabelWin;
 using WidgetsExtra::ToogleButton;
+using WidgetsExtra::FileDialog;
 
 void runOnce(void(func)(void))
 {
@@ -128,6 +129,7 @@ void onPlanetariumBodyCreation(Body2D& createdBody);
 void onReady();
 
 void onFileChosenOpenUniverse(const char* f_name, Id id);
+void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
 void replaceUniverse(Universe2D* universe);
@@ -537,11 +539,9 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnSave)
 	{
-		//xxx temporary code for debug
-		//ApplicationIO::save(planetarium->physics->universe, "test.txt");
-//		alert("Save dialog not implemented yet!");
-		WidgetsExtra::FileDialog* dialog = new WidgetsExtra::FileDialog(WidgetsExtra::FileDialog::SAVE_FILE);
+		WidgetsExtra::FileDialog* dialog = new WidgetsExtra::FileDialog(WidgetsExtra::FileDialog::SAVE_FILE, onFileChosenSaveUniverse);
 		dialog->setVisible();
+		onButtonPressed(btnPause);
 	}
 }
 
@@ -627,6 +627,13 @@ void onFileChosenOpenUniverse(const char* f_name, Id id)
 	}
 	else alert("File doesn't exist or isn't readable.");
 	SDL_util::setWindowTitle("cplanets"); //todo maybe put filename on title
+}
+
+void onFileChosenSaveUniverse(FileDialog* dialog)
+{
+	if(dialog->selectedFilename != null)
+		ApplicationIO::save(planetarium->physics->universe, *dialog->selectedFilename);
+	onButtonPressed(btnRun);
 }
 
 void refreshAllTxtBodies()

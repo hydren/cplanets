@@ -41,6 +41,7 @@ namespace WidgetsExtra
 		static void fileSelected(const char* path,Id);
 		static void folderOpened(const char* path,Id);
 		static void navigateToHome(Button*);
+		static void getFieldText(const char* txt,int);
 		static void confirmation(Button*);
 	};
 }

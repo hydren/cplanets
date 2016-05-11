@@ -68,14 +68,19 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
   btnOk(this, 0, Rect(), "  Ok  ", FileDialog::confirmation),
   btnCancel(this, 0, Rect(), "Cancel", DialogBgrWin::close)
 {
-	this->id = FileDialog_static::lastId++;
-	FileDialog_static::references[id.id1] = this;
+	this->id = FileDialog_static::lastId++; //getting new (presumedly unique) id
+	FileDialog_static::references[id.id1] = this; //binding this id to this address
+	dlgwFilenameField.cmd = FileDialog::getFieldText; //setting callback for dok()
+	dlgwFilenameField.cmd_id = id.id1; //setting id of this FileDialog of reference purposes
+
 	packLabeledComponent(&btnGoHome);
+
 	if(mode == SELECT_FOLDER)
 	{
 		lblFilename.hidden = true;
 		dlgwFilenameField.hidden = true;
 	}
+
 	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect()));
 	layoutSouthButtons.addComponent(btnOk); packLabeledComponent(&btnOk);
 	layoutSouthButtons.addComponent(btnCancel); packLabeledComponent(&btnCancel);
@@ -97,6 +102,7 @@ void FileDialog::setPosition(Point position)
 	layoutSouthButtons.position.y = 120;
 	layoutSouthButtons.pack();
 
+	//todo find a better way to call all draw() functions on FileDialog::setPosition
 	lblCurrentDirectory.draw_blit_upd();
 	cmdmCurrentDirectoryField.src->draw_blit_upd();
 	btnGoHome.draw_blit_upd();
@@ -109,11 +115,12 @@ void FileDialog::setPosition(Point position)
 void FileDialog::replaceSelectedFilename(const char* path, const char* filename)
 {
 	string str = path;
-	str += filename;
+	str = str + '/' + filename;
 	if(this->selectedFilename != null) delete selectedFilename;
 	this->selectedFilename = new string(str);
 }
 
+//called when clicking on the navigation field
 void FileDialog::triggerNavigation(Button* navButton)
 {
 	FileDialog* self = static_cast<FileDialog*>(navButton->parent);
@@ -123,6 +130,7 @@ void FileDialog::triggerNavigation(Button* navButton)
 		working_dir(FileDialog::folderOpened, self->id);
 }
 
+//called when selected a file when browsing
 void FileDialog::fileSelected(const char* path, Id id)
 {
 	SDL_util::setWindowTitle("cplanets");
@@ -131,9 +139,10 @@ void FileDialog::fileSelected(const char* path, Id id)
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
 	self->dlgwFilenameField.dialog_def(path, self->dlgwFilenameField.cmd, self->dlgwFilenameField.cmd_id);
-	self->replaceSelectedFilename(getcwd(buffer, 1024), path);
+	self->replaceSelectedFilename(getcwd(buffer, 1024), path); //retrieve filename
 }
 
+//called when changed folder when browsing
 void FileDialog::folderOpened(const char* path, Id id)
 {
 	SDL_util::setWindowTitle("cplanets");
@@ -141,9 +150,10 @@ void FileDialog::folderOpened(const char* path, Id id)
 
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
-	self->replaceSelectedFilename(getcwd(buffer, 1024));
+	self->replaceSelectedFilename(getcwd(buffer, 1024)); //retrieve folder name
 }
 
+//called when the user press the "Home" button
 void FileDialog::navigateToHome(Button* navButton) //fixme FileDialog::navigateToHome doesn't update file_chooser() bgr
 {
 	FileDialog* self = static_cast<FileDialog*>(navButton->parent);
@@ -153,9 +163,19 @@ void FileDialog::navigateToHome(Button* navButton) //fixme FileDialog::navigateT
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
 }
 
+//to be called by dlgwFilenameField when we call dok() on it in the FileDialog::confirmation() call
+void FileDialog::getFieldText(const char* txt, int id1)
+{
+	FileDialog* self = FileDialog_static::references[id1];
+	self->replaceSelectedFilename(self->cmdmCurrentDirectoryField.src->label.str, txt);
+}
+
+//called when we click Ok button
 void FileDialog::confirmation(Button* okBtn)
 {
 	FileDialog* self = static_cast<FileDialog*>(okBtn->parent);
+	if(self->mode == SAVE_FILE) //filename was not retrieved
+		self->dlgwFilenameField.dok(); //retrieve filename (typed by user)
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
 	DialogBgrWin::close(okBtn);
 }
