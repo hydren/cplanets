@@ -10,8 +10,8 @@
 #include "widgets_util.hpp"
 #include "futil/futil.hpp"
 
-using SDL_util::TabSet;
-using SDL_util::FlowLayout;
+using WidgetsExtra::TabSet;
+using WidgetsExtra::FlowLayout;
 
 TabSet::TabSet(WinBase* parent, int x, int y, unsigned w, unsigned h)
 : commonParent(parent),
@@ -23,7 +23,7 @@ void TabSet::addTab(Label lab, BgrWin* content)
 {
 	controller.addTab(commonParent, Rect(0,0,1,1), lab, content);
 	RExtButton* tabBtn = controller.tabButtons.back();
-	SDL_util::packLabeledComponent(tabBtn);
+	WidgetsExtra::packLabeledComponent(tabBtn);
 	layout.addComponent(tabBtn);
 	layout.pack();
 }
@@ -40,7 +40,7 @@ void TabSet::setActiveTab(unsigned index)
 
 void TabSet::drawTabStyleBgrWin(BgrWin* bgrWin)
 {
-	SDL_util::drawDefaultBgrWin(bgrWin);
+	WidgetsExtra::drawDefaultBgrWin(bgrWin);
 	lineColor(bgrWin->win, 2, 1, bgrWin->tw_area.w - 2, 1, 0x606060ff); //top line
 	lineColor(bgrWin->win, 2, bgrWin->tw_area.h - 1, bgrWin->tw_area.w - 2, bgrWin->tw_area.h - 1, 0x606060ff); //bottom line
 	lineColor(bgrWin->win, 1, 2, 1, bgrWin->tw_area.h - 2, 0x606060ff); //leftmost line

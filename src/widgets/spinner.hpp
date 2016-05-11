@@ -16,7 +16,7 @@
 #include "abstract_layout.hpp"
 #include "widgets_util.hpp"
 
-namespace SDL_util
+namespace WidgetsExtra
 {
 	namespace Spinner_static
 	{
@@ -28,7 +28,7 @@ namespace SDL_util
 	 * Currently it works with 'int'-like typenames.
 	 * The Type must have operator + and -, and be able to cast from double/float.*/
 	template<typename Type>
-	struct Spinner extends SDL_util::Layout::Element
+	struct Spinner extends WidgetsExtra::Layout::Element
 	{
 		static const unsigned BUTTON_SIZE = 16;
 		DialogWin spinner;
@@ -56,9 +56,9 @@ namespace SDL_util
 
 		virtual void setPosition(Point position)
 		{
-			SDL_util::setComponentPosition(&spinner, position.x, position.y);
-			SDL_util::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
-			SDL_util::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
+			WidgetsExtra::setComponentPosition(&spinner, position.x, position.y);
+			WidgetsExtra::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
+			WidgetsExtra::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
 		}
 
 		virtual Rect getSize() const
@@ -69,8 +69,8 @@ namespace SDL_util
 		virtual void setSize(Rect size)
 		{
 			spinner.widen(size.w - spinner.tw_area.w, size.h - spinner.tw_area.h);
-			SDL_util::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
-			SDL_util::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
+			WidgetsExtra::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
+			WidgetsExtra::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
 		}
 
 		virtual bool isStretched() const

@@ -12,7 +12,7 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 
-namespace SDL_util
+namespace WidgetsExtra
 {
 	struct TabController
 	{

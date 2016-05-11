@@ -3,7 +3,7 @@
 
 using std::string;
 
-using SDL_util::LabelWin;
+using WidgetsExtra::LabelWin;
 
 LabelWin::LabelWin(WinBase* pw, Rect bounds, string str, Id id)
 : WinBase(pw, null, bounds.x, bounds.y, (bounds.w > 0? bounds.w : draw_ttf->text_width(str.c_str())), (bounds.h > 0? bounds.h : TTF_FontHeight(draw_ttf->ttf_font)), 0, id),

@@ -13,7 +13,7 @@
 #include "flow_layout.hpp"
 #include "tab_control.hpp"
 
-namespace SDL_util
+namespace WidgetsExtra
 {
 	/// A set of tab buttons arranged together. It also contains an inner tab controller.
 	struct TabSet

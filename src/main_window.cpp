@@ -47,18 +47,23 @@ void workaround_sdl_stream_file_close() // part of workaround
 	#define SDLMAIN_STREAM_WORKAROUND null
 #endif
 
-using std::cout; using std::endl;
+using std::cout;
+using std::endl;
 using std::vector;
+
 using Math::randomBetween;
-using SDL_util::FlowLayout;
-using SDL_util::LabeledComponentPacker;
-using SDL_util::packLabeledComponent;
-using SDL_util::setComponentPosition;
-using SDL_util::Spinner;
-using SDL_util::Layout;
-using SDL_util::TabSet;
-using SDL_util::LabelWin;
-using SDL_util::ToogleButton;
+
+using WidgetsExtra::packLabeledComponent;
+using WidgetsExtra::setComponentPosition;
+using WidgetsExtra::LabeledComponentPacker;
+using WidgetsExtra::Layout;
+using WidgetsExtra::FlowLayout;
+using WidgetsExtra::Spinner;
+using WidgetsExtra::DropDownMenu;
+using WidgetsExtra::DropDownMenuFactory;
+using WidgetsExtra::TabSet;
+using WidgetsExtra::LabelWin;
+using WidgetsExtra::ToogleButton;
 
 void runOnce(void(func)(void))
 {
@@ -161,7 +166,7 @@ void CPlanets::showMainWindow()
 	packer.pack(btnSave);
 	toolbarNorthLayout->addComponent(btnSave);
 
-	toolbarNorthLayout->addComponent(new SDL_util::Layout::Spacer(toolbarNorthLayout));
+	toolbarNorthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
 	packer.pack(btnRun);

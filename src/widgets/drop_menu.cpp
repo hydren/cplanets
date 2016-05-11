@@ -9,7 +9,9 @@
 
 using std::vector;
 
-using SDL_util::LabelWin;
+using WidgetsExtra::LabelWin;
+using WidgetsExtra::DropDownMenu;
+using WidgetsExtra::DropDownMenuFactory;
 
 // DropDownMenu ===========================================================================================
 
@@ -26,13 +28,13 @@ Point DropDownMenu::getPosition() const
 
 void DropDownMenu::setPosition(Point position)
 {
-	SDL_util::Layout::WinBaseWrapper::setWinBasePosition(this->label, position);
+	WidgetsExtra::Layout::WinBaseWrapper::setWinBasePosition(this->label, position);
 
 	//apply offset due to label
 	if(this->isLabelOnTop) position.y += this->label->tw_area.h;
 	else position.x += this->label->tw_area.w;
 
-	SDL_util::Layout::WinBaseWrapper::setWinBasePosition(this->cmdMenu->src, position);
+	WidgetsExtra::Layout::WinBaseWrapper::setWinBasePosition(this->cmdMenu->src, position);
 }
 
 Rect DropDownMenu::getSize() const
@@ -70,14 +72,17 @@ bool DropDownMenu::operator == (const Element& b) const
 
 // DropDownMenuButton =========================================================================================================
 
-struct DropDownMenuButton extends Button
+namespace WidgetsExtra
 {
-	DropDownMenu* menu;
-	DropDownMenuFactory::Implementation* factory;
-	DropDownMenuButton(WinBase *pw, Style st, Rect rt, Label lab, void (*someCmd)(Button*), Id id=0)
-	: Button(pw, st, rt, lab, someCmd, id), menu(null), factory(null) {}
-	virtual ~DropDownMenuButton(); //defined at the end of the file
-};
+	struct DropDownMenuButton extends Button
+	{
+		DropDownMenu* menu;
+		DropDownMenuFactory::Implementation* factory;
+		DropDownMenuButton(WinBase *pw, Style st, Rect rt, Label lab, void (*someCmd)(Button*), Id id=0)
+		: Button(pw, st, rt, lab, someCmd, id), menu(null), factory(null) {}
+		virtual ~DropDownMenuButton(); //defined at the end of the file
+	};
+}
 
 // DropDownMenuFactory (encapsulation) ==========================================================================================
 
@@ -213,4 +218,4 @@ DropDownMenu* DropDownMenuFactory::createAt(WinBase* pw, Id id)
 }
 
 // ===========
-DropDownMenuButton::~DropDownMenuButton(){ delete factory; }
+WidgetsExtra::DropDownMenuButton::~DropDownMenuButton(){ delete factory; }

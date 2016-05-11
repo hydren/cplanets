@@ -10,7 +10,7 @@
 #include <typeinfo>
 
 using std::vector;
-using SDL_util::Layout;
+using WidgetsExtra::Layout;
 
 // WinBaseWrapper =================================================================
 

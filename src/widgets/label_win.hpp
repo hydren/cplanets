@@ -14,7 +14,7 @@
 
 #include "futil/futil.hpp"
 
-namespace SDL_util
+namespace WidgetsExtra
 {
 	struct LabelWin extends WinBase
 	{
