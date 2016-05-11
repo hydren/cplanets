@@ -22,30 +22,56 @@ namespace FileDialog_static
 {
 	int lastId = 0;
 	map<int, FileDialog*> references;
-}
 
-const char* modeTitle(FileDialog::FileDialogMode mode)
-{
-	switch(mode)
+	const char* modeTitle(FileDialog::FileDialogMode mode)
 	{
-		case FileDialog::SELECT_FILE: return "Choose file...";
-		case FileDialog::SAVE_FILE: return "Save file...";
-		case FileDialog::SELECT_FOLDER: return "Choose folder...";
-		default: return "File dialog...";
+		switch(mode)
+		{
+			case FileDialog::SELECT_FILE: return "Choose file...";
+			case FileDialog::SAVE_FILE: return "Save file...";
+			case FileDialog::SELECT_FOLDER: return "Choose folder...";
+			default: return "File dialog...";
+		}
+	}
+
+	const char* modeCurrentDirectory(FileDialog::FileDialogMode mode)
+	{
+		switch(mode)
+		{
+			case FileDialog::SELECT_FILE: return "Look in:";
+			case FileDialog::SAVE_FILE: return "Save in:";
+			case FileDialog::SELECT_FOLDER: return "Folder:";
+			default: return "File dialog...";
+		}
+	}
+
+	const char* modeFilename(FileDialog::FileDialogMode mode)
+	{
+		switch(mode)
+		{
+			case FileDialog::SELECT_FILE: return "Filename:";
+			case FileDialog::SAVE_FILE: return "Name:";
+			default: return "<name>:";
+		}
 	}
 }
 
 FileDialog::FileDialog(FileDialogMode mode)
-: DialogBgrWin(Rect(0, 0, 400, 120), modeTitle(mode)), mode(mode),
-  lblCurrentDirectory(this, Rect(), mode==SAVE_FILE? "Save in:" : "Look in:"),
+: DialogBgrWin(Rect(0, 0, 400, 120), FileDialog_static::modeTitle(mode)), mode(mode),
+  lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
   cmdmCurrentDirectoryField(new Button(this, Style(4,0), Rect(0, 0, titleBarArea.w * 0.75, 1.5 * TTF_FontHeight(draw_ttf->ttf_font)), getcwd(buffer, 1024), FileDialog::triggerNavigation)),
   btnGoHome(this, 0, Rect(), " H ", FileDialog::navigateToHome),
-  lblFilename(this, Rect(), mode==SAVE_FILE? "Name:" : "Filename:"),
+  lblFilename(this, Rect(), FileDialog_static::modeFilename(mode)),
   dlgwFilenameField(this, Rect(0, 0, titleBarArea.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)))
 {
 	this->id = FileDialog_static::lastId++;
 	FileDialog_static::references[id.id1] = this;
 	packLabeledComponent(&btnGoHome);
+	if(mode == SELECT_FOLDER)
+	{
+		lblFilename.hidden = true;
+		dlgwFilenameField.hidden = true;
+	}
 	setPosition(Point());
 //	setPosition(Point(SDL_GetVideoSurface()->w - 200, SDL_GetVideoSurface()->h - 150));
 }
@@ -73,7 +99,7 @@ void FileDialog::triggerNavigation(Button* navButton)
 	FileDialog* self = static_cast<FileDialog*>(navButton->parent);
 	if(self->mode == SELECT_FILE)
 		file_chooser(FileDialog::fileSelected, self->id);
-	else if(self->mode == SAVE_FILE)
+	else if(self->mode == SAVE_FILE || self->mode == SELECT_FOLDER)
 		working_dir(FileDialog::folderOpened, self->id);
 }
 
