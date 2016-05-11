@@ -23,6 +23,7 @@
 #include "widgets/tab_set.hpp"
 #include "widgets/label_win.hpp"
 #include "widgets/toogle_button.hpp"
+#include "widgets/file_dialog.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -538,7 +539,9 @@ void onButtonPressed(Button* btn)
 	{
 		//xxx temporary code for debug
 		//ApplicationIO::save(planetarium->physics->universe, "test.txt");
-		alert("Save dialog not implemented yet!");
+//		alert("Save dialog not implemented yet!");
+		WidgetsExtra::FileDialog* dialog = new WidgetsExtra::FileDialog();
+		dialog->setVisible();
 	}
 }
 
