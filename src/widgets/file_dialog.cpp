@@ -73,7 +73,12 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
 	dlgwFilenameField.cmd = FileDialog::getFieldText; //setting callback for dok()
 	dlgwFilenameField.cmd_id = id.id1; //setting id of this FileDialog of reference purposes
 
-	packLabeledComponent(&btnGoHome);
+	packLabeledComponent(&btnGoHome); //shaping btnGoHome
+
+	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect()));
+	layoutSouthButtons.addComponent(btnOk); packLabeledComponent(&btnOk);
+	layoutSouthButtons.addComponent(btnCancel); packLabeledComponent(&btnCancel);
+	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect(0,0,8,0)));
 
 	if(mode == SELECT_FOLDER)
 	{
@@ -81,35 +86,30 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
 		dlgwFilenameField.hidden = true;
 	}
 
-	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect()));
-	layoutSouthButtons.addComponent(btnOk); packLabeledComponent(&btnOk);
-	layoutSouthButtons.addComponent(btnCancel); packLabeledComponent(&btnCancel);
-	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect(0,0,8,0)));
-	setPosition(Point());
-//	setPosition(Point(SDL_GetVideoSurface()->w - 200, SDL_GetVideoSurface()->h - 150));
+	this->validate();
 }
 
 FileDialog::~FileDialog(){}
 
-void FileDialog::setPosition(Point position)
+void FileDialog::bind()
 {
-	DialogBgrWin::setPosition(position);
-	setComponentPosition(&lblCurrentDirectory, Point(8, titleBarArea.y + titleBarArea.h + 12));
-	setComponentPosition(cmdmCurrentDirectoryField.src, Point(lblCurrentDirectory.area.x + lblCurrentDirectory.tw_area.w + 6, lblCurrentDirectory.area.y - 2));
-	setComponentPosition(&btnGoHome, Point(cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3));
-	setComponentPosition(&lblFilename, Point(8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 32));
-	setComponentPosition(&dlgwFilenameField, Point(lblFilename.area.x + lblFilename.tw_area.w + 6, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font)));
+	this->keep_on_top(); //binds to main window
+	this->bgcol = parent->bgcol; //inherit background color
+	this->draw_blit_recur();
+	this->upd();
+}
+
+void FileDialog::validate()
+{
+	//shift properly all components inside it
+	DialogBgrWin::validate();
+	setComponentPosition(&lblCurrentDirectory, 8, titleBarArea.y + titleBarArea.h + 12);
+	setComponentPosition(cmdmCurrentDirectoryField.src, lblCurrentDirectory.area.x + lblCurrentDirectory.tw_area.w + 6, lblCurrentDirectory.area.y - 2);
+	setComponentPosition(&btnGoHome, cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3);
+	setComponentPosition(&lblFilename, 8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 32);
+	setComponentPosition(&dlgwFilenameField, lblFilename.area.x + lblFilename.tw_area.w + 6, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font));
 	layoutSouthButtons.position.y = 120;
 	layoutSouthButtons.pack();
-
-	//todo find a better way to call all draw() functions on FileDialog::setPosition
-	lblCurrentDirectory.draw_blit_upd();
-	cmdmCurrentDirectoryField.src->draw_blit_upd();
-	btnGoHome.draw_blit_upd();
-	lblFilename.draw_blit_upd();
-	dlgwFilenameField.draw_blit_upd();
-	btnOk.draw_blit_upd();
-	btnCancel.draw_blit_upd();
 }
 
 void FileDialog::replaceSelectedFilename(const char* path, const char* filename)

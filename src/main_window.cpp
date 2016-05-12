@@ -540,6 +540,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnSave)
 	{
 		WidgetsExtra::FileDialog* dialog = new WidgetsExtra::FileDialog(WidgetsExtra::FileDialog::SAVE_FILE, onFileChosenSaveUniverse);
+		dialog->setPositionOnCenter();
 		dialog->setVisible();
 		onButtonPressed(btnPause);
 	}

@@ -23,8 +23,6 @@ namespace WidgetsExtra
 		FileDialog(FileDialogMode mode=SELECT_FILE, void (*onFinished)(FileDialog* dialog)=null);
 		virtual ~FileDialog();
 
-		virtual void setPosition(Point position);
-
 		protected:
 		FileDialogMode mode;
 		LabelWin lblCurrentDirectory;
@@ -34,6 +32,9 @@ namespace WidgetsExtra
 		DialogWin dlgwFilenameField;
 		FlowLayout layoutSouthButtons;
 		Button btnOk, btnCancel;
+
+		virtual void bind();
+		virtual void validate();
 
 		void replaceSelectedFilename(const char* path, const char* filename="");
 
