@@ -186,8 +186,6 @@ void CPlanets::showMainWindow()
 
 	toolbarNorthLayout->pack();
 
-	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse);
-	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse);
 
 	// ****Planetarium****
 	Rect planetariumSize(
@@ -334,6 +332,9 @@ void CPlanets::showMainWindow()
 	toolbarSouthLayout->addComponent(tgbAA);
 
 	toolbarSouthLayout->pack();
+
+	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse);
+	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse);
 
 	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
@@ -621,17 +622,21 @@ void onReady()
 
 void onFileChosenOpenUniverse(FileDialog* dialog)
 {
-	if(FileInputStream(dialog->selectedFilename->c_str()).good())
+	if(dialog->selectedFilename != null)
 	{
-		Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename->c_str()), ApplicationIO::FORMAT_DEFAULT);
+		if(FileInputStream(dialog->selectedFilename->c_str()).good())
+		{
+			Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename->c_str()), ApplicationIO::FORMAT_DEFAULT);
 
-		if(u != null)
-			replaceUniverse(u);
+			if(u != null)
+				replaceUniverse(u);
 
-		else alert("Invalid file!");
+			else alert("Invalid file!");
+		}
+		else alert("File doesn't exist or isn't readable.");
 	}
-	else alert("File doesn't exist or isn't readable.");
 	SDL_util::setWindowTitle("cplanets"); //todo maybe put filename on title
+	onButtonPressed(btnRun);
 }
 
 void onFileChosenSaveUniverse(FileDialog* dialog)

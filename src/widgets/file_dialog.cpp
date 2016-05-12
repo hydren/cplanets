@@ -66,12 +66,13 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
   dlgwFilenameField(this, Rect(0, 0, titleBarArea.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font))),
   layoutSouthButtons(0, 0, 400),
   btnOk(this, 0, Rect(), "  Ok  ", FileDialog::confirmation),
-  btnCancel(this, 0, Rect(), "Cancel", DialogBgrWin::close)
+  btnCancel(this, 0, Rect(), "Cancel", FileDialog::cancellation)
 {
 	this->id = FileDialog_static::lastId++; //getting new (presumedly unique) id
 	FileDialog_static::references[id.id1] = this; //binding this id to this address
 	dlgwFilenameField.cmd = FileDialog::getFieldText; //setting callback for dok()
 	dlgwFilenameField.cmd_id = id.id1; //setting id of this FileDialog of reference purposes
+	this->btnClose.cmd = FileDialog::cancellation; //replacing callback when closing
 
 	packLabeledComponent(&btnGoHome); //shaping btnGoHome
 
@@ -180,6 +181,15 @@ void FileDialog::confirmation(Button* okBtn)
 	FileDialog* self = static_cast<FileDialog*>(okBtn->parent);
 	if(self->mode == SAVE_FILE) //filename was not retrieved
 		self->dlgwFilenameField.dok(); //retrieve filename (typed by user)
+	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
+	DialogBgrWin::close(okBtn);
+}
+
+//called when we click Cancel or 'X' button
+void FileDialog::cancellation(Button* okBtn)
+{
+	FileDialog* self = static_cast<FileDialog*>(okBtn->parent);
+	if(self->selectedFilename != null) { delete self->selectedFilename; self->selectedFilename = null; }
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
 	DialogBgrWin::close(okBtn);
 }
