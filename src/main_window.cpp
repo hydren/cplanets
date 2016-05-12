@@ -88,6 +88,7 @@ TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
 Button* btnNew, *btnLoad, *btnSave, *btnRun, *btnPause, *btnAbout;
+FileDialog* dialogLoad, *dialogSave;
 
 TabSet* tabs;
 
@@ -128,7 +129,7 @@ void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resulting
 void onPlanetariumBodyCreation(Body2D& createdBody);
 void onReady();
 
-void onFileChosenOpenUniverse(const char* f_name, Id id);
+void onFileChosenOpenUniverse(FileDialog* dialog);
 void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
@@ -185,6 +186,8 @@ void CPlanets::showMainWindow()
 
 	toolbarNorthLayout->pack();
 
+	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse);
+	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse);
 
 	// ****Planetarium****
 	Rect planetariumSize(
@@ -534,14 +537,15 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnLoad)
 	{
-		file_chooser(onFileChosenOpenUniverse);
+		dialogLoad->setPositionOnCenter();
+		dialogLoad->setVisible();
+		onButtonPressed(btnPause);
 	}
 
 	if(btn == btnSave)
 	{
-		WidgetsExtra::FileDialog* dialog = new WidgetsExtra::FileDialog(WidgetsExtra::FileDialog::SAVE_FILE, onFileChosenSaveUniverse);
-		dialog->setPositionOnCenter();
-		dialog->setVisible();
+		dialogSave->setPositionOnCenter();
+		dialogSave->setVisible();
 		onButtonPressed(btnPause);
 	}
 }
@@ -615,11 +619,11 @@ void onReady()
 }
 
 
-void onFileChosenOpenUniverse(const char* f_name, Id id)
+void onFileChosenOpenUniverse(FileDialog* dialog)
 {
-	if(FileInputStream(f_name).good())
+	if(FileInputStream(dialog->selectedFilename->c_str()).good())
 	{
-		Universe2D* u = ApplicationIO::load(f_name, ApplicationIO::FORMAT_DEFAULT);
+		Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename->c_str()), ApplicationIO::FORMAT_DEFAULT);
 
 		if(u != null)
 			replaceUniverse(u);
