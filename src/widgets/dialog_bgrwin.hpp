@@ -25,12 +25,15 @@ namespace WidgetsExtra
 
 		virtual void setVisible(bool visible=true);
 		virtual void setPosition(Point position);
-		virtual void setPositionOnCenter();
+		void setPositionOnCenter();
 
 		protected:
 		Rect titleBarArea;
 		int titleStrOffset;
 		Button btnClose;
+
+		virtual void bind();
+		virtual void validate();
 
 		static void draw(BgrWin*);
 		static void close(Button* btn);

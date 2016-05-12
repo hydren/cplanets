@@ -20,35 +20,52 @@ DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWi
   titleStrOffset(0),
   btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), "X", DialogBgrWin::close)
 {
-	this->setPosition(area);
+	this->validate();
+}
+
+DialogBgrWin::~DialogBgrWin()
+{}
+
+void DialogBgrWin::setVisible(bool visibleDesired)
+{
+	if(visibleDesired)
+	{
+		if(this->parent == null)
+			this->bind();
+		else if(this->hidden)
+			this->show();
+	}
+	else if(this->parent != null && not this->hidden)
+	{
+		this->hide();
+	}
+}
+
+void DialogBgrWin::setPosition(Point position)
+{
+	WinBaseWrapper::setPosition(position); //set bgrwin position as a WinBaseWrapper
+	this->validate();
+}
+
+void DialogBgrWin::setPositionOnCenter()
+{
+	this->setPosition(Point(0.5 * (SDL_GetVideoSurface()->w - this->tw_area.w), 0.5 * (SDL_GetVideoSurface()->h - this->tw_area.h)));
+}
+
+void DialogBgrWin::bind()
+{
 	this->keep_on_top(); //binds to main window
 	this->bgcol = parent->bgcol; //inherit background color
 	this->draw_blit_recur();
 	this->upd();
 }
 
-DialogBgrWin::~DialogBgrWin()
-{}
-
-void DialogBgrWin::setVisible(bool visible)
+void DialogBgrWin::validate()
 {
-	if(visible && this->hidden) this->show();
-	else if(not visible && not this->hidden) this->hide();
-}
-
-void DialogBgrWin::setPosition(Point position)
-{
-	WinBaseWrapper::setPosition(position); //set bgrwin position as a WinBaseWrapper
-
 	//shift properly all components inside it
 	titleBarArea = Rect(1, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) - 2);
-	setComponentPosition(&btnClose, Point(titleBarArea.w - titleBarArea.h + 2, 2));
+	setComponentPosition(&btnClose, titleBarArea.w - titleBarArea.h + 2, 2);
 	titleStrOffset = 0.5 * (titleBarArea.h - TTF_FontHeight(draw_title_ttf->ttf_font));
-}
-
-void DialogBgrWin::setPositionOnCenter()
-{
-	setPosition(Point(SDL_GetVideoSurface()->w*0.5-this->tw_area.w*0.5, SDL_GetVideoSurface()->h*0.5-this->tw_area.h*0.5));
 }
 
 void DialogBgrWin::draw(BgrWin* bwSelf)
