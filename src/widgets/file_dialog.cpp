@@ -75,10 +75,10 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
 
 	packLabeledComponent(&btnGoHome); //shaping btnGoHome
 
+	layoutSouthButtons.spacing_h = 8;
 	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect()));
 	layoutSouthButtons.addComponent(btnOk); packLabeledComponent(&btnOk);
 	layoutSouthButtons.addComponent(btnCancel); packLabeledComponent(&btnCancel);
-	layoutSouthButtons.addComponent(new WidgetsExtra::Layout::Spacer(Rect(0,0,8,0)));
 
 	if(mode == SELECT_FOLDER)
 	{
@@ -108,7 +108,7 @@ void FileDialog::validate()
 	setComponentPosition(cmdmCurrentDirectoryField.src, lblCurrentDirectory.area.x + lblCurrentDirectory.tw_area.w + 6, lblCurrentDirectory.area.y - 2);
 	setComponentPosition(&btnGoHome, cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3);
 	setComponentPosition(&lblFilename, 8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 32);
-	setComponentPosition(&dlgwFilenameField, lblFilename.area.x + lblFilename.tw_area.w + 6, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font));
+	setComponentPosition(&dlgwFilenameField, cmdmCurrentDirectoryField.src->area.x, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font));
 	layoutSouthButtons.position.y = 120;
 	layoutSouthButtons.pack();
 }
