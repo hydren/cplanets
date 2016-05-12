@@ -58,7 +58,7 @@ namespace FileDialog_static
 
 FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
 : DialogBgrWin(Rect(0, 0, 400, 150), FileDialog_static::modeTitle(mode)),
-  onFinishedCallback(onFinished), mode(mode),
+  onFinishedCallback(onFinished), selectedFilename(null), mode(mode),
   lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
   cmdmCurrentDirectoryField(new Button(this, Style(4,0), Rect(0, 0, titleBarArea.w * 0.75, 1.5 * TTF_FontHeight(draw_ttf->ttf_font)), getcwd(buffer, 1024), FileDialog::triggerNavigation)),
   btnGoHome(this, 0, Rect(), " H ", FileDialog::navigateToHome),
@@ -116,7 +116,8 @@ void FileDialog::replaceSelectedFilename(const char* path, const char* filename)
 {
 	string str = path;
 	str = str + '/' + filename;
-	if(this->selectedFilename != null) delete selectedFilename;
+	if(this->selectedFilename != null)
+		delete selectedFilename;
 	this->selectedFilename = new string(str);
 }
 
