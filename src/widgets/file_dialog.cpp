@@ -95,6 +95,7 @@ void FileDialog::bind()
 {
 	this->keep_on_top(); //binds to main window
 	this->bgcol = parent->bgcol; //inherit background color
+	this->dlgwFilenameField.bgcol = parent->bgcol; //black prior to this call
 	this->draw_blit_recur();
 	this->upd();
 }
