@@ -536,6 +536,23 @@ void onButtonPressed(Button* btn)
 		replaceUniverse(new Universe2D());
 	}
 
+	//fixme there got to be a better way to avoid file_chooser behind FileDialog bug
+	//xxx workaround for file_chooser behind FileDialog bug
+	if(btn == btnLoad || btn == btnSave)
+	{
+		static bool once = false;
+		if(not once)
+		{
+			dialogSave->setPositionOnCenter();
+			dialogSave->setVisible();
+			dialogSave->hide();
+			dialogLoad->setPositionOnCenter();
+			dialogLoad->setVisible();
+			dialogLoad->hide();
+			once = true;
+		}
+	}
+
 	if(btn == btnLoad)
 	{
 		dialogLoad->setPositionOnCenter();

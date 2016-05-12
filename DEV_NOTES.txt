@@ -10,9 +10,10 @@
 -------------- Backlog
 
 - Show icon on About dialog.
+- Try to not use a std::map for keeping references to Spinners on Spinner class (big time kludge)
+- Show paused/resumed state more explicitly
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Add optional single-threaded mode (iterations per display, etc)
-- Try to not use a std::map for keeping references to Spinners on Spinner class (big time kludge)
 - Keep track of opened file state (modified, etc)
 
 
