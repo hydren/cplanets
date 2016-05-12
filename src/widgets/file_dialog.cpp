@@ -183,6 +183,7 @@ void FileDialog::confirmation(Button* okBtn)
 		self->dlgwFilenameField.dok(); //retrieve filename (typed by user)
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
 	DialogBgrWin::close(okBtn);
+	close_file_chooser();
 }
 
 //called when we click Cancel or 'X' button
