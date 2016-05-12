@@ -192,5 +192,6 @@ void FileDialog::cancellation(Button* okBtn)
 	if(self->selectedFilename != null) { delete self->selectedFilename; self->selectedFilename = null; }
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
 	DialogBgrWin::close(okBtn);
+	close_file_chooser();
 }
 
