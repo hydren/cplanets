@@ -534,6 +534,10 @@ void onButtonPressed(Button* btn)
 	if(btn == btnNew)
 	{
 		replaceUniverse(new Universe2D());
+//		todo remove this debug code
+//		FileDialog* f = new FileDialog(FileDialog::SELECT_FOLDER);
+//		f->setPositionOnCenter();
+//		f->setVisible();
 	}
 
 	//fixme there got to be a better way to avoid file_chooser behind FileDialog bug

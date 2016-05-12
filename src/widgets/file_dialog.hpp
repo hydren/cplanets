@@ -44,14 +44,17 @@ namespace WidgetsExtra
 
 		void replaceSelectedFilename(const char* path, const char* filename="");
 
+		//auxiliary callback
+		static void getFieldText(const char* txt,int);
+
+		//navigation callbacks
 		static void triggerNavigation(Button*);
 		static void fileSelected(const char* path,Id);
 		static void folderOpened(const char* path,Id);
-
 		static void navigateToHome(Button*);
 
-		//auxiliary callback
-		static void getFieldText(const char* txt,int);
+		//filetype selection callback
+		static void selectFileType(RButWin*,int nr,int fire);
 
 		//finishing callbacks
 		static void confirmation(Button*);
