@@ -27,10 +27,10 @@ namespace FileDialog_static
 	{
 		switch(mode)
 		{
-			case FileDialog::SELECT_FILE: return "Choose file...";
-			case FileDialog::SAVE_FILE: return "Save file...";
+			case FileDialog::SELECT_FILE: 	return "Choose file...";
+			case FileDialog::SAVE_FILE: 	return "Save file...";
 			case FileDialog::SELECT_FOLDER: return "Choose folder...";
-			default: return "File dialog...";
+			default: 						return "File dialog...";
 		}
 	}
 
@@ -38,10 +38,10 @@ namespace FileDialog_static
 	{
 		switch(mode)
 		{
-			case FileDialog::SELECT_FILE: return "Look in:";
-			case FileDialog::SAVE_FILE: return "Save in:";
-			case FileDialog::SELECT_FOLDER: return "Folder:";
-			default: return "File dialog...";
+			case FileDialog::SELECT_FILE: 	return "Look in:  ";
+			case FileDialog::SAVE_FILE: 	return "Save in:  ";
+			case FileDialog::SELECT_FOLDER:	return "Folder:   ";
+			default: 						return "Path:     ";
 		}
 	}
 
@@ -49,9 +49,9 @@ namespace FileDialog_static
 	{
 		switch(mode)
 		{
-			case FileDialog::SELECT_FILE: return "Filename:";
-			case FileDialog::SAVE_FILE: return "Name:";
-			default: return "<name>:";
+			case FileDialog::SELECT_FILE:	return "Filename: ";
+			case FileDialog::SAVE_FILE:		return "Name:     ";
+			default:						return "<name>:   ";
 		}
 	}
 }
