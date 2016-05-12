@@ -126,10 +126,12 @@ void FileDialog::replaceSelectedFilename(const char* path, const char* filename)
 void FileDialog::triggerNavigation(Button* navButton)
 {
 	FileDialog* self = static_cast<FileDialog*>(navButton->parent);
+	Point fchooserPos(navButton->tw_area.x + navButton->tw_area.w * 0.5, navButton->tw_area.y + navButton->tw_area.h * 0.5);
+
 	if(self->mode == SELECT_FILE)
-		file_chooser(FileDialog::fileSelected, self->id);
+		file_chooser(FileDialog::fileSelected, self->id, true, fchooserPos.x, fchooserPos.y);
 	else if(self->mode == SAVE_FILE || self->mode == SELECT_FOLDER)
-		working_dir(FileDialog::folderOpened, self->id);
+		working_dir(FileDialog::folderOpened, self->id, true, fchooserPos.x, fchooserPos.y);
 }
 
 //called when selected a file when browsing
