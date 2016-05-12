@@ -11,6 +11,7 @@
 #include "dialog_bgrwin.hpp"
 #include "label_win.hpp"
 #include "flow_layout.hpp"
+#include "drop_menu.hpp"
 
 namespace WidgetsExtra
 {
@@ -25,11 +26,16 @@ namespace WidgetsExtra
 
 		protected:
 		FileDialogMode mode;
+
 		LabelWin lblCurrentDirectory;
 		CmdMenu cmdmCurrentDirectoryField;
 		Button btnGoHome;
+
 		LabelWin lblFilename;
 		DialogWin dlgwFilenameField;
+
+		DropDownMenu* ddmFileType;
+
 		FlowLayout layoutSouthButtons;
 		Button btnOk, btnCancel;
 

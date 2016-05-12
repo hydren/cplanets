@@ -57,13 +57,14 @@ namespace FileDialog_static
 }
 
 FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
-: DialogBgrWin(Rect(0, 0, 400, 150), FileDialog_static::modeTitle(mode)),
+: DialogBgrWin(Rect(0, 0, 400, mode==SELECT_FOLDER? 96 : 160), FileDialog_static::modeTitle(mode)),
   onFinishedCallback(onFinished), selectedFilename(null), mode(mode),
   lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
   cmdmCurrentDirectoryField(new Button(this, Style(4,0), Rect(0, 0, titleBarArea.w * 0.75, 1.5 * TTF_FontHeight(draw_ttf->ttf_font)), getcwd(buffer, 1024), FileDialog::triggerNavigation)),
   btnGoHome(this, 0, Rect(), " H ", FileDialog::navigateToHome),
   lblFilename(this, Rect(), FileDialog_static::modeFilename(mode)),
   dlgwFilenameField(this, Rect(0, 0, titleBarArea.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font))),
+  ddmFileType(null),
   layoutSouthButtons(0, 0, 400),
   btnOk(this, 0, Rect(), "  Ok  ", FileDialog::confirmation),
   btnCancel(this, 0, Rect(), "Cancel", FileDialog::cancellation)
@@ -86,11 +87,24 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
 		lblFilename.hidden = true;
 		dlgwFilenameField.hidden = true;
 	}
+	else
+	{
+		DropDownMenuFactory ddmf;
+		ddmf.setLabel("File type:  ");
+		ddmf.setAppearance(DropDownMenuFactory::COMBOBOX);
+		ddmf.addItem("All files");
+		ddmf.setSize(Rect(0, 0, dlgwFilenameField.tw_area.w * 0.5, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)));
+
+		ddmFileType = ddmf.createAt(this);
+	}
 
 	this->validate();
 }
 
-FileDialog::~FileDialog(){}
+FileDialog::~FileDialog()
+{
+	delete ddmFileType;
+}
 
 void FileDialog::bind()
 {
@@ -108,9 +122,11 @@ void FileDialog::validate()
 	setComponentPosition(&lblCurrentDirectory, 8, titleBarArea.y + titleBarArea.h + 12);
 	setComponentPosition(cmdmCurrentDirectoryField.src, lblCurrentDirectory.area.x + lblCurrentDirectory.tw_area.w + 6, lblCurrentDirectory.area.y - 2);
 	setComponentPosition(&btnGoHome, cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3);
-	setComponentPosition(&lblFilename, 8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 32);
+	setComponentPosition(&lblFilename, 8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 16);
 	setComponentPosition(&dlgwFilenameField, cmdmCurrentDirectoryField.src->area.x, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font));
-	layoutSouthButtons.position.y = 120;
+	if(ddmFileType != null) ddmFileType->setPosition(Point(8, dlgwFilenameField.area.y + dlgwFilenameField.tw_area.h + 12));
+
+	layoutSouthButtons.position.y = this->tw_area.h - btnOk.tw_area.h - 6;
 	layoutSouthButtons.pack();
 }
 
