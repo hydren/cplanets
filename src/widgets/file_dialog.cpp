@@ -7,8 +7,9 @@
 
 #include "file_dialog.hpp"
 
-#include <unistd.h>
 #include <map>
+#include <unistd.h>
+
 #include "SDL_util.hpp"
 #include "widgets_util.hpp"
 
@@ -17,13 +18,11 @@ using std::map;
 
 char buffer[1024];
 
-//xxx kludges to maintain references when calling FileDialog::folderOpened()
+//xxx kludges to maintain references when calling FileDialog's static callbacks
 namespace FileDialog_static
 {
 	int lastId = 0;
 	map<int, FileDialog*> references;
-
-	map<RButWin*, FileDialog*> referencesRButWin;
 
 	const char* modeTitle(FileDialog::FileDialogMode mode)
 	{
@@ -98,9 +97,7 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
 		ddmf.setSize(Rect(0, 0, dlgwFilenameField.tw_area.w * 0.5, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)));
 		ddmf.setCallback(FileDialog::selectFileType);
 
-		ddmFileType = ddmf.createAt(this);
-		//fixme ddmFileType->cmdMenu->buttons is 0 at this point. Why? Maybe its buttons are created dynamically, which ruins the whole point (no way of holding reference to parent)
-		FileDialog_static::referencesRButWin[ddmFileType->cmdMenu->buttons] = this; //binding this rbutwin pointer to this address
+		ddmFileType = ddmf.createAt(this, id);
 	}
 
 	this->validate();
@@ -202,13 +199,7 @@ void FileDialog::selectFileType(RButWin* selection, int nr, int fire)
 {
 	if(fire)
 	{
-		map<RButWin*, FileDialog*>* hh = &FileDialog_static::referencesRButWin;
-		for(map<RButWin*, FileDialog*>::iterator it = hh->begin(); it != hh->end(); it++)
-		{
-			std::cout << (*it).first << " " << (*it).second << std::endl;
-		}
-
-		FileDialog* self = FileDialog_static::referencesRButWin[selection];
+		FileDialog* self = FileDialog_static::references[selection->id.id1];
 		self->ddmFileType->cmdMenu->src->label = selection->act_button()->label.str;
 		self->ddmFileType->cmdMenu->src->draw_blit_upd();
 	}
