@@ -5,16 +5,16 @@
 - Fix bezier spline
 - Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"
-
+- Fix bug on body collision when the program is slow.
 
 -------------- Backlog
 
 - Show icon on About dialog.
+- Try to not use a std::map for keeping references to Spinners on Spinner class (big time kludge). Solution: make Spinner extend WinBase or BgrWin and refer to them via the field 'parent' in Button class when dealing with callbacks of their buttons.
+- Show paused/resumed state more explicitly
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Add optional single-threaded mode (iterations per display, etc)
-- Try to not use a std::map for keeping references to Spinners on Spinner class (big time kludge)
 - Keep track of opened file state (modified, etc)
-
 
 -------------- Legacy 'japla' milestones
 

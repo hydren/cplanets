@@ -23,6 +23,7 @@
 #include "widgets/tab_set.hpp"
 #include "widgets/label_win.hpp"
 #include "widgets/toogle_button.hpp"
+#include "widgets/file_dialog.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -64,6 +65,7 @@ using WidgetsExtra::DropDownMenuFactory;
 using WidgetsExtra::TabSet;
 using WidgetsExtra::LabelWin;
 using WidgetsExtra::ToogleButton;
+using WidgetsExtra::FileDialog;
 
 void runOnce(void(func)(void))
 {
@@ -86,6 +88,7 @@ TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
 Button* btnNew, *btnLoad, *btnSave, *btnRun, *btnPause, *btnAbout;
+FileDialog* dialogLoad, *dialogSave;
 
 TabSet* tabs;
 
@@ -126,7 +129,8 @@ void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resulting
 void onPlanetariumBodyCreation(Body2D& createdBody);
 void onReady();
 
-void onFileChosenOpenUniverse(const char* f_name, Id id);
+void onFileChosenOpenUniverse(FileDialog* dialog);
+void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
 void replaceUniverse(Universe2D* universe);
@@ -329,6 +333,11 @@ void CPlanets::showMainWindow()
 
 	toolbarSouthLayout->pack();
 
+	vector<string> strFiletypes;
+	strFiletypes.push_back("Plain text (*.txt)");
+	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes);
+	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes);
+
 	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
 
@@ -527,18 +536,43 @@ void onButtonPressed(Button* btn)
 	if(btn == btnNew)
 	{
 		replaceUniverse(new Universe2D());
+//		todo remove this debug code
+//		FileDialog* f = new FileDialog(FileDialog::SELECT_FOLDER);
+//		f->setPositionOnCenter();
+//		f->setVisible();
+	}
+
+	//fixme there's got to be a better way to avoid file_chooser behind FileDialog bug
+	//xxx workaround for file_chooser behind FileDialog bug
+	if(btn == btnLoad || btn == btnSave)
+	{
+		static bool once = false;
+		if(not once)
+		{
+			dialogSave->setPositionOnCenter();
+			dialogSave->setVisible();
+			dialogSave->hide();
+			dialogLoad->setPositionOnCenter();
+			dialogLoad->setVisible();
+			dialogLoad->hide();
+			once = true;
+		}
 	}
 
 	if(btn == btnLoad)
 	{
-		file_chooser(onFileChosenOpenUniverse);
+		if(not dialogSave->hidden) return;
+		dialogLoad->setPositionOnCenter();
+		dialogLoad->setVisible();
+		onButtonPressed(btnPause);
 	}
 
 	if(btn == btnSave)
 	{
-		//xxx temporary code for debug
-		//ApplicationIO::save(planetarium->physics->universe, "test.txt");
-		alert("Save dialog not implemented yet!");
+		if(not dialogLoad->hidden) return;
+		dialogSave->setPositionOnCenter();
+		dialogSave->setVisible();
+		onButtonPressed(btnPause);
 	}
 }
 
@@ -611,19 +645,33 @@ void onReady()
 }
 
 
-void onFileChosenOpenUniverse(const char* f_name, Id id)
+void onFileChosenOpenUniverse(FileDialog* dialog)
 {
-	if(FileInputStream(f_name).good())
+	if(not dialog->selectedFilename.empty())
 	{
-		Universe2D* u = ApplicationIO::load(f_name, ApplicationIO::FORMAT_DEFAULT);
+		if(FileInputStream(dialog->selectedFilename.c_str()).good())
+		{
+			Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename.c_str()), ApplicationIO::FORMAT_DEFAULT);
 
-		if(u != null)
-			replaceUniverse(u);
+			if(u != null)
+				replaceUniverse(u);
 
-		else alert("Invalid file!");
+			else alert("Invalid file!");
+		}
+		else alert("File doesn't exist or isn't readable.");
 	}
-	else alert("File doesn't exist or isn't readable.");
 	SDL_util::setWindowTitle("cplanets"); //todo maybe put filename on title
+	onButtonPressed(btnRun);
+}
+
+void onFileChosenSaveUniverse(FileDialog* dialog)
+{
+	if(not dialog->selectedFilename.empty())
+	{
+		// query 'dialog->selectedType' for selected file type
+		ApplicationIO::save(planetarium->physics->universe, dialog->selectedFilename);
+	}
+	onButtonPressed(btnRun);
 }
 
 void refreshAllTxtBodies()
