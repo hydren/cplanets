@@ -78,6 +78,7 @@ const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for 
 const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
 const int PLANETARIUM_ID = 959;
+const int USER_EVENT_ID__UPDATE_BODIES_LIST = 160;
 string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
 
 //  ================ VARIABLES ===============
@@ -620,6 +621,11 @@ void onUserEvent(int cmd,int param,int param2)
 		if(param == planetarium->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
 			planetarium->doRefresh();
 	}
+
+	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
+	{
+		txtBodies->draw_blit_upd();
+	}
 }
 
 void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger)
@@ -629,7 +635,8 @@ void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resulting
 
 void onPlanetariumBodyCreation(Body2D& createdBody)
 {
-	txtBodies->add_text(createdBody.toString().c_str(), true);
+	txtBodies->add_text(createdBody.toString().c_str(), false);
+	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
 }
 
 void onReady()
@@ -680,7 +687,7 @@ void refreshAllTxtBodies()
 	{
 		txtBodies->add_text(body.toString().c_str(), false);
 	}
-	txtBodies->draw_blit_upd(); //xxx call to draw_blit_upd() here may cause race conditions
+	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
 }
 
 void replaceUniverse(Universe2D* universe)

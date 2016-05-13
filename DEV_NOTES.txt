@@ -4,7 +4,6 @@
 - Fix bezier spline
 - Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"
-- Fix bug on body collision when the program is slow.
 
 -------------- Backlog
 
