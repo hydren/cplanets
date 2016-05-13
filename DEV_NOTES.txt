@@ -5,7 +5,6 @@
 - Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"
 - Fix bug on body collision when the program is slow.
-- Fix bug on body creation where it incorrectly "inherits" orbit trace history.
 
 -------------- Backlog
 

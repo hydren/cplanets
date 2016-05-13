@@ -310,6 +310,11 @@ iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
 	return this->traces[body];
 }
 
+void Planetarium::OrbitTracer::clearTrace(const Body2D* body)
+{
+	this->traces.erase(const_cast<Body2D*>(body));
+}
+
 
 // ===========================  protected stuff =====================================================================================
 
@@ -389,6 +394,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		r += ((PlanetariumUserObject*) body->userObject)->color->r;
 		g += ((PlanetariumUserObject*) body->userObject)->color->g;
 		b += ((PlanetariumUserObject*) body->userObject)->color->b;
+		orbitTracer.clearTrace(body);
 	}
 	obj->color = new SDL_Color;
 	obj->color->r = r/collidingList.size();
