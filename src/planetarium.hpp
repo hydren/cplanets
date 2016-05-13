@@ -17,7 +17,7 @@
 
 struct Planetarium extends BgrWin, Physics2D::CollisionListener
 {
-	static const int USER_EVENT_ID__REDRAW_COMPONENT = 192; /// SDL_widgets user event ID hinting that it should be redrawed. Catch such events with a 'handle_uev' function and call 'doRefresh()'.
+	static const int USER_EVENT_ID__REDRAW_REQUESTED = 192; /// SDL_widgets user event ID hinting that it should be redrawed. Catch such events with a 'handle_uev' function and call 'doRefresh()'.
 	static const double BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
 
 	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;

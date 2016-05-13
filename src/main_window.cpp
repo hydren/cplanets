@@ -615,12 +615,10 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 
 void onUserEvent(int cmd,int param,int param2)
 {
-	if(cmd == Planetarium::USER_EVENT_ID__REDRAW_COMPONENT)
+	if(cmd == Planetarium::USER_EVENT_ID__REDRAW_REQUESTED)
 	{
-		if(param == PLANETARIUM_ID)
-		{
+		if(param == planetarium->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
 			planetarium->doRefresh();
-		}
 	}
 }
 

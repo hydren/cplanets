@@ -375,7 +375,7 @@ void Planetarium::updateView()
 		if(not isUpdating)
 		{
 			isUpdating = true;
-			send_uev(USER_EVENT_ID__REDRAW_COMPONENT, this->id.id1);
+			send_uev(USER_EVENT_ID__REDRAW_REQUESTED, this->id.id1);
 		}
 		lastTime = SDL_GetTicks();
 		SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime));
