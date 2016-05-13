@@ -542,7 +542,7 @@ void onButtonPressed(Button* btn)
 //		f->setVisible();
 	}
 
-	//fixme there got to be a better way to avoid file_chooser behind FileDialog bug
+	//fixme there's got to be a better way to avoid file_chooser behind FileDialog bug
 	//xxx workaround for file_chooser behind FileDialog bug
 	if(btn == btnLoad || btn == btnSave)
 	{
@@ -561,6 +561,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnLoad)
 	{
+		if(not dialogSave->hidden) return;
 		dialogLoad->setPositionOnCenter();
 		dialogLoad->setVisible();
 		onButtonPressed(btnPause);
@@ -568,6 +569,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnSave)
 	{
+		if(not dialogLoad->hidden) return;
 		dialogSave->setPositionOnCenter();
 		dialogSave->setVisible();
 		onButtonPressed(btnPause);

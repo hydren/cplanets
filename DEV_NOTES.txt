@@ -5,7 +5,7 @@
 - Fix bezier spline
 - Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"
-
+- Fix bug on body collision when the program is slow.
 
 -------------- Backlog
 
@@ -15,7 +15,6 @@
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Add optional single-threaded mode (iterations per display, etc)
 - Keep track of opened file state (modified, etc)
-
 
 -------------- Legacy 'japla' milestones
 
