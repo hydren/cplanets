@@ -18,7 +18,7 @@ namespace WidgetsExtra
 	struct FileDialog extends WidgetsExtra::DialogBgrWin
 	{
 		void (*onFinishedCallback)(FileDialog* dialog);
-		string* selectedFilename;
+		string selectedFilename, selectedType;
 
 		enum FileDialogMode { SELECT_FILE, SAVE_FILE, SELECT_FOLDER };
 		FileDialog(FileDialogMode mode=SELECT_FILE, void (*onFinished)(FileDialog* dialog)=null, const std::vector<string> fileTypes=std::vector<string>());

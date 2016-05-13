@@ -645,11 +645,11 @@ void onReady()
 
 void onFileChosenOpenUniverse(FileDialog* dialog)
 {
-	if(dialog->selectedFilename != null)
+	if(not dialog->selectedFilename.empty())
 	{
-		if(FileInputStream(dialog->selectedFilename->c_str()).good())
+		if(FileInputStream(dialog->selectedFilename.c_str()).good())
 		{
-			Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename->c_str()), ApplicationIO::FORMAT_DEFAULT);
+			Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename.c_str()), ApplicationIO::FORMAT_DEFAULT);
 
 			if(u != null)
 				replaceUniverse(u);
@@ -664,8 +664,11 @@ void onFileChosenOpenUniverse(FileDialog* dialog)
 
 void onFileChosenSaveUniverse(FileDialog* dialog)
 {
-	if(dialog->selectedFilename != null)
-		ApplicationIO::save(planetarium->physics->universe, *dialog->selectedFilename);
+	if(not dialog->selectedFilename.empty())
+	{
+		// query 'dialog->selectedType' for selected file type
+		ApplicationIO::save(planetarium->physics->universe, dialog->selectedFilename);
+	}
 	onButtonPressed(btnRun);
 }
 

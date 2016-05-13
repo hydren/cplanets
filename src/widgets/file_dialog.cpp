@@ -59,7 +59,7 @@ namespace FileDialog_static
 
 FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), const std::vector<string> fileTypes)
 : DialogBgrWin(Rect(0, 0, 400, mode==SELECT_FOLDER? 96 : 160), FileDialog_static::modeTitle(mode)),
-  onFinishedCallback(onFinished), selectedFilename(null), mode(mode),
+  onFinishedCallback(onFinished), selectedFilename(), mode(mode),
   lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
   cmdmCurrentDirectoryField(new Button(this, Style(4,0), Rect(0, 0, titleBarArea.w * 0.75, 1.5 * TTF_FontHeight(draw_ttf->ttf_font)), getcwd(buffer, 1024), FileDialog::triggerNavigation)),
   btnGoHome(this, 0, Rect(), " H ", FileDialog::navigateToHome),
@@ -96,7 +96,7 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), con
 		ddmf.setSize(Rect(0, 0, dlgwFilenameField.tw_area.w * 0.5, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)));
 		ddmf.setCallback(FileDialog::selectFileType);
 
-		ddmf.addItem("All files");
+		ddmf.addItem("All files"); selectedType = "All files";
 		const_foreach(const string&, str, std::vector<string>, fileTypes)
 		{
 			ddmf.addItem(str.c_str());
@@ -139,11 +139,8 @@ void FileDialog::validate()
 
 void FileDialog::replaceSelectedFilename(const char* path, const char* filename)
 {
-	string str = path;
-	str = str + '/' + filename; //todo review usage of / character as file separator here.
-	if(this->selectedFilename != null)
-		delete selectedFilename;
-	this->selectedFilename = new string(str);
+	//todo review usage of / character as file separator here.
+	selectedFilename = string(path) + '/' + filename;
 }
 
 //================================= callbacks / static functions ===========================================
@@ -207,6 +204,7 @@ void FileDialog::selectFileType(RButWin* selection, int nr, int fire)
 		FileDialog* self = FileDialog_static::references[selection->id.id1];
 		self->ddmFileType->cmdMenu->src->label = selection->act_button()->label.str;
 		self->ddmFileType->cmdMenu->src->draw_blit_upd();
+		self->selectedType = selection->act_button()->label.str;
 	}
 }
 
@@ -225,7 +223,7 @@ void FileDialog::confirmation(Button* okBtn)
 void FileDialog::cancellation(Button* okBtn)
 {
 	FileDialog* self = static_cast<FileDialog*>(okBtn->parent);
-	if(self->selectedFilename != null) { delete self->selectedFilename; self->selectedFilename = null; }
+	self->selectedFilename.clear();
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
 	DialogBgrWin::close(okBtn);
 	close_file_chooser();
