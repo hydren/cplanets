@@ -57,7 +57,7 @@ namespace FileDialog_static
 	}
 }
 
-FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
+FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), const std::vector<string> fileTypes)
 : DialogBgrWin(Rect(0, 0, 400, mode==SELECT_FOLDER? 96 : 160), FileDialog_static::modeTitle(mode)),
   onFinishedCallback(onFinished), selectedFilename(null), mode(mode),
   lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
@@ -93,9 +93,14 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*))
 		DropDownMenuFactory ddmf;
 		ddmf.setLabel("File type:  ");
 		ddmf.setAppearance(DropDownMenuFactory::COMBOBOX);
-		ddmf.addItem("All files");
 		ddmf.setSize(Rect(0, 0, dlgwFilenameField.tw_area.w * 0.5, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)));
 		ddmf.setCallback(FileDialog::selectFileType);
+
+		ddmf.addItem("All files");
+		const_foreach(const string&, str, std::vector<string>, fileTypes)
+		{
+			ddmf.addItem(str.c_str());
+		}
 
 		ddmFileType = ddmf.createAt(this, id);
 	}
@@ -126,7 +131,7 @@ void FileDialog::validate()
 	setComponentPosition(&btnGoHome, cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3);
 	setComponentPosition(&lblFilename, 8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 16);
 	setComponentPosition(&dlgwFilenameField, cmdmCurrentDirectoryField.src->area.x, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font));
-	if(ddmFileType != null) ddmFileType->setPosition(Point(8, dlgwFilenameField.area.y + dlgwFilenameField.tw_area.h + 12));
+	if(ddmFileType != null) ddmFileType->setPosition(Point(8, dlgwFilenameField.area.y + dlgwFilenameField.tw_area.h + 24));
 
 	layoutSouthButtons.position.y = this->tw_area.h - btnOk.tw_area.h - 6;
 	layoutSouthButtons.pack();

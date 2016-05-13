@@ -333,8 +333,10 @@ void CPlanets::showMainWindow()
 
 	toolbarSouthLayout->pack();
 
-	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse);
-	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse);
+	vector<string> strFiletypes;
+	strFiletypes.push_back("Plain text (*.txt)");
+	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes);
+	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes);
 
 	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
