@@ -27,6 +27,7 @@
 #include "widgets/label_win.hpp"
 #include "widgets/toogle_button.hpp"
 #include "widgets/file_dialog.hpp"
+#include "widgets/scrollable_pane.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -69,6 +70,7 @@ using WidgetsExtra::TabSet;
 using WidgetsExtra::LabelWin;
 using WidgetsExtra::ToogleButton;
 using WidgetsExtra::FileDialog;
+using WidgetsExtra::ScrollablePane;
 
 void runOnce(void(func)(void))
 {
@@ -98,6 +100,7 @@ TabSet* tabs;
 
 BgrWin* tabBodies;
 TextWin* txtBodies;
+ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
 CheckBox* chckTraceOrbit;
@@ -215,12 +218,15 @@ void CPlanets::showMainWindow()
 	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Bodies", tabBodies);
 
+	sclpBodies = new ScrollablePane(tabBodies, Style(0, 3*WIDGETS_SPACING), Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), window->bgcol);
+	sclpBodies->setScrollbarHorizontalVisible(false);
+
 	Rect txtBodiesSize(
-			0.5*WIDGETS_SPACING,
-			0.5*WIDGETS_SPACING,
-			sizeTab.w - WIDGETS_SPACING,
-			sizeTab.h - WIDGETS_SPACING);
-	txtBodies = new TextWin(tabBodies, 0, txtBodiesSize, SHRT_MAX, null);
+			0,
+			0,
+			sclpBodies->tw_area.w,
+			sclpBodies->tw_area.h);
+	txtBodies = new TextWin(&sclpBodies->content, 0, txtBodiesSize, SHRT_MAX, null);
 
 	// Tab options
 	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
@@ -406,7 +412,10 @@ void onWindowResize(int dw, int dh)
 	planetarium->widen(dw, dh);
 
 	//todo make a widenAll() method on TabSet
-	tabBodies->widen(0, dh); txtBodies->widen(0, dh);
+	tabBodies->widen(0, dh);
+	sclpBodies->widen(0, dh);
+	txtBodies->widen(0, dh);
+
 	tabOptions->widen(0, dh);
 
 	toolbarRight->position.x += dw;
