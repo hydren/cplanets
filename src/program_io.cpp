@@ -7,6 +7,7 @@
 
 #include "program_io.hpp"
 
+#include <fstream>
 #include <map>
 #include <utility>
 

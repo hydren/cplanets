@@ -7,12 +7,14 @@
 
 #include "main_window.hpp"
 
+#include <iostream>
+#include <fstream>
 #include <cmath>
 #include <cstring>
 #include <climits>
 
-#include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
+#include "SDL_widgets/SDL_widgets.h"
 #include "SDL_util.hpp"
 
 #include "planetarium.hpp"
