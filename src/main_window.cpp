@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <climits>
 
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
@@ -217,7 +218,7 @@ void CPlanets::showMainWindow()
 			0.5*WIDGETS_SPACING,
 			sizeTab.w - WIDGETS_SPACING,
 			sizeTab.h - WIDGETS_SPACING);
-	txtBodies = new TextWin(tabBodies, 0, txtBodiesSize, 8, null);
+	txtBodies = new TextWin(tabBodies, 0, txtBodiesSize, SHRT_MAX, null);
 
 	// Tab options
 	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
