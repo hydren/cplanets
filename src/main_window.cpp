@@ -351,6 +351,8 @@ void CPlanets::showMainWindow()
 	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
 
+	print_h();
+
 	//start
 	planetarium->setRunning();
 	get_events();
@@ -414,7 +416,8 @@ void onWindowResize(int dw, int dh)
 	//todo make a widenAll() method on TabSet
 	tabBodies->widen(0, dh);
 	sclpBodies->widen(0, dh);
-	txtBodies->widen(0, dh);
+	sclpBodies->widenContent(0, (dh > 0 ? dh : 0));
+	if(dh > 0) txtBodies->widen(0, dh);
 
 	tabOptions->widen(0, dh);
 

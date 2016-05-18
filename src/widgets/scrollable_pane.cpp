@@ -29,14 +29,19 @@ void ScrollablePane::draw()
 	SDL_FillRect(this->win, null, this->bgcol); //clears the screen
 }
 
+#include <iostream>
+
 void ScrollablePane::updateOffset(int dx, int dy)
 {
 	offset.x += dx; offset.y += dy;
-	for (int i=content.lst_child;i>=0;--i)
-	{
-		content.children[i]->area.x += dx;
-		content.children[i]->area.y += dy;
-	}
+
+	content.move(dx, dy);
+	content.draw_blit_recur();
+	content.blit_upd();
+
+	std::cout << "dx=" << dx << ", dy=" << dy << std::endl;
+	std::cout << "offset.x=" << offset.x << ", offset.y=" << offset.y << std::endl;
+	std::cout << "content.area.x=" << content.area.x << ", content.area.y=" << content.area.y << std::endl;
 }
 
 void ScrollablePane::setOffset(int x, int y)
@@ -94,12 +99,11 @@ void ScrollablePane::hscrollbarCallback(HScrollbar* bar, int val, int range)
 {
 	ScrollablePane* self = static_cast<ScrollablePane*>(bar->parent);
 	self->setOffset(-val, self->offset.y);
-	self->draw_blit_upd();
 }
+
 
 void ScrollablePane::vscrollbarCallback(VScrollbar* bar, int val, int range)
 {
 	ScrollablePane* self = static_cast<ScrollablePane*>(bar->parent);
 	self->setOffset(self->offset.x, -val);
-	self->draw_blit_upd();
 }
