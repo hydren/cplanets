@@ -11,37 +11,12 @@
 
 void WidgetsExtra::setComponentPosition(WinBase* component, const Point& position)
 {
-	setComponentPosition(component, position.x, position.y);
+	component->move(position.x - component->area.x, position.y - component->area.y);
 }
 
 void WidgetsExtra::setComponentPosition(WinBase* component, int x, int y)
 {
-	setComponentPositionX(component, x);
-	setComponentPositionY(component, y);
-}
-
-void WidgetsExtra::setComponentPositionX(WinBase* component, int x)
-{
-	component->area.x = x;
-	component->tw_area.x = x;
-	component->title_area.x = x;
-	component->title_top.x = x;
-	if (component->parent)
-	{
-		component->tw_area.x=component->area.x+component->parent->tw_area.x;
-	}
-}
-
-void WidgetsExtra::setComponentPositionY(WinBase* component, int y)
-{
-	component->area.y = y;
-	component->tw_area.y = y;
-	component->title_area.y = y-17;
-	component->title_top.y = y-17;
-	if (component->parent)
-	{
-		component->tw_area.y=component->area.y+component->parent->tw_area.y;
-	}
+	component->move(x - component->area.x, y - component->area.y);
 }
 
 void WidgetsExtra::packLabeledComponent(WinBase* wb, Label& lbl, unsigned height, int padding)

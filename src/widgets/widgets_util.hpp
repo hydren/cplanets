@@ -19,12 +19,6 @@ namespace WidgetsExtra
 	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
 	void setComponentPosition(WinBase* component, int x, int y);
 
-	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
-	void setComponentPositionX(WinBase* component, int x);
-
-	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
-	void setComponentPositionY(WinBase* component, int y);
-
 	/// Adjusts the given button size according to its label
 	void packLabeledComponent(Button* btn, unsigned height=0, int padding=4);
 
