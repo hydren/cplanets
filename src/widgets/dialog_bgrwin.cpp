@@ -64,7 +64,7 @@ void DialogBgrWin::validate()
 {
 	//shift properly all components inside it
 	titleBarArea = Rect(1, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) - 2);
-	setComponentPosition(&btnClose, titleBarArea.w - titleBarArea.h + 2, 2);
+	setComponentPosition(&btnClose, titleBarArea.w - titleBarArea.h + 2, 2, true);
 	titleStrOffset = 0.5 * (titleBarArea.h - TTF_FontHeight(draw_title_ttf->ttf_font));
 }
 

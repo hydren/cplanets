@@ -231,11 +231,11 @@ void CPlanets::showMainWindow()
 
 	LabelWin lblOrbitTracing(tabOptions, Rect(), "Orbit tracing");
 	lblOrbitTracing.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblOrbitTracing, Point(WIDGETS_SPACING, WIDGETS_SPACING));
+	setComponentPosition(&lblOrbitTracing, WIDGETS_SPACING, WIDGETS_SPACING);
 
 	chckTraceOrbit = new CheckBox(tabOptions, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
-	setComponentPosition(chckTraceOrbit, Point(lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + WIDGETS_SPACING));
+	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + WIDGETS_SPACING);
 	packLabeledComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
@@ -255,7 +255,7 @@ void CPlanets::showMainWindow()
 
 	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
 	lblBodyCreation.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblBodyCreation, Point(spnTraceLength->getPosition().x, ddmTraceStyle->getPosition().y + ddmTraceStyle->getSize().h + 2*WIDGETS_SPACING));
+	setComponentPosition(&lblBodyCreation, spnTraceLength->getPosition().x, ddmTraceStyle->getPosition().y + ddmTraceStyle->getSize().h + 2*WIDGETS_SPACING);
 
 	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
 	spnBodyDiameter->setPosition(Point(lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING));
@@ -271,7 +271,7 @@ void CPlanets::showMainWindow()
 
 	LabelWin lblSimulationParameters(tabOptions, Rect(), "Simulation parameters");
 	lblSimulationParameters.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblSimulationParameters, Point(spnBodyDiameter->getPosition().x, spnBodyDiameter->getPosition().y + spnBodyDiameter->getSize().h + 3*WIDGETS_SPACING));
+	setComponentPosition(&lblSimulationParameters, spnBodyDiameter->getPosition().x, spnBodyDiameter->getPosition().y + spnBodyDiameter->getSize().h + 3*WIDGETS_SPACING);
 
 	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
 	spnTimeStep->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
@@ -478,7 +478,7 @@ void onButtonPressed(Button* btn)
 {
 	if(btn == btnAbout)
 	{
-		setComponentPosition(dialogAbout, Point(window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150));
+		setComponentPosition(dialogAbout, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		if(dialogAbout->parent == null)
 		{
 			dialogAbout->keep_on_top();

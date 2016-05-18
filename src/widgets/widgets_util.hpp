@@ -13,11 +13,8 @@
 ///Utilities for SDL_widgets
 namespace WidgetsExtra
 {
-	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
-	void setComponentPosition(WinBase* component, const Point& position);
-
-	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly).
-	void setComponentPosition(WinBase* component, int x, int y);
+	/// Properly sets the position of the given component (better than modifying .area and .tw_area directly). Use raw=true when it doesn't work otherwise.
+	void setComponentPosition(WinBase* component, int x, int y, bool raw=false);
 
 	/// Adjusts the given button size according to its label
 	void packLabeledComponent(Button* btn, unsigned height=0, int padding=4);

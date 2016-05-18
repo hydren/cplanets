@@ -126,11 +126,11 @@ void FileDialog::validate()
 {
 	//shift properly all components inside it
 	DialogBgrWin::validate();
-	setComponentPosition(&lblCurrentDirectory, 8, titleBarArea.y + titleBarArea.h + 12);
-	setComponentPosition(cmdmCurrentDirectoryField.src, lblCurrentDirectory.area.x + lblCurrentDirectory.tw_area.w + 6, lblCurrentDirectory.area.y - 2);
-	setComponentPosition(&btnGoHome, cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3);
+	setComponentPosition(&lblCurrentDirectory, 8, titleBarArea.y + titleBarArea.h + 12, true);
+	setComponentPosition(cmdmCurrentDirectoryField.src, lblCurrentDirectory.area.x + lblCurrentDirectory.tw_area.w + 6, lblCurrentDirectory.area.y - 2, true);
+	setComponentPosition(&btnGoHome, cmdmCurrentDirectoryField.src->area.x + cmdmCurrentDirectoryField.src->tw_area.w + 6, lblCurrentDirectory.area.y - 3, true);
 	setComponentPosition(&lblFilename, 8, lblCurrentDirectory.area.y + cmdmCurrentDirectoryField.src->tw_area.h + 16);
-	setComponentPosition(&dlgwFilenameField, cmdmCurrentDirectoryField.src->area.x, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font));
+	setComponentPosition(&dlgwFilenameField, cmdmCurrentDirectoryField.src->area.x, lblFilename.area.y - TTF_FontHeight(draw_ttf->ttf_font), true);
 	if(ddmFileType != null) ddmFileType->setPosition(Point(8, dlgwFilenameField.area.y + dlgwFilenameField.tw_area.h + 24));
 
 	layoutSouthButtons.position.y = this->tw_area.h - btnOk.tw_area.h - 6;

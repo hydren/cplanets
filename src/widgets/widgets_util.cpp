@@ -9,14 +9,24 @@
 
 #include "futil/futil.hpp"
 
-void WidgetsExtra::setComponentPosition(WinBase* component, const Point& position)
+// xxx This function is experimental, but proved to work in many cases. Still, it should be avoided when possible.
+void setComponentRawPosition(WinBase* wb, int x, int y)
 {
-	component->move(position.x - component->area.x, position.y - component->area.y);
+	wb->area.x = x;			wb->area.y = y;
+	wb->tw_area.x = x;		wb->tw_area.y = y;
+	wb->title_area.x = x;	wb->title_area.y = y-17;
+	wb->title_top.x = x;	wb->title_top.y = y-17;
+	if (wb->parent)
+	{
+		wb->tw_area.x=wb->area.x+wb->parent->tw_area.x;
+		wb->tw_area.y=wb->area.y+wb->parent->tw_area.y;
+	}
 }
 
-void WidgetsExtra::setComponentPosition(WinBase* component, int x, int y)
+void WidgetsExtra::setComponentPosition(WinBase* component, int x, int y, bool raw)
 {
-	component->move(x - component->area.x, y - component->area.y);
+	if(raw) setComponentRawPosition(component, x, y);
+	else component->move(x - component->area.x, y - component->area.y);
 }
 
 void WidgetsExtra::packLabeledComponent(WinBase* wb, Label& lbl, unsigned height, int padding)
