@@ -45,6 +45,7 @@ int main(int arc, char* argv[])
 	try
 	{
 		srand(time(null));
+//		putenv("SDL_VIDEO_CENTERED=1"); // todo use video centering when able to choose on settings.
 		CPlanets::showMainWindow();
 		return EXIT_SUCCESS;
 	}
