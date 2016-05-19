@@ -352,7 +352,7 @@ void CPlanets::showMainWindow()
 	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
 
-	print_h();
+//	print_h(); //DEBUG
 
 	//start
 	planetarium->setRunning();
@@ -552,10 +552,6 @@ void onButtonPressed(Button* btn)
 	if(btn == btnNew)
 	{
 		replaceUniverse(new Universe2D());
-//		todo remove this debug code
-//		FileDialog* f = new FileDialog(FileDialog::SELECT_FOLDER);
-//		f->setPositionOnCenter();
-//		f->setVisible();
 	}
 
 	//fixme there's got to be a better way to avoid file_chooser behind FileDialog bug

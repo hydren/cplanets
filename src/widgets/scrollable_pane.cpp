@@ -40,9 +40,10 @@ void ScrollablePane::updateOffset(int dx, int dy)
 	this->hide(); //xxx cumbersome workaround for ScrollablePane::updateOffset()
 	this->show(); //cumbersome workaround for ScrollablePane::updateOffset()
 
-	std::cout << "dx=" << dx << ", dy=" << dy << std::endl;
-	std::cout << "offset.x=" << offset.x << ", offset.y=" << offset.y << std::endl;
-	std::cout << "content.area.x=" << content.area.x << ", content.area.y=" << content.area.y << std::endl;
+	// DEBUG
+//	std::cout << "dx=" << dx << ", dy=" << dy << std::endl;
+//	std::cout << "offset.x=" << offset.x << ", offset.y=" << offset.y << std::endl;
+//	std::cout << "content.area.x=" << content.area.x << ", content.area.y=" << content.area.y << std::endl;
 }
 
 void ScrollablePane::setOffset(int x, int y)
