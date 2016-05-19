@@ -36,8 +36,9 @@ void ScrollablePane::updateOffset(int dx, int dy)
 	offset.x += dx; offset.y += dy;
 
 	content.move(dx, dy);
-	content.draw_blit_recur();
-	content.blit_upd();
+	this->draw_blit_recur();
+	this->hide(); //xxx cumbersome workaround for ScrollablePane::updateOffset()
+	this->show(); //cumbersome workaround for ScrollablePane::updateOffset()
 
 	std::cout << "dx=" << dx << ", dy=" << dy << std::endl;
 	std::cout << "offset.x=" << offset.x << ", offset.y=" << offset.y << std::endl;
