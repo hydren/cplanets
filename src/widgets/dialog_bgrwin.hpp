@@ -19,6 +19,7 @@ namespace WidgetsExtra
 	{
 		void (*onClosedCallback)(DialogBgrWin*);
 		string titleStr;
+		Rect titleBarArea; //automatically set
 
 		DialogBgrWin(Rect bounds, string title="", void (*onClosed)(DialogBgrWin*)=null);
 		virtual ~DialogBgrWin();
@@ -28,7 +29,6 @@ namespace WidgetsExtra
 		void setPositionOnCenter();
 
 		protected:
-		Rect titleBarArea;
 		int titleStrOffset;
 		Button btnClose;
 

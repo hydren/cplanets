@@ -71,6 +71,7 @@ using WidgetsExtra::LabelWin;
 using WidgetsExtra::ToogleButton;
 using WidgetsExtra::FileDialog;
 using WidgetsExtra::ScrollablePane;
+using WidgetsExtra::DialogBgrWin;
 
 void runOnce(void(func)(void))
 {
@@ -120,7 +121,10 @@ ToogleButton* tgbTraceOrbit;
 Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
 ToogleButton* tgbAA;
 
-BgrWin* dialogAbout;
+
+DialogBgrWin* dialogAbout;
+ScrollablePane* sclpAboutLicense;
+Button* btnAboutOk;
 
 //  ================ FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
@@ -141,6 +145,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
+void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
 
 //  ==================== PLANETARIUM LISTENER ===========================
@@ -349,8 +354,22 @@ void CPlanets::showMainWindow()
 	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes);
 	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes);
 
-	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
+	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets");
+
+	btnAboutOk = new Button(dialogAbout, 0, genericButtonSize, "Close", closeDialogBgrWin);
+	packLabeledComponent(btnAboutOk);
+	setComponentPosition(btnAboutOk, 0.5*(400-btnAboutOk->tw_area.w), 300-btnAboutOk->tw_area.h-WIDGETS_SPACING);
+
+	Rect rectSclpAboutLicense(
+			WIDGETS_SPACING,
+			dialogAbout->titleBarArea.h + WIDGETS_SPACING,
+			400-2*WIDGETS_SPACING,
+			300-3*WIDGETS_SPACING-dialogAbout->titleBarArea.h-btnAboutOk->tw_area.h);
+
+	sclpAboutLicense = new ScrollablePane(dialogAbout, 0, rectSclpAboutLicense, window->bgcol);
+	sclpAboutLicense->content.display_cmd = drawAboutDialog;
+	sclpAboutLicense->setScrollbarHorizontalVisible(false);
 
 //	print_h(); //DEBUG
 
@@ -369,10 +388,18 @@ void draw()
 	runOnce(onReady);
 }
 
-void drawAboutDialog(BgrWin* dialog)
+void closeDialogBgrWin(Button* btn)
 {
-	dialog->init_gui();
-	dialog->draw_raised(0, dialog->bgcol, true);
+	DialogBgrWin* self = static_cast<DialogBgrWin*>(btn->parent);
+	self->setVisible(false);
+	if(self->onClosedCallback != null)
+		self->onClosedCallback(self);
+}
+
+void drawAboutDialog(BgrWin* bw)
+{
+	BgrWin* dialog = &sclpAboutLicense->content;
+	WidgetsExtra::drawDefaultBgrWin(bw);
 
 	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(WIDGETS_SPACING, WIDGETS_SPACING));
 
