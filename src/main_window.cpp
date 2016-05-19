@@ -27,6 +27,7 @@
 #include "widgets/label_win.hpp"
 #include "widgets/toogle_button.hpp"
 #include "widgets/file_dialog.hpp"
+#include "widgets/scrollable_pane.hpp"
 
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -69,6 +70,7 @@ using WidgetsExtra::TabSet;
 using WidgetsExtra::LabelWin;
 using WidgetsExtra::ToogleButton;
 using WidgetsExtra::FileDialog;
+using WidgetsExtra::ScrollablePane;
 
 void runOnce(void(func)(void))
 {
@@ -98,6 +100,7 @@ TabSet* tabs;
 
 BgrWin* tabBodies;
 TextWin* txtBodies;
+ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
 CheckBox* chckTraceOrbit;
@@ -137,6 +140,7 @@ void onFileChosenOpenUniverse(FileDialog* dialog);
 void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
+void updateSizeTxtBodies();
 void replaceUniverse(Universe2D* universe);
 
 //  ==================== PLANETARIUM LISTENER ===========================
@@ -215,12 +219,15 @@ void CPlanets::showMainWindow()
 	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Bodies", tabBodies);
 
+	sclpBodies = new ScrollablePane(tabBodies, Style(0, 3*WIDGETS_SPACING), Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), window->bgcol);
+	sclpBodies->setScrollbarHorizontalVisible(false);
+
 	Rect txtBodiesSize(
-			0.5*WIDGETS_SPACING,
-			0.5*WIDGETS_SPACING,
-			sizeTab.w - WIDGETS_SPACING,
-			sizeTab.h - WIDGETS_SPACING);
-	txtBodies = new TextWin(tabBodies, 0, txtBodiesSize, SHRT_MAX, null);
+			0,
+			0,
+			sclpBodies->tw_area.w,
+			sclpBodies->tw_area.h);
+	txtBodies = new TextWin(&sclpBodies->content, 0, txtBodiesSize, SHRT_MAX, null);
 
 	// Tab options
 	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
@@ -345,6 +352,8 @@ void CPlanets::showMainWindow()
 	dialogAbout = new BgrWin(null, Rect(0,0,400,300), null, drawAboutDialog, null, null, null, window->bgcol);
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
 
+	print_h();
+
 	//start
 	planetarium->setRunning();
 	get_events();
@@ -406,7 +415,10 @@ void onWindowResize(int dw, int dh)
 	planetarium->widen(dw, dh);
 
 	//todo make a widenAll() method on TabSet
-	tabBodies->widen(0, dh); txtBodies->widen(0, dh);
+	tabBodies->widen(0, dh);
+	sclpBodies->widen(0, dh);
+	updateSizeTxtBodies();
+
 	tabOptions->widen(0, dh);
 
 	toolbarRight->position.x += dw;
@@ -627,6 +639,7 @@ void onUserEvent(int cmd,int param,int param2)
 
 	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
 	{
+		updateSizeTxtBodies();
 		txtBodies->draw_blit_upd();
 	}
 }
@@ -691,6 +704,20 @@ void refreshAllTxtBodies()
 		txtBodies->add_text(body.toString().c_str(), false);
 	}
 	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
+}
+
+void updateSizeTxtBodies()
+{
+	unsigned height2 = sclpBodies->tw_area.h;
+
+	if(txtBodies->linenr >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
+		height2 = Math::max((txtBodies->linenr+1)*TDIST + 4, (int) sclpBodies->tw_area.h);
+
+	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
+	{
+		txtBodies->widen(0, height2 - txtBodies->tw_area.h);
+		sclpBodies->widenContent(0, height2 - sclpBodies->content.tw_area.h);
+	}
 }
 
 void replaceUniverse(Universe2D* universe)
