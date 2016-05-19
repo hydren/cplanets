@@ -140,6 +140,7 @@ void onFileChosenOpenUniverse(FileDialog* dialog);
 void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
+void updateSizeTxtBodies();
 void replaceUniverse(Universe2D* universe);
 
 //  ==================== PLANETARIUM LISTENER ===========================
@@ -416,8 +417,7 @@ void onWindowResize(int dw, int dh)
 	//todo make a widenAll() method on TabSet
 	tabBodies->widen(0, dh);
 	sclpBodies->widen(0, dh);
-	sclpBodies->widenContent(0, (dh > 0 ? dh : 0));
-	if(dh > 0) txtBodies->widen(0, dh);
+	updateSizeTxtBodies();
 
 	tabOptions->widen(0, dh);
 
@@ -639,6 +639,7 @@ void onUserEvent(int cmd,int param,int param2)
 
 	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
 	{
+		updateSizeTxtBodies();
 		txtBodies->draw_blit_upd();
 	}
 }
@@ -703,6 +704,20 @@ void refreshAllTxtBodies()
 		txtBodies->add_text(body.toString().c_str(), false);
 	}
 	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
+}
+
+void updateSizeTxtBodies()
+{
+	unsigned height2 = sclpBodies->tw_area.h;
+
+	if(txtBodies->linenr >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
+		height2 = Math::max((txtBodies->linenr+1)*TDIST + 4, (int) sclpBodies->tw_area.h);
+
+	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
+	{
+		txtBodies->widen(0, height2 - txtBodies->tw_area.h);
+		sclpBodies->widenContent(0, height2 - sclpBodies->content.tw_area.h);
+	}
 }
 
 void replaceUniverse(Universe2D* universe)
