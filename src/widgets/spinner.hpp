@@ -54,11 +54,16 @@ namespace WidgetsExtra
 			return spinner.area;
 		}
 
-		virtual void setPosition(Point position)
+		virtual void setPosition(int x, int y)
 		{
-			WidgetsExtra::setComponentPosition(&spinner, position.x, position.y);
+			WidgetsExtra::setComponentPosition(&spinner, x, y);
 			WidgetsExtra::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
 			WidgetsExtra::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
+		}
+
+		void setPosition(Point position)
+		{
+			setPosition(position.x, position.y);
 		}
 
 		virtual Rect getSize() const
