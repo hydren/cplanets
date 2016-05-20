@@ -202,7 +202,7 @@ void Layout::addComponent(WinBase* base, int index)
 {
 	WinBaseWrapper* component = new WinBaseWrapper(base); //creater wrapper for winbase
 	innerWrappers.push_back(component); //register the layout-created wrapper
-	addComponent(reinterpret_cast<Element*>(component));
+	addComponent(static_cast<Element*>(component));
 }
 
 void Layout::addComponent(Element& component, int index)
@@ -245,7 +245,7 @@ void Layout::removeComponentAt(unsigned index)
 		throw std::out_of_range("out of range: " + index);
 
 	//if there is a pointer to the element on innerWrappers, then it is a WinBaseWrapper created by this layout
-	for(int w = Collections::indexOf(this->innerWrappers, reinterpret_cast<WinBaseWrapper*>(this->components[index])); w != -1; w = -1)
+	for(int w = Collections::indexOf(this->innerWrappers, static_cast<WinBaseWrapper*>(this->components[index])); w != -1; w = -1)
 	{
 		delete this->innerWrappers[w]; //delete the wrapper
 		this->innerWrappers.erase(this->innerWrappers.begin() + w); //remove the pointer

@@ -206,7 +206,7 @@ DropDownMenu* DropDownMenuFactory::createAt(WinBase* pw, Id id)
 		this->implementation->rt.x += labelArea.w;
 
 	//create CmdMenu with specially crafted button.
-	ddmenu->cmdMenu = new CmdMenu(reinterpret_cast<Button*>(this->implementation->createButton(ddmenu)));
+	ddmenu->cmdMenu = new CmdMenu(static_cast<Button*>(this->implementation->createButton(ddmenu)));
 
 	//create the label
 	ddmenu->label = new LabelWin(pw, labelArea, this->implementation->lb.str);
