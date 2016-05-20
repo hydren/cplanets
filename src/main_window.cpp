@@ -354,7 +354,7 @@ void CPlanets::showMainWindow()
 	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes);
 	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes);
 
-	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE + "Version " + CPLANETS_VERSION + " ";
+	FULL_ABOUT_TEXT = "Version "+CPLANETS_VERSION+"\n\nThis program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE;
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets");
 
 	btnAboutOk = new Button(dialogAbout, 0, genericButtonSize, "Close", closeDialogBgrWin);
