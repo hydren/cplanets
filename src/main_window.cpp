@@ -106,7 +106,7 @@ ScrollablePane* sclpBodies;
 BgrWin* tabOptions;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
-Spinner<double>* spnBodyDiameter, *spnBodyDensity;
+Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
 Spinner<double>* spnTimeStep, *spnGravity;
 Spinner<long>* spnDisplayPeriod;
 DropDownMenu* ddmTraceStyle;
@@ -281,9 +281,15 @@ void CPlanets::showMainWindow()
 	spnBodyDensity->setStepValue(0.1);
 	spnBodyDensity->offset.y -= 2;
 
+	spnBodyVelocity = new Spinner<double>(tabOptions, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
+	spnBodyVelocity->setPosition(spnBodyDiameter->getPosition().x, spnBodyDiameter->getPosition().y + spnBodyDiameter->getSize().h + WIDGETS_SPACING);
+	*spnBodyVelocity->getValue() = 10;
+	spnBodyVelocity->setStepValue(0.1);
+	spnBodyVelocity->offset.y -= 2;
+
 	LabelWin lblSimulationParameters(tabOptions, Rect(), "Simulation parameters");
 	lblSimulationParameters.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblSimulationParameters, spnBodyDiameter->getPosition().x, spnBodyDiameter->getPosition().y + spnBodyDiameter->getSize().h + 3*WIDGETS_SPACING);
+	setComponentPosition(&lblSimulationParameters, spnBodyVelocity->getPosition().x, spnBodyVelocity->getPosition().y + spnBodyVelocity->getSize().h + 3*WIDGETS_SPACING);
 
 	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
 	spnTimeStep->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
@@ -534,7 +540,7 @@ void onButtonPressed(Button* btn)
 		double az = 1/planetarium->viewportZoom;
 		double diameter = (planetarium->bodyCreationDiameterRatio * az) * Planetarium::BODY_CREATION_DIAMETER_FACTOR;
 		double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * diameter * diameter * diameter;
-		double speed = 10; //this should be parametrized
+		double speed = *spnBodyVelocity->getValue();
 		Vector2D randomPosition(randomBetween(0, planetarium->tw_area.w), randomBetween(0, planetarium->tw_area.h));
 		Vector2D randomVelocity(randomBetween(-speed * az, speed * az), randomBetween(-speed * az, speed * az));
 		randomPosition.scale(az).add(planetarium->viewportPosition);
@@ -676,6 +682,7 @@ void onReady()
 	spnTraceLength->refresh();
 	spnBodyDiameter->refresh();
 	spnBodyDensity->refresh();
+	spnBodyVelocity->refresh();
 	spnTimeStep->refresh();
 	spnGravity->refresh();
 	spnDisplayPeriod->refresh();

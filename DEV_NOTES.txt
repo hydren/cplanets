@@ -1,7 +1,6 @@
 -------------- To Do
 
 - Create Spinner to select physics2dsolver's
-- Add random body velocity creation parameter
 - Fix bezier spline
 - Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"
@@ -9,6 +8,7 @@
 -------------- Backlog
 
 - Show icon on About dialog.
+- Color bug when large-mass bodies collides.
 - Try to not use a std::map for keeping references to Spinners on Spinner class (big time kludge). Solution: make Spinner extend WinBase or BgrWin and refer to them via the field 'parent' in Button class when dealing with callbacks of their buttons.
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
