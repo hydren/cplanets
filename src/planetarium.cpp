@@ -389,18 +389,21 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	//reconstructs custom data
 	resultingMerger.userObject = new PlanetariumUserObject(new SDL_Color);
 	PlanetariumUserObject* obj = (PlanetariumUserObject*) resultingMerger.userObject;
-	long r=0, g=0, b=0;
+	long r=0, g=0, b=0, tm=0;
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
-		r += ((PlanetariumUserObject*) body->userObject)->color->r;
-		g += ((PlanetariumUserObject*) body->userObject)->color->g;
-		b += ((PlanetariumUserObject*) body->userObject)->color->b;
+		const SDL_Color* bodyColor = static_cast<PlanetariumUserObject*> (body->userObject)->color;
+		r += bodyColor->r * body->mass;
+		g += bodyColor->g * body->mass;
+		b += bodyColor->b * body->mass;
+		tm += body->mass;
 		orbitTracer.clearTrace(body);
 	}
+	if(tm==0)tm=1; //safety
 	obj->color = new SDL_Color;
-	obj->color->r = r/collidingList.size();
-	obj->color->g = g/collidingList.size();
-	obj->color->b = b/collidingList.size();
+	obj->color->r = static_cast<Uint8>(r/tm);
+	obj->color->g = static_cast<Uint8>(g/tm);
+	obj->color->b = static_cast<Uint8>(b/tm);
 
 	typedef pair<vector<Body2D>, Body2D> Event;
 	Event* ev = new Event();
@@ -428,7 +431,6 @@ void Planetarium::onMouseDown(BgrWin* bgr, int x, int y, int but)
 		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
 		planetarium->lastMouseLeftButtonDown = SDL_GetTicks();
 	}
-
 }
 
 void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
