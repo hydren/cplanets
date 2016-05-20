@@ -88,7 +88,7 @@ const int USER_EVENT_ID__UPDATE_BODIES_LIST = 160;
 string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
 
 //  ================ VARIABLES ===============
-Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE);
+Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
@@ -252,7 +252,7 @@ void CPlanets::showMainWindow()
 
 	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
 	spnTraceLength->setPosition(Point(chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + WIDGETS_SPACING));
-	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength));
+	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength), true);
 
 	DropDownMenuFactory factory;
 	factory.setLabel("Trace style: ", true);
@@ -271,13 +271,13 @@ void CPlanets::showMainWindow()
 
 	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
 	spnBodyDiameter->setPosition(Point(lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING));
-	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio));
+	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio), true);
 	spnBodyDiameter->setStepValue(0.1);
 	spnBodyDiameter->offset.y -= 2;
 
 	spnBodyDensity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
 	spnBodyDensity->setPosition(Point(spnBodyDiameter->getPosition().x + spnBodyDiameter->getSize().w + WIDGETS_SPACING, spnBodyDiameter->getPosition().y));
-	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity));
+	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity), true);
 	spnBodyDensity->setStepValue(0.1);
 	spnBodyDensity->offset.y -= 2;
 
@@ -287,19 +287,19 @@ void CPlanets::showMainWindow()
 
 	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
 	spnTimeStep->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
-	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
+	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep), true);
 	spnTimeStep->setStepValue(0.1);
 	spnTimeStep->offset.y -= 2;
 
 	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
 	spnGravity->setPosition(Point(spnTimeStep->getPosition().x + spnTimeStep->getSize().w + WIDGETS_SPACING, spnTimeStep->getPosition().y));
-	spnGravity->setValue(&(planetarium->physics->universe.gravity));
+	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 	spnGravity->offset.y -= 2;
 
 	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Display period:");
 	spnDisplayPeriod->setPosition(Point(spnTimeStep->getPosition().x, spnTimeStep->getPosition().y + spnTimeStep->getSize().h + WIDGETS_SPACING));
-	spnDisplayPeriod->setValue(&(planetarium->sleepingTime));
+	spnDisplayPeriod->setValue(&(planetarium->sleepingTime), true);
 	spnDisplayPeriod->offset.y -= 2;
 
 	//+++++++++++++++ East (right) toolbar
@@ -555,7 +555,6 @@ void onButtonPressed(Button* btn)
 	if(btn == btnPause)
 	{
 		planetarium->setRunning(false);
-
 	}
 
 	if(btn == btnDoubleTraceLength)

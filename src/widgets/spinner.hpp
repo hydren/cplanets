@@ -93,11 +93,15 @@ namespace WidgetsExtra
 			return this->value;
 		}
 
-		void setValue(Type* val)
+		void setValue(Type* val, bool deleteOldValue=false)
 		{
+			Type* old = this->value;
+
 			this->value = val;
 			if(sdl_running)
 				refresh();
+
+			if(deleteOldValue) delete old;
 		}
 
 		Type getStepValue()
