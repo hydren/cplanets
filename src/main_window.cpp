@@ -218,7 +218,7 @@ void CPlanets::showMainWindow()
 		tabs->layout.position.y + tabs->layout.maxHeight,
 		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
 		planetariumSize.h - tabs->layout.maxHeight
-	); //todo Rearrange tabs position, (8) and (TOOLBAR_SIZE - 8) should be removed
+	);
 
 	// Tab bodies
 	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
@@ -367,7 +367,7 @@ void CPlanets::showMainWindow()
 			400-2*WIDGETS_SPACING,
 			300-3*WIDGETS_SPACING-dialogAbout->titleBarArea.h-btnAboutOk->tw_area.h);
 
-	sclpAboutLicense = new ScrollablePane(dialogAbout, 0, rectSclpAboutLicense, window->bgcol);
+	sclpAboutLicense = new ScrollablePane(dialogAbout, Style(0, 14), rectSclpAboutLicense, window->bgcol);
 	sclpAboutLicense->content.display_cmd = drawAboutDialog;
 	sclpAboutLicense->setScrollbarHorizontalVisible(false);
 
@@ -426,6 +426,8 @@ void drawAboutDialog(BgrWin* bw)
 			lf += cr; //increase text pointer
 			cr = 0; //"caret" position is reset
 			ln++; //line number incremented
+			//expand BgrWin to fit the text
+			if((ln+1)*TDIST - dialogAbout->titleBarArea.h > dialog->tw_area.h) { sclpAboutLicense->widenContent(0, TDIST); sclpAboutLicense->updateOffset(); }
 		}
 
 		cr++; //increase caret position
@@ -518,16 +520,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnAbout)
 	{
 		setComponentPosition(dialogAbout, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
-		if(dialogAbout->parent == null)
-		{
-			dialogAbout->keep_on_top();
-			dialogAbout->draw_blit_recur();
-			dialogAbout->upd();
-		}
-		else if(dialogAbout->hidden)
-			dialogAbout->show();
-		else
-			dialogAbout->hide();
+		dialogAbout->setVisible(dialogAbout->parent==null || dialogAbout->hidden);
 	}
 
 	if(btn == btnAddBody)
