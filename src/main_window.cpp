@@ -571,6 +571,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnNew)
 	{
 		replaceUniverse(new Universe2D());
+		onButtonPressed(btnRun);
 	}
 
 	//fixme there's got to be a better way to avoid file_chooser behind FileDialog bug
