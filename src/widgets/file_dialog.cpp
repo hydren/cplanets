@@ -7,6 +7,11 @@
 
 #include "file_dialog.hpp"
 
+#if defined(_WIN32) && defined(__STRICT_ANSI__)
+	#define off64_t _off64_t
+	#define off_t _off_t
+#endif
+
 #include <map>
 #include <unistd.h>
 
