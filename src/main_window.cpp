@@ -5,6 +5,7 @@
  *      Author: professor
  */
 
+#include <widgets/spinner2.hpp>
 #include "main_window.hpp"
 
 #include <iostream>
@@ -21,7 +22,6 @@
 #include "program_io.hpp"
 #include "widgets/widgets_util.hpp"
 #include "widgets/flow_layout.hpp"
-#include "widgets/spinner.hpp"
 #include "widgets/drop_menu.hpp"
 #include "widgets/tab_set.hpp"
 #include "widgets/label_win.hpp"
