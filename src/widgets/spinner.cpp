@@ -5,7 +5,7 @@
  *      Author: carlosfaruolo
  */
 
-#include "spinner2.hpp"
+#include "spinner.hpp"
 #include <map>
 
 #include "widgets_util.hpp"
@@ -13,10 +13,11 @@
 using WidgetsExtra::AbstractSpinner;
 using WidgetsExtra::Spinner;
 
+// helpers
 namespace AbstractSpinnerAux
 {
-	int nextId = 0;
-	std::map<int, AbstractSpinner*> references; //xxx kludge-type to reference Spinner's by id
+	int nextId = 0; // used to maintain consistency. not thread safe.
+	std::map<int, AbstractSpinner*> references; //xxx kludge to map references to Spinner's addresses by id
 }
 
 AbstractSpinner::AbstractSpinner(WinBase *pw, Rect area, const char* label)

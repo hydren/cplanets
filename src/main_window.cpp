@@ -5,7 +5,7 @@
  *      Author: professor
  */
 
-#include <widgets/spinner2.hpp>
+#include <widgets/spinner.hpp>
 #include "main_window.hpp"
 
 #include <iostream>
