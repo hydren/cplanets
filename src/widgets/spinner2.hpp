@@ -14,7 +14,7 @@
 
 namespace WidgetsExtra
 {
-	struct AbstractSpinner extends WinBase, WidgetsExtra::Layout::WinBaseWrapper
+	struct AbstractSpinner extends WinBase
 	{
 		static const unsigned BUTTON_SIZE = 16;
 
@@ -24,22 +24,13 @@ namespace WidgetsExtra
 		AbstractSpinner(WinBase *pw, Rect area, const char* label=null);
 		virtual ~AbstractSpinner();
 
+		//overrides WinBase's
 		virtual void draw();
 
-		virtual Point getPosition() const;
+		//overrides WinBase's (caution: doesn't work if called from a WinBase pointer; widen() is not virtual in WinBase)
+		virtual void widen(int dx, int dy);
 
-		virtual void setPosition(int x, int y);
-
-		void setPosition(Point position);
-
-		virtual Rect getSize() const;
-
-		virtual void setSize(Rect size);
-
-		virtual bool isStretched() const;
-
-		virtual bool operator == (const Element& b) const;
-
+		/// Sets the spinner label
 		virtual void setLabel(const char* lbl);
 
 		//pure virtual. needs to be implemented:
@@ -57,6 +48,7 @@ namespace WidgetsExtra
 		virtual void parseIfValid(const char* txtVal) abstract;
 
 		protected:
+		//callbacks
 		static void changeValue(Button* btn);
 		static void validateField(const char* text,int cmd_id);
 	};
@@ -70,7 +62,6 @@ namespace WidgetsExtra
 		: AbstractSpinner(pw, area, label),
 		  value(value==null? new Type(1) : value), step(1), min(0), max(9999)
 		{}
-
 
 		Type* getValue()
 		{
