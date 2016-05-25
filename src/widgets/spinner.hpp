@@ -22,7 +22,7 @@ namespace WidgetsExtra
 	{
 		static const unsigned BUTTON_SIZE = 16;
 
-		DialogWin spinner;
+		DialogWin dlwTextField;
 		Button btnInc, btnDec;
 
 		AbstractSpinner(WinBase *pw, Rect area, const char* label=null);
@@ -108,8 +108,8 @@ namespace WidgetsExtra
 		void refresh()
 		{
 			string strValue = string() + *(this->value);
-			spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
-			spinner.unset_cursor();
+			dlwTextField.dialog_def(strValue.c_str(), this->dlwTextField.cmd, this->dlwTextField.cmd_id);
+			dlwTextField.unset_cursor();
 			btnInc.draw_blit_upd();
 			btnDec.draw_blit_upd();
 		}

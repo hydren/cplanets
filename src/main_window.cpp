@@ -251,7 +251,7 @@ void CPlanets::showMainWindow()
 	packLabeledComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
-	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + WIDGETS_SPACING);
+	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + WIDGETS_SPACING + 3);
 	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength), true);
 
 	DropDownMenuFactory factory;
@@ -262,7 +262,7 @@ void CPlanets::showMainWindow()
 	factory.addItem("Point");
 	factory.setCallback(onDropDownMenuButton);
 	ddmTraceStyle = factory.createAt(tabOptions);
-	ddmTraceStyle->setPosition(Point(spnTraceLength->area.x + spnTraceLength->tw_area.w + WIDGETS_SPACING, spnTraceLength->area.y));
+	ddmTraceStyle->setPosition(Point(spnTraceLength->area.x + spnTraceLength->tw_area.w + WIDGETS_SPACING, spnTraceLength->area.y - 3));
 	ddmTraceStyle->offset.y = -10;
 
 	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
