@@ -5,7 +5,6 @@
  *      Author: professor
  */
 
-#include <widgets/spinner.hpp>
 #include "main_window.hpp"
 
 #include <iostream>
@@ -22,6 +21,7 @@
 #include "program_io.hpp"
 #include "widgets/widgets_util.hpp"
 #include "widgets/flow_layout.hpp"
+#include "widgets/spinner.hpp"
 #include "widgets/drop_menu.hpp"
 #include "widgets/tab_set.hpp"
 #include "widgets/label_win.hpp"
@@ -273,19 +273,16 @@ void CPlanets::showMainWindow()
 	setComponentPosition(spnBodyDiameter, lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING);
 	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio), true);
 	spnBodyDiameter->setStepValue(0.1);
-//	spnBodyDiameter->offset.y -= 2;
 
 	spnBodyDensity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
 	setComponentPosition(spnBodyDensity, spnBodyDiameter->area.x + spnBodyDiameter->tw_area.w + WIDGETS_SPACING, spnBodyDiameter->area.y);
 	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity), true);
 	spnBodyDensity->setStepValue(0.1);
-//	spnBodyDensity->offset.y -= 2;
 
 	spnBodyVelocity = new Spinner<double>(tabOptions, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
 	setComponentPosition(spnBodyVelocity, spnBodyDiameter->area.x, spnBodyDiameter->area.y + spnBodyDiameter->tw_area.h + WIDGETS_SPACING);
 	*spnBodyVelocity->getValue() = 10;
 	spnBodyVelocity->setStepValue(0.1);
-//	spnBodyVelocity->offset.y -= 2;
 
 	LabelWin lblSimulationParameters(tabOptions, Rect(), "Simulation parameters");
 	lblSimulationParameters.setTextRenderer(draw_title_ttf);
@@ -295,18 +292,15 @@ void CPlanets::showMainWindow()
 	setComponentPosition(spnTimeStep, lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING);
 	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep), true);
 	spnTimeStep->setStepValue(0.1);
-//	spnTimeStep->offset.y -= 2;
 
 	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
 	setComponentPosition(spnGravity, spnTimeStep->area.x + spnTimeStep->tw_area.w + WIDGETS_SPACING, spnTimeStep->area.y);
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
-//	spnGravity->offset.y -= 2;
 
 	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Display period:");
 	setComponentPosition(spnDisplayPeriod, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
 	spnDisplayPeriod->setValue(&(planetarium->sleepingTime), true);
-//	spnDisplayPeriod->offset.y -= 2;
 
 	//+++++++++++++++ East (right) toolbar
 	toolbarRight = new FlowLayout(planetariumSize.x + planetariumSize.w + WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING);
