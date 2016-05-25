@@ -42,6 +42,8 @@ namespace WidgetsExtra
 
 		void addItem(Label label, short index=-1);
 		Label itemAt(unsigned index);
+		void removeItem(short index);
+		void removeAllItems();
 
 		DropDownMenu* createAt(WinBase* pw, Point pt, Id id=0);
 		DropDownMenu* createAt(WinBase* pw, Id id=0);

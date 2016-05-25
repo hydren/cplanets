@@ -175,6 +175,16 @@ Label DropDownMenuFactory::itemAt(unsigned index)
 	return this->implementation->items[index];
 }
 
+void DropDownMenuFactory::removeItem(short index)
+{
+	this->implementation->items.erase(this->implementation->items.begin() + index);
+}
+
+void DropDownMenuFactory::removeAllItems()
+{
+	this->implementation->items.clear();
+}
+
 DropDownMenu* DropDownMenuFactory::createAt(WinBase* pw, Point pt, Id id)
 {
 	this->implementation->rt.x = pt.x;
