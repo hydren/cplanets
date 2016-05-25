@@ -8,85 +8,68 @@
 #ifndef WIDGETS_SPINNER_HPP_
 #define WIDGETS_SPINNER_HPP_
 
+#include "SDL_widgets/SDL_widgets.h"
+
 #include <stdexcept>
 
-#include "SDL_widgets/SDL_widgets.h"
 #include "futil/futil.hpp"
-
 #include "abstract_layout.hpp"
-#include "widgets_util.hpp"
 
 namespace WidgetsExtra
 {
-	namespace Spinner_static
-	{
-		std::map<Button*, void*> references; //xxx kludge-type references. do not modify it!!!
-		int nextId=0; //xxx Id sequence for Spinners. Do not modify it!!!
-	}
-
-	/** A widget like Java's JSpinner. It is a template, which means the value on the spinner field can be (theorectically) of any typename.
-	 * Currently it works with 'int'-like typenames.
-	 * The Type must have operator + and -, and be able to cast from double/float.*/
-	template<typename Type>
-	struct Spinner extends WidgetsExtra::Layout::Element
+	/// Generic widget that serves as a skeleton to the template struct Spinner.
+	struct AbstractSpinner extends WinBase
 	{
 		static const unsigned BUTTON_SIZE = 16;
+
 		DialogWin spinner;
 		Button btnInc, btnDec;
 
+		AbstractSpinner(WinBase *pw, Rect area, const char* label=null);
+		virtual ~AbstractSpinner();
+
+		//overrides WinBase's
+		virtual void draw();
+
+		//overrides WinBase's (caution: doesn't work if called from a WinBase pointer; widen() is not virtual in WinBase)
+		virtual void widen(int dx, int dy);
+
+		/// Sets the spinner label
+		virtual void setLabel(const char* lbl);
+
+		//pure virtual. needs to be implemented:
+
+		/// Should refresh the text according to this spinner's current value.
+		virtual void refresh() abstract;
+
+		/// Should increment the spinner value
+		virtual void incrementValue() abstract;
+
+		/// Should decrement the spinner value
+		virtual void decrementValue() abstract;
+
+		/// Should, if the text in the field is valid, update the spinner value. Otherwise refresh the field text with the spinner value (overriding any text in the field)
+		virtual void parseIfValid(const char* txtVal) abstract;
+
+		protected:
+		//callbacks
+		static void changeValue(Button* btn);
+		static void validateField(const char* text,int cmd_id);
+	};
+
+	/** A widget similar to Swing's JSpinner. It is a template, which means the value on the spinner field can be (theorectically) of any type.
+	 * Currently it has been tested (and passed) with integer types (int, long and alike) and floating points types (float, double and alike).
+	 * The template type must have operator + and -, and be able to cast from literal values 1 and 9999.
+	 * Default bounds are 0 (min) and 9999 (max). Set these as needed. Default step value is literal value 1.*/
+	template<typename Type>
+	struct Spinner extends AbstractSpinner
+	{
+		Type* value, step, min, max;
+
 		Spinner(WinBase *pw, Rect area, const char* label=null, Type* value=null)
-		: spinner(pw, Rect(area.x, area.y, area.w - BUTTON_SIZE, area.h)),
-		  btnInc (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
-		  btnDec (pw, 0, Rect(area.x + area.w - BUTTON_SIZE, area.y + BUTTON_SIZE/2, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue),
+		: AbstractSpinner(pw, area, label),
 		  value(value==null? new Type(1) : value), step(1), min(0), max(9999)
-		{
-			if(label != null) this->spinner.dialog_label(label);
-			this->spinner.cmd = validateField;
-			this->spinner.cmd_id = Spinner_static::nextId++;
-			Spinner_static::references[&btnInc] = this; //register kludge-type reference to this spinner
-			Spinner_static::references[&btnDec] = this; //register kludge-type reference to this spinner
-		}
-
-		virtual ~Spinner() {}
-
-		virtual Point getPosition() const
-		{
-			return spinner.area;
-		}
-
-		virtual void setPosition(int x, int y)
-		{
-			WidgetsExtra::setComponentPosition(&spinner, x, y);
-			WidgetsExtra::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
-			WidgetsExtra::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
-		}
-
-		void setPosition(Point position)
-		{
-			setPosition(position.x, position.y);
-		}
-
-		virtual Rect getSize() const
-		{
-			return Rect(spinner.area.x, spinner.area.y, spinner.tw_area.w + btnInc.tw_area.w, spinner.tw_area.h);
-		}
-
-		virtual void setSize(Rect size)
-		{
-			spinner.widen(size.w - spinner.tw_area.w, size.h - spinner.tw_area.h);
-			WidgetsExtra::setComponentPosition(&btnInc, spinner.area.x + spinner.tw_area.w, spinner.area.y + TDIST);
-			WidgetsExtra::setComponentPosition(&btnDec, spinner.area.x + spinner.tw_area.w, spinner.area.y + BUTTON_SIZE/2 + TDIST);
-		}
-
-		virtual bool isStretched() const
-		{
-			return false; // todo maybe allow spinner to be layout-stretched (setSize() is ready, but untested)
-		}
-
-		virtual bool operator == (const Element& b) const
-		{
-			return &b == this;
-		}
+		{}
 
 		Type* getValue()
 		{
@@ -117,6 +100,20 @@ namespace WidgetsExtra
 			this->step = v;
 		}
 
+		bool isValidValue(Type val)
+		{
+			return (val >= this->min) && (val <= this->max);
+		}
+
+		void refresh()
+		{
+			string strValue = string() + *(this->value);
+			spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
+			spinner.unset_cursor();
+			btnInc.draw_blit_upd();
+			btnDec.draw_blit_upd();
+		}
+
 		void incrementValue()
 		{
 			if(isValidValue(*(this->value) + this->step) && *(this->value) + this->step >= *(this->value)) //second clausule checks for overflow
@@ -135,73 +132,16 @@ namespace WidgetsExtra
 			this->refresh();
 		}
 
-		void setLabel(const char* lbl)
+		void parseIfValid(const char* txtVal)
 		{
-			this->spinner.dialog_label(lbl);
-		}
-
-		/** Refresh the text according to this spinner's value.  */
-		void refresh()
-		{
-			string strValue = string() + *(this->value);
-			spinner.dialog_def(strValue.c_str(), this->spinner.cmd, this->spinner.cmd_id);
-			spinner.unset_cursor();
-			btnInc.draw_blit_upd();
-			btnDec.draw_blit_upd();
-		}
-
-		protected:
-		Type* value, step, min, max;
-
-		bool isValidValue(Type val)
-		{
-			return (val >= this->min) && (val <= this->max);
-		}
-
-		static Spinner<Type>* getSpinner(Button* btn)
-		{
-			return static_cast<Spinner<Type>*> (Spinner_static::references[btn]); //kludged reference to the button's spinner
-		}
-
-		static Spinner<Type>* getSpinner(int kludgyId)
-		{
-			typedef std::pair<Button*, void*> PairOfButtonPtrAndVoidPtr;
-			typedef std::map<Button*, void*> MapOfButtonPtrAndVoidPtr;
-			const_foreach(const PairOfButtonPtrAndVoidPtr, pair, MapOfButtonPtrAndVoidPtr, Spinner_static::references)
+			if(String::parseable<Type>(string(txtVal))) //if we can figure out something from the field
 			{
-				Spinner<Type>* spinner = static_cast<Spinner<Type>*> (pair.second);
-				if(spinner != null && spinner->spinner.cmd_id == kludgyId)
-				{
-					return spinner; //kludged reference to the button's spinner
-				}
+				Type val = String::parse<Type>(string(txtVal));
+				if(this->isValidValue(val)) //if value type is inside bounds
+					*(this->value) = val;
 			}
-			return null;
-		}
-
-		static void changeValue(Button* btn)
-		{
-			Spinner* sp = getSpinner(btn); //kludged reference to the button's spinner
-			if(string(btn->label.str) == string("+")) //if '+' do increment
-				sp->incrementValue();
-
-			if(string(btn->label.str) == string("-")) //if '-' do decrement
-				sp->decrementValue();
-		}
-
-		static void validateField(const char* text,int cmd_id)
-		{
-			Spinner* sp = getSpinner(cmd_id); //kludged reference to the button's spinner
-			if(String::parseable<Type>(string(text))) //if we can figure out something from the field
-			{
-				Type val = String::parse<Type>(string(text));
-				if(sp->isValidValue(val)) //if value type is inside bounds
-					*sp->value = val; //change only the pointer
-			}
-
-			sp->refresh(); //do the real deal. if everything was alright, sp->getValue() is already the new value
 		}
 	};
 }
-
 
 #endif /* WIDGETS_SPINNER_HPP_ */
