@@ -16,46 +16,46 @@
 
 struct EulerSolver extends public AbstractPhysics2DSolver
 {
-	EulerSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
-	{
-		this->displayName = "Euler";
-		this->timestep = 0.01;
-	}
+	EulerSolver(Universe2D& u)
+	: AbstractPhysics2DSolver(u, 0.01)
+	{}
 
 	void step();
+	std::string getSolverClassName() { return "EulerSolver"; }
+	std::string getSolverDisplayName() { return "Euler"; }
 };
 
 struct SemiImplicitEulerSolver extends public AbstractPhysics2DSolver
 {
-	SemiImplicitEulerSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
-	{
-		this->displayName = "Semi-implicit Euler";
-		this->timestep = 0.01;
-	}
+	SemiImplicitEulerSolver(Universe2D& u)
+	: AbstractPhysics2DSolver(u, 0.01)
+	{}
 
 	void step();
+	std::string getSolverClassName() { return "SemiImplicitEulerSolver"; }
+	std::string getSolverDisplayName() { return "Semi-implicit Euler"; }
 };
 
 struct EulerCromerSolver extends public AbstractPhysics2DSolver
 {
-	EulerCromerSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
-	{
-		this->displayName = "Semi-implicit Euler (Euler-Cromer)";
-		this->timestep = 0.1;
-	}
+	EulerCromerSolver(Universe2D& u)
+	: AbstractPhysics2DSolver(u, 0.1)
+	{}
 
 	void step();
+	std::string getSolverClassName() { return "EulerCromerSolver"; }
+	std::string getSolverDisplayName() { return "Semi-implicit Euler (Euler-Cromer)"; }
 };
 
 struct LeapfrogSolver extends public AbstractPhysics2DSolver
 {
-	LeapfrogSolver(Universe2D& u) : AbstractPhysics2DSolver(u)
-	{
-		this->displayName = "Leapfrog";
-		this->timestep = 0.1;
-	}
+	LeapfrogSolver(Universe2D& u)
+	: AbstractPhysics2DSolver(u, 0.1)
+	{}
 
 	void step();
+	std::string getSolverClassName() { return "LeapfrogSolver"; }
+	std::string getSolverDisplayName() { return "Leapfrog"; }
 };
 
 #endif /* PHYSICS_PHYSICS2D_SOLVERS_HPP_ */

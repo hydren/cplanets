@@ -14,27 +14,24 @@
 
 struct AbstractPhysics2DSolver
 {
-	std::string displayName;
-
 	Universe2D& universe;
 
 	double timeElapsed;
-
 	double timestep;
 
-	AbstractPhysics2DSolver(Universe2D& u)
-	: displayName("Generic solver"), universe(u), timeElapsed(0), timestep(0)
+	AbstractPhysics2DSolver(Universe2D& u, double timestep=0)
+	: universe(u), timeElapsed(0), timestep(timestep)
 	{}
 
 	virtual ~AbstractPhysics2DSolver() {}
 
 	virtual void step()=0;
+	virtual std::string getSolverClassName()=0;
+	virtual std::string getSolverDisplayName()=0;
 
 	protected:
 	void computeAllBodiesAccelerations();
 	Vector2D calculateAccelerationDueToNeighborhood(Vector2D position, Body2D body);
 };
-
-
 
 #endif /* PHYSICS_PHYSICS2DSOLVER_HPP_ */
