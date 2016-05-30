@@ -106,10 +106,11 @@ ScrollablePane* sclpBodies;
 BgrWin* tabOptions;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
+DropDownMenu* ddmTraceStyle;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
 Spinner<double>* spnTimeStep, *spnGravity;
 Spinner<long>* spnDisplayPeriod;
-DropDownMenu* ddmTraceStyle;
+DropDownMenu* ddmIntegrationMethod;
 
 Planetarium* planetarium;
 
@@ -301,6 +302,18 @@ void CPlanets::showMainWindow()
 	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Display period:");
 	setComponentPosition(spnDisplayPeriod, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
 	spnDisplayPeriod->setValue(&(planetarium->sleepingTime), true);
+
+	factory.setLabel("Integration method: ", true);
+	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
+	factory.setSize(Rect(40, 40, 100, 20));
+	factory.removeAllItems();
+	factory.addItem("Euler");
+	factory.addItem("Leapfrog");
+	factory.setCallback(onDropDownMenuButton);
+	ddmIntegrationMethod = factory.createAt(tabOptions);
+	ddmIntegrationMethod->setPosition(Point(spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING));
+	ddmIntegrationMethod->offset.y = -10;
+
 
 	//+++++++++++++++ East (right) toolbar
 	toolbarRight = new FlowLayout(planetariumSize.x + planetariumSize.w + WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING);
@@ -641,6 +654,21 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 			planetarium->orbitTracer.style = Planetarium::OrbitTracer::POINT;
 			ddmTraceStyle->cmdMenu->src->label = "Point";
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
+		}
+	}
+
+	if(btn == ddmIntegrationMethod->cmdMenu->buttons && fire)
+	{
+		RButton* rbtn = btn->act_button();
+		if(string(rbtn->label.str) == "Euler")
+		{
+			ddmIntegrationMethod->cmdMenu->src->label = "Euler";
+			ddmIntegrationMethod->cmdMenu->src->draw_blit_upd();
+		}
+		if(string(rbtn->label.str) == "Leapfrog")
+		{
+			ddmIntegrationMethod->cmdMenu->src->label = "Leapfrog";
+			ddmIntegrationMethod->cmdMenu->src->draw_blit_upd();
 		}
 	}
 }
