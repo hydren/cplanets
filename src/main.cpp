@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "geometry/vector2d.hpp"
+#include "physics/physics2d_solvers.hpp"
 
 #include "util.hpp"
 #include "main_window.hpp"
@@ -46,6 +46,7 @@ int main(int arc, char* argv[])
 	{
 		srand(time(null));
 //		putenv("SDL_VIDEO_CENTERED=1"); // todo use video centering when able to choose on settings.
+		StandardPhysics2DSolvers::doRegister();
 		CPlanets::showMainWindow();
 		return EXIT_SUCCESS;
 	}

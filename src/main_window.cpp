@@ -139,7 +139,6 @@ void onDropDownMenuButton(RButWin*,int nr,int fire);
 void onUserEvent(int cmd,int param,int param2);
 void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
 void onPlanetariumBodyCreation(Body2D& createdBody);
-void onReady();
 
 void onFileChosenOpenUniverse(FileDialog* dialog);
 void onFileChosenSaveUniverse(FileDialog* dialog);
@@ -148,6 +147,8 @@ void refreshAllTxtBodies();
 void updateSizeTxtBodies();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
+
+void onReady();
 
 //  ==================== PLANETARIUM LISTENER ===========================
 
@@ -304,12 +305,13 @@ void CPlanets::showMainWindow()
 	spnDisplayPeriod->setValue(&(planetarium->sleepingTime), true);
 
 	factory.setLabel("Integration method: ", true);
-	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
-	factory.setSize(Rect(40, 40, 100, 20));
+	factory.setSize(Rect(40, 40, 200, 20));
 	factory.removeAllItems();
-	factory.addItem("Euler");
-	factory.addItem("Leapfrog");
-	factory.setCallback(onDropDownMenuButton);
+	typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
+	const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
+	{
+		factory.addItem(solverFactory->solverDisplayName.c_str());
+	}
 	ddmIntegrationMethod = factory.createAt(tabOptions);
 	ddmIntegrationMethod->setPosition(Point(spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
@@ -699,18 +701,6 @@ void onPlanetariumBodyCreation(Body2D& createdBody)
 	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
 }
 
-void onReady()
-{
-	spnTraceLength->refresh();
-	spnBodyDiameter->refresh();
-	spnBodyDensity->refresh();
-	spnBodyVelocity->refresh();
-	spnTimeStep->refresh();
-	spnGravity->refresh();
-	spnDisplayPeriod->refresh();
-}
-
-
 void onFileChosenOpenUniverse(FileDialog* dialog)
 {
 	if(not dialog->selectedFilename.empty())
@@ -771,4 +761,15 @@ void replaceUniverse(Universe2D* universe)
 	planetarium->setUniverse(universe);
 	refreshAllTxtBodies();
 	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
+}
+
+void onReady()
+{
+	spnTraceLength->refresh();
+	spnBodyDiameter->refresh();
+	spnBodyDensity->refresh();
+	spnBodyVelocity->refresh();
+	spnTimeStep->refresh();
+	spnGravity->refresh();
+	spnDisplayPeriod->refresh();
 }
