@@ -7,6 +7,8 @@
 
 #include "SDL_util.hpp"
 
+#include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
+
 #include "futil/futil.hpp"
 
 int SDL_util::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
@@ -14,7 +16,6 @@ int SDL_util::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool f
 	#ifdef HOTFIX_FOR_SDL_MAP_RGB_1
 	if(forceRGBA || surf == null)
 		return (((int) color.r) << 24) + (((int) color.g) << 16) + (((int) color.b) << 8) + 0x000000FF;
-
 	#endif
 
 	return SDL_MapRGB(surf->format, color.r, color.g, color.b);

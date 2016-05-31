@@ -12,8 +12,6 @@
 
 #include <SDL/SDL.h>
 
-#include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
-
 //works kinda like java's synchronized block
 #define synchronized(mutex) for(bool mutex##_SYNCHRONIZED=SDL_mutexP(mutex)||true;mutex##_SYNCHRONIZED;mutex##_SYNCHRONIZED=SDL_mutexV(mutex)&&false)
 

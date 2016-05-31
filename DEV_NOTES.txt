@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Create Spinner to select physics2dsolver's
 - Fix bezier spline
 - Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"

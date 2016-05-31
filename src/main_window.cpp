@@ -7,6 +7,8 @@
 
 #include "main_window.hpp"
 
+#include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -29,6 +31,28 @@
 #include "widgets/file_dialog.hpp"
 #include "widgets/scrollable_pane.hpp"
 
+using std::cout;
+using std::endl;
+using std::vector;
+
+using Math::randomBetween;
+
+using WidgetsExtra::packLabeledComponent;
+using WidgetsExtra::setComponentPosition;
+using WidgetsExtra::LabeledComponentPacker;
+using WidgetsExtra::Layout;
+using WidgetsExtra::FlowLayout;
+using WidgetsExtra::Spinner;
+using WidgetsExtra::DropDownMenu;
+using WidgetsExtra::DropDownMenuFactory;
+using WidgetsExtra::TabSet;
+using WidgetsExtra::LabelWin;
+using WidgetsExtra::ToogleButton;
+using WidgetsExtra::FileDialog;
+using WidgetsExtra::ScrollablePane;
+using WidgetsExtra::DialogBgrWin;
+
+//**********************************************************************************
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
 void workaround_sdl_stream_file_close() // part of workaround
@@ -51,28 +75,9 @@ void workaround_sdl_stream_file_close() // part of workaround
 #else
 	#define SDLMAIN_STREAM_WORKAROUND null
 #endif
+//**********************************************************************************
 
-using std::cout;
-using std::endl;
-using std::vector;
-
-using Math::randomBetween;
-
-using WidgetsExtra::packLabeledComponent;
-using WidgetsExtra::setComponentPosition;
-using WidgetsExtra::LabeledComponentPacker;
-using WidgetsExtra::Layout;
-using WidgetsExtra::FlowLayout;
-using WidgetsExtra::Spinner;
-using WidgetsExtra::DropDownMenu;
-using WidgetsExtra::DropDownMenuFactory;
-using WidgetsExtra::TabSet;
-using WidgetsExtra::LabelWin;
-using WidgetsExtra::ToogleButton;
-using WidgetsExtra::FileDialog;
-using WidgetsExtra::ScrollablePane;
-using WidgetsExtra::DialogBgrWin;
-
+// wrapper function to control a run-once function
 void runOnce(void(func)(void))
 {
 	static bool once = false;
