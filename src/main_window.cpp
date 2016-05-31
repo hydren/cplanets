@@ -313,6 +313,7 @@ void CPlanets::showMainWindow()
 		factory.addItem(solverFactory->solverDisplayName.c_str());
 	}
 	ddmIntegrationMethod = factory.createAt(tabOptions);
+	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->physics2DSolver->factory->solverDisplayName.c_str());
 	ddmIntegrationMethod->setPosition(Point(spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
@@ -662,16 +663,28 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 	if(btn == ddmIntegrationMethod->cmdMenu->buttons && fire)
 	{
 		RButton* rbtn = btn->act_button();
-		if(string(rbtn->label.str) == "Euler")
+		if(planetarium->physics->physics2DSolver->factory->solverDisplayName == string(rbtn->label.str))
+			return; //avoid doing anything if the chosen integration method is the same as the current
+
+		typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
+		const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
 		{
-			ddmIntegrationMethod->cmdMenu->src->label = "Euler";
-			ddmIntegrationMethod->cmdMenu->src->draw_blit_upd();
+			if(string(rbtn->label.str) == solverFactory->solverDisplayName)
+			{
+				AbstractPhysics2DSolver* old = planetarium->physics->physics2DSolver;
+				planetarium->physics->physics2DSolver = solverFactory->createSolver(planetarium->physics->universe); //swap solver
+				planetarium->physics->physics2DSolver->timeElapsed = old->timeElapsed;
+				planetarium->physics->physics2DSolver->timestep = old->timestep;
+				spnTimeStep->setValue(&planetarium->physics->physics2DSolver->timestep); //updates the backing value
+				delete old;
+				goto break1;
+			}
 		}
-		if(string(rbtn->label.str) == "Leapfrog")
-		{
-			ddmIntegrationMethod->cmdMenu->src->label = "Leapfrog";
-			ddmIntegrationMethod->cmdMenu->src->draw_blit_upd();
-		}
+		break1:
+
+		ddmIntegrationMethod->cmdMenu->src->label = rbtn->label.str;
+		ddmIntegrationMethod->cmdMenu->src->draw_blit_upd();
+		spnTimeStep->refresh();
 	}
 }
 
