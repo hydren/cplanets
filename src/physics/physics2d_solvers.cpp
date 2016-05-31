@@ -8,10 +8,16 @@
 #include "physics2d_solvers.hpp"
 
 #include <cmath>
-
 #include <vector>
+
 using std::vector;
 
+const AbstractPhysics2DSolver::CustomFactory<EulerSolver>
+EulerSolver::CLASS_FACTORY("EulerSolver", "Euler");
+
+EulerSolver::EulerSolver(Universe2D& u)
+: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01)
+{}
 
 void EulerSolver::step()
 {
@@ -27,6 +33,14 @@ void EulerSolver::step()
 
 	timeElapsed += timestep;
 }
+
+
+const AbstractPhysics2DSolver::CustomFactory<SemiImplicitEulerSolver>
+SemiImplicitEulerSolver::CLASS_FACTORY("SemiImplicitEulerSolver", "Semi-implicit Euler");
+
+SemiImplicitEulerSolver::SemiImplicitEulerSolver(Universe2D& u)
+: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01)
+{}
 
 void SemiImplicitEulerSolver::step()
 {
@@ -50,6 +64,14 @@ void SemiImplicitEulerSolver::step()
 	timeElapsed += timestep;
 }
 
+
+const AbstractPhysics2DSolver::CustomFactory<EulerCromerSolver>
+EulerCromerSolver::CLASS_FACTORY("EulerCromerSolver", "Semi-implicit Euler (Euler-Cromer)");
+
+EulerCromerSolver::EulerCromerSolver(Universe2D& u)
+: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.1)
+{}
+
 void EulerCromerSolver::step()
 {
 	computeAllBodiesAccelerations();
@@ -64,6 +86,14 @@ void EulerCromerSolver::step()
 
 	timeElapsed += timestep;
 }
+
+
+const AbstractPhysics2DSolver::CustomFactory<LeapfrogSolver>
+LeapfrogSolver::CLASS_FACTORY("LeapfrogSolver", "Leapfrog");
+
+LeapfrogSolver::LeapfrogSolver(Universe2D& u)
+: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.1)
+{}
 
 void LeapfrogSolver::step()
 {
@@ -81,4 +111,12 @@ void LeapfrogSolver::step()
 	}
 
 	timeElapsed += timestep;
+}
+
+void StandardPhysics2DSolvers::doRegister()
+{
+	AbstractPhysics2DSolver::registeredFactories.push_back(&EulerSolver::CLASS_FACTORY);
+	AbstractPhysics2DSolver::registeredFactories.push_back(&SemiImplicitEulerSolver::CLASS_FACTORY);
+	AbstractPhysics2DSolver::registeredFactories.push_back(&EulerCromerSolver::CLASS_FACTORY);
+	AbstractPhysics2DSolver::registeredFactories.push_back(&LeapfrogSolver::CLASS_FACTORY);
 }

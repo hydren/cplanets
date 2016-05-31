@@ -14,6 +14,8 @@
 
 using std::vector;
 
+vector<const AbstractPhysics2DSolver::GenericFactory*> AbstractPhysics2DSolver::registeredFactories;
+
 void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
 {
 	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
