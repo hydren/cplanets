@@ -121,21 +121,26 @@ void Planetarium::draw()
 					break;
 				}
 
+				// http://stackoverflow.com/questions/9658932/snappy-bezier-curves
+				// http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
 				case OrbitTracer::SPLINE:
 				{
 					Vector2D previousPosition = trace.front();
+					Vector2D previousSupport;
+					if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
 					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
 					{
 						if(recordedPosition != previousPosition) //avoid drawing segments of same points
 						{
 							//FixMe Fix quadratic bezier spline implementation
+							Vector2D supportPoint = this->getTransposed(previousSupport);
 							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-							Vector2D supportPoint;// = ???
 							Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
 							Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
-							bezierRGBA(this->win, pxs, pys, 2, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+							bezierRGBA(this->win, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
 						}
 						previousPosition = recordedPosition;
+						previousSupport = previousPosition.times(2).subtract(previousSupport);
 					}
 					break;
 				}
