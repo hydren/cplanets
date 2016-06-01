@@ -101,7 +101,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 		OrbitTracer();
 
-		void record(Body2D* body, Vector2D& position);
+		void record(Body2D* body);
 		futil::iterable_queue<Vector2D> getTrace(Body2D* body);
 		void clearTrace(const Body2D* body);
 

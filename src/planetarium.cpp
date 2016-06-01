@@ -127,7 +127,8 @@ void Planetarium::draw()
 				{
 					Vector2D previousPosition = trace.front();
 					Vector2D previousSupport;
-					if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
+//					if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
+					if(trace.size() > 1) previousSupport = trace.front().times(2).subtract(*(trace.begin()+1)); //kickstart aux
 					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
 					{
 						if(recordedPosition != previousPosition) //avoid drawing segments of same points
@@ -173,7 +174,7 @@ void Planetarium::draw()
 
 			//record position
 			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
-				orbitTracer.record(body, body->position);
+				orbitTracer.record(body);
 		}
 	} // end synchronized(physicsAccessMutex)
 
@@ -304,9 +305,9 @@ Planetarium::OrbitTracer::OrbitTracer()
 : style(LINEAR), isActive(false), traceLength(20), traces()
 {}
 
-void Planetarium::OrbitTracer::record(Body2D* body, Vector2D& position)
+void Planetarium::OrbitTracer::record(Body2D* body)
 {
-	this->traces[body].push(position);
+	this->traces[body].push(body->position);
 	while(this->traces[body].size() > traceLength)
 		this->traces[body].pop();
 }
