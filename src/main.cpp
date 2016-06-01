@@ -21,7 +21,7 @@ using std::string;
 using std::exception;
 using std::cout; using std::endl;
 
-const string CPLANETS_VERSION = "0.5.2-beta";
+const string CPLANETS_VERSION = "0.5.3-beta";
 
 const string CPLANETS_LICENSE =
 		"Copyright (C) 2016 Carlos F. M. Faruolo\n"
