@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Fix bezier spline
 - Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"
 
@@ -8,6 +7,7 @@
 
 - Show icon on About dialog.
 - Color bug when large-mass bodies collides.
+- Fix bezier spline
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
 - Show paused/resumed state more explicitly

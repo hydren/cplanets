@@ -509,6 +509,9 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			planetarium->currentViewportZoomChangeRate = down? 1.0 - planetarium->viewportZoomChangeRateValue : 1.0;
 			break;
 		//key bindings
+		case SDLK_e:
+			if(down) onButtonPressed(btnNew);
+			break;
 		case SDLK_a:
 			if(down) onButtonPressed(btnAddBody);
 			break;
