@@ -267,6 +267,7 @@ void CPlanets::showMainWindow()
 	factory.setSize(Rect(40, 40, 100, 20));
 	factory.addItem("Linear");
 	factory.addItem("Point");
+	factory.addItem("Spline");
 	factory.setCallback(onDropDownMenuButton);
 	ddmTraceStyle = factory.createAt(tabOptions);
 	ddmTraceStyle->setPosition(Point(spnTraceLength->area.x + spnTraceLength->tw_area.w + WIDGETS_SPACING, spnTraceLength->area.y - 3));
@@ -661,6 +662,12 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		{
 			planetarium->orbitTracer.style = Planetarium::OrbitTracer::POINT;
 			ddmTraceStyle->cmdMenu->src->label = "Point";
+			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
+		}
+		if(string(rbtn->label.str) == "Spline")
+		{
+			planetarium->orbitTracer.style = Planetarium::OrbitTracer::SPLINE;
+			ddmTraceStyle->cmdMenu->src->label = "Spline";
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
 		}
 	}
