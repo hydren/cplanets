@@ -123,6 +123,8 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	Vector2D bodyCreationPosition, bodyCreationVelocity;
 	double bodyCreationDiameter;
 	Uint32 lastMouseLeftButtonDown;
+	bool isMouseLeftButtonDown;
+	Vector2D lastMouseClickPoint;
 
 	void performPhysics(); //updates physics
 	void updateView(); //updates view

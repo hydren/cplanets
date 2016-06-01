@@ -209,6 +209,12 @@ void Planetarium::draw()
 			}
 		}
 	}
+	else if(isMouseLeftButtonDown) // rectangular mouse selection stubs
+	{
+		int mouseX, mouseY;
+		SDL_GetMouseState(&mouseX, &mouseY);
+		rectangleRGBA(this->win, lastMouseClickPoint.x, lastMouseClickPoint.y, mouseX - area.x, mouseY - area.y, 255, 255, 255, 255);
+	}
 }
 
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
@@ -436,6 +442,8 @@ void Planetarium::onMouseDown(BgrWin* bgr, int x, int y, int but)
 	{
 		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
 		planetarium->lastMouseLeftButtonDown = SDL_GetTicks();
+		planetarium->isMouseLeftButtonDown = true;
+		planetarium->lastMouseClickPoint = Vector2D(x, y);
 	}
 }
 
@@ -467,6 +475,8 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 		}
 		else //mouse up after holding down
 		{}
+
+		planetarium->isMouseLeftButtonDown = false;
 	}
 }
 

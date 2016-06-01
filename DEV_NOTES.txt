@@ -14,6 +14,8 @@
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Add optional single-threaded mode (iterations per display, etc)
 - Keep track of opened file state (modified, etc)
+- When performing area selection, the simulation should be paused.
+- Optimize drawing by only redrawing the rectangular areas around bodies. (SDL_UpdateRect/SDL_UpdateRects)
 
 -------------- Legacy 'japla' milestones
 
