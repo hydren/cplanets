@@ -51,7 +51,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   bgColor(SDL_util::Color::BLACK), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true),
-  viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0), tryAA(false),
+  viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0), focusedBodies(), tryAA(false),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
@@ -63,7 +63,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
   physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
   bodyCreationPosition(), bodyCreationVelocity(), bodyCreationDiameter(),
-  lastMouseLeftButtonDown(0)
+  lastMouseLeftButtonDown(0), isMouseLeftButtonDown(false), lastMouseClickPoint()
 {
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
 	this->physics->addCollisionListener(this);
@@ -472,9 +472,15 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 				planetarium->bodyCreationState = IDLE;
 				planetarium->setRunning();
 			}
+			else //user tried to click a single body, or it was a mistake/random action.
+			{
+				//todo check if the clicked point is above a body. if yes, "focused" the body.
+			}
 		}
 		else //mouse up after holding down
-		{}
+		{
+			//todo make all bodies under this to be "focused"
+		}
 
 		planetarium->isMouseLeftButtonDown = false;
 	}

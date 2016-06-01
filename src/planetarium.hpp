@@ -42,6 +42,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	//rendering parameters
 	Vector2D viewportPosition;
 	double viewportZoom, minimumBodyRenderingRadius;
+	std::vector<Body2D*> focusedBodies;
 	bool tryAA;
 
 	//interactive parameters
