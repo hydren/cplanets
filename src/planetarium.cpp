@@ -164,15 +164,29 @@ void Planetarium::draw()
 			if(size < this->minimumBodyRenderingRadius)
 				size = this->minimumBodyRenderingRadius;
 
-			//draw body
-			if(bodyColor != null)
-				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			bool isFocused = Collections::containsElement(this->focusedBodies, body);
+
+			//if body is focused draw its border with 'strokeSizeFocused' size, otherwise use 'strokeSizeNormal'
+			int& strokeSize = isFocused? strokeSizeFocused : strokeSizeNormal;
 
 			//if body is focused draw its border with 'strokeColorFocused' color, otherwise use 'strokeColorNormal'
-			SDL_Color* borderColor = Collections::containsElement(this->focusedBodies, body)? &strokeColorFocused : &strokeColorNormal;
+			SDL_Color& borderColor = isFocused? strokeColorFocused : strokeColorNormal;
 
-			//draw body border. todo use strokeSizeNormal and strokeSizeFocused values when drawing the body border
-			circle_function(this->win, v.x, v.y, round(size*0.5), borderColor->r, borderColor->g, borderColor->b, 255);
+			//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
+			if(strokeSize > 1)
+				//draw body border (middle part)
+				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+
+			//draw body
+			if(bodyColor != null) //if there is not body color information, skip
+				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+
+			//inner blending with stroke when the stroke is thick
+			if(strokeSize > 1)
+				circle_function(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+
+			//draw body border (if stroke size is more than 1, it is the "border of the border" part)
+			circle_function(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 			//record position
 			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
