@@ -38,6 +38,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	SDL_Color bgColor, strokeColorNormal, strokeColorFocused;
 	int strokeSizeNormal, strokeSizeFocused;
 	bool isViewportTranslationRateProportionalToZoom;
+	bool pauseOnSelection;
 
 	//rendering parameters
 	Vector2D viewportPosition;

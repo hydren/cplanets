@@ -52,7 +52,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE), strokeColorFocused(SDL_util::Color::ORANGE),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
-  isViewportTranslationRateProportionalToZoom(true),
+  isViewportTranslationRateProportionalToZoom(true), pauseOnSelection(true),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0), focusedBodies(), tryAA(false),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
@@ -449,6 +449,8 @@ void Planetarium::onMouseDown(BgrWin* bgr, int x, int y, int but)
 		planetarium->lastMouseLeftButtonDown = SDL_GetTicks();
 		planetarium->isMouseLeftButtonDown = true;
 		planetarium->lastMouseClickPoint = Vector2D(x, y);
+		if(planetarium->pauseOnSelection)
+			planetarium->setRunning(false);
 	}
 }
 
@@ -494,6 +496,8 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 						}
 					}
 				}
+				if(planetarium->pauseOnSelection)
+					planetarium->setRunning();
 			}
 		}
 		else //mouse up after holding down
@@ -516,6 +520,8 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 					}
 				}
 			}
+			if(planetarium->pauseOnSelection)
+				planetarium->setRunning();
 		}
 		planetarium->isMouseLeftButtonDown = false;
 	}
