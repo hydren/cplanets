@@ -83,6 +83,9 @@ void Planetarium::draw()
 	this->init_gui();
 	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
 
+	int (*circle_function) (SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aacircleRGBA : circleRGBA);
+	int (*line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aalineRGBA : lineRGBA);
+
 	//draw all stuff
 	synchronized(physicsAccessMutex)
 	{
@@ -113,10 +116,7 @@ void Planetarium::draw()
 						if(recordedPosition != previousPosition) //avoid drawing segments of same points
 						{
 							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-							if(not tryAA)
-								lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
-							else
-								aalineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+							line_function(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 						}
 						previousPosition = recordedPosition;
 					}
@@ -172,10 +172,7 @@ void Planetarium::draw()
 			SDL_Color* borderColor = Collections::containsElement(this->focusedBodies, body)? &strokeColorFocused : &strokeColorNormal;
 
 			//draw body border. todo use strokeSizeNormal and strokeSizeFocused values when drawing the body border
-			if(not tryAA)
-				circleRGBA(this->win, v.x, v.y, round(size*0.5), borderColor->r, borderColor->g, borderColor->b, 255);
-			else
-				aacircleRGBA(this->win, v.x, v.y, round(size*0.5), borderColor->r, borderColor->g, borderColor->b, 255);
+			circle_function(this->win, v.x, v.y, round(size*0.5), borderColor->r, borderColor->g, borderColor->b, 255);
 
 			//record position
 			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
@@ -191,10 +188,7 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->area.x; mouseY -= this->area.y;
-			if(not tryAA)
-				circleRGBA(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
-			else
-				aacircleRGBA(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
+			circle_function(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
 		}
 		else if(bodyCreationState == VELOCITY_SELECTION)
 		{
@@ -202,16 +196,8 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->area.x; mouseY -= this->area.y;
-			if(not tryAA)
-			{
-				circleRGBA(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
-				lineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
-			}
-			else
-			{
-				aacircleRGBA(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
-				aalineRGBA(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
-			}
+			circle_function(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
+			line_function(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
 		}
 	}
 	else if(isMouseLeftButtonDown) // rectangular mouse selection stubs
