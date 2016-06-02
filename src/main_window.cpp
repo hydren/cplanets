@@ -564,6 +564,7 @@ void onButtonPressed(Button* btn)
 		Vector2D randomVelocity(randomBetween(-speed * az, speed * az), randomBetween(-speed * az, speed * az));
 		randomPosition.scale(az).add(planetarium->viewportPosition);
 
+		//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
 		planetarium->addCustomBody(new Body2D(mass, diameter, randomPosition, randomVelocity, Vector2D::NULL_VECTOR), SDL_util::getRandomColor());
 	}
 

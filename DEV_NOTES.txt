@@ -1,6 +1,5 @@
 -------------- To Do
 
-- Implement body selection (single click, rectangle area, etc)
 - Implement "view movement speed"
 
 -------------- Backlog
@@ -11,6 +10,7 @@
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
 - Show paused/resumed state more explicitly
+- Implement selection on bodies list.
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Add optional single-threaded mode (iterations per display, etc)
 - Keep track of opened file state (modified, etc)

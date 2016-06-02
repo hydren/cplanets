@@ -25,8 +25,9 @@ using std::queue;
 using std::pair;
 using std::map;
 using SDL_util::colorToInt;
-using SDL_util::getRandomColor;
 using futil::iterable_queue;
+using Math::max;
+using Math::min;
 
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
@@ -248,7 +249,7 @@ void Planetarium::recolorAllBodies()
 		{
 			PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
 			SDL_Color* oldColor = custom->color;
-			custom->color = getRandomColor();
+			custom->color = SDL_util::getRandomColor();
 			delete oldColor;
 		}
 	}
@@ -456,7 +457,10 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 	if(but == SDL_BUTTON_LEFT)
 	{
 		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
+
 		Vector2D pointedPosition = Vector2D(x, y).scale(1.0/planetarium->viewportZoom).add(planetarium->viewportPosition);
+		Vector2D prevPointedPosition = planetarium->lastMouseClickPoint.times(1.0/planetarium->viewportZoom).add(planetarium->viewportPosition);
+
 		if(SDL_GetTicks() - planetarium->lastMouseLeftButtonDown < 250) //click event
 		{
 			if(planetarium->bodyCreationState == POSITION_SELECTION)
@@ -470,7 +474,6 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			{
 				Vector2D selectedVelocity = pointedPosition.difference(planetarium->bodyCreationPosition);
 				double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter;
-				//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
 				Body2D* newBody = new Body2D(mass, planetarium->bodyCreationDiameter, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
 				planetarium->addCustomBody(newBody, SDL_util::getRandomColor());
 				planetarium->bodyCreationState = IDLE;
@@ -478,14 +481,42 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			}
 			else //user tried to click a single body, or it was a mistake/random action.
 			{
-				//todo check if the clicked point is above a body. if yes, "focused" the body.
+				//check if the clicked point is above a body. if yes, "focused" the body.
+				planetarium->focusedBodies.clear();
+				SDL_mutex* collisionEventsMutex = planetarium->physicsEventsManager->mutex;
+				synchronized(collisionEventsMutex)
+				{
+					foreach(Body2D*, body, vector<Body2D*>, planetarium->physics->universe.bodies)
+					{
+						if(body->position.distance(pointedPosition) <= body->diameter*0.5)
+						{
+							planetarium->focusedBodies.push_back(body);
+						}
+					}
+				}
 			}
 		}
 		else //mouse up after holding down
 		{
-			//todo make all bodies under this to be "focused"
-		}
+			//make all bodies under this to be "focused"
+			planetarium->focusedBodies.clear();
 
+			double rtix = min(prevPointedPosition.x, pointedPosition.x), rtfx = max(prevPointedPosition.x, pointedPosition.x),
+				   rtiy = min(prevPointedPosition.y, pointedPosition.y), rtfy = max(prevPointedPosition.y, pointedPosition.y);
+
+			SDL_mutex* collisionEventsMutex = planetarium->physicsEventsManager->mutex;
+			synchronized(collisionEventsMutex)
+			{
+				foreach(Body2D*, body, vector<Body2D*>, planetarium->physics->universe.bodies)
+				{
+					if(body->position.x >= rtix && body->position.x <= rtfx
+					&& body->position.y >= rtiy && body->position.y <= rtfy)
+					{
+						planetarium->focusedBodies.push_back(body);
+					}
+				}
+			}
+		}
 		planetarium->isMouseLeftButtonDown = false;
 	}
 }
