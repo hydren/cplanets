@@ -19,15 +19,36 @@ namespace SDL_util
 {
 	namespace Color
 	{
+		const SDL_Color BLACK = {0,0,0,0};
+
+		//full saturated colors
 		const SDL_Color
-			BLACK 	= {  0,  0,  0,0},
-			RED   	= {255,  0,  0,0},
-			GREEN 	= {  0,255,  0,0},
-			BLUE  	= {  0,  0,255,0},
-			YELLOW	= {255,255,  0,0},
-			CYAN 	= {  0,255,255,0},
-			MAGENTA	= {255,  0,255,0},
-			WHITE 	= {255,255,255,0};
+			RED   	= {255,  0,  0,  0},
+			LIME 	= {  0,255,  0,  0},
+			BLUE  	= {  0,  0,255,  0},
+			YELLOW	= {255,255,  0,  0},
+			CYAN 	= {  0,255,255,  0},
+			MAGENTA	= {255,  0,255,  0},
+			WHITE 	= {255,255,255,  0};
+
+		//half saturated colors
+		const SDL_Color
+			MAROON 	= {127,  0,  0,  0},
+			GREEN 	= {  0,127,  0,  0},
+			NAVY  	= {  0,  0,127,  0},
+			OLIVE	= {127,127,  0,  0},
+			TEAL 	= {  0,127,127,  0},
+			PURPLE	= {127,  0,127,  0},
+			GRAY 	= {127,127,127,  0};
+
+		//full/half saturated colors
+		const SDL_Color
+			ORANGE			= {255,127,  0,  0},
+			SPRING_GREEN 	= {  0,255,127,  0},
+			ROSE			= {255,  0,127,  0},
+			CHARTREUSE		= {127,255,  0,  0},
+			AZURE 			= {  0,127,255,  0},
+			VIOLET			= {127,  0,255,  0};
 	}
 
 	//convert the given sdl color to an int color suitable to be used on the given surface
