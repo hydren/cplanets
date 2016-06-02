@@ -16,6 +16,7 @@
 - Keep track of opened file state (modified, etc)
 - When performing area selection, the simulation should be paused.
 - Optimize drawing by only redrawing the rectangular areas around bodies. (SDL_UpdateRect/SDL_UpdateRects)
+- Make planetarium.hpp/cpp independent from SDL_widgets code.
 
 -------------- Legacy 'japla' milestones
 

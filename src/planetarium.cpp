@@ -49,7 +49,8 @@ struct Planetarium::Physics2DEventsManager
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : BgrWin(parentWidget, rect, null, null, Planetarium::onMouseDown, null, Planetarium::onMouseUp, 0, _id),
   physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
-  bgColor(SDL_util::Color::BLACK), strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
+  bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE), strokeColorFocused(SDL_util::Color::ORANGE),
+  strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0), focusedBodies(), tryAA(false),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
@@ -166,11 +167,14 @@ void Planetarium::draw()
 			if(bodyColor != null)
 				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
-			//draw body border. todo choose other body border color when focused
+			//if body is focused draw its border with 'strokeColorFocused' color, otherwise use 'strokeColorNormal'
+			SDL_Color* borderColor = Collections::containsElement(this->focusedBodies, body)? &strokeColorFocused : &strokeColorNormal;
+
+			//draw body border. todo use strokeSizeNormal and strokeSizeFocused values when drawing the body border
 			if(not tryAA)
-				circleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255);
+				circleRGBA(this->win, v.x, v.y, round(size*0.5), borderColor->r, borderColor->g, borderColor->b, 255);
 			else
-				aacircleRGBA(this->win, v.x, v.y, round(size*0.5), 255, 255, 255, 255);
+				aacircleRGBA(this->win, v.x, v.y, round(size*0.5), borderColor->r, borderColor->g, borderColor->b, 255);
 
 			//record position
 			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
