@@ -1,3 +1,9 @@
+-------------- Bugs
+
+- Crash when too many bodies collide at the same time
+- Color bug when large-mass bodies collides.
+- Bezier spline is glitched due to wrong parametrization.
+
 -------------- To Do
 
 - Implement "view movement speed"
@@ -5,8 +11,6 @@
 -------------- Backlog
 
 - Show icon on About dialog.
-- Color bug when large-mass bodies collides.
-- Fix bezier spline
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
 - Show paused/resumed state more explicitly

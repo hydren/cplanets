@@ -190,6 +190,6 @@ void Physics2D::resolveCollisions()
 	//cleanup
 	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
 		foreach(Body2D*, trash, vector<Body2D*>, collisionList)
-			delete trash;
+			delete trash; //fixme this deletion crashes a lot (double-freeing)
 	collisions.clear();
 }
