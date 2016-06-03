@@ -272,7 +272,7 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 
 vector<Body2D> Planetarium::getBodies() const
 {
-	std::vector<Body2D> bodies;
+	vector<Body2D> bodies;
 	synchronized(physicsAccessMutex)
 	{
 		const_foreach(Body2D*, i, vector<Body2D*>, physics->universe.bodies)
