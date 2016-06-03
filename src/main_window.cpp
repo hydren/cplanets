@@ -216,6 +216,7 @@ void CPlanets::showMainWindow()
 	);
 	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
 	planetarium->addUniverseEventListener(new CustomUniverseListener());
+	planetarium->physics->universe.gravity = 9.807;
 
 
 	//+++++++++++++++ Tabs
