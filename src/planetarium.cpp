@@ -85,6 +85,7 @@ void Planetarium::draw()
 
 	int (*circle_function) (SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aacircleRGBA : circleRGBA);
 	int (*line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aalineRGBA : lineRGBA);
+	typedef OrbitTracer::TraceInfo TraceInfo; //since 'using' doesn't work
 
 	//draw all stuff
 	synchronized(physicsAccessMutex)
@@ -95,14 +96,15 @@ void Planetarium::draw()
 			if(body->userObject == null) goto break1; //if there isn't body data, there isn't body color. leave.
 			SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
 
-			iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
+
+			iterable_queue<TraceInfo> trace = orbitTracer.getTrace(body);
 			switch(this->orbitTracer.style)
 			{
 				case OrbitTracer::POINT:
 				{
-					foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+					foreach(TraceInfo&, info, iterable_queue<TraceInfo>, trace)
 					{
-						Vector2D pv = this->getTransposed(r);
+						Vector2D pv = this->getTransposed(info.position);
 						pixelRGBA(this->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 					}
 					break;
@@ -110,9 +112,11 @@ void Planetarium::draw()
 
 				case OrbitTracer::LINEAR:
 				{
-					Vector2D previousPosition = trace.front();
-					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+					Vector2D previousPosition = trace.front().position;
+
+					foreach(TraceInfo&, info, iterable_queue<TraceInfo>, trace)
 					{
+						Vector2D& recordedPosition = info.position;
 						if(recordedPosition != previousPosition) //avoid drawing segments of same points
 						{
 							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
@@ -123,27 +127,42 @@ void Planetarium::draw()
 					break;
 				}
 
-				// http://stackoverflow.com/questions/9658932/snappy-bezier-curves
+				// http://stackoverflow.com/questions/37575428/spline-bezier-interpolation/37582402#37582402
 				// http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
 				case OrbitTracer::SPLINE:
 				{
-					Vector2D previousPosition = trace.front();
-					Vector2D previousSupport;
-//					if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
-					if(trace.size() > 1) previousSupport = trace.front().times(2).subtract(*(trace.begin()+1)); //kickstart aux
-					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+					Vector2D previousPosition = trace.front().position;
+					Vector2D previousVelocity = trace.front().velocity;
+
+					foreach(TraceInfo&, info, iterable_queue<TraceInfo>, trace)
 					{
+						Vector2D& recordedPosition = info.position;
+						Vector2D& recordedVelocity = info.velocity;
+
 						if(recordedPosition != previousPosition) //avoid drawing segments of same points
 						{
 							//FixMe Fix quadratic bezier spline implementation
-							Vector2D supportPoint = this->getTransposed(previousSupport);
 							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-							Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
-							Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
-							bezierRGBA(this->win, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+							Vector2D recVelTrans = this->getTransposed(recordedVelocity), prevVelTrans = this->getTransposed(previousVelocity);
+
+							Sint16 qix[] = {
+								static_cast<Sint16>(prevPosTrans.x),
+								static_cast<Sint16>(prevPosTrans.x + prevVelTrans.x/3),
+								static_cast<Sint16>(recPosTrans.x - recVelTrans.x/3),
+								static_cast<Sint16>(recPosTrans.x)
+							};
+
+							Sint16 qiy[] = {
+								static_cast<Sint16>(prevPosTrans.y),
+								static_cast<Sint16>(prevPosTrans.y + prevVelTrans.y/3),
+								static_cast<Sint16>(recPosTrans.y - recVelTrans.y/3),
+								static_cast<Sint16>(recPosTrans.y)
+							};
+
+							bezierRGBA(this->win, qix, qiy, 4, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
 						}
 						previousPosition = recordedPosition;
-						previousSupport = previousPosition.times(2).subtract(previousSupport);
+						previousVelocity = recordedVelocity;
 					}
 					break;
 				}
@@ -318,12 +337,13 @@ Planetarium::OrbitTracer::OrbitTracer()
 
 void Planetarium::OrbitTracer::record(Body2D* body)
 {
-	this->traces[body].push(body->position);
+	TraceInfo info = {body->position, body->velocity};
+	this->traces[body].push(info);
 	while(this->traces[body].size() > traceLength)
 		this->traces[body].pop();
 }
 
-iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
+iterable_queue<Planetarium::OrbitTracer::TraceInfo> Planetarium::OrbitTracer::getTrace(Body2D* body)
 {
 	return this->traces[body];
 }

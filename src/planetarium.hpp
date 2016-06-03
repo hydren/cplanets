@@ -96,16 +96,22 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** A struct to record orbits. */
 	struct OrbitTracer
 	{
+		struct TraceInfo;
 		enum OrbitTraceStyle { POINT, LINEAR, SPLINE } style;
 		bool isActive;
 		unsigned traceLength;
-		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
+		std::map<Body2D*, futil::iterable_queue<TraceInfo> > traces;
 
 		OrbitTracer();
 
 		void record(Body2D* body);
-		futil::iterable_queue<Vector2D> getTrace(Body2D* body);
+		futil::iterable_queue<TraceInfo> getTrace(Body2D* body);
 		void clearTrace(const Body2D* body);
+
+		struct TraceInfo
+		{
+			Vector2D position, velocity;
+		};
 
 	} orbitTracer;
 
