@@ -45,7 +45,6 @@ struct Physics2D
 	void removeCollisionListener(CollisionListener* listener);
 
 	private:
-	std::vector< std::vector<Body2D*> > collisions;
 	std::vector<CollisionListener*>* collisionListeners; //null unless any listener is registered
 	void resolveCollisions();
 };

@@ -1,6 +1,5 @@
 -------------- Bugs
 
-- Crash when too many bodies collide at the same time
 - Color bug when large-mass bodies collides.
 - Bezier spline is glitched due to wrong parametrization.
 

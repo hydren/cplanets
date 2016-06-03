@@ -20,7 +20,7 @@ Physics2D::Physics2D()
 : universe(), referenceFrame(),
   physics2DSolver(null),
   onCollision(null),
-  collisions(), collisionListeners(null)
+  collisionListeners(null)
 {}
 
 Vector2D ReferenceFrame::getPosition() const
@@ -100,60 +100,67 @@ void Physics2D::removeCollisionListener(CollisionListener* listener)
 	}
 }
 
+vector<Body2D*>* collisionsOf(Body2D* body, vector< vector<Body2D*> >& collisions)
+{
+	foreach(vector<Body2D*>&, list1, vector< vector<Body2D*> >, collisions)
+		if(Collections::containsElement(list1, body))
+				return &list1;
+
+	return null;
+}
+
 void Physics2D::resolveCollisions()
 {
-	//detect collisions
-	foreach(Body2D*, ap, vector<Body2D*>, universe.bodies) foreach(Body2D*, bp, vector<Body2D*>, universe.bodies)
+	vector< vector<Body2D*> > collisions;
+
+	// detect collisions
+	foreach(Body2D*, b1, vector<Body2D*>, universe.bodies) foreach(Body2D*, b2, vector<Body2D*>, universe.bodies)
 	{
-		Body2D& a = *ap; Body2D& b = *bp;
-
-		if(a == b) goto continue1;
-
-		if(a.position.distance(b.position) < a.diameter/2 + b.diameter/2)
+		if(b1 != b2) // only make sense to deal with different bodies
 		{
-			bool bothAdded=false;
-			foreach(vector<Body2D*>&, list1, vector< vector<Body2D*> >, collisions)
+			if(b1->position.distance(b2->position) < b1->diameter/2.0 + b2->diameter/2.0)
 			{
-				if(Collections::containsElement(list1, a) && Collections::containsElement(list1, b)) //probably a duplicate lookup
+				vector<Body2D*>* b1_col_list = collisionsOf(b1, collisions), *b2_col_list = collisionsOf(b2, collisions);
+				const bool b1_alreadyAdded = b1_col_list != null;
+				const bool b2_alreadyAdded = b2_col_list != null;
+
+				if(b1_alreadyAdded && b2_alreadyAdded)
 				{
-					bothAdded = true;
-					goto break1;
+					if(b1_col_list != b2_col_list) // if they're both added but on different lists, merge lists
+					{
+						b1_col_list->insert(b1_col_list->end(), b2_col_list->begin(), b2_col_list->end());
+						collisions.erase(std::find(collisions.begin(), collisions.end(), *b2_col_list));
+					}
 				}
-				else if(Collections::containsElement(list1, a) && not Collections::containsElement(list1, b)) //append colliding b
+				else if(b1_alreadyAdded && not b2_alreadyAdded)
 				{
-					list1.push_back(&a);
-					bothAdded = true;
-					goto break1;
+					b1_col_list->push_back(b2);
 				}
-				else if(!Collections::containsElement(list1, a) && Collections::containsElement(list1, b)) //append colliding a
+				else if(not b1_alreadyAdded && b2_alreadyAdded)
 				{
-					list1.push_back(&a);
-					bothAdded = true;
-					goto break1;
+					b2_col_list->push_back(b1);
 				}
-			}
-			break1:
-			if(!bothAdded) //new colliding pair
-			{
-				vector<Body2D*> newlist1;
-				newlist1.push_back(&a);
-				newlist1.push_back(&b);
-				collisions.push_back(newlist1);
+				else // both not added
+				{
+					collisions.push_back(vector<Body2D*>()); //push new list
+					vector<Body2D*>& newlist = collisions.back(); //grab the list to edit
+					newlist.push_back(b1);
+					newlist.push_back(b2);
+				}
 			}
 		}
-		continue1:;
 	}
 
-	if(collisions.empty() == false)
+	if(not collisions.empty())
 		referenceFrame.bodies.clear();
 
 	//resolve collisions
 	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
 	{
 		Body2D merger(0, 0, Vector2D(), Vector2D(), Vector2D());
-		foreach(Body2D*, body1, vector<Body2D*>, collisionList)
+		foreach(Body2D*, bodyPtr, vector<Body2D*>, collisionList)
 		{
-			Body2D& body = *body1; //to simplify formulas
+			Body2D& body = *bodyPtr; //to simplify formulas
 			merger.position.x += body.position.x * body.mass;
 			merger.position.y += body.position.y * body.mass;
 
@@ -163,17 +170,13 @@ void Physics2D::resolveCollisions()
 			merger.diameter = sqrt(merger.diameter*merger.diameter + body.diameter*body.diameter);
 			merger.mass += body.mass;
 
-			//merger.color = (merger.color + body.color)/2;
-
-			Collections::removeElement(universe.bodies, body1); //remove actual pointer
+			Collections::removeElement(universe.bodies, bodyPtr); //remove actual pointer
 		}
-
-		if(collisionList.size() == 0) goto continue2;
 
 		merger.position.x /= merger.mass;
 		merger.position.y /= merger.mass;
 
-		universe.bodies.push_back(new Body2D(merger));
+		universe.bodies.push_back(new Body2D(merger)); //creates a copy and stores on universe.bodies
 
 		//callback for body collision
 		if(onCollision != null)
@@ -182,14 +185,12 @@ void Physics2D::resolveCollisions()
 		//also notify if there are any listeners
 		if(collisionListeners != null)
 			foreach(CollisionListener*, listener, vector<CollisionListener*>, *(this->collisionListeners))
-				listener->onCollision(collisionList, *(universe.bodies.back()));
-
-		continue2:;
+				listener->onCollision(collisionList, *universe.bodies.back());
 	}
 
 	//cleanup
 	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
 		foreach(Body2D*, trash, vector<Body2D*>, collisionList)
-			delete trash; //fixme this deletion crashes a lot (double-freeing)
-	collisions.clear();
+			delete trash; //delete previously existing bodies individually
+	collisions.clear(); //removes all collisions lists
 }
