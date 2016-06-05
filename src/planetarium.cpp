@@ -145,6 +145,9 @@ void Planetarium::draw()
 							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
 							Vector2D recVelTrans = this->getTransposed(recordedVelocity), prevVelTrans = this->getTransposed(previousVelocity);
 
+							recVelTrans.normalize().scale(recPosTrans.distance(prevPosTrans) * 0.5);
+							prevVelTrans.normalize().scale(recPosTrans.distance(prevPosTrans) * 0.5);
+
 							Sint16 qix[] = {
 								static_cast<Sint16>(prevPosTrans.x),
 								static_cast<Sint16>(prevPosTrans.x + prevVelTrans.x/3),
@@ -159,7 +162,11 @@ void Planetarium::draw()
 								static_cast<Sint16>(recPosTrans.y)
 							};
 
-							bezierRGBA(this->win, qix, qiy, 4, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+							bezierRGBA(this->win, qix, qiy, 4, 4, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+
+							//debug
+							lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), 0, 255, 0, 255);
+							lineRGBA(this->win, recPosTrans.x, recPosTrans.y, recPosTrans.sum(recVelTrans).x, recPosTrans.sum(recVelTrans).y, 255, 0, 0, 255);
 						}
 						previousPosition = recordedPosition;
 						previousVelocity = recordedVelocity;
