@@ -146,6 +146,7 @@ DropDownMenu* ddmTraceStyle;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
 Spinner<double>* spnTimeStep, *spnGravity;
 Spinner<long>* spnDisplayPeriod;
+Spinner<short>* spnFPS;
 DropDownMenu* ddmIntegrationMethod;
 
 Planetarium* planetarium;
@@ -310,6 +311,10 @@ void CPlanets::showMainWindow()
 	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Display period:");
 	setComponentPosition(spnDisplayPeriod, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
 	spnDisplayPeriod->setValue(&(planetarium->sleepingTime), true);
+
+	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
+	setComponentPosition(spnFPS, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
+	spnFPS->setValue(&(planetarium->fps), true);
 
 	factory.setLabel("Integration method: ", true);
 	factory.setSize(Rect(40, 40, 200, 20));
@@ -796,4 +801,5 @@ void onReady()
 	spnTimeStep->refresh();
 	spnGravity->refresh();
 	spnDisplayPeriod->refresh();
+	spnFPS->refresh();
 }
