@@ -84,6 +84,37 @@ void runOnce(void(func)(void))
 	if(not once) { func(); once = true; }
 }
 
+//  ============= FUNCTION PROTOTYPES ================
+void draw(); // The drawing function.
+void drawAboutDialog(BgrWin* dialog);
+void onWindowResize(int dw, int dh); // callback for window resizing events
+void onKeyEvent(SDL_keysym *key,bool down);
+void onButtonPressed(Button* btn);
+void onCheckBoxPressed(CheckBox* chck);
+void onCheckBoxPressed(CheckBox* chck, bool fake);
+void onDropDownMenuButton(RButWin*,int nr,int fire);
+void onUserEvent(int cmd,int param,int param2);
+void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
+void onPlanetariumBodyCreation(Body2D& createdBody);
+
+void onFileChosenOpenUniverse(FileDialog* dialog);
+void onFileChosenSaveUniverse(FileDialog* dialog);
+
+void refreshAllTxtBodies();
+void updateSizeTxtBodies();
+void closeDialogBgrWin(Button* btn);
+void replaceUniverse(Universe2D* universe);
+
+void onReady();
+
+//  =========== PLANETARIUM LISTENER ===========================
+
+struct CustomUniverseListener extends Planetarium::UniverseEventListener
+{
+	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
+	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
+};
+
 // ================ CONSTANTS ================
 const unsigned TOOLBAR_SIZE = 32; // TOOLBAR_SIZE is used as size reference for buttons, spacing, etc
 const unsigned WIDGETS_SPACING = 4;
@@ -132,36 +163,6 @@ DialogBgrWin* dialogAbout;
 ScrollablePane* sclpAboutLicense;
 Button* btnAboutOk;
 
-//  ================ FUNCTION PROTOTYPES ================
-void draw(); // The drawing function.
-void drawAboutDialog(BgrWin* dialog);
-void onWindowResize(int dw, int dh); // callback for window resizing events
-void onKeyEvent(SDL_keysym *key,bool down);
-void onButtonPressed(Button* btn);
-void onCheckBoxPressed(CheckBox* chck);
-void onCheckBoxPressed(CheckBox* chck, bool fake);
-void onDropDownMenuButton(RButWin*,int nr,int fire);
-void onUserEvent(int cmd,int param,int param2);
-void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
-void onPlanetariumBodyCreation(Body2D& createdBody);
-
-void onFileChosenOpenUniverse(FileDialog* dialog);
-void onFileChosenSaveUniverse(FileDialog* dialog);
-
-void refreshAllTxtBodies();
-void updateSizeTxtBodies();
-void closeDialogBgrWin(Button* btn);
-void replaceUniverse(Universe2D* universe);
-
-void onReady();
-
-//  ==================== PLANETARIUM LISTENER ===========================
-
-struct CustomUniverseListener extends Planetarium::UniverseEventListener
-{
-	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
-	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
-};
 
 // ================ CPlanetsGUI::MainWindow namespace ================
 void CPlanets::showMainWindow()
