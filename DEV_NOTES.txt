@@ -6,6 +6,7 @@
 -------------- To Do
 
 - Implement "view movement speed"
+- Make drawing thread use a copy-image of physics state instead of locking physics thread
 
 -------------- Backlog
 
