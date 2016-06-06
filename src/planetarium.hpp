@@ -101,11 +101,20 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 		unsigned traceLength;
 		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
 
-		OrbitTracer();
+		OrbitTracer(Planetarium* p);
 
 		void record(Body2D* body);
 		futil::iterable_queue<Vector2D> getTrace(Body2D* body);
 		void clearTrace(const Body2D* body);
+
+		void drawDotted(Body2D* body);
+		void drawLinear(Body2D* body);
+
+		void drawQuadricBezier(Body2D* body); //still not working properly
+//		void drawCubicBezier(Body2D* body);  //not implemented
+
+		protected:
+		Planetarium* planetarium;
 
 	} orbitTracer;
 

@@ -57,7 +57,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
-  orbitTracer(), bodyCreationState(IDLE),
+  orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
   isUpdating(false),
@@ -92,66 +92,13 @@ void Planetarium::draw()
 		//draw all traced orbits (only if tracer is active)
 		if(this->orbitTracer.isActive) foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 		{
-			if(body->userObject == null) goto break1; //if there isn't body data, there isn't body color. leave.
-			SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
-
-			iterable_queue<Vector2D> trace = orbitTracer.getTrace(body);
 			switch(this->orbitTracer.style)
 			{
-				case OrbitTracer::POINT:
-				{
-					foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
-					{
-						Vector2D pv = this->getTransposed(r);
-						pixelRGBA(this->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
-					}
-					break;
-				}
-
-				case OrbitTracer::LINEAR:
-				{
-					Vector2D previousPosition = trace.front();
-					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
-					{
-						if(recordedPosition != previousPosition) //avoid drawing segments of same points
-						{
-							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-							line_function(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
-						}
-						previousPosition = recordedPosition;
-					}
-					break;
-				}
-
-				// http://stackoverflow.com/questions/9658932/snappy-bezier-curves
-				// http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
-				case OrbitTracer::SPLINE:
-				{
-					Vector2D previousPosition = trace.front();
-					Vector2D previousSupport;
-//					if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
-					if(trace.size() > 1) previousSupport = trace.front().times(2).subtract(*(trace.begin()+1)); //kickstart aux
-					foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
-					{
-						if(recordedPosition != previousPosition) //avoid drawing segments of same points
-						{
-							//FixMe Fix quadratic bezier spline implementation
-							Vector2D supportPoint = this->getTransposed(previousSupport);
-							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-							Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
-							Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
-							bezierRGBA(this->win, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
-						}
-						previousPosition = recordedPosition;
-						previousSupport = previousPosition.times(2).subtract(previousSupport);
-					}
-					break;
-				}
-
-				default:break;
+				case OrbitTracer::POINT: orbitTracer.drawDotted(body); break;
+				default:case OrbitTracer::LINEAR: orbitTracer.drawLinear(body); break;
+				case OrbitTracer::SPLINE: orbitTracer.drawQuadricBezier(body); break;
 			}
 		}
-		break1:
 
 		//draw all bodies
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
@@ -312,8 +259,9 @@ void Planetarium::removeUniverseEventListener(UniverseEventListener* listener)
 	Collections::removeElement(this->registeredBodyCollisionListeners, listener);
 }
 
-Planetarium::OrbitTracer::OrbitTracer()
-: style(LINEAR), isActive(false), traceLength(20), traces()
+Planetarium::OrbitTracer::OrbitTracer(Planetarium* p)
+: style(LINEAR), isActive(false), traceLength(20), traces(),
+  planetarium(p)
 {}
 
 void Planetarium::OrbitTracer::record(Body2D* body)
@@ -333,6 +281,69 @@ void Planetarium::OrbitTracer::clearTrace(const Body2D* body)
 	this->traces.erase(const_cast<Body2D*>(body));
 }
 
+void Planetarium::OrbitTracer::drawDotted(Body2D* body)
+{
+	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
+	SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
+
+	iterable_queue<Vector2D> trace = this->getTrace(body);
+
+	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+	{
+		Vector2D pv = planetarium->getTransposed(r);
+		pixelRGBA(planetarium->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+	}
+}
+
+void Planetarium::OrbitTracer::drawLinear(Body2D* body)
+{
+	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
+	SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
+
+	iterable_queue<Vector2D> trace = this->getTrace(body);
+
+	int (*const line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (planetarium->tryAA? aalineRGBA : lineRGBA);
+
+	Vector2D previousPosition = trace.front();
+	foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+	{
+		if(recordedPosition != previousPosition) //avoid drawing segments of same points
+		{
+			Vector2D recPosTrans = planetarium->getTransposed(recordedPosition), prevPosTrans = planetarium->getTransposed(previousPosition);
+			line_function(planetarium->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+		}
+		previousPosition = recordedPosition;
+	}
+}
+
+// http://stackoverflow.com/questions/9658932/snappy-bezier-curves
+// http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
+void Planetarium::OrbitTracer::drawQuadricBezier(Body2D* body)
+{
+	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
+	SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
+
+	iterable_queue<Vector2D> trace = this->getTrace(body);
+
+	Vector2D previousPosition = trace.front();
+	Vector2D previousSupport;
+//	if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
+	if(trace.size() > 1) previousSupport = trace.front().times(2).subtract(*(trace.begin()+1)); //kickstart aux
+	foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+	{
+		if(recordedPosition != previousPosition) //avoid drawing segments of same points
+		{
+			//fixme Fix quadratic bezier spline implementation
+			Vector2D supportPoint = planetarium->getTransposed(previousSupport);
+			Vector2D recPosTrans = planetarium->getTransposed(recordedPosition), prevPosTrans = planetarium->getTransposed(previousPosition);
+			Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
+			Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
+			bezierRGBA(planetarium->win, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+		}
+		previousPosition = recordedPosition;
+		previousSupport = previousPosition.times(2).subtract(previousSupport);
+	}
+}
 
 // ===========================  protected stuff =====================================================================================
 
