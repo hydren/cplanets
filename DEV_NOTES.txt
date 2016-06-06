@@ -5,12 +5,13 @@
 -------------- To Do
 
 - Implement "view movement speed"
-- Make drawing thread use a copy-image of physics state instead of locking physics thread
+- Implement Display period / iterations per display controls (disabling FPS control at will) 
 
 -------------- Backlog
 
 - When holding R (add random body), after 1 second, starts spamming bodies until user releases the R key.
 - Show icon on About dialog.
+- Add option to disable orbit trace (which would stop recording position, for performance's sake)
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
 - Show paused/resumed state more explicitly

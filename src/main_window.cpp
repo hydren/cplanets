@@ -145,7 +145,7 @@ Spinner<unsigned>* spnTraceLength;
 DropDownMenu* ddmTraceStyle;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
 Spinner<double>* spnTimeStep, *spnGravity;
-Spinner<long>* spnDisplayPeriod;
+Spinner<long>* spnStepDelay;
 Spinner<short>* spnFPS;
 DropDownMenu* ddmIntegrationMethod;
 
@@ -308,12 +308,12 @@ void CPlanets::showMainWindow()
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
-	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.2*TOOLBAR_SIZE, TOOLBAR_SIZE), "Display period:");
-	setComponentPosition(spnDisplayPeriod, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
-	spnDisplayPeriod->setValue(&(planetarium->sleepingTime), true);
+	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,3.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay (ms):");
+	setComponentPosition(spnStepDelay, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
+	spnStepDelay->setValue(&(planetarium->sleepingTime), true);
 
 	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
-	setComponentPosition(spnFPS, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
+	setComponentPosition(spnFPS, spnStepDelay->area.x + spnStepDelay->tw_area.w + WIDGETS_SPACING, spnStepDelay->area.y);
 	spnFPS->setValue(&(planetarium->fps), true);
 
 	factory.setLabel("Integration method: ", true);
@@ -326,7 +326,7 @@ void CPlanets::showMainWindow()
 	}
 	ddmIntegrationMethod = factory.createAt(tabOptions);
 	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->physics2DSolver->factory->solverDisplayName.c_str());
-	ddmIntegrationMethod->setPosition(Point(spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING));
+	ddmIntegrationMethod->setPosition(Point(spnStepDelay->area.x, spnStepDelay->area.y + spnStepDelay->tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
 
@@ -800,6 +800,6 @@ void onReady()
 	spnBodyVelocity->refresh();
 	spnTimeStep->refresh();
 	spnGravity->refresh();
-	spnDisplayPeriod->refresh();
+	spnStepDelay->refresh();
 	spnFPS->refresh();
 }
