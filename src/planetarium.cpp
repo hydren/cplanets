@@ -12,7 +12,6 @@
 #include <vector>
 #include <queue>
 #include <map>
-#include <utility>
 
 #include "util.hpp"
 #include "SDL_util.hpp"
@@ -22,7 +21,6 @@
 using std::cout; using std::endl;
 using std::vector;
 using std::queue;
-using std::pair;
 using std::map;
 using SDL_util::colorToInt;
 using futil::iterable_queue;
@@ -39,10 +37,24 @@ struct PlanetariumUserObject
 	~PlanetariumUserObject() { delete color; }
 };
 
+struct CollisionEvent
+{
+	vector<Body2D> collidingBodies;
+	Body2D resultingMerger;
+
+	~CollisionEvent()
+	{
+		foreach(Body2D&, b, vector<Body2D>, collidingBodies)
+		{
+			delete static_cast<PlanetariumUserObject*>(b.userObject);
+		}
+	}
+};
+
 // helper struct to buffer collision events
 struct Planetarium::Physics2DEventsManager
 {
-	queue< pair<vector<Body2D>, Body2D>* > collisionEvents;
+	queue< CollisionEvent* > collisionEvents;
 	SDL_mutex* mutex;
 	Physics2DEventsManager() : collisionEvents(), mutex(SDL_CreateMutex()) {}
 	~Physics2DEventsManager() { SDL_DestroyMutex(mutex); }
@@ -391,12 +403,11 @@ void Planetarium::updateView()
 			SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 			synchronized(collisionEventsMutex)
 			{
-				pair<vector<Body2D>, Body2D>* ev; //event
 				while(not physicsEventsManager->collisionEvents.empty()) //has collision events
 				{
-					ev = physicsEventsManager->collisionEvents.front(); //gets first
+					CollisionEvent* ev = physicsEventsManager->collisionEvents.front(); //gets first
 					foreach(UniverseEventListener*, listener, vector<UniverseEventListener*>, registeredBodyCollisionListeners) //for each listener
-						listener->onBodyCollision(ev->first, ev->second); //notify
+						listener->onBodyCollision(ev->collidingBodies, ev->resultingMerger); //notify
 
 					physicsEventsManager->collisionEvents.pop();//after using, unregister event
 					delete ev; //and delete event object
@@ -452,16 +463,17 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	obj->color->g = static_cast<Uint8>(g/tm);
 	obj->color->b = static_cast<Uint8>(b/tm);
 
-	typedef pair<vector<Body2D>, Body2D> Event;
-	Event* ev = new Event();
+	CollisionEvent* ev = new CollisionEvent();
 
-	vector<Body2D>& collidingListCopy = ev->first;
-	foreach(Body2D*, i, vector<Body2D*>, collidingList)
+	vector<Body2D>& collidingListCopy = ev->collidingBodies;
+	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
-		collidingListCopy.push_back(*i);
-		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color());
+		PlanetariumUserObject* uobj = static_cast<PlanetariumUserObject*> (body->userObject);
+		collidingListCopy.push_back(*body);
+		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color(*(uobj->color))); //implicit copy constructor
+		delete uobj; //we need to delete it since it the physics code won't do it (it has no knowledge of this)
 	}
-	ev->second = resultingMerger;
+	ev->resultingMerger = resultingMerger;
 
 	SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 	synchronized(collisionEventsMutex)

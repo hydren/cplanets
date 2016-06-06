@@ -9,6 +9,7 @@
 
 -------------- Backlog
 
+- When holding R (add random body), after 1 second, starts spamming bodies until user releases the R key.
 - Show icon on About dialog.
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
@@ -17,7 +18,6 @@
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Add optional single-threaded mode (iterations per display, etc)
 - Keep track of opened file state (modified, etc)
-- When performing area selection, the simulation should be paused.
 - Optimize drawing by only redrawing the rectangular areas around bodies. (SDL_UpdateRect/SDL_UpdateRects)
 - Make planetarium.hpp/cpp independent from SDL_widgets code.
 - Bezier spline is glitched due to wrong parametrization.
