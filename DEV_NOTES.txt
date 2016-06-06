@@ -1,7 +1,6 @@
 -------------- Bugs
 
 - Color bug when large-mass bodies collides.
-- Bezier spline is glitched due to wrong parametrization.
 
 -------------- To Do
 
@@ -21,6 +20,7 @@
 - When performing area selection, the simulation should be paused.
 - Optimize drawing by only redrawing the rectangular areas around bodies. (SDL_UpdateRect/SDL_UpdateRects)
 - Make planetarium.hpp/cpp independent from SDL_widgets code.
+- Bezier spline is glitched due to wrong parametrization.
 
 -------------- Legacy 'japla' milestones
 
