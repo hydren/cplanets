@@ -415,7 +415,7 @@ void Planetarium::updateView()
 void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
 	//reconstructs custom data
-	resultingMerger.userObject = new PlanetariumUserObject(new SDL_Color);
+	resultingMerger.userObject = new PlanetariumUserObject(new SDL_Color());
 	PlanetariumUserObject* obj = (PlanetariumUserObject*) resultingMerger.userObject;
 	long double r=0, g=0, b=0, tm=0;
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
@@ -428,7 +428,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		orbitTracer.clearTrace(body);
 	}
 	if(tm==0)tm=1; //safety
-	obj->color = new SDL_Color;
+	obj->color = new SDL_Color();
 	obj->color->r = static_cast<Uint8>(r/tm);
 	obj->color->g = static_cast<Uint8>(g/tm);
 	obj->color->b = static_cast<Uint8>(b/tm);
@@ -440,7 +440,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	foreach(Body2D*, i, vector<Body2D*>, collidingList)
 	{
 		collidingListCopy.push_back(*i);
-		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color);
+		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color());
 	}
 	ev->second = resultingMerger;
 

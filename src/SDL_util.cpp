@@ -23,7 +23,7 @@ int SDL_util::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool f
 
 SDL_Color* SDL_util::getRandomColor()
 {
-	SDL_Color* somecolor = new SDL_Color;
+	SDL_Color* somecolor = new SDL_Color();
 	somecolor->r = Math::randomBetween(0, 255);
 	somecolor->g = Math::randomBetween(0, 255);
 	somecolor->b = Math::randomBetween(0, 255);
