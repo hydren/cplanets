@@ -141,32 +141,28 @@ void Planetarium::draw()
 
 						if(recordedPosition != previousPosition) //avoid drawing segments of same points
 						{
-							//FixMe Fix quadratic bezier spline implementation
-							Vector2D recPosTrans = this->getTransposed(recordedPosition), prevPosTrans = this->getTransposed(previousPosition);
-							Vector2D recVelTrans = this->getTransposed(recordedVelocity), prevVelTrans = this->getTransposed(previousVelocity);
-
-							recVelTrans.normalize().scale(recPosTrans.distance(prevPosTrans) * 0.5);
-							prevVelTrans.normalize().scale(recPosTrans.distance(prevPosTrans) * 0.5);
-
-							Sint16 qix[] = {
-								static_cast<Sint16>(prevPosTrans.x),
-								static_cast<Sint16>(prevPosTrans.x + prevVelTrans.x/3),
-								static_cast<Sint16>(recPosTrans.x - recVelTrans.x/3),
-								static_cast<Sint16>(recPosTrans.x)
+							const Vector2D q[] = {
+								this->getTransposed(previousPosition),
+								this->getTransposed(previousPosition + previousVelocity.times(1.0/3.0)),
+								this->getTransposed(recordedPosition - recordedVelocity.times(1.0/3.0)),
+								this->getTransposed(recordedPosition)
 							};
 
-							Sint16 qiy[] = {
-								static_cast<Sint16>(prevPosTrans.y),
-								static_cast<Sint16>(prevPosTrans.y + prevVelTrans.y/3),
-								static_cast<Sint16>(recPosTrans.y - recVelTrans.y/3),
-								static_cast<Sint16>(recPosTrans.y)
+							const Sint16 qix16[] = {
+									static_cast<Sint16>(q[0].x),
+									static_cast<Sint16>(q[1].x),
+									static_cast<Sint16>(q[2].x),
+									static_cast<Sint16>(q[3].x)
 							};
 
-							bezierRGBA(this->win, qix, qiy, 4, 4, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+							const Sint16 qiy16[] = {
+									static_cast<Sint16>(q[0].y),
+									static_cast<Sint16>(q[1].y),
+									static_cast<Sint16>(q[2].y),
+									static_cast<Sint16>(q[3].y)
+							};
 
-							//debug
-							lineRGBA(this->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), 0, 255, 0, 255);
-							lineRGBA(this->win, recPosTrans.x, recPosTrans.y, recPosTrans.sum(recVelTrans).x, recPosTrans.sum(recVelTrans).y, 255, 0, 0, 255);
+							bezierRGBA(this->win, qix16, qiy16, 4, 4, bodyColor->r, bodyColor->g, bodyColor->b, 255);
 						}
 						previousPosition = recordedPosition;
 						previousVelocity = recordedVelocity;
