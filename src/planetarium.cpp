@@ -36,6 +36,7 @@ struct PlanetariumUserObject
 	: color(color)
 	{}
 	SDL_Color* color;
+	~PlanetariumUserObject() { delete color; }
 };
 
 // helper struct to buffer collision events
@@ -78,6 +79,12 @@ Planetarium::~Planetarium()
 	SDL_DestroyMutex(physicsAccessMutex);
 }
 
+struct CopyBody2D extends Body2D
+{
+	Body2D* original;
+	CopyBody2D(Body2D* orig) : Body2D(*orig), original(orig)  {}
+};
+
 void Planetarium::draw()
 {
 	this->init_gui();
@@ -86,60 +93,72 @@ void Planetarium::draw()
 	int (*circle_function) (SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aacircleRGBA : circleRGBA);
 	int (*line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aalineRGBA : lineRGBA);
 
-	//draw all stuff
+	//make a copy of the current state of bodies.
+	std::vector<CopyBody2D> bodies;
 	synchronized(physicsAccessMutex)
 	{
-		//draw all traced orbits (only if tracer is active)
-		if(this->orbitTracer.isActive) foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
-		{
-			switch(this->orbitTracer.style)
-			{
-				case OrbitTracer::POINT: orbitTracer.drawDotted(body); break;
-				default:case OrbitTracer::LINEAR: orbitTracer.drawLinear(body); break;
-				case OrbitTracer::SPLINE: orbitTracer.drawQuadricBezier(body); break;
-			}
-		}
-
-		//draw all bodies
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 		{
-			SDL_Color* bodyColor = body->userObject != null? ((PlanetariumUserObject*) body->userObject)->color : null;
+			bodies.push_back(CopyBody2D(body)); //copy the body
 
-			double size = viewportZoom*body->diameter;
-			Vector2D v = this->getTransposed(body->position);
-
-			if(size < this->minimumBodyRenderingRadius)
-				size = this->minimumBodyRenderingRadius;
-
-			bool isFocused = Collections::containsElement(this->focusedBodies, body);
-
-			//if body is focused draw its border with 'strokeSizeFocused' size, otherwise use 'strokeSizeNormal'
-			int& strokeSize = isFocused? strokeSizeFocused : strokeSizeNormal;
-
-			//if body is focused draw its border with 'strokeColorFocused' color, otherwise use 'strokeColorNormal'
-			SDL_Color& borderColor = isFocused? strokeColorFocused : strokeColorNormal;
-
-			//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
-			if(strokeSize > 1)
-				//draw body border (middle part)
-				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
-
-			//draw body
-			if(bodyColor != null) //if there is not body color information, skip
-				filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
-
-			//inner blending with stroke when the stroke is thick
-			if(strokeSize > 1)
-				circle_function(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
-
-			//draw body border (if stroke size is more than 1, it is the "border of the border" part)
-			circle_function(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
-
-			//record position
-			if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
-				orbitTracer.record(body);
+			//lets copy the user object for precaution, since its a pointer
+			SDL_Color* bodyColor = static_cast<PlanetariumUserObject*>(body->userObject)->color;
+			SDL_Color* bodyColorCopy = new SDL_Color();
+			*bodyColorCopy = *bodyColor;
+			bodies.back().userObject = new PlanetariumUserObject(bodyColorCopy);
 		}
-	} // end synchronized(physicsAccessMutex)
+	}// end synchronized(physicsAccessMutex)
+
+	//draw all traced orbits (only if tracer is active)
+	if(this->orbitTracer.isActive) foreach(CopyBody2D&, body, vector<CopyBody2D>, bodies)
+	{
+		switch(this->orbitTracer.style)
+		{
+			case OrbitTracer::POINT: orbitTracer.drawDotted(body.original); break;
+			default:case OrbitTracer::LINEAR: orbitTracer.drawLinear(body.original); break;
+			case OrbitTracer::SPLINE: orbitTracer.drawQuadricBezier(body.original); break;
+		}
+	}
+
+	//draw all bodies
+	foreach(CopyBody2D&, body, vector<CopyBody2D>, bodies)
+	{
+		SDL_Color* bodyColor = body.userObject != null? ((PlanetariumUserObject*) body.userObject)->color : null;
+
+		double size = viewportZoom*body.diameter;
+		Vector2D v = this->getTransposed(body.position);
+
+		if(size < this->minimumBodyRenderingRadius)
+			size = this->minimumBodyRenderingRadius;
+
+		bool isFocused = Collections::containsElement(this->focusedBodies, static_cast<Body2D*>(&body));
+
+		//if body is focused draw its border with 'strokeSizeFocused' size, otherwise use 'strokeSizeNormal'
+		int& strokeSize = isFocused? strokeSizeFocused : strokeSizeNormal;
+
+		//if body is focused draw its border with 'strokeColorFocused' color, otherwise use 'strokeColorNormal'
+		SDL_Color& borderColor = isFocused? strokeColorFocused : strokeColorNormal;
+
+		//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
+		if(strokeSize > 1)
+			//draw body border (middle part)
+			filledCircleRGBA(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+
+		//draw body
+		if(bodyColor != null) //if there is not body color information, skip
+			filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+
+		//inner blending with stroke when the stroke is thick
+		if(strokeSize > 1)
+			circle_function(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+
+		//draw body border (if stroke size is more than 1, it is the "border of the border" part)
+		circle_function(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+
+		//record position
+		if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
+			orbitTracer.record(body.original);
+	}
 
 	//draw body creation helper stubs
 	if(bodyCreationState != IDLE)
