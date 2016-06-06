@@ -143,7 +143,7 @@ void Planetarium::draw()
 		if(size < this->minimumBodyRenderingRadius)
 			size = this->minimumBodyRenderingRadius;
 
-		bool isFocused = Collections::containsElement(this->focusedBodies, static_cast<Body2D*>(&body));
+		bool isFocused = Collections::containsElement(this->focusedBodies, body.original);
 
 		//if body is focused draw its border with 'strokeSizeFocused' size, otherwise use 'strokeSizeNormal'
 		int& strokeSize = isFocused? strokeSizeFocused : strokeSizeNormal;
