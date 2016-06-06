@@ -417,7 +417,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	//reconstructs custom data
 	resultingMerger.userObject = new PlanetariumUserObject(new SDL_Color);
 	PlanetariumUserObject* obj = (PlanetariumUserObject*) resultingMerger.userObject;
-	long r=0, g=0, b=0, tm=0;
+	long double r=0, g=0, b=0, tm=0;
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
 		const SDL_Color* bodyColor = static_cast<PlanetariumUserObject*> (body->userObject)->color;
