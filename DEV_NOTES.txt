@@ -6,7 +6,6 @@
 -------------- To Do
 
 - Implement "view movement speed"
-- Add Display period / iterations per display spinners
 
 -------------- Backlog
 

@@ -148,6 +148,8 @@ Spinner<double>* spnTimeStep, *spnGravity;
 Spinner<long>* spnStepDelay;
 Spinner<short>* spnFPS;
 DropDownMenu* ddmIntegrationMethod;
+CheckBox* chckLegacyParameters;
+Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 
 Planetarium* planetarium;
 
@@ -316,6 +318,19 @@ void CPlanets::showMainWindow()
 	setComponentPosition(spnFPS, spnStepDelay->area.x + spnStepDelay->tw_area.w + WIDGETS_SPACING, spnStepDelay->area.y);
 	spnFPS->setValue(&(planetarium->fps), true);
 
+	chckLegacyParameters = new CheckBox(tabOptions, 0, genericButtonSize, "Use legacy parameters:", onCheckBoxPressed);
+	chckLegacyParameters->d = &(planetarium->legacyControl);  // binds the checkbox to the variable
+	setComponentPosition(chckLegacyParameters, spnStepDelay->area.x, spnStepDelay->area.y + spnStepDelay->tw_area.h + WIDGETS_SPACING);
+	packLabeledComponent(chckLegacyParameters);
+
+	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.6*TOOLBAR_SIZE, TOOLBAR_SIZE), "Disp. period (ms):");
+	setComponentPosition(spnDisplayPeriod, chckLegacyParameters->area.x, chckLegacyParameters->area.y + chckLegacyParameters->tw_area.h + WIDGETS_SPACING);
+	spnDisplayPeriod->setValue(&(planetarium->displayPeriod));
+
+	spnIterPerDisplay = new Spinner<long>(tabOptions, Rect(0,0,2.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "Iter/display:");
+	setComponentPosition(spnIterPerDisplay, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
+	spnIterPerDisplay->setValue(&(planetarium->iterationsPerDisplay));
+
 	factory.setLabel("Integration method: ", true);
 	factory.setSize(Rect(40, 40, 200, 20));
 	factory.removeAllItems();
@@ -326,7 +341,7 @@ void CPlanets::showMainWindow()
 	}
 	ddmIntegrationMethod = factory.createAt(tabOptions);
 	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->physics2DSolver->factory->solverDisplayName.c_str());
-	ddmIntegrationMethod->setPosition(Point(spnStepDelay->area.x, spnStepDelay->area.y + spnStepDelay->tw_area.h + WIDGETS_SPACING));
+	ddmIntegrationMethod->setPosition(Point(spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
 
@@ -802,4 +817,6 @@ void onReady()
 	spnGravity->refresh();
 	spnStepDelay->refresh();
 	spnFPS->refresh();
+	spnDisplayPeriod->refresh();
+	spnIterPerDisplay->refresh();
 }
