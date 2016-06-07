@@ -6,7 +6,7 @@
 -------------- To Do
 
 - Implement "view movement speed"
-- Implement Display period / iterations per display controls (disabling FPS control at will) 
+- Add Display period / iterations per display spinners
 
 -------------- Backlog
 
@@ -18,10 +18,10 @@
 - Show paused/resumed state more explicitly
 - Implement selection on bodies list.
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
-- Add optional single-threaded mode (iterations per display, etc)
 - Keep track of opened file state (modified, etc)
 - Optimize drawing by only redrawing the rectangular areas around bodies. (SDL_UpdateRect/SDL_UpdateRects)
 - Make planetarium.hpp/cpp independent from SDL_widgets code.
+- Add optional single-threaded mode
 - Bezier spline is glitched due to wrong parametrization.
 
 -------------- Legacy 'japla' milestones

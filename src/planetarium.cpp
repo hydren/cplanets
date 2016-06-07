@@ -63,6 +63,7 @@ struct Planetarium::Physics2DEventsManager
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : BgrWin(parentWidget, rect, null, null, Planetarium::onMouseDown, null, Planetarium::onMouseUp, 0, _id),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
+  legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY),
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE), strokeColorFocused(SDL_util::Color::ORANGE),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true), pauseOnSelection(true),
@@ -73,7 +74,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
-  isUpdating(false),
+  isUpdating(false), currentIterationCount(0),
   threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
   physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
@@ -382,22 +383,23 @@ void Planetarium::performPhysics()
 {
 	while(true)
 	{
-		if(running)
+		if(running && (not legacyControl || currentIterationCount++ < iterationsPerDisplay))
 		{
 			synchronized(physicsAccessMutex)
 			{
 				this->physics->step();
 			}
 		}
-		SDL_Delay(stepDelay);
+		SDL_Delay(legacyControl? 0 : stepDelay);
 	}
 }
 
 void Planetarium::updateView()
 {
-	static long lastTime;
+	static long lastUpdateTime, lastRedrawRequestTime = 0;
 	while(true)
 	{
+		lastUpdateTime = SDL_GetTicks();
 		if(not physicsEventsManager->collisionEvents.empty()) //notify listeners about the collisions
 		{
 			SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
@@ -431,13 +433,20 @@ void Planetarium::updateView()
 			this->viewportPosition.x += this->tw_area.w * (1/prevZoom - 1/viewportZoom) * 0.5;
 			this->viewportPosition.y += this->tw_area.h * (1/prevZoom - 1/viewportZoom) * 0.5;
 		}
-		if(not isUpdating)
+
+		const bool allowedByLegacy = not running || (currentIterationCount >= iterationsPerDisplay && (SDL_GetTicks() - lastRedrawRequestTime) > displayPeriod);
+
+		if(not isUpdating && (not legacyControl || allowedByLegacy) )
 		{
 			isUpdating = true;
 			send_uev(USER_EVENT_ID__REDRAW_REQUESTED, this->id.id1);
+
+			//to aid legacy controls
+			currentIterationCount = 0;
+			lastRedrawRequestTime = SDL_GetTicks();
 		}
-		lastTime = SDL_GetTicks();
-		SDL_Delay(1000/fps - (SDL_GetTicks() - lastTime));
+
+		SDL_Delay(1000/fps - (SDL_GetTicks() - lastUpdateTime));
 	}
 }
 

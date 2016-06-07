@@ -29,6 +29,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	static const unsigned DEFAULT_STROKE_SIZE_NORMAL = 1, DEFAULT_STROKE_SIZE_FOCUSED = 2;
 	static const unsigned DEFAULT_SLEEPING_TIME = 25;
 	static const short DEFAULT_FPS = 60;
+	static const long DEFAULT_DISPLAY_PERIOD = 30, DEFAULT_ITERATIONS_PER_DISPLAY = 2;
 
 	//model
 	Physics2D* physics;
@@ -37,6 +38,8 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	bool running;
 	long stepDelay;
 	short fps;
+	bool legacyControl;
+	long displayPeriod, iterationsPerDisplay;
 
 	//widget parameters
 	SDL_Color bgColor, strokeColorNormal, strokeColorFocused;
@@ -133,6 +136,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	Physics2DEventsManager* physicsEventsManager;
 
 	bool isUpdating;
+	long currentIterationCount;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;
 	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
