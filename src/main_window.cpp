@@ -310,8 +310,21 @@ void CPlanets::showMainWindow()
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
+	factory.setLabel("Integration method: ", true);
+	factory.setSize(Rect(40, 40, 200, 20));
+	factory.removeAllItems();
+	typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
+	const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
+	{
+		factory.addItem(solverFactory->solverDisplayName.c_str());
+	}
+	ddmIntegrationMethod = factory.createAt(tabOptions);
+	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->physics2DSolver->factory->solverDisplayName.c_str());
+	ddmIntegrationMethod->setPosition(Point(spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING));
+	ddmIntegrationMethod->offset.y = -10;
+
 	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,3.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay (ms):");
-	setComponentPosition(spnStepDelay, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
+	setComponentPosition(spnStepDelay, ddmIntegrationMethod->getPosition().x, ddmIntegrationMethod->getPosition().y + ddmIntegrationMethod->getSize().h + WIDGETS_SPACING);
 	spnStepDelay->setValue(&(planetarium->stepDelay), true);
 
 	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
@@ -330,20 +343,6 @@ void CPlanets::showMainWindow()
 	spnIterPerDisplay = new Spinner<long>(tabOptions, Rect(0,0,2.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "Iter/display:");
 	setComponentPosition(spnIterPerDisplay, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
 	spnIterPerDisplay->setValue(&(planetarium->iterationsPerDisplay));
-
-	factory.setLabel("Integration method: ", true);
-	factory.setSize(Rect(40, 40, 200, 20));
-	factory.removeAllItems();
-	typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
-	const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
-	{
-		factory.addItem(solverFactory->solverDisplayName.c_str());
-	}
-	ddmIntegrationMethod = factory.createAt(tabOptions);
-	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->physics2DSolver->factory->solverDisplayName.c_str());
-	ddmIntegrationMethod->setPosition(Point(spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING));
-	ddmIntegrationMethod->offset.y = -10;
-
 
 	//+++++++++++++++ East (right) toolbar
 	toolbarRight = new FlowLayout(planetariumSize.x + planetariumSize.w + WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING);
