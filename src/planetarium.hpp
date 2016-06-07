@@ -27,6 +27,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	static const double DEFAULT_BODY_CREATION_DIAMETER_RATIO = 1.0;
 	static const double DEFAULT_BODY_CREATION_DENSITY = 1.0;
 	static const unsigned DEFAULT_STROKE_SIZE_NORMAL = 1, DEFAULT_STROKE_SIZE_FOCUSED = 2;
+	static const double DEFAULT_MINIMUM_BODY_RENDERING_RADIUS = 3.0;
 	static const unsigned DEFAULT_SLEEPING_TIME = 25;
 	static const short DEFAULT_FPS = 60;
 	static const long DEFAULT_DISPLAY_PERIOD = 30, DEFAULT_ITERATIONS_PER_DISPLAY = 2;

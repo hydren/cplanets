@@ -67,7 +67,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE), strokeColorFocused(SDL_util::Color::ORANGE),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true), pauseOnSelection(true),
-  viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(3.0), focusedBodies(), tryAA(false),
+  viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(DEFAULT_MINIMUM_BODY_RENDERING_RADIUS), focusedBodies(), tryAA(false),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
