@@ -1,6 +1,7 @@
 -------------- Bugs
 
 - Color bug when large-mass bodies collides.
+- SDL_widgets: When clicking on a DialogWin and then clicking on another one, the former doesn't remove the caret (a redraw is needed)
 
 -------------- To Do
 

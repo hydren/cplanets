@@ -126,7 +126,7 @@ void Planetarium::draw()
 	{
 		switch(this->orbitTracer.style)
 		{
-			case OrbitTracer::POINT: orbitTracer.drawDotted(body.original); break;
+			case OrbitTracer::DOTTED: orbitTracer.drawDotted(body.original); break;
 			default:case OrbitTracer::LINEAR: orbitTracer.drawLinear(body.original); break;
 			case OrbitTracer::SPLINE: orbitTracer.drawQuadricBezier(body.original); break;
 		}

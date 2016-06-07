@@ -269,7 +269,7 @@ void CPlanets::showMainWindow()
 	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
 	factory.setSize(Rect(40, 40, 100, 20));
 	factory.addItem("Linear");
-	factory.addItem("Point");
+	factory.addItem("Dotted");
 	factory.setCallback(onDropDownMenuButton);
 	ddmTraceStyle = factory.createAt(tabOptions);
 	ddmTraceStyle->setPosition(Point(spnTraceLength->area.x + spnTraceLength->tw_area.w + WIDGETS_SPACING, spnTraceLength->area.y - 3));
@@ -668,10 +668,10 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 			ddmTraceStyle->cmdMenu->src->label = "Linear";
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
 		}
-		if(string(rbtn->label.str) == "Point")
+		if(string(rbtn->label.str) == "Dotted")
 		{
-			planetarium->orbitTracer.style = Planetarium::OrbitTracer::POINT;
-			ddmTraceStyle->cmdMenu->src->label = "Point";
+			planetarium->orbitTracer.style = Planetarium::OrbitTracer::DOTTED;
+			ddmTraceStyle->cmdMenu->src->label = "Dotted";
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
 		}
 	}

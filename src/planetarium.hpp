@@ -79,6 +79,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2D> getBodies() const;
 
+	/** Safer way to replace the universe instance. */
 	void setUniverse(Universe2D* u);
 
 
@@ -98,7 +99,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** A struct to record orbits. */
 	struct OrbitTracer
 	{
-		enum OrbitTraceStyle { POINT, LINEAR, SPLINE } style;
+		enum OrbitTraceStyle { DOTTED, LINEAR, SPLINE } style;
 		bool isActive;
 		unsigned traceLength;
 		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
