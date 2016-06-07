@@ -74,7 +74,7 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
-  isUpdating(false), currentIterationCount(0),
+  isRedrawPending(false), currentIterationCount(0),
   threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
   physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
@@ -215,7 +215,7 @@ void Planetarium::setRunning(bool run)
 void Planetarium::doRefresh()
 {
 	draw_blit_upd();
-	isUpdating = false;
+	isRedrawPending = false;
 }
 
 //--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
@@ -436,9 +436,9 @@ void Planetarium::updateView()
 
 		const bool allowedByLegacy = not running || (currentIterationCount >= iterationsPerDisplay && (SDL_GetTicks() - lastRedrawRequestTime) > displayPeriod);
 
-		if(not isUpdating && (not legacyControl || allowedByLegacy) )
+		if(not isRedrawPending && (not legacyControl || allowedByLegacy) )
 		{
-			isUpdating = true;
+			isRedrawPending = true;
 			send_uev(USER_EVENT_ID__REDRAW_REQUESTED, this->id.id1);
 
 			//to aid legacy controls

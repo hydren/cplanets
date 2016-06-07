@@ -135,7 +135,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
 
-	bool isUpdating;
+	bool isRedrawPending;
 	long currentIterationCount;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;
