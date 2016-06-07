@@ -62,7 +62,7 @@ struct Planetarium::Physics2DEventsManager
 
 Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
 : BgrWin(parentWidget, rect, null, null, Planetarium::onMouseDown, null, Planetarium::onMouseUp, 0, _id),
-  physics(new Physics2D()), running(false), sleepingTime(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
+  physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE), strokeColorFocused(SDL_util::Color::ORANGE),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true), pauseOnSelection(true),
@@ -389,7 +389,7 @@ void Planetarium::performPhysics()
 				this->physics->step();
 			}
 		}
-		SDL_Delay(sleepingTime);
+		SDL_Delay(stepDelay);
 	}
 }
 

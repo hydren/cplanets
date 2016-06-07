@@ -310,7 +310,7 @@ void CPlanets::showMainWindow()
 
 	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,3.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay (ms):");
 	setComponentPosition(spnStepDelay, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
-	spnStepDelay->setValue(&(planetarium->sleepingTime), true);
+	spnStepDelay->setValue(&(planetarium->stepDelay), true);
 
 	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
 	setComponentPosition(spnFPS, spnStepDelay->area.x + spnStepDelay->tw_area.w + WIDGETS_SPACING, spnStepDelay->area.y);
