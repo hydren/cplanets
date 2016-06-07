@@ -65,34 +65,46 @@ namespace WidgetsExtra
 	struct Spinner extends AbstractSpinner
 	{
 		Type* value, step, min, max;
+		bool needsRefresh;
 
 		Spinner(WinBase *pw, Rect area, const char* label=null, Type* value=null)
 		: AbstractSpinner(pw, area, label),
-		  value(value==null? new Type(1) : value), step(1), min(0), max(9999)
+		  value(value==null? new Type(1) : value), step(1), min(0), max(9999),
+		  needsRefresh(false)
 		{}
 
-		Type* getValue()
+		/// Returns a pointer to the spinner current value.
+		virtual Type* getValue()
 		{
 			return this->value;
 		}
 
-		void setValue(Type* val, bool deleteOldValue=false)
+		/// Replaces the spinner value with the pointer 'val'. If 'deleteOldValue' is true, calls the previous value's destructor.
+		virtual void setValue(Type* val, bool deleteOldValue=false)
 		{
 			Type* old = this->value;
 
 			this->value = val;
-			if(sdl_running)
-				refresh();
+			this->needsRefresh = true;
 
 			if(deleteOldValue) delete old;
 		}
 
-		Type getStepValue()
+		/// Updates the spinner value, assigning 'newValue' to it.
+		virtual void setValue(const Type& newValue)
+		{
+			*(this->value) = newValue;
+			this->needsRefresh = true;
+		}
+
+		/// Returns the value by which the spinner's value is incremented or decremented when calling incrementValue() or decrementValue()
+		virtual Type getStepValue()
 		{
 			return this->step;
 		}
 
-		void setStepValue(Type v)
+		/// Sets the value by which the spinner's value is incremented or decremented to 'v'. 'v' must be non-negative.
+		virtual void setStepValue(Type v)
 		{
 			if(v < 0) //step value must be non-negative
 				throw std::invalid_argument("Specified step value in Spinner is negative");
@@ -100,21 +112,34 @@ namespace WidgetsExtra
 			this->step = v;
 		}
 
-		bool isValidValue(Type val)
+		/// Return true if 'val' is in the valid range of this spinner's value.
+		virtual bool isValidValue(Type val)
 		{
 			return (val >= this->min) && (val <= this->max);
 		}
 
-		void refresh()
+		/// Updates the text field content and redraw's the Spinner.
+		virtual void refresh()
 		{
 			string strValue = string() + *(this->value);
-			dlwTextField.dialog_def(strValue.c_str(), this->dlwTextField.cmd, this->dlwTextField.cmd_id);
-			dlwTextField.unset_cursor();
-			btnInc.draw_blit_upd();
-			btnDec.draw_blit_upd();
+			this->dlwTextField.dialog_def(strValue.c_str(), this->dlwTextField.cmd, this->dlwTextField.cmd_id);
+			this->dlwTextField.unset_cursor();
+			this->btnInc.draw_blit_upd();
+			this->btnDec.draw_blit_upd();
+			this->needsRefresh = false;
 		}
 
-		void incrementValue()
+		//overrides AbstractSpinner's
+		virtual void draw()
+		{
+			if(this->needsRefresh)
+				this->refresh();
+			else
+				this->AbstractSpinner::draw();
+		}
+
+		/// Increments the spinner value by 'step'.
+		virtual void incrementValue()
 		{
 			if(isValidValue(*(this->value) + this->step) && *(this->value) + this->step >= *(this->value)) //second clausule checks for overflow
 			{
@@ -123,7 +148,8 @@ namespace WidgetsExtra
 			this->refresh();
 		}
 
-		void decrementValue()
+		/// Decrements the spinner value by 'step'.
+		virtual void decrementValue()
 		{
 			if(isValidValue(*(this->value) - this->step) && *(this->value) - this->step <= *(this->value))
 			{
@@ -132,7 +158,8 @@ namespace WidgetsExtra
 			this->refresh();
 		}
 
-		void parseIfValid(const char* txtVal)
+		//overrides AbstractSpinner's
+		virtual void parseIfValid(const char* txtVal)
 		{
 			if(String::parseable<Type>(string(txtVal))) //if we can figure out something from the field
 			{

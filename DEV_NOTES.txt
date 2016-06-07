@@ -1,6 +1,6 @@
 -------------- Bugs
 
-- Color bug when large-mass bodies collides.
+- Color bug when large-mass bodies collides. Maybe fixed?
 - SDL_widgets: When clicking on a DialogWin and then clicking on another one, the former doesn't remove the caret (a redraw is needed)
 
 -------------- To Do
@@ -15,6 +15,7 @@
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
 - Show paused/resumed state more explicitly
+- SDL_widgets: DialogWin does not recognize numpad digits.
 - Implement selection on bodies list.
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Keep track of opened file state (modified, etc)

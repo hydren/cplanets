@@ -293,7 +293,7 @@ void CPlanets::showMainWindow()
 
 	spnBodyVelocity = new Spinner<double>(tabOptions, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
 	setComponentPosition(spnBodyVelocity, spnBodyDiameter->area.x, spnBodyDiameter->area.y + spnBodyDiameter->tw_area.h + WIDGETS_SPACING);
-	*spnBodyVelocity->getValue() = 10;
+	spnBodyVelocity->setValue(10);
 	spnBodyVelocity->setStepValue(0.1);
 
 	LabelWin lblSimulationParameters(tabOptions, Rect(), "Simulation parameters");
@@ -808,14 +808,5 @@ void replaceUniverse(Universe2D* universe)
 
 void onReady()
 {
-	spnTraceLength->refresh();
-	spnBodyDiameter->refresh();
-	spnBodyDensity->refresh();
-	spnBodyVelocity->refresh();
-	spnTimeStep->refresh();
-	spnGravity->refresh();
-	spnStepDelay->refresh();
-	spnFPS->refresh();
-	spnDisplayPeriod->refresh();
-	spnIterPerDisplay->refresh();
+
 }
