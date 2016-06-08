@@ -249,6 +249,46 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 	}
 }
 
+void Planetarium::removeBody(Body2D* body, bool alsoDelete)
+{
+	synchronized(physicsAccessMutex)
+	{
+		Collections::removeElement(physics->universe.bodies, body);
+	}
+
+	Collections::removeElement(focusedBodies, body);
+
+	//notify listeners about the body deleted
+	foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
+	{
+		listener->onBodyDeletion(body);
+	}
+	if(alsoDelete) delete body;
+}
+
+void Planetarium::removeFocusedBodies(bool alsoDelete)
+{
+	synchronized(physicsAccessMutex)
+	{
+		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
+		{
+			Collections::removeElement(physics->universe.bodies, body);
+		}
+	}
+
+	foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
+	{
+		//notify listeners about the body deleted
+		foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
+		{
+			listener->onBodyDeletion(body);
+		}
+		if(alsoDelete) delete body;
+	}
+
+	focusedBodies.clear();
+}
+
 vector<Body2D> Planetarium::getBodies() const
 {
 	vector<Body2D> bodies;

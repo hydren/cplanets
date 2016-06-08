@@ -82,6 +82,13 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** Adds a custom body (the safe way) */
 	void addCustomBody(Body2D* body, SDL_Color* color);
 
+	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
+	void removeBody(Body2D* body, bool alsoDelete = false);
+
+	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
+	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
+	void removeFocusedBodies(bool alsoDelete = true);
+
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2D> getBodies() const;
 
@@ -97,6 +104,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 		virtual ~UniverseEventListener() {}
 		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) abstract;
 		virtual void onBodyCreation(Body2D& createdBody) abstract;
+		virtual void onBodyDeletion(Body2D* deletedBody) abstract; //not exactly safe to use the pointer after the call ends
 	};
 
 	void addUniverseEventListener(UniverseEventListener* listener);

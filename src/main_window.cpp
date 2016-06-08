@@ -113,6 +113,7 @@ struct CustomUniverseListener extends Planetarium::UniverseEventListener
 {
 	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
 	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
+	void onBodyDeletion(Body2D* deletedBody) { refreshAllTxtBodies(); }
 };
 
 // ================ CONSTANTS ================
