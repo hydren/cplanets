@@ -155,7 +155,7 @@ Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 Planetarium* planetarium;
 
 FlowLayout* toolbarRight;
-Button* btnAddBody, *btnAddRandom, *btnRecolorAll;
+Button* btnAddBody, *btnAddRandom, *btnRemove, *btnRecolorAll;
 
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
@@ -358,6 +358,9 @@ void CPlanets::showMainWindow()
 
 	btnAddRandom = new Button(window, 0, sideButtonSize, "AdR", onButtonPressed);
 	toolbarRight->addComponent(btnAddRandom);
+
+	btnRemove = new Button(window, 0, sideButtonSize, "Rem", onButtonPressed);
+	toolbarRight->addComponent(btnRemove);
 
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
 
@@ -587,6 +590,11 @@ void onButtonPressed(Button* btn)
 
 		//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
 		planetarium->addCustomBody(new Body2D(mass, diameter, randomPosition, randomVelocity, Vector2D::NULL_VECTOR), SDL_util::getRandomColor());
+	}
+
+	if(btn == btnRemove)
+	{
+		planetarium->removeFocusedBodies(true);
 	}
 
 	if(btn == btnRecolorAll)
