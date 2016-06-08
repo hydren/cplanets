@@ -40,19 +40,18 @@ const string CPLANETS_LICENSE =
 		"You should have received a copy of the GNU General Public License "
 		"along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n";
 
-int main(int arc, char* argv[])
+int main(int argc, char* argv[])
 {
 	try
 	{
 		srand(time(null));
-//		putenv("SDL_VIDEO_CENTERED=1"); // todo use video centering when able to choose on settings.
 		StandardPhysics2DSolvers::doRegister();
-		CPlanets::showMainWindow();
+		CPlanets::showMainWindow(); // set SDL_VIDEO_CENTERED=1 environment variable before program execution to center window
 		return EXIT_SUCCESS;
 	}
 	catch (exception& e)
 	{
-		cout << "application exited after uncaught exception: " << e.what() << endl;
+		cout << "Application exited after uncaught exception: " << e.what() << endl;
 		return EXIT_FAILURE;
 	}
 }

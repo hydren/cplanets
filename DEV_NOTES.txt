@@ -23,6 +23,7 @@
 - Make planetarium.hpp/cpp independent from SDL_widgets code.
 - Add optional single-threaded mode
 - Bezier spline is glitched due to wrong parametrization.
+- Use TCLAP for command line usage.
 
 -------------- Legacy 'japla' milestones
 
