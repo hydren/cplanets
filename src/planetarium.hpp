@@ -110,6 +110,9 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	void addUniverseEventListener(UniverseEventListener* listener);
 	void removeUniverseEventListener(UniverseEventListener* listener);
 
+	// auxiliar structure
+	struct CopyBody2D;
+
 	/** A struct to record orbits. */
 	struct OrbitTracer
 	{
@@ -121,17 +124,22 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 		OrbitTracer(Planetarium* p);
 
 		void record(Body2D* body);
-		futil::iterable_queue<Vector2D> getTrace(Body2D* body);
+		futil::iterable_queue<Vector2D>& getTrace(Body2D* body);
 		void clearTrace(const Body2D* body);
 
-		void drawDotted(Body2D* body);
-		void drawLinear(Body2D* body);
-
-		void drawQuadricBezier(Body2D* body); //still not working properly
-//		void drawCubicBezier(Body2D* body);  //not implemented
+		void drawTrace(Body2D* body);
+		void drawTrace(CopyBody2D& body);
 
 		protected:
 		Planetarium* planetarium;
+
+		void drawTrace(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);
+
+		void drawDotted(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);
+		void drawLinear(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);
+
+		void drawQuadricBezier(futil::iterable_queue<Vector2D>& trace, SDL_Color* color); //still not working properly
+//		void drawCubicBezier(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);  //not implemented
 
 	} orbitTracer;
 

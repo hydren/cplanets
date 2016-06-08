@@ -92,7 +92,7 @@ Planetarium::~Planetarium()
 	SDL_DestroyMutex(physicsAccessMutex);
 }
 
-struct CopyBody2D extends Body2D
+struct Planetarium::CopyBody2D extends Body2D
 {
 	Body2D* original;
 	CopyBody2D(Body2D* orig) : Body2D(*orig), original(orig)  {}
@@ -125,12 +125,7 @@ void Planetarium::draw()
 	//draw all traced orbits (only if tracer is active)
 	if(this->orbitTracer.isActive) foreach(CopyBody2D&, body, vector<CopyBody2D>, bodies)
 	{
-		switch(this->orbitTracer.style)
-		{
-			case OrbitTracer::DOTTED: orbitTracer.drawDotted(body.original); break;
-			default:case OrbitTracer::LINEAR: orbitTracer.drawLinear(body.original); break;
-			case OrbitTracer::SPLINE: orbitTracer.drawQuadricBezier(body.original); break;
-		}
+		orbitTracer.drawTrace(body);
 	}
 
 	//draw all bodies
@@ -262,6 +257,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 	foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
 	{
 		listener->onBodyDeletion(body);
+		orbitTracer.clearTrace(body);
 	}
 	if(alsoDelete) delete body;
 }
@@ -282,6 +278,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 		foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
 		{
 			listener->onBodyDeletion(body);
+			orbitTracer.clearTrace(body);
 		}
 		if(alsoDelete) delete body;
 	}
@@ -343,7 +340,7 @@ void Planetarium::OrbitTracer::record(Body2D* body)
 		this->traces[body].pop();
 }
 
-iterable_queue<Vector2D> Planetarium::OrbitTracer::getTrace(Body2D* body)
+iterable_queue<Vector2D>& Planetarium::OrbitTracer::getTrace(Body2D* body)
 {
 	return this->traces[body];
 }
@@ -353,13 +350,38 @@ void Planetarium::OrbitTracer::clearTrace(const Body2D* body)
 	this->traces.erase(const_cast<Body2D*>(body));
 }
 
-void Planetarium::OrbitTracer::drawDotted(Body2D* body)
+void Planetarium::OrbitTracer::drawTrace(Body2D* body)
 {
 	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
 	SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
 
-	iterable_queue<Vector2D> trace = this->getTrace(body);
+	iterable_queue<Vector2D>& trace = this->getTrace(body);
 
+	drawTrace(trace, bodyColor);
+}
+
+void Planetarium::OrbitTracer::drawTrace(CopyBody2D& body)
+{
+	if(body.userObject == null) return; //if there isn't body data, there isn't body color. leave.
+	SDL_Color* bodyColor = ((PlanetariumUserObject*) body.userObject)->color;
+
+	iterable_queue<Vector2D>& trace = this->getTrace(body.original); //get original body trace
+
+	drawTrace(trace, bodyColor);
+}
+
+void Planetarium::OrbitTracer::drawTrace(iterable_queue<Vector2D>& trace, SDL_Color* color)
+{
+	switch(style)
+	{
+		case DOTTED:			drawDotted(trace, color); break;
+		default:case LINEAR:	drawLinear(trace, color); break;
+		case SPLINE:			drawQuadricBezier(trace, color); break;
+	}
+}
+
+void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, SDL_Color* bodyColor)
+{
 	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 	{
 		Vector2D pv = planetarium->getTransposed(r);
@@ -367,13 +389,8 @@ void Planetarium::OrbitTracer::drawDotted(Body2D* body)
 	}
 }
 
-void Planetarium::OrbitTracer::drawLinear(Body2D* body)
+void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_Color* bodyColor)
 {
-	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
-	SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
-
-	iterable_queue<Vector2D> trace = this->getTrace(body);
-
 	int (*const line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (planetarium->tryAA? aalineRGBA : lineRGBA);
 
 	Vector2D previousPosition = trace.front();
@@ -390,13 +407,8 @@ void Planetarium::OrbitTracer::drawLinear(Body2D* body)
 
 // http://stackoverflow.com/questions/9658932/snappy-bezier-curves
 // http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
-void Planetarium::OrbitTracer::drawQuadricBezier(Body2D* body)
+void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace, SDL_Color* bodyColor)
 {
-	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
-	SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
-
-	iterable_queue<Vector2D> trace = this->getTrace(body);
-
 	Vector2D previousPosition = trace.front();
 	Vector2D previousSupport;
 //	if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
