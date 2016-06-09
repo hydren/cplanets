@@ -124,6 +124,8 @@ const int PLANETARIUM_ID = 959;
 const int USER_EVENT_ID__UPDATE_BODIES_LIST = 160;
 string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
 
+SDL_Surface* APP_LOGO;
+
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
 
@@ -177,6 +179,7 @@ void CPlanets::showMainWindow()
 	handle_kev = onKeyEvent; //set callback for keyboard events
 	handle_uev = onUserEvent;
 	VERSION_TEXT ="v"+CPLANETS_VERSION;
+	APP_LOGO = SDL_util::loadBitmap("data/icon.bmp", &SDL_util::Color::LIME);
 
 	LabeledComponentPacker packer(TOOLBAR_SIZE-2*WIDGETS_SPACING);
 
@@ -400,7 +403,7 @@ void CPlanets::showMainWindow()
 	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes);
 	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes);
 
-	FULL_ABOUT_TEXT = "Version "+CPLANETS_VERSION+"\n\nThis program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE;
+	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE;
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets");
 
 	btnAboutOk = new Button(dialogAbout, 0, genericButtonSize, "Close", closeDialogBgrWin);
@@ -482,24 +485,37 @@ void drawAboutDialog(BgrWin* bw)
 	BgrWin* dialog = &sclpAboutLicense->content;
 	WidgetsExtra::drawDefaultBgrWin(bw);
 
-	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(WIDGETS_SPACING, WIDGETS_SPACING));
+	int logoOffset = 0;
+	if(APP_LOGO != null)
+	{
+		SDL_Rect position = {WIDGETS_SPACING, WIDGETS_SPACING, 0, 0};
+		SDL_BlitSurface(APP_LOGO, null, bw->win, &position);
+		logoOffset = APP_LOGO->w;
+	}
+
+	const int lineHeight = TTF_FontHeight(draw_ttf->ttf_font);
+
+	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(logoOffset + 3*WIDGETS_SPACING, 0.8*WIDGETS_SPACING));
+	draw_title_ttf->draw_string(dialog->win, ("Version " + CPLANETS_VERSION).c_str(), Point(logoOffset + 3*WIDGETS_SPACING, WIDGETS_SPACING + lineHeight));
 
 	static vector<string>* textLines = null;
 	if(textLines == null)
 		textLines = getLineWrappedText(FULL_ABOUT_TEXT, draw_ttf, dialog->tw_area.w - 2*WIDGETS_SPACING);
 
+	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2;
+	const int totalSize = headerSize + lineHeight * textLines->size();
+
 	//expand BgrWin to fit the text
-	if(dialogAbout->titleBarArea.h + (textLines->size() * TTF_FontHeight(draw_ttf->ttf_font)) > sclpAboutLicense->content.tw_area.h)
+	if(totalSize > sclpAboutLicense->content.tw_area.h)
 	{
-		const int toExpand = dialogAbout->titleBarArea.h + (textLines->size() * TTF_FontHeight(draw_ttf->ttf_font)) - sclpAboutLicense->content.tw_area.h;
-		sclpAboutLicense->widenContent(0, toExpand);
+		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
 		sclpAboutLicense->updateOffset();
 	}
 
-	int ln = 0;
+	int lineNumber = 0;
 	foreach(string&, line, vector<string>, (*textLines))
 	{
-		draw_ttf->draw_string(dialog->win, line.c_str(), Point(WIDGETS_SPACING, dialogAbout->titleBarArea.h + ln++*TTF_FontHeight(draw_ttf->ttf_font)));
+		draw_ttf->draw_string(dialog->win, line.c_str(), Point(WIDGETS_SPACING, headerSize + lineHeight * lineNumber++));
 	}
 }
 
