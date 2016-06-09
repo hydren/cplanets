@@ -20,6 +20,7 @@
 
 using WidgetsExtra::FileDialog;
 using std::map;
+using std::vector;
 
 char buffer[1024];
 
@@ -62,7 +63,7 @@ namespace FileDialog_static
 	}
 }
 
-FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), const std::vector<string> fileTypes)
+FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), const vector<string>& fileTypes)
 : DialogBgrWin(Rect(0, 0, 400, mode==SELECT_FOLDER? 96 : 160), FileDialog_static::modeTitle(mode)),
   onFinishedCallback(onFinished), selectedFilename(), mode(mode),
   lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
@@ -102,9 +103,9 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), con
 		ddmf.setCallback(FileDialog::selectFileType);
 
 		ddmf.addItem("All files"); selectedType = "All files";
-		const_foreach(const string&, str, std::vector<string>, fileTypes)
+		const_foreach(const string&, str, vector<string>, fileTypes)
 		{
-			ddmf.addItem(str.c_str());
+			ddmf.addItem(Label(str.c_str()));
 		}
 
 		ddmFileType = ddmf.createAt(this, id);
