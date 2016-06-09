@@ -13,9 +13,6 @@
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-
 # Compiled Static libraries
 *.lai
 *.la
@@ -27,11 +24,16 @@
 *.out
 *.app
 
+# Makefile dependency-lists
+*.d
+
 # Eclipse annoying file
 language.settings.xml
 
-# Custom
-/bin/
-/japla.properties
-/windows-debug/
+# Debug builds' folders
+/cross-debug/
 /linux-debug/
+/windows-debug/
+
+# cplanets executables
+cplanets
