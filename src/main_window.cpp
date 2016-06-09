@@ -442,6 +442,41 @@ void closeDialogBgrWin(Button* btn)
 		self->onClosedCallback(self);
 }
 
+vector<string>* getLineWrappedText(string fullText, RenderText* drawer, Uint16 maxWidth)
+{
+	vector<string>* lines = new vector<string>();
+
+	unsigned lf = 0, cr = 0, ln = 0;
+
+	while( lf + cr < fullText.size() )
+	{
+		bool exceed = false;
+
+		if(fullText.c_str()[lf+cr] == '\n' ||  lf + cr == fullText.size()-1) // line feed or last draw
+			exceed = true;
+		else
+		{
+			string substr = String::replaceAll(fullText.substr(lf, cr+1), "\n", " ");
+			if((unsigned) drawer->text_width(substr.c_str()) > maxWidth)
+				exceed = true;
+		}
+
+		if(exceed)
+		{
+			//separate from text pointer, 'cr' caracters
+			string substr = String::replaceAll(fullText.substr(lf, cr), "\n", " ");
+			lines->push_back(substr);
+			lf += cr; //increase text pointer
+			cr = 0; //"caret" position is reset
+			ln++; //line number incremented
+		}
+
+		cr++; //increase caret position
+	}
+
+	return lines;
+}
+
 void drawAboutDialog(BgrWin* bw)
 {
 	BgrWin* dialog = &sclpAboutLicense->content;
@@ -449,34 +484,22 @@ void drawAboutDialog(BgrWin* bw)
 
 	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(WIDGETS_SPACING, WIDGETS_SPACING));
 
-	unsigned lf = 0, cr = 0, ln = 2;
+	static vector<string>* textLines = null;
+	if(textLines == null)
+		textLines = getLineWrappedText(FULL_ABOUT_TEXT, draw_ttf, dialog->tw_area.w - 2*WIDGETS_SPACING);
 
-	while( lf + cr < FULL_ABOUT_TEXT.size() )
+	//expand BgrWin to fit the text
+	if(dialogAbout->titleBarArea.h + (textLines->size() * TTF_FontHeight(draw_ttf->ttf_font)) > sclpAboutLicense->content.tw_area.h)
 	{
-		bool exceed = false;
+		const int toExpand = dialogAbout->titleBarArea.h + (textLines->size() * TTF_FontHeight(draw_ttf->ttf_font)) - sclpAboutLicense->content.tw_area.h;
+		sclpAboutLicense->widenContent(0, toExpand);
+		sclpAboutLicense->updateOffset();
+	}
 
-		if(FULL_ABOUT_TEXT.c_str()[lf+cr] == '\n' ||  lf + cr == FULL_ABOUT_TEXT.size()-1) // line feed or last draw
-			exceed = true;
-		else
-		{
-			string substr = String::replaceAll(FULL_ABOUT_TEXT.substr(lf, cr+1), "\n", " ");
-			if((unsigned) draw_ttf->text_width(substr.c_str()) > (dialog->tw_area.w - 2*WIDGETS_SPACING))
-				exceed = true;
-		}
-
-		if(exceed)
-		{
-			//draw from text pointer, 'cr' caracters
-			string substr = String::replaceAll(FULL_ABOUT_TEXT.substr(lf, cr), "\n", " ");
-			draw_ttf->draw_string(dialog->win, substr.c_str(), Point(WIDGETS_SPACING, ln*TTF_FontHeight(draw_ttf->ttf_font)));
-			lf += cr; //increase text pointer
-			cr = 0; //"caret" position is reset
-			ln++; //line number incremented
-			//expand BgrWin to fit the text
-			if((ln+1)*TDIST - dialogAbout->titleBarArea.h > dialog->tw_area.h) { sclpAboutLicense->widenContent(0, TDIST); sclpAboutLicense->updateOffset(); }
-		}
-
-		cr++; //increase caret position
+	int ln = 0;
+	foreach(string&, line, vector<string>, (*textLines))
+	{
+		draw_ttf->draw_string(dialog->win, line.c_str(), Point(WIDGETS_SPACING, dialogAbout->titleBarArea.h + ln++*TTF_FontHeight(draw_ttf->ttf_font)));
 	}
 }
 
