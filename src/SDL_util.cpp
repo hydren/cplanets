@@ -30,16 +30,11 @@ SDL_Color* SDL_util::getRandomColor()
 	return somecolor;
 }
 
-void SDL_util::setWindowTitle(const char* title)
+SDL_Surface* SDL_util::loadBitmap(const char* path, const SDL_Color* transparentColor)
 {
-	static char* icon;
-	SDL_WM_GetCaption(null, &icon);
-	SDL_WM_SetCaption(title, icon);
-}
+	SDL_Surface* bmp = SDL_LoadBMP(path);
+	if(bmp != null && transparentColor != null)
+		SDL_SetColorKey(bmp, SDL_SRCCOLORKEY, SDL_MapRGB(bmp->format, transparentColor->r, transparentColor->g, transparentColor->b));
 
-void SDL_util::setWindowIcon(const char* icon)
-{
-	static char* title;
-	SDL_WM_GetCaption(&title, null);
-	SDL_WM_SetCaption(title, icon);
+	return bmp;
 }

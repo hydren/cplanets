@@ -807,7 +807,7 @@ void onFileChosenOpenUniverse(FileDialog* dialog)
 		}
 		else alert("File doesn't exist or isn't readable.");
 	}
-	SDL_util::setWindowTitle("cplanets"); //todo maybe put filename on title
+	SDL_WM_SetCaption("cplanets", "cplanets"); //todo maybe put filename on title
 	onButtonPressed(btnRun);
 }
 

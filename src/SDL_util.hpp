@@ -57,8 +57,7 @@ namespace SDL_util
 	//creates a random color
 	SDL_Color* getRandomColor();
 
-	void setWindowTitle(const char* title);
-	void setWindowIcon(const char* icon);
+	SDL_Surface* loadBitmap(const char* path, const SDL_Color* transparentColor=NULL);
 }
 
 #endif /* SDL_UTIL_HPP_ */
