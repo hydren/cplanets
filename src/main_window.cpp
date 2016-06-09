@@ -77,13 +77,6 @@ void workaround_sdl_stream_file_close() // part of workaround
 #endif
 //**********************************************************************************
 
-// wrapper function to control a run-once function
-void runOnce(void(func)(void))
-{
-	static bool once = false;
-	if(not once) { func(); once = true; }
-}
-
 //  ============= FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
@@ -104,8 +97,6 @@ void refreshAllTxtBodies();
 void updateSizeTxtBodies();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
-
-void onReady();
 
 //  =========== PLANETARIUM LISTENER ===========================
 
@@ -434,7 +425,6 @@ void draw()
 	window->clear();
 	Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
 	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
-	runOnce(onReady);
 }
 
 void closeDialogBgrWin(Button* btn)
@@ -852,9 +842,4 @@ void replaceUniverse(Universe2D* universe)
 	planetarium->setUniverse(universe);
 	refreshAllTxtBodies();
 	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
-}
-
-void onReady()
-{
-
 }
