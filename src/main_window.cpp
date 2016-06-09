@@ -60,21 +60,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 	if(workaround_sdl_stream_file != null) // if file var was used, close the file
 		fclose(workaround_sdl_stream_file);
 }
-#ifdef _WIN32
-	#ifdef HOTFIX_FOR_SDL_OUTPUT_STREAM_1
-		void onSDLInit() // upon sdl init, reroute streams
-		{
-			workaround_sdl_stream_file = fopen("CON", "w" );
-			freopen( "CON", "w", stdout );
-			freopen( "CON", "w", stderr );
-		}
-		#define SDLMAIN_STREAM_WORKAROUND onSDLInit
-	#else
-		#define SDLMAIN_STREAM_WORKAROUND null
-	#endif
-#else
-	#define SDLMAIN_STREAM_WORKAROUND null
-#endif
+
 //**********************************************************************************
 
 //  ============= FUNCTION PROTOTYPES ================
@@ -97,6 +83,8 @@ void refreshAllTxtBodies();
 void updateSizeTxtBodies();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
+
+void onSDLInit();
 
 //  =========== PLANETARIUM LISTENER ===========================
 
@@ -165,7 +153,7 @@ Button* btnAboutOk;
 void CPlanets::showMainWindow()
 {
 	Rect windowSize(0, 0, 640, 480);
-	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, SDLMAIN_STREAM_WORKAROUND);
+	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, onSDLInit);
 	handle_rsev = onWindowResize; //set callback for window resize
 	handle_kev = onKeyEvent; //set callback for keyboard events
 	handle_uev = onUserEvent;
@@ -417,6 +405,22 @@ void CPlanets::showMainWindow()
 	planetarium->setRunning();
 	get_events();
 	workaround_sdl_stream_file_close(); // part of workaround
+}
+
+void onSDLInit()
+{
+	// workaround to reroute output stream to console
+	#ifdef _WIN32
+		#ifdef HOTFIX_FOR_SDL_OUTPUT_STREAM_1
+			// upon sdl init, reroute streams
+			workaround_sdl_stream_file = fopen("CON", "w" );
+			freopen( "CON", "w", stdout );
+			freopen( "CON", "w", stderr );
+		#endif
+	#endif
+
+	SDL_Surface* appIcon = SDL_util::loadBitmap("data/icon.bmp", &SDL_util::Color::LIME);
+	if(appIcon != null) SDL_WM_SetIcon(appIcon, null);
 }
 
 //  ================ CALLBACK DEFINITIONS ================
