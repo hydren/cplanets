@@ -172,7 +172,6 @@ void FileDialog::triggerNavigation(Button* navButton)
 //called when selected a file when browsing
 void FileDialog::fileSelected(const char* path, Id id)
 {
-	SDL_util::setWindowTitle("cplanets");
 	FileDialog* self = FileDialog_static::references[id.id1];
 
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
@@ -184,7 +183,6 @@ void FileDialog::fileSelected(const char* path, Id id)
 //called when changed folder when browsing
 void FileDialog::folderOpened(const char* path, Id id)
 {
-	SDL_util::setWindowTitle("cplanets");
 	FileDialog* self = FileDialog_static::references[id.id1];
 
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
