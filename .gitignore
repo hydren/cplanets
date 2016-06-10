@@ -37,3 +37,4 @@ language.settings.xml
 
 # cplanets executables
 cplanets
+/cross-test-geometry/
