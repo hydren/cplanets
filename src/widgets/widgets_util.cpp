@@ -109,4 +109,40 @@ const WidgetsExtra::Color5
 	WidgetsExtra::Color5::GradientRose(0xffd0d0ff, 0xd07070ff);
 
 
+std::vector<std::string>* WidgetsExtra::getLineWrappedText(std::string fullText, RenderText* drawer, Uint16 maxWidth)
+{
+	using std::vector; using std::string;
+
+	vector<string>* lines = new vector<string>();
+
+	unsigned lf = 0, cr = 0, ln = 0;
+
+	while( lf + cr < fullText.size() )
+	{
+		bool exceed = false;
+
+		if(fullText.c_str()[lf+cr] == '\n' ||  lf + cr == fullText.size()-1) // line feed or last draw
+			exceed = true;
+		else
+		{
+			string substr = String::replaceAll(fullText.substr(lf, cr+1), "\n", " ");
+			if((unsigned) drawer->text_width(substr.c_str()) > maxWidth)
+				exceed = true;
+		}
+
+		if(exceed)
+		{
+			//separate from text pointer, 'cr' caracters
+			string substr = String::replaceAll(fullText.substr(lf, cr), "\n", " ");
+			lines->push_back(substr);
+			lf += cr; //increase text pointer
+			cr = 0; //"caret" position is reset
+			ln++; //line number incremented
+		}
+
+		cr++; //increase caret position
+	}
+
+	return lines;
+}
 

@@ -81,6 +81,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
+void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
 
@@ -147,6 +148,7 @@ ToogleButton* tgbAA;
 DialogBgrWin* dialogAbout;
 ScrollablePane* sclpAboutLicense;
 Button* btnAboutOk;
+vector<string>* dialogAboutTextLines = null;
 
 
 // ================ CPlanetsGUI::MainWindow namespace ================
@@ -431,49 +433,6 @@ void draw()
 	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
 }
 
-void closeDialogBgrWin(Button* btn)
-{
-	DialogBgrWin* self = static_cast<DialogBgrWin*>(btn->parent);
-	self->setVisible(false);
-	if(self->onClosedCallback != null)
-		self->onClosedCallback(self);
-}
-
-vector<string>* getLineWrappedText(string fullText, RenderText* drawer, Uint16 maxWidth)
-{
-	vector<string>* lines = new vector<string>();
-
-	unsigned lf = 0, cr = 0, ln = 0;
-
-	while( lf + cr < fullText.size() )
-	{
-		bool exceed = false;
-
-		if(fullText.c_str()[lf+cr] == '\n' ||  lf + cr == fullText.size()-1) // line feed or last draw
-			exceed = true;
-		else
-		{
-			string substr = String::replaceAll(fullText.substr(lf, cr+1), "\n", " ");
-			if((unsigned) drawer->text_width(substr.c_str()) > maxWidth)
-				exceed = true;
-		}
-
-		if(exceed)
-		{
-			//separate from text pointer, 'cr' caracters
-			string substr = String::replaceAll(fullText.substr(lf, cr), "\n", " ");
-			lines->push_back(substr);
-			lf += cr; //increase text pointer
-			cr = 0; //"caret" position is reset
-			ln++; //line number incremented
-		}
-
-		cr++; //increase caret position
-	}
-
-	return lines;
-}
-
 void drawAboutDialog(BgrWin* bw)
 {
 	BgrWin* dialog = &sclpAboutLicense->content;
@@ -492,22 +451,10 @@ void drawAboutDialog(BgrWin* bw)
 	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(logoOffset + 3*WIDGETS_SPACING, 0.8*WIDGETS_SPACING));
 	draw_title_ttf->draw_string(dialog->win, ("Version " + CPLANETS_VERSION).c_str(), Point(logoOffset + 3*WIDGETS_SPACING, WIDGETS_SPACING + lineHeight));
 
-	static vector<string>* textLines = null;
-	if(textLines == null)
-		textLines = getLineWrappedText(FULL_ABOUT_TEXT, draw_ttf, dialog->tw_area.w - 2*WIDGETS_SPACING);
-
 	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2;
-	const int totalSize = headerSize + lineHeight * textLines->size();
-
-	//expand BgrWin to fit the text
-	if(totalSize > sclpAboutLicense->content.tw_area.h)
-	{
-		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
-		sclpAboutLicense->updateOffset();
-	}
 
 	int lineNumber = 0;
-	foreach(string&, line, vector<string>, (*textLines))
+	foreach(string&, line, vector<string>, (*dialogAboutTextLines))
 	{
 		draw_ttf->draw_string(dialog->win, line.c_str(), Point(WIDGETS_SPACING, headerSize + lineHeight * lineNumber++));
 	}
@@ -601,6 +548,7 @@ void onButtonPressed(Button* btn)
 {
 	if(btn == btnAbout)
 	{
+		adjustAboutDialog();
 		setComponentPosition(dialogAbout, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogAbout->setVisible(dialogAbout->parent==null || dialogAbout->hidden);
 	}
@@ -838,6 +786,32 @@ void updateSizeTxtBodies()
 		txtBodies->widen(0, height2 - txtBodies->tw_area.h);
 		sclpBodies->widenContent(0, height2 - sclpBodies->content.tw_area.h);
 	}
+}
+
+void adjustAboutDialog()
+{
+	if(dialogAboutTextLines == null)
+		dialogAboutTextLines = WidgetsExtra::getLineWrappedText(FULL_ABOUT_TEXT, draw_ttf, sclpAboutLicense->content.tw_area.w - 3*WIDGETS_SPACING);
+
+	const int lineHeight = TTF_FontHeight(draw_ttf->ttf_font);
+
+	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2;
+	const int totalSize = headerSize + lineHeight * dialogAboutTextLines->size();
+
+	//expand BgrWin to fit the text
+	if(totalSize > sclpAboutLicense->content.tw_area.h)
+	{
+		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
+		sclpAboutLicense->updateOffset();
+	}
+}
+
+void closeDialogBgrWin(Button* btn)
+{
+	DialogBgrWin* self = static_cast<DialogBgrWin*>(btn->parent);
+	self->setVisible(false);
+	if(self->onClosedCallback != null)
+		self->onClosedCallback(self);
 }
 
 void replaceUniverse(Universe2D* universe)

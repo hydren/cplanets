@@ -10,6 +10,9 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 
+#include <vector>
+#include <string>
+
 ///Utilities for SDL_widgets
 namespace WidgetsExtra
 {
@@ -58,7 +61,7 @@ namespace WidgetsExtra
 		void setup();
 	};
 
-
+	std::vector<std::string>* getLineWrappedText(std::string fullText, RenderText* drawer, Uint16 maxWidth);
 }
 
 #endif /* WIDGETS_WIDGETS_UTIL_HPP_ */
