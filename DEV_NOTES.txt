@@ -2,6 +2,7 @@
 
 - SDL_widgets: When clicking on a DialogWin and then clicking on another one, the former doesn't remove the caret (a redraw is needed)
 - SDL_widgets: ScrollablePane does not support scrolling via mousewheel.
+- SDL: application icon displays black instead of transparency.
 
 -------------- To Do
 
