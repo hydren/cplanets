@@ -3,6 +3,7 @@
 - SDL_widgets: When clicking on a DialogWin and then clicking on another one, the former doesn't remove the caret (a redraw is needed)
 - SDL_widgets: ScrollablePane does not support scrolling via mousewheel.
 - SDL: application icon displays black instead of transparency.
+- SDL_widgets: DialogWin does not recognize numpad digits.
 
 -------------- To Do
 
@@ -11,12 +12,10 @@
 -------------- Backlog
 
 - When holding R (add random body), after 1 second, starts spamming bodies until user releases the R key.
-- Show icon on About dialog.
 - Add option to disable orbit trace (which would stop recording position, for performance's sake)
 - Improve scrollbar performace (it's kinda sluggish). Look at testsw.cpp for a references about using scrollbars.
 - Try to load the universe setting a fitting zoom for its size.
 - Show paused/resumed state more explicitly
-- SDL_widgets: DialogWin does not recognize numpad digits.
 - Implement selection on bodies list.
 - Use pixmaps instead of text labels on buttons, taking advantage of the create_pixmap() function. Examples in sw-pixmaps.h.
 - Keep track of opened file state (modified, etc)
