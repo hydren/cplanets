@@ -40,7 +40,7 @@ void TabSet::setActiveTab(unsigned index)
 
 void TabSet::drawTabStyleBgrWin(BgrWin* bgrWin)
 {
-	WidgetsExtra::drawDefaultBgrWin(bgrWin);
+	WidgetsExtra::drawBgrWin(bgrWin);
 	lineColor(bgrWin->win, 2, 1, bgrWin->tw_area.w - 2, 1, 0x606060ff); //top line
 	lineColor(bgrWin->win, 2, bgrWin->tw_area.h - 1, bgrWin->tw_area.w - 2, bgrWin->tw_area.h - 1, 0x606060ff); //bottom line
 	lineColor(bgrWin->win, 1, 2, 1, bgrWin->tw_area.h - 2, 0x606060ff); //leftmost line

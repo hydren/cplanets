@@ -436,7 +436,7 @@ void draw()
 void drawAboutDialog(BgrWin* bw)
 {
 	BgrWin* dialog = &sclpAboutLicense->content;
-	WidgetsExtra::drawDefaultBgrWin(bw);
+	WidgetsExtra::drawBgrWin(bw);
 
 	int logoOffset = 0;
 	if(APP_LOGO != null)

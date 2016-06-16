@@ -42,8 +42,9 @@ namespace WidgetsExtra
 		void pack(WinBase* wb, Label& lbl) const { packLabeledComponent(wb, lbl, height, padding); }
 	};
 
-	/// A (proposed) default draw() function for BgrWin's. Fills its area with background color.
-	void drawDefaultBgrWin(BgrWin* bgrWin);
+	/// A (proposed) default draw() function for BgrWin's.
+	/// Fills the given BgrWin area with its background color (bgcol).
+	void drawBgrWin(BgrWin* bgrWin);
 
 	/// Holds a gradient of 5 colors (copied from SDL_widgets.cpp)
 	struct Color5 {

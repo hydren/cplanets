@@ -53,7 +53,7 @@ void WidgetsExtra::packLabeledComponent(RExtButton* btn, unsigned height, int pa
 	packLabeledComponent(btn, btn->label, height, padding);
 }
 
-void WidgetsExtra::drawDefaultBgrWin(BgrWin* bgrWin)
+void WidgetsExtra::drawBgrWin(BgrWin* bgrWin)
 {
 	bgrWin->init_gui();
 	SDL_FillRect(bgrWin->win, null, bgrWin->bgcol); //clears the screen
