@@ -54,8 +54,9 @@ namespace WidgetsExtra
 	/// A model for a list of elements to be displayed by a UI element like ListWin.
 	struct UIListModel
 	{
-		virtual std::vector<std::string> getStringfiedList() abstract;
 		virtual ~UIListModel() {};
+		virtual std::vector<std::string> getStringfiedList() abstract;
+		virtual unsigned size() abstract;
 	};
 
 	/// Default implementation of UIListModel. The list's elements are standard strings.
@@ -65,6 +66,7 @@ namespace WidgetsExtra
 		DefaultUIListModel(const std::vector<std::string>& data) : data(data) {}
 
 		virtual std::vector<std::string> getStringfiedList() { return data; }
+		virtual unsigned size() { return data.size(); }
 
 		protected:
 		std::vector<std::string> data;
@@ -99,6 +101,8 @@ namespace WidgetsExtra
 			}
 			return lines;
 		}
+
+		virtual unsigned size() { return data.size(); }
 
 		protected:
 		std::vector<StringableType> data;
