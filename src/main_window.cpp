@@ -31,6 +31,8 @@
 #include "widgets/file_dialog.hpp"
 #include "widgets/scrollable_pane.hpp"
 
+#include "widgets/list_win.hpp"
+
 using std::cout;
 using std::endl;
 using std::vector;
@@ -402,6 +404,38 @@ void CPlanets::showMainWindow()
 	sclpAboutLicense->setScrollbarHorizontalVisible(false);
 
 //	print_h(); //DEBUG
+
+//	vector<string> ls;
+//	ls.push_back("jaguar");
+//	ls.push_back("unicorn");
+
+//	vector<string*> ls;
+//	ls.push_back(new string("jaguar"));
+//	ls.push_back(new string("unicorn"));
+
+	vector<Vector2D> ls;
+	ls.push_back(Vector2D(0, 3));
+	ls.push_back(Vector2D(5,-8));
+	ls.push_back(Vector2D(3,-2));
+	ls.push_back(Vector2D(-4,-1));
+	ls.push_back(Vector2D(2,2));
+	ls.push_back(Vector2D(2001,2007));
+
+//	vector<Vector2D*> ls;
+//	ls.push_back(new Vector2D(0, 3));
+//	ls.push_back(new Vector2D(5,-8));
+
+	WidgetsExtra::ListWin lw (window, 0, Rect(32, 96, 128, 256));
+	lw.bgcol = calc_color(0xffefefdd);
+	lw.setListData<Vector2D>(ls, WidgetsExtra::stringfy_by_method_const<Vector2D, &Vector2D::toString>);
+
+	vector<string> test = lw.model->getStringfiedList();
+	cout << lw.model->getStringfiedList().size() << endl;
+
+	//																													aqui entra o kaoh (nao sei se vai rolar com os ListModel)
+//	WidgetsExtra::StringableTypeUIListModel<string> model(ls);
+
+//	model.getStringfiedList();
 
 	//start
 	planetarium->setRunning();
