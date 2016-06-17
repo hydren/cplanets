@@ -13,7 +13,7 @@ using WidgetsExtra::ListWin;
 using std::vector;
 
 ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
-: BgrWin(parent, rect, null, drawBgrWinAsListWin, 0 /*down_cmd*/, 0 /*moved_cmd*/, 0 /*up_cmd*/,  calc_color(0xffffffff), id),
+: BgrWin(parent, rect, null, drawBgrWinAsListWin, onMouseDown, onMouseMove, onMouseUp, calc_color(0xffffffff), id),
   model(new DefaultUIListModel()), selection(), padding(1,1), spacing(1), textRenderer(draw_ttf)
 {}
 
@@ -21,6 +21,8 @@ void ListWin::setListData(const std::vector<std::string>& data)
 {
 	UIListModel* old = this->model;
 	this->model = new DefaultUIListModel(data);
+	this->selection.clear();
+	this->selection.insert(this->selection.begin(), data.size(), false);
 	if(old != null) delete old;
 }
 
@@ -37,15 +39,64 @@ void ListWin::draw()
 	vector<string> listItems = this->model->getStringfiedList();
 	const unsigned lineHeight = TTF_FontHeight(this->textRenderer->ttf_font);
 
+	SDL_Rect selectedLineRect = SDL_Rect(); //area to draw selected item background
+	selectedLineRect.w = this->tw_area.w; selectedLineRect.h = lineHeight;
+
 	Point itemLocation = this->padding; //start after padding
 	foreach(string&, itemStr, vector<string>, listItems)
 	{
+		const unsigned index = inner_iterator(itemStr) - listItems.begin();
+		if(selection[index] == true)
+		{
+			selectedLineRect.y = itemLocation.y;
+			SDL_FillRect(this->win, &selectedLineRect, parent->bgcol);
+		}
 		this->textRenderer->draw_string(this->win, itemStr.c_str(), itemLocation);
 		itemLocation.y += lineHeight + this->spacing;
 	}
 }
 
-void ListWin::drawBgrWinAsListWin(BgrWin* selfAsBgrWin)
+void ListWin::onMouseDown(Point point, int buttonNumber)
 {
-	static_cast<ListWin*>(selfAsBgrWin)->draw();
+	 //if out of bounds, don't do anything
+	if(point.x < padding.x or point.y < padding.y) return;
+
+	 //clears the selection
+	this->selection.assign(this->selection.size(), false);
+
+	//infer index by mouse position
+	unsigned index = (point.y - padding.y) / (TTF_FontHeight(textRenderer->ttf_font) + spacing);
+
+	 //set selected item if inside range
+	if(index < this->model->size())
+		this->selection[index].flip();
+
+	 //redraw
+	this->draw_blit_upd();
+}
+
+void ListWin::onMouseMove(Point point, int buttonNumber) {}  // by default does nothing
+
+void ListWin::onMouseUp(Point point, int buttonNumber) {}  // by default does nothing
+
+// ++++++++++++++  to be used when referencing ListWin's as a BgrWin's.  ++++++++++++++
+
+void ListWin::drawBgrWinAsListWin(BgrWin* listWinAsBgrWin)
+{
+	static_cast<ListWin*>(listWinAsBgrWin)->draw();
+}
+
+void ListWin::onMouseDown(BgrWin* listWinAsBgrWin,int x,int y,int but)
+{
+	static_cast<ListWin*>(listWinAsBgrWin)->onMouseDown(Point(x, y), but);
+}
+
+void ListWin::onMouseMove(BgrWin* listWinAsBgrWin,int x,int y,int but)
+{
+	static_cast<ListWin*>(listWinAsBgrWin)->onMouseMove(Point(x, y), but);
+}
+
+void ListWin::onMouseUp(BgrWin* listWinAsBgrWin,int x,int y,int but)
+{
+	static_cast<ListWin*>(listWinAsBgrWin)->onMouseUp(Point(x, y), but);
 }

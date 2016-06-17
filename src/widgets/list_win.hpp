@@ -36,17 +36,29 @@ namespace WidgetsExtra
 		void setListData(const std::vector<StringCastableType>& data)
 		{
 			model = new StringableTypeUIListModel<StringCastableType>(data);
+			selection.clear();
+			selection.insert(selection.begin(), data.size(), false);
 		}
 
 		template<typename StringableType>
 		void setListData(const std::vector<StringableType>& data, std::string (*stringfyFunction)(StringableType value))
 		{
 			model = new StringableTypeUIListModel<StringableType>(data, stringfyFunction);
+			selection.clear();
+			selection.insert(selection.begin(), data.size(), false);
 		}
+
+		protected:
+		virtual void onMouseDown(Point point, int buttonNumber);
+		virtual void onMouseMove(Point point, int buttonNumber); // by default does nothing
+		virtual void onMouseUp(Point point, int buttonNumber); // by default does nothing
 
 		private:
 		//compatibility function (with BgrWin pointers)
 		static void drawBgrWinAsListWin(BgrWin* bgrWin);
+		static void onMouseDown(BgrWin* bgr,int x,int y,int but);
+		static void onMouseMove(BgrWin* bgr,int x,int y,int but);
+		static void onMouseUp(BgrWin* bgr,int x,int y,int but);
 	};
 }
 
