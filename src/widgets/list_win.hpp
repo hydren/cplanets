@@ -21,7 +21,8 @@ namespace WidgetsExtra
 
 		Point padding;
 		unsigned spacing;
-		RenderText* textRenderer;
+		RenderText* textRenderer, *textRendererCaseSelected;
+		Uint32 bgcolCaseSelected;
 
 		//can be called only after a TopWin has been constructed
 		ListWin(WinBase *parent, Style, Rect rect, Id id=0);

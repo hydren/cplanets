@@ -8,13 +8,17 @@
 #include "list_win.hpp"
 
 #include "widgets_util.hpp"
+#include "SDL_util.hpp"
 
 using WidgetsExtra::ListWin;
 using std::vector;
 
 ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
 : BgrWin(parent, rect, null, drawBgrWinAsListWin, onMouseDown, onMouseMove, onMouseUp, calc_color(0xffffffff), id),
-  model(new DefaultUIListModel()), selection(), padding(1,1), spacing(1), textRenderer(draw_ttf)
+  model(new DefaultUIListModel()), selection(),
+  padding(1,1), spacing(1),
+  textRenderer(draw_ttf), textRendererCaseSelected(draw_blue_ttf),
+  bgcolCaseSelected(calc_color(0xff80D8F0))
 {}
 
 void ListWin::setListData(const std::vector<std::string>& data)
@@ -49,9 +53,12 @@ void ListWin::draw()
 		if(selection[index] == true)
 		{
 			selectedLineRect.y = itemLocation.y;
-			SDL_FillRect(this->win, &selectedLineRect, parent->bgcol);
+			SDL_FillRect(this->win, &selectedLineRect, bgcolCaseSelected);
+			this->textRendererCaseSelected->draw_string(this->win, itemStr.c_str(), itemLocation);
 		}
-		this->textRenderer->draw_string(this->win, itemStr.c_str(), itemLocation);
+		else
+			this->textRenderer->draw_string(this->win, itemStr.c_str(), itemLocation);
+
 		itemLocation.y += lineHeight + this->spacing;
 	}
 }

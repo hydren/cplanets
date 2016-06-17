@@ -426,7 +426,7 @@ void CPlanets::showMainWindow()
 //	ls.push_back(new Vector2D(5,-8));
 
 	WidgetsExtra::ListWin lw (window, 0, Rect(32, 96, 128, 256));
-	lw.bgcol = calc_color(0xffefefdd);
+	lw.bgcol = calc_color(0xffdfdfdd);
 	lw.setListData<Vector2D>(ls, WidgetsExtra::stringfy_by_method_const<Vector2D, &Vector2D::toString>);
 
 	vector<string> test = lw.model->getStringfiedList();
