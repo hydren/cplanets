@@ -17,16 +17,26 @@ DefaultUIListModel::DefaultUIListModel()
 : data()
 {}
 
-DefaultUIListModel::DefaultUIListModel(const std::vector<std::string>& data)
+DefaultUIListModel::DefaultUIListModel(const vector<string>& data)
 : data(data)
 {}
 
 string DefaultUIListModel::getStringfiedElementAt(unsigned index)
 {
-	return data.at(index);
+	return this->data.at(index);
 }
 
 unsigned DefaultUIListModel::size()
 {
-	return data.size();
+	return this->data.size();
+}
+
+void DefaultUIListModel::updateData(const vector<string>& data)
+{
+	this->data = data;
+}
+
+void DefaultUIListModel::updateData(void* data)
+{
+	this->updateData(*static_cast<vector<string>*>(data));
 }

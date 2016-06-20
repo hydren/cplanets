@@ -18,8 +18,16 @@ namespace WidgetsExtra
 	struct UIListModel
 	{
 		virtual ~UIListModel() {};
+
+		/// Returns the string value of the element at the specified index.
 		virtual std::string getStringfiedElementAt(unsigned index) abstract;
+
+		/// Returns the length of the list.
 		virtual unsigned size() abstract;
+
+		/// (Optional) Updates the inner data of this model.
+		/// Behavior and expected type and format of the given data are implementation-defined.
+		virtual void updateData(void* data) {}
 	};
 }
 

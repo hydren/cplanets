@@ -33,7 +33,12 @@ namespace WidgetsExtra
 		: data(data), stringfyFunction(stringfyFunction) {}
 
 		virtual std::string getStringfiedElementAt(unsigned index) { return stringfyFunction(data.at(index)); }
+
 		virtual unsigned size() { return data.size(); }
+
+		virtual void updateData(const std::vector<StringableType>& data) { this->data = data; }
+
+		virtual void updateData(void* data) { this->updateData(*static_cast<std::vector<StringableType>*>(data)); }
 
 		protected:
 		std::vector<StringableType> data;

@@ -20,6 +20,8 @@ namespace WidgetsExtra
 
 		virtual std::string getStringfiedElementAt(unsigned index);
 		virtual unsigned size();
+		virtual void updateData(const std::vector<std::string>& data);
+		virtual void updateData(void* data);
 
 		protected:
 		std::vector<std::string> data;
