@@ -24,6 +24,11 @@ ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
   bgcolCaseSelected(calc_color(0xffA0D0E0))
 {}
 
+ListWin::~ListWin()
+{
+	delete model;
+}
+
 void ListWin::setListData(const std::vector<std::string>& data, bool redrawImmediately)
 {
 	this->setListModel(new DefaultUIListModel(data), redrawImmediately);
@@ -47,11 +52,6 @@ void ListWin::updateListData(void* data, bool redrawImmediately)
 	this->selection.clear();
 	this->selection.insert(this->selection.begin(), model->size(), false);
 	if(sdl_running and redrawImmediately) this->draw_blit_upd();
-}
-
-ListWin::~ListWin()
-{
-	delete model;
 }
 
 void ListWin::draw()
@@ -80,6 +80,11 @@ void ListWin::draw()
 
 		itemLocation.y += lineHeight + this->spacing;
 	}
+}
+
+unsigned ListWin::getListHeight()
+{
+	return this->model->size() * (TTF_FontHeight(this->textRenderer->ttf_font) + this->spacing + this->padding.y);
 }
 
 void ListWin::onMouseDown(Point point, int buttonNumber)

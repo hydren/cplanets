@@ -815,7 +815,7 @@ void updateSizeTxtBodies()
 	unsigned height2 = sclpBodies->tw_area.h;
 
 	if(txtBodies->model->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
-		height2 = Math::max((txtBodies->model->size()+1)*TDIST + 4, (unsigned) sclpBodies->tw_area.h);
+		height2 = Math::max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
 
 	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
 	{

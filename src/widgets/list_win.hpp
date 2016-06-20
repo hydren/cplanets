@@ -34,6 +34,7 @@ namespace WidgetsExtra
 		void setListData(const std::vector<std::string>& data, bool redrawImmediately=false);
 		void setListModel(UIListModel* model, bool redrawImmediately=false, bool deletePrevious=true);
 		void updateListData(void* data, bool redrawImmediately=false);
+		virtual unsigned getListHeight();
 
 		protected:
 		virtual void onMouseDown(Point point, int buttonNumber);
