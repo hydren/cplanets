@@ -30,8 +30,9 @@
 #include "widgets/toogle_button.hpp"
 #include "widgets/file_dialog.hpp"
 #include "widgets/scrollable_pane.hpp"
-
 #include "widgets/list_win.hpp"
+
+#include "widgets/list_model_extra.hpp"
 
 using std::cout;
 using std::endl;
@@ -53,6 +54,7 @@ using WidgetsExtra::ToogleButton;
 using WidgetsExtra::FileDialog;
 using WidgetsExtra::ScrollablePane;
 using WidgetsExtra::DialogBgrWin;
+using WidgetsExtra::ListWin;
 
 //**********************************************************************************
 // workaround to reroute output stream to console
@@ -427,14 +429,8 @@ void CPlanets::showMainWindow()
 
 	WidgetsExtra::ListWin lw (window, 0, Rect(32, 96, 128, 256));
 	lw.bgcol = calc_color(0xffdfdfdd);
-	lw.setListData<Vector2D>(ls, WidgetsExtra::stringfy_by_method_const<Vector2D, &Vector2D::toString>);
-
+	lw.setListModel(new WidgetsExtra::StringableTypeUIListModel<Vector2D>(ls, String::Callbacks::stringfy_by_method_const<Vector2D, &Vector2D::toString>));
 	cout << lw.model->size() << endl;
-
-	//																													aqui entra o kaoh (nao sei se vai rolar com os ListModel)
-//	WidgetsExtra::StringableTypeUIListModel<string> model(ls);
-
-//	model.getStringfiedList();
 
 	//start
 	planetarium->setRunning();

@@ -11,7 +11,10 @@
 #include "SDL_util.hpp"
 
 using WidgetsExtra::ListWin;
+using WidgetsExtra::DefaultUIListModel;
+
 using std::vector;
+
 
 ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
 : BgrWin(parent, rect, null, drawBgrWinAsListWin, onMouseDown, onMouseMove, onMouseUp, calc_color(0xffffffff), id),
@@ -21,13 +24,21 @@ ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
   bgcolCaseSelected(calc_color(0xffA0D0E0))
 {}
 
-void ListWin::setListData(const std::vector<std::string>& data)
+void ListWin::setListData(const std::vector<std::string>& data, bool redrawImmediately)
 {
-	UIListModel* old = this->model;
-	this->model = new DefaultUIListModel(data);
+	this->setListModel(new DefaultUIListModel(data), redrawImmediately);
+}
+
+void ListWin::setListModel(UIListModel* model, bool redrawImmediately, bool deletePrevious)
+{
+	UIListModel* previousModel = this->model;
+
+	this->model = model;
 	this->selection.clear();
-	this->selection.insert(this->selection.begin(), data.size(), false);
-	if(old != null) delete old;
+	this->selection.insert(this->selection.begin(), model->size(), false);
+
+	if(sdl_running and redrawImmediately) this->draw_blit_upd();
+	if(deletePrevious and previousModel != null) delete previousModel;
 }
 
 ListWin::~ListWin()

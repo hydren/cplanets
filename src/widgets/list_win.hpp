@@ -9,7 +9,7 @@
 #define WIDGETS_LIST_WIN_HPP_
 
 #include "SDL_widgets/SDL_widgets.h"
-#include "list_models.hpp"
+#include "list_model.hpp"
 
 namespace WidgetsExtra
 {
@@ -31,23 +31,8 @@ namespace WidgetsExtra
 
 		virtual void draw();
 
-		void setListData(const std::vector<std::string>& data);
-
-		template<typename StringCastableType>
-		void setListData(const std::vector<StringCastableType>& data)
-		{
-			model = new StringableTypeUIListModel<StringCastableType>(data);
-			selection.clear();
-			selection.insert(selection.begin(), data.size(), false);
-		}
-
-		template<typename StringableType>
-		void setListData(const std::vector<StringableType>& data, std::string (*stringfyFunction)(StringableType value))
-		{
-			model = new StringableTypeUIListModel<StringableType>(data, stringfyFunction);
-			selection.clear();
-			selection.insert(selection.begin(), data.size(), false);
-		}
+		void setListData(const std::vector<std::string>& data, bool redrawImmediately=false);
+		void setListModel(UIListModel* model, bool redrawImmediately=false, bool deletePrevious=true);
 
 		protected:
 		virtual void onMouseDown(Point point, int buttonNumber);
