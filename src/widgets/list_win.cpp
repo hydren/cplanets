@@ -84,7 +84,7 @@ void ListWin::draw()
 
 unsigned ListWin::getListHeight()
 {
-	return this->model->size() * (TTF_FontHeight(this->textRenderer->ttf_font) + this->spacing + this->padding.y);
+	return this->padding.y + this->model->size() * (TTF_FontHeight(this->textRenderer->ttf_font) + this->spacing);
 }
 
 void ListWin::onMouseDown(Point point, int buttonNumber)
