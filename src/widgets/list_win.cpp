@@ -41,6 +41,14 @@ void ListWin::setListModel(UIListModel* model, bool redrawImmediately, bool dele
 	if(deletePrevious and previousModel != null) delete previousModel;
 }
 
+void ListWin::updateListData(void* data, bool redrawImmediately)
+{
+	this->model->updateData(data);
+	this->selection.clear();
+	this->selection.insert(this->selection.begin(), model->size(), false);
+	if(sdl_running and redrawImmediately) this->draw_blit_upd();
+}
+
 ListWin::~ListWin()
 {
 	delete model;
