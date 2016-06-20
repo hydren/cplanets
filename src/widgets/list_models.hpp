@@ -55,7 +55,7 @@ namespace WidgetsExtra
 	struct UIListModel
 	{
 		virtual ~UIListModel() {};
-		virtual std::vector<std::string> getStringfiedList() abstract;
+		virtual std::string getStringfiedElementAt(unsigned index) abstract;
 		virtual unsigned size() abstract;
 	};
 
@@ -65,7 +65,7 @@ namespace WidgetsExtra
 		DefaultUIListModel() : data() {}
 		DefaultUIListModel(const std::vector<std::string>& data) : data(data) {}
 
-		virtual std::vector<std::string> getStringfiedList() { return data; }
+		virtual std::string getStringfiedElementAt(unsigned index) { return data.at(index); }
 		virtual unsigned size() { return data.size(); }
 
 		protected:
@@ -92,16 +92,7 @@ namespace WidgetsExtra
 		StringableTypeUIListModel(const std::vector<StringableType>& data, std::string (*stringfyFunction)(StringableType))
 		: data(data), stringfyFunction(stringfyFunction) {}
 
-		virtual std::vector<std::string> getStringfiedList()
-		{
-			std::vector<std::string> lines;
-			foreach(StringableType&, obj, typename std::vector<StringableType>, data)
-			{
-				lines.push_back(stringfyFunction(obj));
-			}
-			return lines;
-		}
-
+		virtual std::string getStringfiedElementAt(unsigned index) { return stringfyFunction(data.at(index)); }
 		virtual unsigned size() { return data.size(); }
 
 		protected:

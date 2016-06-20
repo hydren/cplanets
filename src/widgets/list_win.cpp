@@ -18,7 +18,7 @@ ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
   model(new DefaultUIListModel()), selection(),
   padding(1,1), spacing(1),
   textRenderer(draw_ttf), textRendererCaseSelected(draw_blue_ttf),
-  bgcolCaseSelected(calc_color(0xff80D8F0))
+  bgcolCaseSelected(calc_color(0xffA0D0E0))
 {}
 
 void ListWin::setListData(const std::vector<std::string>& data)
@@ -40,16 +40,16 @@ void ListWin::draw()
 	this->init_gui();
 	SDL_FillRect(this->win, null, this->bgcol);
 
-	vector<string> listItems = this->model->getStringfiedList();
 	const unsigned lineHeight = TTF_FontHeight(this->textRenderer->ttf_font);
 
 	SDL_Rect selectedLineRect = SDL_Rect(); //area to draw selected item background
 	selectedLineRect.w = this->tw_area.w; selectedLineRect.h = lineHeight;
 
 	Point itemLocation = this->padding; //start after padding
-	foreach(string&, itemStr, vector<string>, listItems)
+
+	for(unsigned index = 0; index < model->size(); index++)
 	{
-		const unsigned index = inner_iterator(itemStr) - listItems.begin();
+		string itemStr = model->getStringfiedElementAt(index);
 		if(selection[index] == true)
 		{
 			selectedLineRect.y = itemLocation.y;

@@ -429,8 +429,7 @@ void CPlanets::showMainWindow()
 	lw.bgcol = calc_color(0xffdfdfdd);
 	lw.setListData<Vector2D>(ls, WidgetsExtra::stringfy_by_method_const<Vector2D, &Vector2D::toString>);
 
-	vector<string> test = lw.model->getStringfiedList();
-	cout << lw.model->getStringfiedList().size() << endl;
+	cout << lw.model->size() << endl;
 
 	//																													aqui entra o kaoh (nao sei se vai rolar com os ListModel)
 //	WidgetsExtra::StringableTypeUIListModel<string> model(ls);
