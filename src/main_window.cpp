@@ -760,6 +760,7 @@ void onUserEvent(int cmd,int param,int param2)
 	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
 	{
 		updateSizeTxtBodies();
+		sclpBodies->draw_blit_recur();
 		txtBodies->draw_blit_upd();
 	}
 }
