@@ -60,6 +60,20 @@ void ScrollablePane::widenContent(int dx, int dy)
 	content.widen(dx, dy);
 	scrollbarHorizontal.set_range(content.tw_area.w);
 	scrollbarVertical.set_range(content.tw_area.h);
+
+	// stabilize scrollbars
+	if(content.tw_area.h + offset.y < this->tw_area.h)
+	{
+		const int diff = content.tw_area.h + offset.y - this->tw_area.h;
+		scrollbarVertical.p0 = 0;
+		scrollbarVertical.calc_ypos(diff);
+	}
+	if(content.tw_area.w + offset.x < this->tw_area.w)
+	{
+		const int diff = content.tw_area.w + offset.x - this->tw_area.w;
+		scrollbarHorizontal.p0 = 0;
+		scrollbarHorizontal.calc_xpos(diff);
+	}
 }
 
 void ScrollablePane::setScrollbarVerticalVisible(bool visibleDesired)
