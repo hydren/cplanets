@@ -21,7 +21,8 @@ ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
   model(new DefaultUIListModel()), selection(),
   padding(1,1), spacing(1),
   textRenderer(draw_ttf), textRendererCaseSelected(draw_blue_ttf),
-  bgcolCaseSelected(calc_color(0xffA0D0E0))
+  bgcolCaseSelected(calc_color(0xffA0D0E0)),
+  preventRedrawOnClick(false)
 {}
 
 ListWin::~ListWin()
@@ -87,7 +88,7 @@ unsigned ListWin::getListHeight()
 	return this->padding.y + this->model->size() * (TTF_FontHeight(this->textRenderer->ttf_font) + this->spacing);
 }
 
-void ListWin::onMouseDown(Point point, int buttonNumber)
+void ListWin::clickList(const Point& point)
 {
 	 //if out of bounds, don't do anything
 	if(point.x < padding.x or point.y < padding.y) return;
@@ -101,9 +102,14 @@ void ListWin::onMouseDown(Point point, int buttonNumber)
 	 //set selected item if inside range
 	if(index < this->model->size())
 		this->selection[index].flip();
+}
 
-	 //redraw
-	this->draw_blit_upd();
+void ListWin::onMouseDown(Point point, int buttonNumber)
+{
+	if(buttonNumber != SDL_BUTTON_RIGHT) return; // only accepts left-button clicks
+	this->clickList(point);
+	if(preventRedrawOnClick) return;
+	this->draw_blit_upd(); // redraw
 }
 
 void ListWin::onMouseMove(Point point, int buttonNumber) {}  // by default does nothing

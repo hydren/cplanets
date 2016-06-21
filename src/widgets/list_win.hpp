@@ -24,6 +24,9 @@ namespace WidgetsExtra
 		RenderText* textRenderer, *textRendererCaseSelected;
 		Uint32 bgcolCaseSelected;
 
+		/// (Advanced) Flag used to tweak the behavior of clicking on the list.
+		bool preventRedrawOnClick;
+
 		//can be called only after a TopWin has been constructed
 		ListWin(WinBase *parent, Style, Rect rect, Id id=0);
 
@@ -35,6 +38,7 @@ namespace WidgetsExtra
 		void setListModel(UIListModel* model, bool redrawImmediately=false, bool deletePrevious=true);
 		void updateListData(void* data, bool redrawImmediately=false);
 		virtual unsigned getListHeight();
+		virtual void clickList(const Point& point);
 
 		protected:
 		virtual void onMouseDown(Point point, int buttonNumber);
