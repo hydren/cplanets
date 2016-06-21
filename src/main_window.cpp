@@ -33,6 +33,7 @@
 #include "widgets/list_win.hpp"
 
 #include "widgets/list_model_extra.hpp"
+#include "widgets/widgets_debug.hpp"
 
 using std::cout;
 using std::endl;
@@ -85,6 +86,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
+void callbackTxtBodiesClicked(BgrWin* listWinAsBgrWin,int x,int y,int but);
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
@@ -235,6 +237,8 @@ void CPlanets::showMainWindow()
 			sclpBodies->tw_area.h);
 	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
 	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
+	txtBodies->preventRedrawOnClick = true;
+	txtBodies->down_cmd = callbackTxtBodiesClicked;
 
 	// Tab options
 	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
@@ -407,6 +411,8 @@ void CPlanets::showMainWindow()
 	sclpAboutLicense->setScrollbarHorizontalVisible(false);
 
 //	print_h(); //DEBUG
+//	cout << "\n" << "Deep analysis:" << endl;
+//	WidgetsExtra::print_hierarchy(window);
 
 ////	vector<string> ls;
 ////	ls.push_back("jaguar");
@@ -754,14 +760,15 @@ void onUserEvent(int cmd,int param,int param2)
 	if(cmd == Planetarium::USER_EVENT_ID__REDRAW_REQUESTED)
 	{
 		if(param == planetarium->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
+		{
 			planetarium->doRefresh();
+		}
 	}
 
 	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
 	{
 		updateSizeTxtBodies();
-		sclpBodies->draw_blit_recur();
-		txtBodies->draw_blit_upd();
+		sclpBodies->refresh();
 	}
 }
 
@@ -825,6 +832,13 @@ void updateSizeTxtBodies()
 	}
 }
 
+void callbackTxtBodiesClicked(BgrWin* var, int x, int y, int but)
+{
+	if(but != SDL_BUTTON_LEFT) return; // only accepts left-button clicks
+	txtBodies->clickList(Point(x, y));
+	sclpBodies->refresh();
+}
+
 void adjustAboutDialog()
 {
 	if(dialogAboutTextLines == null)
@@ -839,7 +853,7 @@ void adjustAboutDialog()
 	if(totalSize > sclpAboutLicense->content.tw_area.h)
 	{
 		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
-		sclpAboutLicense->updateOffset();
+		sclpAboutLicense->refresh();
 	}
 }
 
