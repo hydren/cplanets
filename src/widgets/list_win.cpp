@@ -41,7 +41,7 @@ void ListWin::setListModel(UIListModel* model, bool redrawImmediately, bool dele
 
 	this->model = model;
 	this->selection.clear();
-	this->selection.insert(this->selection.begin(), model->size(), false);
+	this->selection.fit(model->size());
 
 	if(sdl_running and redrawImmediately) this->draw_blit_upd();
 	if(deletePrevious and previousModel != null) delete previousModel;
@@ -51,7 +51,7 @@ void ListWin::updateListData(void* data, bool redrawImmediately)
 {
 	this->model->updateData(data);
 	this->selection.clear();
-	this->selection.insert(this->selection.begin(), model->size(), false);
+	this->selection.fit(model->size());
 	if(sdl_running and redrawImmediately) this->draw_blit_upd();
 }
 
@@ -70,7 +70,7 @@ void ListWin::draw()
 	for(unsigned index = 0; index < model->size(); index++)
 	{
 		string itemStr = model->getStringfiedElementAt(index);
-		if(selection[index] == true)
+		if(selection.isSelected(index))
 		{
 			selectedLineRect.y = itemLocation.y;
 			SDL_FillRect(this->win, &selectedLineRect, bgcolCaseSelected);
@@ -94,14 +94,14 @@ void ListWin::clickList(const Point& point)
 	if(point.x < padding.x or point.y < padding.y) return;
 
 	 //clears the selection
-	this->selection.assign(this->selection.size(), false);
+	this->selection.clear();
 
 	//infer index by mouse position
 	unsigned index = (point.y - padding.y) / (TTF_FontHeight(textRenderer->ttf_font) + spacing);
 
 	 //set selected item if inside range
 	if(index < this->model->size())
-		this->selection[index].flip();
+		this->selection.setSelected(index);
 }
 
 void ListWin::onMouseDown(Point point, int buttonNumber)

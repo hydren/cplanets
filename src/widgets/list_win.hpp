@@ -10,6 +10,7 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 #include "list_model.hpp"
+#include "list_selection_model.hpp"
 
 namespace WidgetsExtra
 {
@@ -17,7 +18,7 @@ namespace WidgetsExtra
 	struct ListWin extends BgrWin
 	{
 		UIListModel* model;
-		std::vector<bool> selection;
+		ListSelectionModel selection;
 
 		Point padding;
 		unsigned spacing;
