@@ -7,40 +7,53 @@
 
 #include "list_selection_model.hpp"
 
+#include <cstddef>
+#include <algorithm>
+
 using WidgetsExtra::ListSelectionModel;
 using std::vector;
+
+ListSelectionModel::ListSelectionModel()
+: onChange(NULL), selection(), listeners(NULL)
+{}
 
 void ListSelectionModel::select(unsigned index)
 {
 	selection.at(index) = true;
+	notify(index);
 }
 
 void ListSelectionModel::select(unsigned startIndex, unsigned endIndex)
 {
 	for(unsigned i = startIndex; i <= endIndex; i++)
 		selection.at(i) = true;
+	notify(startIndex, endIndex);
 }
 
 void ListSelectionModel::unselect(unsigned index)
 {
 	selection.at(index) = false;
+	notify(index);
 }
 
 void ListSelectionModel::unselect(unsigned startIndex, unsigned endIndex)
 {
 	for(unsigned i = startIndex; i <= endIndex; i++)
 		selection.at(i) = false;
+	notify(startIndex, endIndex);
 }
 
 void ListSelectionModel::toogle(unsigned index)
 {
 	selection.at(index).flip();
+	notify(index);
 }
 
 void ListSelectionModel::toogle(unsigned startIndex, unsigned endIndex)
 {
 	for(unsigned i = startIndex; i <= endIndex; i++)
 		selection.at(i).flip();
+	notify(startIndex, endIndex);
 }
 
 bool ListSelectionModel::isSelected() const
@@ -112,7 +125,27 @@ void ListSelectionModel::setSelectedIndexes(const std::vector<unsigned>& indexes
 
 void ListSelectionModel::clear()
 {
-	selection.assign(selection.size(), false);
+	if(onChange == NULL && (listeners == NULL || listeners->size() == 0))
+		selection.assign(selection.size(), false); //doesn't need to notify anyone, use raw function
+
+	else //notify along assignment
+	{
+		long currentChangeStartIndex = -1; // start of current changing interval
+		for(unsigned i = 0; i < selection.size(); i++)
+		{
+			bool wasTrue = (selection[i] == true); // a change
+			selection[i] = false;
+			if(wasTrue and currentChangeStartIndex == -1)
+			{
+				currentChangeStartIndex = i;
+			}
+			else if(not wasTrue and currentChangeStartIndex != -1)
+			{
+				notify(currentChangeStartIndex, i-1);
+				currentChangeStartIndex = -1;
+			}
+		}
+	}
 }
 
 void ListSelectionModel::shift(bool up, unsigned index)
@@ -121,6 +154,11 @@ void ListSelectionModel::shift(bool up, unsigned index)
 		selection.erase(selection.begin() + index);
 	else
 		selection.insert(selection.begin() + index, false);
+
+	if(index < selection.size())
+		notify(index, selection.size()-1);
+//	else
+//		notify(); //xxx should we notify this?
 }
 
 void ListSelectionModel::fit(unsigned size)
@@ -130,4 +168,39 @@ void ListSelectionModel::fit(unsigned size)
 			selection.push_back(false);
 		else
 			selection.pop_back();
+
+	//xxx should we notify this?
+}
+
+void ListSelectionModel::listenerAdd(Listener* listener)
+{
+	if(std::find(listeners->begin(), listeners->end(), listener) == listeners->end())
+		listeners->push_back(listener);
+}
+
+void ListSelectionModel::listenerRemove(Listener* listener)
+{
+	vector<Listener*>::iterator it = std::find(listeners->begin(), listeners->end(), listener);
+	if(it != listeners->end())
+		listeners->erase(it);
+}
+
+void ListSelectionModel::notify()
+{
+	notify(0, selection.size()-1);
+}
+
+void ListSelectionModel::notify(unsigned index)
+{
+	notify(index, index);
+}
+
+void ListSelectionModel::notify(unsigned index, unsigned endIndex)
+{
+	if(onChange != NULL)
+		onChange(index, endIndex);
+
+	if(listeners != NULL)
+		for(unsigned i = 0; i < listeners->size(); i++)
+			listeners->at(i)->onChange(index, endIndex);
 }

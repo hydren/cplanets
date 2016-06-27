@@ -87,6 +87,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
 void callbackTxtBodiesClicked(BgrWin* listWinAsBgrWin,int x,int y,int but);
+void callbackListSelectionChanged(unsigned, unsigned);
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
@@ -239,6 +240,7 @@ void CPlanets::showMainWindow()
 	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
 	txtBodies->preventRedrawOnClick = true;
 	txtBodies->down_cmd = callbackTxtBodiesClicked;
+	txtBodies->selection.onChange = callbackListSelectionChanged;
 
 	// Tab options
 	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
@@ -837,6 +839,12 @@ void callbackTxtBodiesClicked(BgrWin* var, int x, int y, int but)
 	if(but != SDL_BUTTON_LEFT) return; // only accepts left-button clicks
 	txtBodies->clickList(Point(x, y));
 	sclpBodies->refresh();
+}
+
+void callbackListSelectionChanged(unsigned ind0, unsigned ind1)
+{
+	cout << "I will set the focused bodies as the selected ones in [" << ind0 << ", " << ind1 << "]" << endl;
+//	planetarium->focusedBodies
 }
 
 void adjustAboutDialog()

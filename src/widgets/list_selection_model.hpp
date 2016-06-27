@@ -14,6 +14,8 @@ namespace WidgetsExtra
 {
 	struct ListSelectionModel
 	{
+		ListSelectionModel();
+
 		/// Makes the given index selected. Any previous selection will also remain.
 		void select(unsigned index);
 		/// Makes the given index interval selected (startIndex, endIndex). Any previous selection will also remain.
@@ -65,8 +67,32 @@ namespace WidgetsExtra
 		/// @param size the size to fit the selection model
 		void fit(unsigned size);
 
+		/// Optional callback to be called when a change in the selection is made.
+		/// If a selection or a deselection is made on a single index ('index'='endIndex') or a contiguous interval, this function is called.
+		/// If more than one interval is selected, multiple calls to this function is made - each call for each contiguous interval.
+		void (*onChange)(unsigned index, unsigned endIndex);
+
+		/// A simple listener for ListSelectionModel. Subclass this struct and register to the listeners list to get called on selection changes.
+		struct Listener
+		{
+			/// Method to be called in the listener when a change in the selection is made.
+			/// If a selection or a deselection is made on a single index ('index'='endIndex') or a contiguous interval, this function is called.
+			/// If more than one interval is selected, multiple calls to this function is made - each call for each contiguous interval.
+			virtual void onChange(unsigned index, unsigned endIndex)=0;
+		};
+
+		/// Adds a Listener to this ListSelectionModel's list of listeners. If the given listener is already added, nothing happens.
+		void listenerAdd(Listener* listener);
+		/// Removes a Listener from this ListSelectionModel's list of listeners. If the given listener wasn't in the list, nothing happens.
+		void listenerRemove(Listener* listener);
+
 		protected:
 		std::vector<bool> selection;
+		std::vector<Listener*>* listeners;
+
+		void notify();
+		void notify(unsigned index);
+		void notify(unsigned index, unsigned endIndex);
 	};
 }
 
