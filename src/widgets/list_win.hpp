@@ -43,6 +43,7 @@ namespace WidgetsExtra
 		virtual void clickList(const Point& point);
 
 		protected:
+		unsigned lastClickedIndex;
 		virtual void onMouseDown(Point point, int buttonNumber);
 		virtual void onMouseMove(Point point, int buttonNumber); // by default does nothing
 		virtual void onMouseUp(Point point, int buttonNumber); // by default does nothing

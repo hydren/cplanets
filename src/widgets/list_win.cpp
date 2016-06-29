@@ -22,7 +22,8 @@ ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
   padding(1,1), spacing(1),
   textRenderer(draw_ttf), textRendererCaseSelected(draw_blue_ttf),
   bgcolCaseSelected(calc_color(0xffA0D0E0)),
-  preventRedrawOnClick(false)
+  preventRedrawOnClick(false),
+  lastClickedIndex(0)
 {}
 
 ListWin::~ListWin()
@@ -112,19 +113,21 @@ void ListWin::clickList(const Point& point)
 		else // click-wise selection only
 		{
 			this->selection.toogle(index);
+			this->lastClickedIndex = index;
 		}
 	}
 
 	else if(SDL_GetModState() & KMOD_SHIFT) // check if multi selection
 	{
-		if(index > this->selection.getSelected())
-			this->selection.setSelected(this->selection.getSelected(), index); // set range selected
+		if(index > lastClickedIndex)
+			this->selection.setSelected(lastClickedIndex, index); // set range selected
 		else
-			this->selection.setSelected(index, this->selection.getSelected()); // set range selected (inverted)
+			this->selection.setSelected(index, lastClickedIndex); // set range selected (inverted)
 	}
 	else // single selection
 	{
 		this->selection.setSelected(index);
+		this->lastClickedIndex = index;
 	}
 }
 
