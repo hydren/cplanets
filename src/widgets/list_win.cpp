@@ -93,15 +93,27 @@ void ListWin::clickList(const Point& point)
 	 //if out of bounds, don't do anything
 	if(point.x < padding.x or point.y < padding.y) return;
 
-	 //clears the selection
-	this->selection.clear();
-
 	//infer index by mouse position
 	unsigned index = (point.y - padding.y) / (TTF_FontHeight(textRenderer->ttf_font) + spacing);
 
-	 //set selected item if inside range
-	if(index < this->model->size())
+	//set selected item if inside range. if not, clear and leave
+	if(index > this->model->size() - 1)
+	{
+		this->selection.clear();
+		return;
+	}
+
+	if(SDL_GetModState() & KMOD_SHIFT) // check if multi selection
+	{
+		if(index > this->selection.getSelected())
+			this->selection.setSelected(this->selection.getSelected(), index); // set range selected
+		else
+			this->selection.setSelected(index, this->selection.getSelected()); // set range selected (inverted)
+	}
+	else // single selection
+	{
 		this->selection.setSelected(index);
+	}
 }
 
 void ListWin::onMouseDown(Point point, int buttonNumber)

@@ -93,6 +93,8 @@ namespace WidgetsExtra
 		void notify();
 		void notify(unsigned index);
 		void notify(unsigned index, unsigned endIndex);
+
+		void clear(unsigned except0, unsigned except1);
 	};
 }
 

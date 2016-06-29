@@ -100,17 +100,28 @@ vector<unsigned> ListSelectionModel::getSelectedIndexes() const
 
 void ListSelectionModel::setSelected(unsigned index)
 {
-	selection.assign(selection.size(), false);
-	selection.at(index) = true;
-	notify();
+	if(not isSelected()) //nothing selected before
+		select(index);
+	else
+	{
+		unsigned n, *indexes = getSelected(n);
+		if(n == 1 and indexes[0] == index) return; // only one selected and the same
+
+		clear();
+		select(index);
+	}
 }
 
 void ListSelectionModel::setSelected(unsigned startIndex, unsigned endIndex)
 {
-	selection.assign(selection.size(), false);
-	for(unsigned i = startIndex; i <= endIndex; i++)
-		selection.at(i) = true;
-	notify();
+	if(not isSelected())
+		select(startIndex, endIndex);
+	else
+	{
+		for(unsigned i = startIndex; i <= endIndex; i++)
+			selection.at(i) = true;
+		clear(startIndex, endIndex);
+	}
 }
 
 void ListSelectionModel::setSelected(const unsigned * indexes, unsigned n)
@@ -150,6 +161,25 @@ void ListSelectionModel::clear()
 				notify(currentChangeStartIndex, i-1);
 				currentChangeStartIndex = -1;
 			}
+		}
+	}
+}
+
+void ListSelectionModel::clear(unsigned exceptStart, unsigned exceptEnd)
+{
+	long currentChangeStartIndex = -1; // start of current changing interval
+	for(unsigned i = 0; i < selection.size(); i++)
+	{
+		bool changed = (selection[i] == true) or (i <= exceptEnd and i >= exceptStart); // a change
+		if(i > exceptEnd or i < exceptStart) selection[i] = false;
+		if(changed and currentChangeStartIndex == -1)
+		{
+			currentChangeStartIndex = i;
+		}
+		else if(not changed and currentChangeStartIndex != -1)
+		{
+			notify(currentChangeStartIndex, i-1);
+			currentChangeStartIndex = -1;
 		}
 	}
 }
