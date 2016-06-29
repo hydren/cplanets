@@ -23,6 +23,7 @@ ListWin::ListWin(WinBase *parent, Style, Rect rect, Id id)
   textRenderer(draw_ttf), textRendererCaseSelected(draw_blue_ttf),
   bgcolCaseSelected(calc_color(0xffA0D0E0)),
   preventRedrawOnClick(false),
+  adjustSelection(null),
   lastClickedIndex(0)
 {}
 
@@ -50,9 +51,14 @@ void ListWin::setListModel(UIListModel* model, bool redrawImmediately, bool dele
 
 void ListWin::updateListData(void* data, bool redrawImmediately)
 {
+	if(this->adjustSelection == null)  //no special selection adjuster specified
+	{
+		//default procedure, clear selection
+		this->selection.fit(model->size());
+		this->selection.clear();
+	}
+	else this->adjustSelection(selection, this->model->getData(), data); // special selection adjuster
 	this->model->updateData(data);
-	this->selection.fit(model->size());
-	this->selection.clear();
 	if(sdl_running and redrawImmediately) this->draw_blit_upd();
 }
 

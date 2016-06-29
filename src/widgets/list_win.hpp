@@ -29,6 +29,10 @@ namespace WidgetsExtra
 		/// If true, the list won't be re-drawed when clicked.
 		bool preventRedrawOnClick;
 
+		/// Optional function to be called to adjust this model's selection when changes occur in the list data related to this selection model.
+		/// If it is null (default), the selection will be cleared everytime the inner data changes.
+		void (*adjustSelection)(ListSelectionModel& selection, const void* oldDataPtr, const void* newDataPtr);
+
 		//can be called only after a TopWin has been constructed
 		ListWin(WinBase *parent, Style, Rect rect, Id id=0);
 
