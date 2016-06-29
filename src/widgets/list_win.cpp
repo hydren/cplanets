@@ -51,8 +51,8 @@ void ListWin::setListModel(UIListModel* model, bool redrawImmediately, bool dele
 void ListWin::updateListData(void* data, bool redrawImmediately)
 {
 	this->model->updateData(data);
-	this->selection.clear();
 	this->selection.fit(model->size());
+	this->selection.clear();
 	if(sdl_running and redrawImmediately) this->draw_blit_upd();
 }
 
