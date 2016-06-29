@@ -8,8 +8,6 @@
 #ifndef WIDGETS_ABSTRACT_LIST_MODEL_HPP_
 #define WIDGETS_ABSTRACT_LIST_MODEL_HPP_
 
-#include "futil/futil.hpp"
-
 #include <string>
 
 namespace WidgetsExtra
@@ -20,10 +18,10 @@ namespace WidgetsExtra
 		virtual ~UIListModel() {};
 
 		/// Returns the string value of the element at the specified index.
-		virtual std::string getStringfiedElementAt(unsigned index) abstract;
+		virtual std::string getStringfiedElementAt(unsigned index)=0;
 
 		/// Returns the length of the list.
-		virtual unsigned size() abstract;
+		virtual unsigned size()=0;
 
 		/// (Optional) Updates the inner data of this model.
 		/// Behavior and expected type and format of the given data are implementation-defined.
