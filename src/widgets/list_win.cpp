@@ -103,7 +103,19 @@ void ListWin::clickList(const Point& point)
 		return;
 	}
 
-	if(SDL_GetModState() & KMOD_SHIFT) // check if multi selection
+	if(SDL_GetModState() & KMOD_CTRL) // check if click-wise selection
+	{
+		if(SDL_GetModState() & KMOD_SHIFT) // check if click-wise, multi-selection
+		{
+			//todo needs to remember last selection
+		}
+		else // click-wise selection only
+		{
+			this->selection.toogle(index);
+		}
+	}
+
+	else if(SDL_GetModState() & KMOD_SHIFT) // check if multi selection
 	{
 		if(index > this->selection.getSelected())
 			this->selection.setSelected(this->selection.getSelected(), index); // set range selected
