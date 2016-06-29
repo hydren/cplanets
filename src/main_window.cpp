@@ -22,6 +22,8 @@
 #include "planetarium.hpp"
 #include "program_io.hpp"
 #include "widgets/widgets_util.hpp"
+#include "widgets/widgets_debug.hpp"
+
 #include "widgets/flow_layout.hpp"
 #include "widgets/spinner.hpp"
 #include "widgets/drop_menu.hpp"
@@ -31,9 +33,7 @@
 #include "widgets/file_dialog.hpp"
 #include "widgets/scrollable_pane.hpp"
 #include "widgets/list_win.hpp"
-
 #include "widgets/list_model_extra.hpp"
-#include "widgets/widgets_debug.hpp"
 #include "widgets/list_selection_model_extra.hpp"
 
 using std::cout;
@@ -57,6 +57,7 @@ using WidgetsExtra::FileDialog;
 using WidgetsExtra::ScrollablePane;
 using WidgetsExtra::DialogBgrWin;
 using WidgetsExtra::ListWin;
+using WidgetsExtra::AgnosticSelectionAdjustment;
 
 //**********************************************************************************
 // workaround to reroute output stream to console
@@ -238,7 +239,7 @@ void CPlanets::showMainWindow()
 			sclpBodies->tw_area.h);
 	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
 	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
-	txtBodies->adjustSelection = WidgetsExtra::AgnosticSelectionAdjustment::function<Body2D>;
+	txtBodies->adjustSelection = AgnosticSelectionAdjustment::function<Body2D>;
 	txtBodies->selection.onChange = callbackListSelectionChanged;
 	txtBodies->preventRedrawOnClick = true;
 
@@ -415,42 +416,6 @@ void CPlanets::showMainWindow()
 //	print_h(); //DEBUG
 //	cout << "\n" << "Deep analysis:" << endl;
 //	WidgetsExtra::print_hierarchy(window);
-
-////	vector<string> ls;
-////	ls.push_back("jaguar");
-////	ls.push_back("unicorn");
-//
-////	vector<string*> ls;
-////	ls.push_back(new string("jaguar"));
-////	ls.push_back(new string("unicorn"));
-//
-//	vector<Vector2D> ls;
-//	ls.push_back(Vector2D(0, 3));
-//	ls.push_back(Vector2D(5,-8));
-//	ls.push_back(Vector2D(3,-2));
-//	ls.push_back(Vector2D(-4,-1));
-//	ls.push_back(Vector2D(2,2));
-//	ls.push_back(Vector2D(2001,2007));
-//
-////	vector<Vector2D*> ls;
-////	ls.push_back(new Vector2D(0, 3));
-////	ls.push_back(new Vector2D(5,-8));
-//
-//	WidgetsExtra::ListWin lw (window, 0, Rect(32, 96, 128, 256));
-//	lw.bgcol = calc_color(0xffdfdfdd);
-//	lw.setListModel(new WidgetsExtra::StringableTypeUIListModel<Vector2D>(ls, String::Callbacks::stringfy_by_method_const<Vector2D, &Vector2D::toString>));
-//	cout << lw.model->size() << endl;
-//
-//	ls.erase(ls.end());
-//	ls.erase(ls.end());
-//	lw.updateListData(&ls);
-//	cout << lw.model->size() << endl;
-//
-//	ls.push_back(Vector2D(2015,2003));
-//	ls.push_back(Vector2D(-959,430));
-//	ls.push_back(Vector2D(-575,850));
-//	lw.updateListData(&ls);
-//	cout << lw.model->size() << endl;
 
 	//start
 	planetarium->setRunning();
