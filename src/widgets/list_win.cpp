@@ -108,7 +108,10 @@ void ListWin::clickList(const Point& point)
 	{
 		if(SDL_GetModState() & KMOD_SHIFT) // check if click-wise, multi-selection
 		{
-			//todo needs to remember last selection
+			if(index > lastClickedIndex)
+				this->selection.select(lastClickedIndex, index); // set range selected
+			else
+				this->selection.select(index, lastClickedIndex); // set range selected (inverted)
 		}
 		else // click-wise selection only
 		{
