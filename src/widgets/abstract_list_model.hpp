@@ -26,6 +26,10 @@ namespace WidgetsExtra
 		/// (Optional) Updates the inner data of this model.
 		/// Behavior and expected type and format of the given data are implementation-defined.
 		virtual void updateData(void* data) {}
+
+		/// (Optional) Returns the inner data of this model.
+		/// Behavior and expected type and format of the returned data are implementation-defined.
+		virtual void* getData() { return 0; }
 	};
 }
 

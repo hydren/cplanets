@@ -40,3 +40,8 @@ void DefaultUIListModel::updateData(void* data)
 {
 	this->updateData(*static_cast<vector<string>*>(data));
 }
+
+void* DefaultUIListModel::getData()
+{
+	return &this->data;
+}

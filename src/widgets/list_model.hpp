@@ -23,6 +23,7 @@ namespace WidgetsExtra
 		virtual unsigned size();
 		virtual void updateData(const std::vector<std::string>& data);
 		virtual void updateData(void* data);
+		virtual void* getData();
 
 		protected:
 		std::vector<std::string> data;

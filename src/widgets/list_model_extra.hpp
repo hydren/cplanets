@@ -41,6 +41,8 @@ namespace WidgetsExtra
 
 		virtual void updateData(void* data) { this->updateData(*static_cast<std::vector<StringableType>*>(data)); }
 
+		virtual void* getData() { return &this->data; }
+
 		protected:
 		std::vector<StringableType> data;
 		std::string (*stringfyFunction)(StringableType value);  //todo should stringfyFunction be a function that receives value by reference
