@@ -34,6 +34,7 @@
 
 #include "widgets/list_model_extra.hpp"
 #include "widgets/widgets_debug.hpp"
+#include "widgets/list_selection_model_extra.hpp"
 
 using std::cout;
 using std::endl;
@@ -237,6 +238,7 @@ void CPlanets::showMainWindow()
 			sclpBodies->tw_area.h);
 	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
 	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
+	txtBodies->adjustSelection = WidgetsExtra::AgnosticSelectionAdjustment::function<Body2D>;
 	txtBodies->selection.onChange = callbackListSelectionChanged;
 	txtBodies->preventRedrawOnClick = true;
 
