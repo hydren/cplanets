@@ -46,7 +46,7 @@ namespace WidgetsExtra
 		/// Makes the given index the selected one. All other indexes are deselected.
 		void setSelected(unsigned index);
 		/// Makes the given index interval the be the only selected indexes. All other indexes are deselected.
-		void setSelected(unsigned index, unsigned endIndex);
+		void setSelected(unsigned startIndex, unsigned endIndex);
 		/// Makes the given indexes the be the only selected ones. The number of indexes to select (in order) must be passed throught 'n'. All other indexes are deselected.
 		void setSelected(const unsigned* indexes, unsigned n);
 		/// Makes the indexes in the given vector the only selected ones. All other indexes are deselected.

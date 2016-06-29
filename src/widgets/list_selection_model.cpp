@@ -100,32 +100,38 @@ vector<unsigned> ListSelectionModel::getSelectedIndexes() const
 
 void ListSelectionModel::setSelected(unsigned index)
 {
-	clear();
-	select(index);
+	selection.assign(selection.size(), false);
+	selection.at(index) = true;
+	notify();
 }
 
-void ListSelectionModel::setSelected(unsigned index, unsigned endIndex)
+void ListSelectionModel::setSelected(unsigned startIndex, unsigned endIndex)
 {
-	clear();
-	select(index, endIndex);
+	selection.assign(selection.size(), false);
+	for(unsigned i = startIndex; i <= endIndex; i++)
+		selection.at(i) = true;
+	notify();
 }
 
 void ListSelectionModel::setSelected(const unsigned * indexes, unsigned n)
 {
-	clear();
+	selection.assign(selection.size(), false);
 	for(unsigned i = 0; i < n; i++)
-		select(indexes[i]);
+		selection.at(indexes[i]) = true;
+	notify();
 }
 
 void ListSelectionModel::setSelectedIndexes(const std::vector<unsigned>& indexes)
 {
+	selection.assign(selection.size(), false);
 	for(unsigned i = 0; i < indexes.size(); i++)
-		select(indexes[i]);
+		selection.at(indexes.at(i)) = true;
+	notify();
 }
 
 void ListSelectionModel::clear()
 {
-	if(onChange == NULL && (listeners == NULL || listeners->size() == 0))
+	if(onChange == NULL and (listeners == NULL or listeners->size() == 0))
 		selection.assign(selection.size(), false); //doesn't need to notify anyone, use raw function
 
 	else //notify along assignment
