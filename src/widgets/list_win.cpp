@@ -106,7 +106,7 @@ void ListWin::clickList(const Point& point)
 
 void ListWin::onMouseDown(Point point, int buttonNumber)
 {
-	if(buttonNumber != SDL_BUTTON_RIGHT) return; // only accepts left-button clicks
+	if(buttonNumber != SDL_BUTTON_LEFT) return; // only accepts left-button clicks
 	this->clickList(point);
 	if(preventRedrawOnClick) return;
 	this->draw_blit_upd(); // redraw

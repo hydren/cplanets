@@ -25,7 +25,8 @@ namespace WidgetsExtra
 		RenderText* textRenderer, *textRendererCaseSelected;
 		Uint32 bgcolCaseSelected;
 
-		/// (Advanced) Flag used to tweak the behavior of clicking on the list.
+		/// Advanced flag used to tweak the behavior of clicking on the list.
+		/// If true, the list won't be re-drawed when clicked.
 		bool preventRedrawOnClick;
 
 		//can be called only after a TopWin has been constructed
