@@ -34,6 +34,8 @@ namespace WidgetsExtra
 
 		virtual void draw();
 
+		virtual void refresh();
+
 		/// updates the offset displacing all childs of the 'content' BgrWin. dx and dy are deltas.
 		void updateOffset(int dx=0, int dy=0);
 

@@ -22,6 +22,8 @@
 #include "planetarium.hpp"
 #include "program_io.hpp"
 #include "widgets/widgets_util.hpp"
+#include "widgets/widgets_debug.hpp"
+
 #include "widgets/flow_layout.hpp"
 #include "widgets/spinner.hpp"
 #include "widgets/drop_menu.hpp"
@@ -30,6 +32,9 @@
 #include "widgets/toogle_button.hpp"
 #include "widgets/file_dialog.hpp"
 #include "widgets/scrollable_pane.hpp"
+#include "widgets/list_win.hpp"
+#include "widgets/list_model_extra.hpp"
+#include "widgets/list_selection_model_extra.hpp"
 
 using std::cout;
 using std::endl;
@@ -51,6 +56,8 @@ using WidgetsExtra::ToogleButton;
 using WidgetsExtra::FileDialog;
 using WidgetsExtra::ScrollablePane;
 using WidgetsExtra::DialogBgrWin;
+using WidgetsExtra::ListWin;
+using WidgetsExtra::GenericSelectionAdjustment;
 
 //**********************************************************************************
 // workaround to reroute output stream to console
@@ -81,6 +88,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
+void callbackListSelectionChanged(unsigned, unsigned);
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
@@ -119,7 +127,7 @@ FileDialog* dialogLoad, *dialogSave;
 TabSet* tabs;
 
 BgrWin* tabBodies;
-TextWin* txtBodies;
+ListWin* txtBodies;
 ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
@@ -224,12 +232,12 @@ void CPlanets::showMainWindow()
 	sclpBodies = new ScrollablePane(tabBodies, Style(0, 3*WIDGETS_SPACING), Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), window->bgcol);
 	sclpBodies->setScrollbarHorizontalVisible(false);
 
-	Rect txtBodiesSize(
-			0,
-			0,
-			sclpBodies->tw_area.w,
-			sclpBodies->tw_area.h);
-	txtBodies = new TextWin(&sclpBodies->content, 0, txtBodiesSize, SHRT_MAX, null);
+	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
+	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
+	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
+	txtBodies->adjustSelection = GenericSelectionAdjustment::function<Body2D>;
+	txtBodies->selection.onChange = callbackListSelectionChanged;
+	txtBodies->preventRedrawOnClick = true;
 
 	// Tab options
 	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
@@ -402,6 +410,8 @@ void CPlanets::showMainWindow()
 	sclpAboutLicense->setScrollbarHorizontalVisible(false);
 
 //	print_h(); //DEBUG
+//	cout << "\n" << "Deep analysis:" << endl;
+//	WidgetsExtra::print_hierarchy(window);
 
 	//start
 	planetarium->setRunning();
@@ -713,13 +723,15 @@ void onUserEvent(int cmd,int param,int param2)
 	if(cmd == Planetarium::USER_EVENT_ID__REDRAW_REQUESTED)
 	{
 		if(param == planetarium->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
+		{
 			planetarium->doRefresh();
+		}
 	}
 
 	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
 	{
 		updateSizeTxtBodies();
-		txtBodies->draw_blit_upd();
+		sclpBodies->refresh();
 	}
 }
 
@@ -730,8 +742,7 @@ void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resulting
 
 void onPlanetariumBodyCreation(Body2D& createdBody)
 {
-	txtBodies->add_text(createdBody.toString().c_str(), false);
-	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
+	refreshAllTxtBodies();
 }
 
 void onFileChosenOpenUniverse(FileDialog* dialog)
@@ -765,12 +776,8 @@ void onFileChosenSaveUniverse(FileDialog* dialog)
 
 void refreshAllTxtBodies()
 {
-	txtBodies->reset();
 	vector<Body2D> bodies = planetarium->getBodies();
-	foreach(Body2D&, body, vector<Body2D>, bodies)
-	{
-		txtBodies->add_text(body.toString().c_str(), false);
-	}
+	txtBodies->updateListData(&bodies);
 	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
 }
 
@@ -778,14 +785,21 @@ void updateSizeTxtBodies()
 {
 	unsigned height2 = sclpBodies->tw_area.h;
 
-	if(txtBodies->linenr >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
-		height2 = Math::max((txtBodies->linenr+1)*TDIST + 4, (int) sclpBodies->tw_area.h);
+	if(txtBodies->model->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
+		height2 = Math::max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
 
 	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
 	{
 		txtBodies->widen(0, height2 - txtBodies->tw_area.h);
 		sclpBodies->widenContent(0, height2 - sclpBodies->content.tw_area.h);
 	}
+}
+
+void callbackListSelectionChanged(unsigned ind0, unsigned ind1)
+{
+	cout << "I will set the focused bodies as the selected ones in [" << ind0 << ", " << ind1 << "]" << endl;
+	sclpBodies->refresh(); //custom redraw behavior
+//	planetarium->focusedBodies
 }
 
 void adjustAboutDialog()
@@ -802,7 +816,7 @@ void adjustAboutDialog()
 	if(totalSize > sclpAboutLicense->content.tw_area.h)
 	{
 		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
-		sclpAboutLicense->updateOffset();
+		sclpAboutLicense->refresh();
 	}
 }
 
