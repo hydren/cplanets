@@ -15,7 +15,7 @@
 
 namespace WidgetsExtra
 {
-	struct AgnosticSelectionAdjustment
+	struct GenericSelectionAdjustment
 	{
 		/// Adjusts this selection according to the changes in the given data.
 		/// The parameter 'oldData' should be the list from which this model is the selection model.
@@ -43,8 +43,8 @@ namespace WidgetsExtra
 		}
 
 		//Lock instantiation
-		private: AgnosticSelectionAdjustment(){}
-		virtual ~AgnosticSelectionAdjustment()=0;
+		private: GenericSelectionAdjustment(){}
+		virtual ~GenericSelectionAdjustment()=0;
 	};
 }
 

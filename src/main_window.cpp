@@ -57,7 +57,7 @@ using WidgetsExtra::FileDialog;
 using WidgetsExtra::ScrollablePane;
 using WidgetsExtra::DialogBgrWin;
 using WidgetsExtra::ListWin;
-using WidgetsExtra::AgnosticSelectionAdjustment;
+using WidgetsExtra::GenericSelectionAdjustment;
 
 //**********************************************************************************
 // workaround to reroute output stream to console
@@ -232,14 +232,10 @@ void CPlanets::showMainWindow()
 	sclpBodies = new ScrollablePane(tabBodies, Style(0, 3*WIDGETS_SPACING), Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), window->bgcol);
 	sclpBodies->setScrollbarHorizontalVisible(false);
 
-	Rect txtBodiesSize(
-			0,
-			0,
-			sclpBodies->tw_area.w,
-			sclpBodies->tw_area.h);
+	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
 	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
 	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
-	txtBodies->adjustSelection = AgnosticSelectionAdjustment::function<Body2D>;
+	txtBodies->adjustSelection = GenericSelectionAdjustment::function<Body2D>;
 	txtBodies->selection.onChange = callbackListSelectionChanged;
 	txtBodies->preventRedrawOnClick = true;
 

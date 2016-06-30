@@ -95,7 +95,7 @@ namespace WidgetsExtra
 		void notify(unsigned index, unsigned endIndex);
 
 		void clear(unsigned except0, unsigned except1);
-		friend class AgnosticSelectionAdjustment;
+		friend class GenericSelectionAdjustment;
 	};
 }
 
