@@ -152,24 +152,9 @@ void ListWin::onMouseMove(Point point, int buttonNumber) {}  // by default does 
 
 void ListWin::onMouseUp(Point point, int buttonNumber) {}  // by default does nothing
 
-// ++++++++++++++  to be used when referencing ListWin's as a BgrWin's.  ++++++++++++++
 
-void ListWin::drawBgrWinAsListWin(BgrWin* listWinAsBgrWin)
-{
-	static_cast<ListWin*>(listWinAsBgrWin)->draw();
-}
-
-void ListWin::onMouseDown(BgrWin* listWinAsBgrWin,int x,int y,int but)
-{
-	static_cast<ListWin*>(listWinAsBgrWin)->onMouseDown(Point(x, y), but);
-}
-
-void ListWin::onMouseMove(BgrWin* listWinAsBgrWin,int x,int y,int but)
-{
-	static_cast<ListWin*>(listWinAsBgrWin)->onMouseMove(Point(x, y), but);
-}
-
-void ListWin::onMouseUp(BgrWin* listWinAsBgrWin,int x,int y,int but)
-{
-	static_cast<ListWin*>(listWinAsBgrWin)->onMouseUp(Point(x, y), but);
-}
+// ################# static functions to be used when referencing ListWin's as a BgrWin's.  #################
+void ListWin::drawBgrWinAsListWin(BgrWin* listWinAsBgrWin) 				{ static_cast<ListWin*>(listWinAsBgrWin)->draw(); }
+void ListWin::onMouseDown(BgrWin* listWinAsBgrWin,int x,int y,int but) 	{ static_cast<ListWin*>(listWinAsBgrWin)->onMouseDown(Point(x, y), but); }
+void ListWin::onMouseMove(BgrWin* listWinAsBgrWin,int x,int y,int but) 	{ static_cast<ListWin*>(listWinAsBgrWin)->onMouseMove(Point(x, y), but); }
+void ListWin::onMouseUp(BgrWin* listWinAsBgrWin,int x,int y,int but) 	{ static_cast<ListWin*>(listWinAsBgrWin)->onMouseUp(Point(x, y), but); }
