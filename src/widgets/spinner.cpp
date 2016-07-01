@@ -69,6 +69,6 @@ void AbstractSpinner::changeValue(Button* btn)
 void AbstractSpinner::validateField(const char* text,int cmd_id)
 {
 	AbstractSpinner* sp = AbstractSpinnerAux::references[cmd_id]; //kludged reference to the button's spinner
-	sp->parseIfValid(text);
+	sp->assignValue(text);
 	sp->refresh(); //do the real deal. if everything was alright, sp->getValue() is already the new value
 }

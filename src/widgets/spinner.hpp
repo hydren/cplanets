@@ -11,6 +11,7 @@
 #include "SDL_widgets/SDL_widgets.h"
 
 #include <stdexcept>
+#include <string>
 
 #include "futil/futil.hpp"
 #include "abstract_layout.hpp"
@@ -49,7 +50,10 @@ namespace WidgetsExtra
 		virtual void decrementValue() abstract;
 
 		/// Should, if the text in the field is valid, update the spinner value. Otherwise refresh the field text with the spinner value (overriding any text in the field)
-		virtual void parseIfValid(const char* txtVal) abstract;
+		virtual void assignValue(const char* txtVal) abstract;
+
+		/// Returns a string representation of the spinner's current value;
+		virtual std::string valueToString() abstract;
 
 		protected:
 		//callbacks
@@ -159,7 +163,7 @@ namespace WidgetsExtra
 		}
 
 		//overrides AbstractSpinner's
-		virtual void parseIfValid(const char* txtVal)
+		virtual void assignValue(const char* txtVal)
 		{
 			if(String::parseable<Type>(string(txtVal))) //if we can figure out something from the field
 			{
@@ -167,6 +171,12 @@ namespace WidgetsExtra
 				if(this->isValidValue(val)) //if value type is inside bounds
 					*(this->value) = val;
 			}
+		}
+
+		/// Returns a string representation of the spinner's current value. The value type must be compatible with operator + and string
+		virtual std::string valueToString()
+		{
+			return string() + *(this->value);
 		}
 	};
 }
