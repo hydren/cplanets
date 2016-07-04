@@ -237,10 +237,8 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 		physics->universe.bodies.back()->userObject = new PlanetariumUserObject(color);
 
 		//notify listeners about the body created
-		foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
-		{
-			listener->onBodyCreation(*physics->universe.bodies.back());
-		}
+		for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
+			registeredBodyCollisionListeners[i]->onBodyCreation(*physics->universe.bodies.back());
 	}
 }
 
@@ -254,11 +252,11 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 	Collections::removeElement(focusedBodies, body);
 
 	//notify listeners about the body deleted
-	foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
-	{
-		listener->onBodyDeletion(body);
-		orbitTracer.clearTrace(body);
-	}
+	for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
+		registeredBodyCollisionListeners[i]->onBodyDeletion(body);
+
+	orbitTracer.clearTrace(body);
+
 	if(alsoDelete) delete body;
 }
 
@@ -275,11 +273,11 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
 	{
 		//notify listeners about the body deleted
-		foreach(Planetarium::UniverseEventListener*, listener, vector<Planetarium::UniverseEventListener*>, registeredBodyCollisionListeners)
-		{
-			listener->onBodyDeletion(body);
-			orbitTracer.clearTrace(body);
-		}
+		for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
+			registeredBodyCollisionListeners[i]->onBodyDeletion(body);
+
+		orbitTracer.clearTrace(body);
+
 		if(alsoDelete) delete body;
 	}
 
@@ -315,18 +313,6 @@ void Planetarium::setUniverse(Universe2D* u)
 }
 
 //--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
-
-void Planetarium::addUniverseEventListener(UniverseEventListener* listener)
-{
-	//kinda wrong, all instances of Planetarium will share this
-	this->registeredBodyCollisionListeners.push_back(listener);
-}
-
-void Planetarium::removeUniverseEventListener(UniverseEventListener* listener)
-{
-	//kinda wrong, all instances of Planetarium will share this
-	Collections::removeElement(this->registeredBodyCollisionListeners, listener);
-}
 
 Planetarium::OrbitTracer::OrbitTracer(Planetarium* p)
 : style(LINEAR), isActive(false), traceLength(20), traces(),
@@ -460,8 +446,8 @@ void Planetarium::updateView()
 				while(not physicsEventsManager->collisionEvents.empty()) //has collision events
 				{
 					CollisionEvent* ev = physicsEventsManager->collisionEvents.front(); //gets first
-					foreach(UniverseEventListener*, listener, vector<UniverseEventListener*>, registeredBodyCollisionListeners) //for each listener
-						listener->onBodyCollision(ev->collidingBodies, ev->resultingMerger); //notify
+					for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
+						registeredBodyCollisionListeners[i]->onBodyCollision(ev->collidingBodies, ev->resultingMerger); //notify
 
 					physicsEventsManager->collisionEvents.pop();//after using, unregister event
 					delete ev; //and delete event object
@@ -501,6 +487,7 @@ void Planetarium::updateView()
 		SDL_Delay(1000/fps - (SDL_GetTicks() - lastUpdateTime));
 	}
 }
+
 
 // callback called by physics thread
 void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingMerger)

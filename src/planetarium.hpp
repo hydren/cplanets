@@ -107,8 +107,8 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 		virtual void onBodyDeletion(Body2D* deletedBody) abstract; //not exactly safe to use the pointer after the call ends
 	};
 
-	void addUniverseEventListener(UniverseEventListener* listener);
-	void removeUniverseEventListener(UniverseEventListener* listener);
+	/// The listener manager. Add and remove listener with it.
+	futil::ListenerManager<UniverseEventListener> registeredBodyCollisionListeners;
 
 	// auxiliar structure
 	struct CopyBody2D;
@@ -156,7 +156,6 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	long currentIterationCount;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;
-	std::vector<UniverseEventListener*> registeredBodyCollisionListeners;
 	Vector2D bodyCreationPosition, bodyCreationVelocity;
 	double bodyCreationDiameter;
 	Uint32 lastMouseLeftButtonDown;
