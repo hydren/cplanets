@@ -62,8 +62,8 @@ namespace WidgetsExtra
 
 		private:
 		//redirects SDL_widgets callbacks to methods
-		static void changeValue(Button* btn);
-		static void validateField(const char* text,int cmd_id);
+		static void handleAbstractSpinnerButtonPress(Button* btn);
+		static void handleAbstractSpinnerEnterKeyPress(const char* text,int cmd_id);
 	};
 
 	/** A widget similar to Swing's JSpinner. It is a template, which means the value on the spinner field can be (theorectically) of any type.

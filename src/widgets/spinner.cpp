@@ -23,11 +23,11 @@ namespace AbstractSpinnerAux
 AbstractSpinner::AbstractSpinner(WinBase *pw, Rect area, const char* label)
 : WinBase(pw, null, area.x, area.y, area.w, area.h, pw->bgcol, ++AbstractSpinnerAux::nextId),
   dlwTextField(this, Rect(0, 0, area.w - BUTTON_SIZE, area.h)),
-  btnInc (this, 0, Rect(area.w - BUTTON_SIZE, TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "+", changeValue),
-  btnDec (this, 0, Rect(area.w - BUTTON_SIZE, BUTTON_SIZE/2 + TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "-", changeValue)
+  btnInc (this, 0, Rect(area.w - BUTTON_SIZE, TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "+", handleAbstractSpinnerButtonPress),
+  btnDec (this, 0, Rect(area.w - BUTTON_SIZE, BUTTON_SIZE/2 + TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "-", handleAbstractSpinnerButtonPress)
 {
 	if(label != null) this->dlwTextField.dialog_label(label);
-	this->dlwTextField.cmd = validateField;
+	this->dlwTextField.cmd = handleAbstractSpinnerEnterKeyPress;
 	this->dlwTextField.cmd_id = this->id.id1;
 	AbstractSpinnerAux::references[this->id.id1] = this; //register kludge-type reference to this spinner
 }
@@ -75,5 +75,5 @@ void AbstractSpinner::onEnterKey(const char* currentTxt)
 }
 
 // static callback methods
-void AbstractSpinner::changeValue(Button* btn) { static_cast<AbstractSpinner*>(btn->parent)->onButtonPressed(btn); }
-void AbstractSpinner::validateField(const char* text, int cmd_id) { AbstractSpinnerAux::references[cmd_id]->onEnterKey(text); /*kludged reference to the button's spinner*/ }
+void AbstractSpinner::handleAbstractSpinnerButtonPress(Button* btn) { static_cast<AbstractSpinner*>(btn->parent)->onButtonPressed(btn); }
+void AbstractSpinner::handleAbstractSpinnerEnterKeyPress(const char* text, int cmd_id) { AbstractSpinnerAux::references[cmd_id]->onEnterKey(text); /*kludged reference to the button's spinner*/ }
