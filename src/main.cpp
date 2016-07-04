@@ -44,6 +44,12 @@ int main(int argc, char* argv[])
 {
 	srand(time(null));
 
+	if(argc > 1 and (string(argv[1]) == "--version" or string(argv[1]) == "-v"))
+	{
+		cout << CPLANETS_VERSION << endl;
+		return EXIT_SUCCESS;
+	}
+
 	if(argc > 1 and (string(argv[1]) == "--centered" or string(argv[1]) == "-c"))
 		putenv("SDL_VIDEO_CENTERED=1");
 
