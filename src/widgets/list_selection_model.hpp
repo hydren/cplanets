@@ -21,6 +21,9 @@ namespace WidgetsExtra
 		/// Makes the given index interval selected (startIndex, endIndex). Any previous selection will also remain.
 		void select(unsigned startIndex, unsigned endIndex);
 
+		/// Modifies the given index range: set selected if 'selected' is true and false otherwise. Any previous selection will also remain. If silent is true, no event is triggered.
+		void modify(unsigned index, unsigned endIndex, bool selected, bool silent=false);
+
 		/// Makes the given index deselected. Any previous selection will also remain.
 		void unselect(unsigned index);
 		/// Makes the given index interval deselected (startIndex, endIndex). Any previous selection will also remain.

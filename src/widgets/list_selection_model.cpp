@@ -30,6 +30,13 @@ void ListSelectionModel::select(unsigned startIndex, unsigned endIndex)
 	notify(startIndex, endIndex);
 }
 
+void ListSelectionModel::modify(unsigned index, unsigned endIndex, bool selected, bool silent)
+{
+	for(unsigned i = index; i <= endIndex; i++)
+		selection.at(i) = selected;
+	if(not silent) notify(index, endIndex);
+}
+
 void ListSelectionModel::unselect(unsigned index)
 {
 	selection.at(index) = false;
