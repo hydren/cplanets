@@ -601,6 +601,10 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 				}
 				if(planetarium->pauseOnSelection)
 					planetarium->setRunning();
+
+				//notify listeners about re-focusing of bodies
+				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
+					planetarium->listeners[i]->onBodyReFocus();
 			}
 		}
 		else //mouse up after holding down
@@ -625,6 +629,10 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			}
 			if(planetarium->pauseOnSelection)
 				planetarium->setRunning();
+
+			//notify listeners about re-focusing of bodies
+			for(unsigned i = 0; i < planetarium->listeners.size(); i++)
+				planetarium->listeners[i]->onBodyReFocus();
 		}
 		planetarium->isMouseLeftButtonDown = false;
 	}
