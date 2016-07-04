@@ -88,7 +88,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
-void callbackListSelectionChanged(unsigned, unsigned);
+void onListSelectionChanged(unsigned, unsigned);
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
@@ -102,7 +102,7 @@ struct CustomListener extends Planetarium::UniverseEventListener, WidgetsExtra::
 	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
 	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
 	void onBodyDeletion(Body2D* deletedBody) { refreshAllTxtBodies(); }
-	void onChange(unsigned index, unsigned endIndex) { callbackListSelectionChanged(index, endIndex); }
+	void onChange(unsigned index, unsigned endIndex) { onListSelectionChanged(index, endIndex); }
 };
 
 // ================ CONSTANTS ================
@@ -239,7 +239,7 @@ void CPlanets::showMainWindow()
 	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
 	txtBodies->adjustSelection = GenericSelectionAdjustment::function<Body2D>;
 	txtBodies->selection.listenerAdd(&customListener);
-	txtBodies->selection.onChange = callbackListSelectionChanged;
+	txtBodies->selection.onChange = onListSelectionChanged;
 	txtBodies->preventRedrawOnClick = true;
 
 	// Tab options
@@ -798,7 +798,7 @@ void updateSizeTxtBodies()
 	}
 }
 
-void callbackListSelectionChanged(unsigned ind0, unsigned ind1)
+void onListSelectionChanged(unsigned ind0, unsigned ind1)
 {
 	cout << "I will set the focused bodies as the selected ones in [" << ind0 << ", " << ind1 << "]" << endl;
 	sclpBodies->refresh(); //custom redraw behavior
