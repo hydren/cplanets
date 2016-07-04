@@ -37,6 +37,7 @@ struct PlanetariumUserObject
 	~PlanetariumUserObject() { delete color; }
 };
 
+//helper struct to deal with collision events
 struct CollisionEvent
 {
 	vector<Body2D> collidingBodies;
@@ -71,13 +72,13 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
-  orbitTracer(this), bodyCreationState(IDLE),
+  listeners(), orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
   isRedrawPending(false), currentIterationCount(0),
   threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
   threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
-  physicsAccessMutex(SDL_CreateMutex()), registeredBodyCollisionListeners(),
+  physicsAccessMutex(SDL_CreateMutex()),
   bodyCreationPosition(), bodyCreationVelocity(), bodyCreationDiameter(),
   lastMouseLeftButtonDown(0), isMouseLeftButtonDown(false), lastMouseClickPoint()
 {
@@ -237,8 +238,8 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 		physics->universe.bodies.back()->userObject = new PlanetariumUserObject(color);
 
 		//notify listeners about the body created
-		for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
-			registeredBodyCollisionListeners[i]->onBodyCreation(*physics->universe.bodies.back());
+		for(unsigned i = 0; i < listeners.size(); i++)
+			listeners[i]->onBodyCreation(*physics->universe.bodies.back());
 	}
 }
 
@@ -252,8 +253,8 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 	Collections::removeElement(focusedBodies, body);
 
 	//notify listeners about the body deleted
-	for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
-		registeredBodyCollisionListeners[i]->onBodyDeletion(body);
+	for(unsigned i = 0; i < listeners.size(); i++)
+		listeners[i]->onBodyDeletion(body);
 
 	orbitTracer.clearTrace(body);
 
@@ -273,8 +274,8 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
 	{
 		//notify listeners about the body deleted
-		for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
-			registeredBodyCollisionListeners[i]->onBodyDeletion(body);
+		for(unsigned i = 0; i < listeners.size(); i++)
+			listeners[i]->onBodyDeletion(body);
 
 		orbitTracer.clearTrace(body);
 
@@ -446,8 +447,8 @@ void Planetarium::updateView()
 				while(not physicsEventsManager->collisionEvents.empty()) //has collision events
 				{
 					CollisionEvent* ev = physicsEventsManager->collisionEvents.front(); //gets first
-					for(unsigned i = 0; i < registeredBodyCollisionListeners.size(); i++)
-						registeredBodyCollisionListeners[i]->onBodyCollision(ev->collidingBodies, ev->resultingMerger); //notify
+					for(unsigned i = 0; i < listeners.size(); i++)
+						listeners[i]->onBodyCollision(ev->collidingBodies, ev->resultingMerger); //notify
 
 					physicsEventsManager->collisionEvents.pop();//after using, unregister event
 					delete ev; //and delete event object

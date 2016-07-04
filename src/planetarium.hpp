@@ -108,7 +108,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	};
 
 	/// The listener manager. Add and remove listener with it.
-	futil::ListenerManager<UniverseEventListener> registeredBodyCollisionListeners;
+	futil::ListenerManager<UniverseEventListener> listeners;
 
 	// auxiliar structure
 	struct CopyBody2D;
