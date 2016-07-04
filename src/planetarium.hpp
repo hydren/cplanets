@@ -88,16 +88,19 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
 	void removeBody(Body2D* body, bool alsoDelete = false);
 
-	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
-	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
-	void removeFocusedBodies(bool alsoDelete = true);
-
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2DClone> getBodies() const;
 
 	/** Safer way to replace the universe instance. */
 	void setUniverse(Universe2D* u);
 
+	void setFocusedBodies(Body2D** bodyarr, unsigned n);
+
+	void setFocusedBodies(std::vector<Body2D*> bodies);
+
+	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
+	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
+	void removeFocusedBodies(bool alsoDelete = true);
 
 	// :::::::::::::::::::::: Inner classes ::::::::::::::::::::::::::::::::
 

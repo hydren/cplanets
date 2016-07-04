@@ -8,6 +8,7 @@
 -------------- To Do
 
 - Implement "view movement speed"
+- Make ListWin architecture like Spinner's
 
 -------------- Backlog
 

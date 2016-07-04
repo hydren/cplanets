@@ -255,30 +255,6 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 	if(alsoDelete) delete body;
 }
 
-void Planetarium::removeFocusedBodies(bool alsoDelete)
-{
-	synchronized(physicsAccessMutex)
-	{
-		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
-		{
-			Collections::removeElement(physics->universe.bodies, body);
-		}
-	}
-
-	foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
-	{
-		//notify listeners about the body deleted
-		for(unsigned i = 0; i < listeners.size(); i++)
-			listeners[i]->onBodyDeletion(body);
-
-		orbitTracer.clearTrace(body);
-
-		if(alsoDelete) delete body;
-	}
-
-	focusedBodies.clear();
-}
-
 vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 {
 	vector<Body2DClone> bodies;
@@ -304,6 +280,48 @@ void Planetarium::setUniverse(Universe2D* u)
 		delete physics->physics2DSolver; //delete older solver
 		physics->physics2DSolver = new LeapfrogSolver(physics->universe); //create new solver
 		physics->physics2DSolver->timestep = timeStep; //use previously defined timestep
+	}
+}
+
+void Planetarium::removeFocusedBodies(bool alsoDelete)
+{
+	synchronized(physicsAccessMutex)
+	{
+		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
+		{
+			Collections::removeElement(physics->universe.bodies, body);
+		}
+	}
+
+	foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
+	{
+		//notify listeners about the body deleted
+		for(unsigned i = 0; i < listeners.size(); i++)
+			listeners[i]->onBodyDeletion(body);
+
+		orbitTracer.clearTrace(body);
+
+		if(alsoDelete) delete body;
+	}
+
+	focusedBodies.clear();
+}
+
+void Planetarium::setFocusedBodies(Body2D** bodyarr, unsigned n)
+{
+	focusedBodies.clear();
+	for(unsigned i = 0; i < n; i++)
+	{
+		focusedBodies.push_back(bodyarr[i]);
+	}
+}
+
+void Planetarium::setFocusedBodies(vector<Body2D*> bodies)
+{
+	focusedBodies.clear();
+	foreach(Body2D*, body, vector<Body2D*>, bodies)
+	{
+		focusedBodies.push_back(body);
 	}
 }
 

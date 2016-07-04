@@ -804,7 +804,16 @@ void onListSelectionChanged(unsigned ind0, unsigned ind1)
 {
 	cout << "I will set the focused bodies as the selected ones in [" << ind0 << ", " << ind1 << "]" << endl;
 	sclpBodies->refresh(); //custom redraw behavior
-//	planetarium->focusedBodies
+
+	// fixme whats the point of model separation on ListWin if we needed to do the following cast?
+	std::vector<Body2DClone>& data = *static_cast<std::vector<Body2DClone>*> (txtBodies->model->getData());
+	std::vector<Body2D*> newSelection;
+
+	for(unsigned i = 0; i < data.size(); i++)
+		if(txtBodies->selection.isSelected(i))
+			newSelection.push_back(data.at(i).original);
+
+	planetarium->setFocusedBodies(newSelection);
 }
 
 void adjustAboutDialog()
