@@ -8,15 +8,14 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <stdexcept>
+#include <string>
 #include <iostream>
+#include <stdexcept>
 
 #include "physics/physics2d_solvers.hpp"
-
-#include "util.hpp"
 #include "main_window.hpp"
+#include "util.hpp" //todo do we need this include?
 
-#include <string>
 using std::string;
 using std::exception;
 using std::cout; using std::endl;
@@ -52,6 +51,12 @@ int main(int argc, char* argv[])
 			return EXIT_SUCCESS;
 		}
 
+		if(string(argv[i]) == "--help" or string(argv[i]) == "-h")
+		{
+			cout << "Use --version or -v to display version. \nUse --centered or -c to start cplanets centered. \nUse --help or -h to show this help." << endl;
+			return EXIT_SUCCESS;
+		}
+
 		else if(string(argv[i]) == "--centered" or string(argv[i]) == "-c")
 			putenv(const_cast<char*>("SDL_VIDEO_CENTERED=1"));
 
@@ -61,7 +66,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		StandardPhysics2DSolvers::doRegister();
-		CPlanets::showMainWindow(); // set SDL_VIDEO_CENTERED=1 environment variable before program execution to center window
+		CPlanets::showMainWindow();
 		return EXIT_SUCCESS;
 	}
 	catch (exception& e)
