@@ -44,14 +44,19 @@ int main(int argc, char* argv[])
 {
 	srand(time(null));
 
-	if(argc > 1 and (string(argv[1]) == "--version" or string(argv[1]) == "-v"))
+	for(int i = 1; i < argc; i++)
 	{
-		cout << CPLANETS_VERSION << endl;
-		return EXIT_SUCCESS;
-	}
+		if(string(argv[i]) == "--version" or string(argv[i]) == "-v")
+		{
+			cout << CPLANETS_VERSION << endl;
+			return EXIT_SUCCESS;
+		}
 
-	if(argc > 1 and (string(argv[1]) == "--centered" or string(argv[1]) == "-c"))
-		putenv("SDL_VIDEO_CENTERED=1");
+		else if(string(argv[i]) == "--centered" or string(argv[i]) == "-c")
+			putenv(const_cast<char*>("SDL_VIDEO_CENTERED=1"));
+
+		else cout << "Unrecognized argument: " << argv[i] << endl;
+	}
 
 	try
 	{
