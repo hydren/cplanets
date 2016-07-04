@@ -53,22 +53,27 @@ void AbstractSpinner::setLabel(const char* lbl)
 	this->dlwTextField.dialog_label(lbl);
 }
 
-
-// static methods
-
-void AbstractSpinner::changeValue(Button* btn)
+void AbstractSpinner::refresh()
 {
-	AbstractSpinner* sp = static_cast<AbstractSpinner*>(btn->parent);
-	if(string(btn->label.str) == string("+")) //if '+' do increment
-		sp->incrementValue();
-
-	if(string(btn->label.str) == string("-")) //if '-' do decrement
-		sp->decrementValue();
+	string strValue = this->valueToString();
+	this->dlwTextField.dialog_def(strValue.c_str(), this->dlwTextField.cmd, this->dlwTextField.cmd_id);
+	this->dlwTextField.unset_cursor();
+	this->btnInc.draw_blit_upd();
+	this->btnDec.draw_blit_upd();
 }
 
-void AbstractSpinner::validateField(const char* text,int cmd_id)
+void AbstractSpinner::onButtonPressed(Button* btn)
 {
-	AbstractSpinner* sp = AbstractSpinnerAux::references[cmd_id]; //kludged reference to the button's spinner
-	sp->assignValue(text);
-	sp->refresh(); //do the real deal. if everything was alright, sp->getValue() is already the new value
+	if(btn == &btnInc) this->incrementValue();
+	if(btn == &btnDec) this->decrementValue();
 }
+
+void AbstractSpinner::onEnterKey(const char* currentTxt)
+{
+	this->assignValue(currentTxt);
+	this->refresh();
+}
+
+// static callback methods
+void AbstractSpinner::changeValue(Button* btn) { static_cast<AbstractSpinner*>(btn->parent)->onButtonPressed(btn); }
+void AbstractSpinner::validateField(const char* text, int cmd_id) { AbstractSpinnerAux::references[cmd_id]->onEnterKey(text); /*kludged reference to the button's spinner*/ }

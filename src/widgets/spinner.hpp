@@ -38,10 +38,10 @@ namespace WidgetsExtra
 		/// Sets the spinner label
 		virtual void setLabel(const char* lbl);
 
-		//pure virtual. needs to be implemented:
+		/// Refreshes the text according to this spinner's current value.
+		virtual void refresh();
 
-		/// Should refresh the text according to this spinner's current value.
-		virtual void refresh() abstract;
+		//pure virtual. needs to be implemented:
 
 		/// Should increment the spinner value
 		virtual void incrementValue() abstract;
@@ -56,7 +56,12 @@ namespace WidgetsExtra
 		virtual std::string valueToString() abstract;
 
 		protected:
-		//callbacks
+
+		void onButtonPressed(Button* btn);
+		void onEnterKey(const char* currentTxt);
+
+		private:
+		//redirects SDL_widgets callbacks to methods
 		static void changeValue(Button* btn);
 		static void validateField(const char* text,int cmd_id);
 	};
@@ -122,14 +127,10 @@ namespace WidgetsExtra
 			return (val >= this->min) && (val <= this->max);
 		}
 
-		/// Updates the text field content and redraw's the Spinner.
+		//overrides AbstractSpinner's
 		virtual void refresh()
 		{
-			string strValue = string() + *(this->value);
-			this->dlwTextField.dialog_def(strValue.c_str(), this->dlwTextField.cmd, this->dlwTextField.cmd_id);
-			this->dlwTextField.unset_cursor();
-			this->btnInc.draw_blit_upd();
-			this->btnDec.draw_blit_upd();
+			AbstractSpinner::refresh();
 			this->needsRefresh = false;
 		}
 
@@ -142,6 +143,7 @@ namespace WidgetsExtra
 				this->AbstractSpinner::draw();
 		}
 
+		//implements as declared by AbstractSpinner
 		/// Increments the spinner value by 'step'.
 		virtual void incrementValue()
 		{
@@ -152,6 +154,7 @@ namespace WidgetsExtra
 			this->refresh();
 		}
 
+		//implements as declared by AbstractSpinner
 		/// Decrements the spinner value by 'step'.
 		virtual void decrementValue()
 		{
@@ -162,7 +165,7 @@ namespace WidgetsExtra
 			this->refresh();
 		}
 
-		//overrides AbstractSpinner's
+		//implements as declared by AbstractSpinner
 		virtual void assignValue(const char* txtVal)
 		{
 			if(String::parseable<Type>(string(txtVal))) //if we can figure out something from the field
@@ -173,6 +176,7 @@ namespace WidgetsExtra
 			}
 		}
 
+		//implements as declared by AbstractSpinner
 		/// Returns a string representation of the spinner's current value. The value type must be compatible with operator + and string
 		virtual std::string valueToString()
 		{
