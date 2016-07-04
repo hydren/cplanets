@@ -10,11 +10,15 @@ CPP_SRCS += \
 ../src/widgets/file_dialog.cpp \
 ../src/widgets/flow_layout.cpp \
 ../src/widgets/label_win.cpp \
+../src/widgets/list_model.cpp \
+../src/widgets/list_selection_model.cpp \
+../src/widgets/list_win.cpp \
 ../src/widgets/scrollable_pane.cpp \
 ../src/widgets/spinner.cpp \
 ../src/widgets/tab_control.cpp \
 ../src/widgets/tab_set.cpp \
 ../src/widgets/toogle_button.cpp \
+../src/widgets/widgets_debug.cpp \
 ../src/widgets/widgets_util.cpp 
 
 OBJS += \
@@ -24,11 +28,15 @@ OBJS += \
 ./src/widgets/file_dialog.o \
 ./src/widgets/flow_layout.o \
 ./src/widgets/label_win.o \
+./src/widgets/list_model.o \
+./src/widgets/list_selection_model.o \
+./src/widgets/list_win.o \
 ./src/widgets/scrollable_pane.o \
 ./src/widgets/spinner.o \
 ./src/widgets/tab_control.o \
 ./src/widgets/tab_set.o \
 ./src/widgets/toogle_button.o \
+./src/widgets/widgets_debug.o \
 ./src/widgets/widgets_util.o 
 
 CPP_DEPS += \
@@ -38,11 +46,15 @@ CPP_DEPS += \
 ./src/widgets/file_dialog.d \
 ./src/widgets/flow_layout.d \
 ./src/widgets/label_win.d \
+./src/widgets/list_model.d \
+./src/widgets/list_selection_model.d \
+./src/widgets/list_win.d \
 ./src/widgets/scrollable_pane.d \
 ./src/widgets/spinner.d \
 ./src/widgets/tab_control.d \
 ./src/widgets/tab_set.d \
 ./src/widgets/toogle_button.d \
+./src/widgets/widgets_debug.d \
 ./src/widgets/widgets_util.d 
 
 
