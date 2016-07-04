@@ -32,6 +32,9 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	static const short DEFAULT_FPS = 60;
 	static const long DEFAULT_DISPLAY_PERIOD = 30, DEFAULT_ITERATIONS_PER_DISPLAY = 2;
 
+	// auxiliar structure
+	struct Body2DClone;
+
 	//model
 	Physics2D* physics;
 
@@ -90,7 +93,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	void removeFocusedBodies(bool alsoDelete = true);
 
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
-	std::vector<Body2D> getBodies() const;
+	std::vector<Body2DClone> getBodies() const;
 
 	/** Safer way to replace the universe instance. */
 	void setUniverse(Universe2D* u);
@@ -110,9 +113,6 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/// The listener manager. Add and remove listener with it.
 	futil::ListenerManager<UniverseEventListener> listeners;
 
-	// auxiliar structure
-	struct CopyBody2D;
-
 	/** A struct to record orbits. */
 	struct OrbitTracer
 	{
@@ -128,7 +128,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 		void clearTrace(const Body2D* body);
 
 		void drawTrace(Body2D* body);
-		void drawTrace(CopyBody2D& body);
+		void drawTrace(Body2DClone& body);
 
 		protected:
 		Planetarium* planetarium;
@@ -146,6 +146,14 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 	/** Informs about visual body creation mode state. default is IDLE */
 	enum BodyCreationState { IDLE, POSITION_SELECTION, VELOCITY_SELECTION } bodyCreationState;
+
+	struct Body2DClone
+	{
+		Body2D* original, clone;
+		Body2DClone(Body2D* orig) : original(orig), clone(*orig) {}
+		bool operator==(const Body2DClone& b) const { return b.original == this->original; }
+		std::string toString() { return clone.toString(); }
+	};
 
 	//================================================================================================================================================
 	protected:

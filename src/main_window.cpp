@@ -59,6 +59,8 @@ using WidgetsExtra::DialogBgrWin;
 using WidgetsExtra::ListWin;
 using WidgetsExtra::GenericSelectionAdjustment;
 
+typedef Planetarium::Body2DClone Body2DClone;
+
 //**********************************************************************************
 // workaround to reroute output stream to console
 FILE* workaround_sdl_stream_file = null;
@@ -236,8 +238,8 @@ void CPlanets::showMainWindow()
 
 	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
 	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
-	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
-	txtBodies->adjustSelection = GenericSelectionAdjustment::function<Body2D>;
+	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2DClone>(String::Callbacks::stringfy_by_method<Body2DClone, &Body2DClone::toString>));
+	txtBodies->adjustSelection = GenericSelectionAdjustment::function<Body2DClone>;
 	txtBodies->selection.listenerAdd(&customListener);
 	txtBodies->selection.onChange = onListSelectionChanged;
 	txtBodies->preventRedrawOnClick = true;
@@ -779,7 +781,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog)
 
 void refreshAllTxtBodies()
 {
-	vector<Body2D> bodies = planetarium->getBodies();
+	vector<Body2DClone> bodies = planetarium->getBodies();
 	txtBodies->updateListData(&bodies);
 	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
 }

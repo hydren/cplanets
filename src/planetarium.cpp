@@ -93,12 +93,6 @@ Planetarium::~Planetarium()
 	SDL_DestroyMutex(physicsAccessMutex);
 }
 
-struct Planetarium::CopyBody2D extends Body2D
-{
-	Body2D* original;
-	CopyBody2D(Body2D* orig) : Body2D(*orig), original(orig)  {}
-};
-
 void Planetarium::draw()
 {
 	this->init_gui();
@@ -108,34 +102,34 @@ void Planetarium::draw()
 	int (*line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aalineRGBA : lineRGBA);
 
 	//make a copy of the current state of bodies.
-	std::vector<CopyBody2D> bodies;
+	std::vector<Body2DClone> bodies;
 	synchronized(physicsAccessMutex)
 	{
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 		{
-			bodies.push_back(CopyBody2D(body)); //copy the body
+			bodies.push_back(Body2DClone(body)); //copy the body
 
 			//lets copy the user object for precaution, since its a pointer
 			SDL_Color* bodyColor = static_cast<PlanetariumUserObject*>(body->userObject)->color;
 			SDL_Color* bodyColorCopy = new SDL_Color();
 			*bodyColorCopy = *bodyColor;
-			bodies.back().userObject = new PlanetariumUserObject(bodyColorCopy);
+			bodies.back().clone.userObject = new PlanetariumUserObject(bodyColorCopy);
 		}
 	}// end synchronized(physicsAccessMutex)
 
 	//draw all traced orbits (only if tracer is active)
-	if(this->orbitTracer.isActive) foreach(CopyBody2D&, body, vector<CopyBody2D>, bodies)
+	if(this->orbitTracer.isActive) foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
 	{
 		orbitTracer.drawTrace(body);
 	}
 
 	//draw all bodies
-	foreach(CopyBody2D&, body, vector<CopyBody2D>, bodies)
+	foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
 	{
-		SDL_Color* bodyColor = body.userObject != null? ((PlanetariumUserObject*) body.userObject)->color : null;
+		SDL_Color* bodyColor = body.clone.userObject != null? ((PlanetariumUserObject*) body.clone.userObject)->color : null;
 
-		double size = viewportZoom*body.diameter;
-		Vector2D v = this->getTransposed(body.position);
+		double size = viewportZoom*body.clone.diameter;
+		Vector2D v = this->getTransposed(body.clone.position);
 
 		if(size < this->minimumBodyRenderingRadius)
 			size = this->minimumBodyRenderingRadius;
@@ -285,14 +279,14 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	focusedBodies.clear();
 }
 
-vector<Body2D> Planetarium::getBodies() const
+vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 {
-	vector<Body2D> bodies;
+	vector<Body2DClone> bodies;
 	synchronized(physicsAccessMutex)
 	{
 		const_foreach(Body2D*, i, vector<Body2D*>, physics->universe.bodies)
 		{
-			bodies.push_back(Body2D(*i)); //must do deep copy on userObject
+			bodies.push_back(Body2DClone(i)); //must do deep copy on userObject
 		}
 	}
 	return bodies;
@@ -347,10 +341,10 @@ void Planetarium::OrbitTracer::drawTrace(Body2D* body)
 	drawTrace(trace, bodyColor);
 }
 
-void Planetarium::OrbitTracer::drawTrace(CopyBody2D& body)
+void Planetarium::OrbitTracer::drawTrace(Body2DClone& body)
 {
-	if(body.userObject == null) return; //if there isn't body data, there isn't body color. leave.
-	SDL_Color* bodyColor = ((PlanetariumUserObject*) body.userObject)->color;
+	if(body.clone.userObject == null) return; //if there isn't body data, there isn't body color. leave.
+	SDL_Color* bodyColor = ((PlanetariumUserObject*) body.clone.userObject)->color;
 
 	iterable_queue<Vector2D>& trace = this->getTrace(body.original); //get original body trace
 
