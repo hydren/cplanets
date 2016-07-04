@@ -210,12 +210,14 @@ void ListSelectionModel::fit(unsigned size)
 
 void ListSelectionModel::listenerAdd(Listener* listener)
 {
+	if(listeners == NULL) listeners = new vector<Listener*>();
 	if(std::find(listeners->begin(), listeners->end(), listener) == listeners->end())
 		listeners->push_back(listener);
 }
 
 void ListSelectionModel::listenerRemove(Listener* listener)
 {
+	if(listeners == NULL) return;
 	vector<Listener*>::iterator it = std::find(listeners->begin(), listeners->end(), listener);
 	if(it != listeners->end())
 		listeners->erase(it);

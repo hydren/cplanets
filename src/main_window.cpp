@@ -97,11 +97,12 @@ void onSDLInit();
 
 //  =========== PLANETARIUM LISTENER ===========================
 
-struct CustomUniverseListener extends Planetarium::UniverseEventListener
+struct CustomListener extends Planetarium::UniverseEventListener, WidgetsExtra::ListSelectionModel::Listener
 {
 	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
 	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
 	void onBodyDeletion(Body2D* deletedBody) { refreshAllTxtBodies(); }
+	void onChange(unsigned index, unsigned endIndex) { callbackListSelectionChanged(index, endIndex); }
 };
 
 // ================ CONSTANTS ================
@@ -116,6 +117,7 @@ SDL_Surface* APP_LOGO;
 
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
+CustomListener customListener;
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
@@ -212,7 +214,7 @@ void CPlanets::showMainWindow()
 		windowSize.h - (2.1*TOOLBAR_SIZE)
 	);
 	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
-	planetarium->listeners.addListener(new CustomUniverseListener());
+	planetarium->listeners.addListener(&customListener);
 	planetarium->physics->universe.gravity = 9.807;
 
 
@@ -236,6 +238,7 @@ void CPlanets::showMainWindow()
 	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
 	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2D>(String::Callbacks::stringfy_by_method<Body2D, &Body2D::toString>));
 	txtBodies->adjustSelection = GenericSelectionAdjustment::function<Body2D>;
+	txtBodies->selection.listenerAdd(&customListener);
 	txtBodies->selection.onChange = callbackListSelectionChanged;
 	txtBodies->preventRedrawOnClick = true;
 
