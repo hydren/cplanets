@@ -42,9 +42,13 @@ const string CPLANETS_LICENSE =
 
 int main(int argc, char* argv[])
 {
+	srand(time(null));
+
+	if(argc > 1 and (string(argv[1]) == "--centered" or string(argv[1]) == "-c"))
+		putenv("SDL_VIDEO_CENTERED=1");
+
 	try
 	{
-		srand(time(null));
 		StandardPhysics2DSolvers::doRegister();
 		CPlanets::showMainWindow(); // set SDL_VIDEO_CENTERED=1 environment variable before program execution to center window
 		return EXIT_SUCCESS;
