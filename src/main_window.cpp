@@ -91,6 +91,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
 void onListSelectionChanged(unsigned, unsigned);
+void onBodyReFocusing();
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
@@ -104,6 +105,7 @@ struct CustomListener extends Planetarium::UniverseEventListener, WidgetsExtra::
 	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
 	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
 	void onBodyDeletion(Body2D* deletedBody) { refreshAllTxtBodies(); }
+	void onBodyReFocus(){ onBodyReFocusing(); }
 	void onChange(unsigned index, unsigned endIndex) { onListSelectionChanged(index, endIndex); }
 };
 
@@ -806,14 +808,30 @@ void onListSelectionChanged(unsigned ind0, unsigned ind1)
 	sclpBodies->refresh(); //custom redraw behavior
 
 	// fixme whats the point of model separation on ListWin if we needed to do the following cast?
-	std::vector<Body2DClone>& data = *static_cast<std::vector<Body2DClone>*> (txtBodies->model->getData());
-	std::vector<Body2D*> newSelection;
+	vector<Body2DClone>& data = *static_cast<vector<Body2DClone>*> (txtBodies->model->getData());
+	vector<Body2D*> newSelection;
 
 	for(unsigned i = 0; i < data.size(); i++)
 		if(txtBodies->selection.isSelected(i))
 			newSelection.push_back(data.at(i).original);
 
 	planetarium->setFocusedBodies(newSelection);
+}
+
+void onBodyReFocusing()
+{
+	// fixme whats the point of model separation on ListWin if we needed to do the following cast?
+	vector<Body2DClone>& data = *static_cast<vector<Body2DClone>*> (txtBodies->model->getData());
+
+	txtBodies->selection.clear();
+	foreach(Body2D*, focused, vector<Body2D*>, planetarium->focusedBodies)
+	{
+		for(unsigned i = 0; i < data.size(); i++)
+			if(data.at(i).original == focused)
+				txtBodies->selection.modify(i, i, true, true);
+	}
+
+	sclpBodies->refresh(); //custom redraw behavior
 }
 
 void adjustAboutDialog()
