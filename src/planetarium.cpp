@@ -559,6 +559,7 @@ void Planetarium::onMouseDown(BgrWin* bgr, int x, int y, int but)
 
 void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 {
+	bool notToogling = not(SDL_GetModState() & KMOD_CTRL); // check if click-wise selection
 	if(but == SDL_BUTTON_LEFT)
 	{
 		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
@@ -588,8 +589,9 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			{
 				// Check if the clicked point is above a body. if yes, "focused" the body.
 
-				if(not(SDL_GetModState() & KMOD_CTRL)) // check if click-wise selection
+				if(notToogling)
 					planetarium->focusedBodies.clear();
+
 				SDL_mutex* collisionEventsMutex = planetarium->physicsEventsManager->mutex;
 				synchronized(collisionEventsMutex)
 				{
@@ -597,7 +599,11 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 					{
 						if(body->position.distance(pointedPosition) <= body->diameter*0.5)
 						{
-							planetarium->focusedBodies.push_back(body);
+							if(notToogling) //set focused
+								planetarium->focusedBodies.push_back(body);
+							else //toogle focus
+								if(Collections::removeElement(planetarium->focusedBodies, body) == false)
+									planetarium->focusedBodies.push_back(body);
 						}
 					}
 				}
@@ -613,7 +619,7 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 		{
 			// Make all bodies under this to be "focused"
 
-			if(not(SDL_GetModState() & KMOD_CTRL)) // check if click-wise selection
+			if(notToogling)
 				planetarium->focusedBodies.clear();
 
 			double rtix = min(prevPointedPosition.x, pointedPosition.x), rtfx = max(prevPointedPosition.x, pointedPosition.x),
@@ -627,7 +633,11 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 					if(body->position.x >= rtix && body->position.x <= rtfx
 					&& body->position.y >= rtiy && body->position.y <= rtfy)
 					{
-						planetarium->focusedBodies.push_back(body);
+						if(notToogling) //set focused
+							planetarium->focusedBodies.push_back(body);
+						else //toogle focus
+							if(Collections::removeElement(planetarium->focusedBodies, body) == false)
+								planetarium->focusedBodies.push_back(body);
 					}
 				}
 			}
