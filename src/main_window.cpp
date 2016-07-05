@@ -823,10 +823,10 @@ void onBodyReFocusing()
 	// fixme whats the point of model separation on ListWin if we needed to do the following cast?
 	vector<Body2DClone>& data = *static_cast<vector<Body2DClone>*> (txtBodies->model->getData());
 
-	txtBodies->selection.clear();
-	foreach(Body2D*, focused, vector<Body2D*>, planetarium->focusedBodies)
+	for(unsigned i = 0; i < data.size(); i++)
 	{
-		for(unsigned i = 0; i < data.size(); i++)
+		txtBodies->selection.modify(i, i, false, true);
+		foreach(Body2D*, focused, vector<Body2D*>, planetarium->focusedBodies)
 			if(data.at(i).original == focused)
 				txtBodies->selection.modify(i, i, true, true);
 	}
