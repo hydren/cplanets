@@ -9,42 +9,35 @@
 #define WIDGETS_LIST_WIN_HPP_
 
 #include "SDL_widgets/SDL_widgets.h"
-#include "list_model.hpp"
 #include "list_selection_model.hpp"
+#include "futil/futil.hpp"
 
 namespace WidgetsExtra
 {
-	/// An improved alternative of TextWin.
-	struct ListWin extends BgrWin
+	struct AbstractListWin extends BgrWin
 	{
-		UIListModel* model;
-		ListSelectionModel selection;
-
 		Point padding;
 		unsigned spacing;
 		RenderText* textRenderer, *textRendererCaseSelected;
 		Uint32 bgcolCaseSelected;
 
+		ListSelectionModel selection;
+
 		/// Advanced flag used to tweak the behavior of clicking on the list.
 		/// If true, the list won't be re-drawed when clicked.
 		bool preventRedrawOnClick;
 
-		/// Optional function to be called to adjust this model's selection when changes occur in the list data related to this selection model.
-		/// If it is null (default), the selection will be cleared everytime the inner data changes.
-		void (*adjustSelection)(ListSelectionModel& selection, const void* oldDataPtr, const void* newDataPtr);
-
 		//can be called only after a TopWin has been constructed
-		ListWin(WinBase *parent, Style, Rect rect, Id id=0);
-
-		virtual ~ListWin();
+		AbstractListWin(WinBase *parent, Style, Rect rect, Id id=0);
+		virtual ~AbstractListWin();
 
 		virtual void draw();
-
-		virtual void setListData(const std::vector<std::string>& data, bool redrawImmediately=false);
-		virtual void setListModel(UIListModel* model, bool redrawImmediately=false, bool deletePrevious=true);
-		virtual void updateListData(void* data, bool redrawImmediately=false);
 		virtual unsigned getListHeight();
 		virtual void clickList(const Point& point);
+
+		// Pure virtuals, needs implementation from child class
+		virtual unsigned size() abstract;
+		virtual std::string getAsString(unsigned index) abstract;
 
 		protected:
 		unsigned lastClickedIndex;
@@ -58,6 +51,77 @@ namespace WidgetsExtra
 		static void onMouseDown(BgrWin* bgr,int x,int y,int but);
 		static void onMouseMove(BgrWin* bgr,int x,int y,int but);
 		static void onMouseUp(BgrWin* bgr,int x,int y,int but);
+	};
+
+	/// An improved alternative of TextWin.
+	template<typename Type>
+	struct ListWin extends AbstractListWin
+	{
+		ListWin(WinBase *parent, Style style, Rect rect, Id id=0)
+		: AbstractListWin(parent, style, rect, id),
+		  listData(new std::vector<Type>()), ownData(true),
+
+		  //advanced usage
+		  stringfyFunction(String::Callbacks::stringfy_by_cast<Type>),
+		  selectionAdjustmentFunction(null)
+		{}
+
+		ListWin(WinBase *parent, Style style, Rect rect, std::string (*stringfyFunction)(Type value), Id id=0)
+		: AbstractListWin(parent, style, rect, id),
+		  listData(new std::vector<Type>()), ownData(true),
+
+		  //advanced usage
+		  stringfyFunction(stringfyFunction),
+		  selectionAdjustmentFunction(null)
+		{}
+
+		virtual ~ListWin() { if(ownData) delete listData; }
+
+		virtual unsigned size() { return listData->size(); }
+		virtual std::string getAsString(unsigned index)
+		{
+			if(stringfyFunction != null)
+				return stringfyFunction(listData->at(index)); // if a stringfy function was specified, use it
+			else
+				return "<unstringable value>";
+		}
+
+		virtual std::vector<Type>* getListData() { return listData; }
+		virtual void setListData(std::vector<Type>* newData, bool alsoDeletePrevious=false)
+		{
+			//adjust selection to new data
+			this->updateSelection(newData);
+
+			std::vector<Type>* previous = listData;
+			this->listData = newData;
+
+			if(alsoDeletePrevious or ownData) delete previous;
+			ownData = false;
+		}
+
+		/// Optional function to be called to adjust this model's selection when changes occur in the list data related to this selection model.
+		/// If it is null (default), the selection will be cleared everytime the inner data changes.
+		void (*selectionAdjustmentFunction)(ListSelectionModel& selection, const std::vector<Type>* oldDataPtr, const std::vector<Type>* newDataPtr);
+
+		protected:
+		std::vector<Type>* listData;
+		bool ownData; // tells whether the listData was created by this instance. if true, then it will be deleted when this list is deleted or its listData is replaced.
+
+		/// A function pointer to a procedure to get a string value of the specified value.
+		/// By default, the action is to try to cast to std::string, but other actions can be specified.
+		/// See String::Callbacks for a useful set of templates of functions.
+		std::string (*stringfyFunction)(Type value); // todo should stringfyFunction be a function that receives value by reference?
+
+		void updateSelection(std::vector<Type>* newData)
+		{
+			if(this->selectionAdjustmentFunction == null)  //no special selection adjuster specified
+			{
+				//default procedure, clear selection
+				this->selection.fit(newData->size());
+				this->selection.clear();
+			}
+			else this->selectionAdjustmentFunction(this->selection, this->listData, newData);
+		}
 	};
 }
 
