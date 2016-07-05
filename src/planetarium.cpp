@@ -586,8 +586,10 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			}
 			else //user tried to click a single body, or it was a mistake/random action.
 			{
-				//check if the clicked point is above a body. if yes, "focused" the body.
-				planetarium->focusedBodies.clear();
+				// Check if the clicked point is above a body. if yes, "focused" the body.
+
+				if(not(SDL_GetModState() & KMOD_CTRL)) // check if click-wise selection
+					planetarium->focusedBodies.clear();
 				SDL_mutex* collisionEventsMutex = planetarium->physicsEventsManager->mutex;
 				synchronized(collisionEventsMutex)
 				{
@@ -609,8 +611,10 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 		}
 		else //mouse up after holding down
 		{
-			//make all bodies under this to be "focused"
-			planetarium->focusedBodies.clear();
+			// Make all bodies under this to be "focused"
+
+			if(not(SDL_GetModState() & KMOD_CTRL)) // check if click-wise selection
+				planetarium->focusedBodies.clear();
 
 			double rtix = min(prevPointedPosition.x, pointedPosition.x), rtfx = max(prevPointedPosition.x, pointedPosition.x),
 				   rtiy = min(prevPointedPosition.y, pointedPosition.y), rtfy = max(prevPointedPosition.y, pointedPosition.y);
