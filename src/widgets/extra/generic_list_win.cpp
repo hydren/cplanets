@@ -5,8 +5,8 @@
  *      Author: carlosfaruolo
  */
 
-#include <widgets/generic_list_win.hpp>
-#include "widgets_util.hpp"
+#include "generic_list_win.hpp"
+#include "widgets/widgets_util.hpp"
 #include "SDL_util.hpp"
 
 using WidgetsExtra::GenericListWin;

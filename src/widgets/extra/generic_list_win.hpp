@@ -9,7 +9,7 @@
 #define WIDGETS_GENERIC_LIST_WIN_HPP_
 
 #include "SDL_widgets/SDL_widgets.h"
-#include "list_selection_model.hpp"
+#include "widgets/list_selection_model.hpp"
 #include "list_model.hpp"
 
 namespace WidgetsExtra

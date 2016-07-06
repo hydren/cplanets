@@ -27,6 +27,7 @@ src \
 src/geometry \
 src/physics \
 src/widgets \
+src/widgets/extra \
 src_libs/SDL_widgets \
 src_libs/futil \
 
