@@ -800,7 +800,7 @@ void updateSizeTxtBodies()
 
 void onListSelectionChanged(unsigned ind0, unsigned ind1)
 {
-	cout << "I will set the focused bodies as the selected ones in [" << ind0 << ", " << ind1 << "]" << endl;
+//	cout << "I will set the focused bodies as the selected ones in [" << ind0 << ", " << ind1 << "]" << endl;
 	sclpBodies->refresh(); //custom redraw behavior
 
 	vector<Body2DClone>& data = *txtBodies->getListData();
