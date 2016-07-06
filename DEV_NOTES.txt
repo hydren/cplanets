@@ -2,6 +2,7 @@
 
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
 - Bezier spline is glitched due to wrong parametrization.
+- Selection on planetarium always unpauses when it should only unpause if it was paused before.
 
 - (SDL) application icon displays black instead of transparency.
 
@@ -32,10 +33,11 @@ Add random orbiting planet functionality
 Bouncing bodies
 G exp.
 
-- 1.0 (planets-supersedure milestone)
+- 1.0 (planets-supersedure/usability milestone)
 
 Undo functionality
 Show paused/resumed state more explicitly
+Save preferences (window positions, paths, etc)
 Implement button with icon and offer icons-only buttons (pixmaps can be used, taking advantage of the create_pixmap() function; examples in sw-pixmaps.h)
 Theming functionality (mainly to match many OSes' ones)
 Try to load the universe setting a fitting zoom for its size.
