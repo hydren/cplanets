@@ -60,8 +60,8 @@ namespace WidgetsExtra
 			if (wb) typ="(ScrollablePane)";
 		}
 		if (!typ) {
-			ListWin *wb=dynamic_cast<ListWin*>(child);
-			if (wb) typ="(ListWin)";
+			AbstractListWin *wb=dynamic_cast<AbstractListWin*>(child);
+			if (wb) typ="(AbstractListWin)";
 		}
 
 		// original widgets

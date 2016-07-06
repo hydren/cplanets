@@ -10,7 +10,6 @@ CPP_SRCS += \
 ../src/widgets/file_dialog.cpp \
 ../src/widgets/flow_layout.cpp \
 ../src/widgets/label_win.cpp \
-../src/widgets/list_model.cpp \
 ../src/widgets/list_selection_model.cpp \
 ../src/widgets/list_win.cpp \
 ../src/widgets/scrollable_pane.cpp \
@@ -28,7 +27,6 @@ OBJS += \
 ./src/widgets/file_dialog.o \
 ./src/widgets/flow_layout.o \
 ./src/widgets/label_win.o \
-./src/widgets/list_model.o \
 ./src/widgets/list_selection_model.o \
 ./src/widgets/list_win.o \
 ./src/widgets/scrollable_pane.o \
@@ -46,7 +44,6 @@ CPP_DEPS += \
 ./src/widgets/file_dialog.d \
 ./src/widgets/flow_layout.d \
 ./src/widgets/label_win.d \
-./src/widgets/list_model.d \
 ./src/widgets/list_selection_model.d \
 ./src/widgets/list_win.d \
 ./src/widgets/scrollable_pane.d \

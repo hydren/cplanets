@@ -33,7 +33,6 @@
 #include "widgets/file_dialog.hpp"
 #include "widgets/scrollable_pane.hpp"
 #include "widgets/list_win.hpp"
-#include "widgets/list_model_extra.hpp"
 #include "widgets/list_selection_model_extra.hpp"
 
 using std::cout;
@@ -57,7 +56,6 @@ using WidgetsExtra::FileDialog;
 using WidgetsExtra::ScrollablePane;
 using WidgetsExtra::DialogBgrWin;
 using WidgetsExtra::ListWin;
-using WidgetsExtra::GenericSelectionAdjustment;
 
 typedef Planetarium::Body2DClone Body2DClone;
 
@@ -133,7 +131,7 @@ FileDialog* dialogLoad, *dialogSave;
 TabSet* tabs;
 
 BgrWin* tabBodies;
-ListWin* txtBodies;
+ListWin<Body2DClone>* txtBodies;
 ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
@@ -239,9 +237,8 @@ void CPlanets::showMainWindow()
 	sclpBodies->setScrollbarHorizontalVisible(false);
 
 	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
-	txtBodies = new ListWin(&sclpBodies->content, 0, txtBodiesSize);
-	txtBodies->setListModel(new WidgetsExtra::StringableTypeUIListModel<Body2DClone>(String::Callbacks::stringfy_by_method<Body2DClone, &Body2DClone::toString>));
-	txtBodies->adjustSelection = GenericSelectionAdjustment::function<Body2DClone>;
+	txtBodies = new ListWin<Body2DClone>(&sclpBodies->content, 0, txtBodiesSize, String::Callbacks::stringfy_by_method<Body2DClone, &Body2DClone::toString>);
+	txtBodies->selectionAdjustmentFunction = WidgetsExtra::GenericSelectionAdjustment::function<Body2DClone>;
 	txtBodies->selection.listenerAdd(&customListener);
 	txtBodies->selection.onChange = onListSelectionChanged;
 	txtBodies->preventRedrawOnClick = true;
@@ -783,8 +780,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog)
 
 void refreshAllTxtBodies()
 {
-	vector<Body2DClone> bodies = planetarium->getBodies();
-	txtBodies->updateListData(&bodies);
+	txtBodies->setListData(new vector<Body2DClone>(planetarium->getBodies()), true);
 	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
 }
 
@@ -792,7 +788,7 @@ void updateSizeTxtBodies()
 {
 	unsigned height2 = sclpBodies->tw_area.h;
 
-	if(txtBodies->model->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
+	if(txtBodies->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
 		height2 = Math::max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
 
 	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
@@ -807,8 +803,7 @@ void onListSelectionChanged(unsigned ind0, unsigned ind1)
 	cout << "I will set the focused bodies as the selected ones in [" << ind0 << ", " << ind1 << "]" << endl;
 	sclpBodies->refresh(); //custom redraw behavior
 
-	// fixme whats the point of model separation on ListWin if we needed to do the following cast?
-	vector<Body2DClone>& data = *static_cast<vector<Body2DClone>*> (txtBodies->model->getData());
+	vector<Body2DClone>& data = *txtBodies->getListData();
 	vector<Body2D*> newSelection;
 
 	for(unsigned i = 0; i < data.size(); i++)
@@ -820,8 +815,7 @@ void onListSelectionChanged(unsigned ind0, unsigned ind1)
 
 void onBodyReFocusing()
 {
-	// fixme whats the point of model separation on ListWin if we needed to do the following cast?
-	vector<Body2DClone>& data = *static_cast<vector<Body2DClone>*> (txtBodies->model->getData());
+	vector<Body2DClone>& data = *txtBodies->getListData();
 
 	for(unsigned i = 0; i < data.size(); i++)
 	{

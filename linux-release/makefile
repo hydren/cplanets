@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include src_libs/futil/subdir.mk
 -include src_libs/SDL_widgets/subdir.mk
+-include src/widgets/extra/subdir.mk
 -include src/widgets/subdir.mk
 -include src/physics/subdir.mk
 -include src/geometry/subdir.mk
