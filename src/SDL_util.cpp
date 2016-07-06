@@ -38,3 +38,17 @@ SDL_Surface* SDL_util::loadBitmap(const char* path, const SDL_Color* transparent
 
 	return bmp;
 }
+
+#ifdef __WIN32__
+	#include <windows.h>
+#endif
+
+void SDL_util::preloadCentered()
+{
+	//Added macro to supply missing setenv in Win32 platform
+	#ifdef __WIN32__
+		SetEnvironmentVariable("SDL_VIDEO_CENTERED", "1");
+	#elif defined _POSIX_VERSION
+		setenv("SDL_VIDEO_CENTERED", "1", 1);
+	#endif
+}

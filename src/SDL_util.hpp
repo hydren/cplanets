@@ -58,6 +58,9 @@ namespace SDL_util
 	SDL_Color* getRandomColor();
 
 	SDL_Surface* loadBitmap(const char* path, const SDL_Color* transparentColor=NULL);
+
+	//hints SDL_Init to start the window centered
+	void preloadCentered();
 }
 
 #endif /* SDL_UTIL_HPP_ */

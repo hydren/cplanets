@@ -14,6 +14,7 @@
 
 #include "physics/physics2d_solvers.hpp"
 #include "main_window.hpp"
+#include "SDL_util.hpp"
 #include "util.hpp" //todo do we need this include?
 
 using std::string;
@@ -58,7 +59,7 @@ int main(int argc, char* argv[])
 		}
 
 		else if(string(argv[i]) == "--centered" or string(argv[i]) == "-c")
-			putenv(const_cast<char*>("SDL_VIDEO_CENTERED=1"));
+			SDL_util::preloadCentered();
 
 		else cout << "Unrecognized argument: " << argv[i] << endl;
 	}
