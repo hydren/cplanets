@@ -192,8 +192,9 @@ void Physics2D::resolveCollisions()
 		}
 	}
 
+	//if there was collisions, reset
 	if(not collisions.empty())
-		this->referenceFrame.position();
+		this->referenceFrame.reset();
 
 	//resolve collisions
 	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
