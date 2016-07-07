@@ -202,7 +202,7 @@ void Layout::addComponent(WinBase* base, int index)
 {
 	WinBaseWrapper* component = new WinBaseWrapper(base); //creater wrapper for winbase
 	innerWrappers.push_back(component); //register the layout-created wrapper
-	addComponent(static_cast<Element*>(component));
+	addComponent(static_cast<Element*>(component), index);
 }
 
 void Layout::addComponent(Element& component, int index)
