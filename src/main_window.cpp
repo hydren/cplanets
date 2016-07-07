@@ -607,17 +607,19 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnFollowSelection)
 	{
+		const double az = 1/planetarium->viewportZoom;
 		planetarium->physics->referenceFrame.set(planetarium->focusedBodies);
-		planetarium->viewportPosition.x = -planetarium->tw_area.w/2;
-		planetarium->viewportPosition.y = -planetarium->tw_area.h/2;
+		planetarium->viewportPosition.x = -az*planetarium->tw_area.w/2;
+		planetarium->viewportPosition.y = -az*planetarium->tw_area.h/2;
 	}
 
 	if(btn == btnResetReferenceFrame)
 	{
+		const double az = 1/planetarium->viewportZoom;
 		planetarium->viewportPosition = planetarium->physics->referenceFrame.position();
 		planetarium->physics->referenceFrame.reset();
-		planetarium->viewportPosition.x -= planetarium->tw_area.w/2;
-		planetarium->viewportPosition.y -= planetarium->tw_area.h/2;
+		planetarium->viewportPosition.x -= az*planetarium->tw_area.w/2;
+		planetarium->viewportPosition.y -= az*planetarium->tw_area.h/2;
 	}
 
 	if(btn == btnRun)
