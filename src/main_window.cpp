@@ -149,7 +149,7 @@ Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 Planetarium* planetarium;
 
 FlowLayout* toolbarRight;
-Button* btnAddBody, *btnAddRandom, *btnRemove, *btnRecolorAll, *btnFollowSelection;
+Button* btnAddBody, *btnAddRandom, *btnRemove, *btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;
 
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
@@ -367,6 +367,9 @@ void CPlanets::showMainWindow()
 
 	btnFollowSelection = new Button(window, 0, sideButtonSize, "Flw", onButtonPressed);
 	toolbarRight->addComponent(btnFollowSelection);
+
+	btnResetReferenceFrame = new Button(window, 0, sideButtonSize, "RRF", onButtonPressed);
+	toolbarRight->addComponent(btnResetReferenceFrame);
 
 	toolbarRight->pack();
 
@@ -605,6 +608,11 @@ void onButtonPressed(Button* btn)
 	if(btn == btnFollowSelection)
 	{
 		planetarium->physics->referenceFrame.set(planetarium->focusedBodies);
+	}
+
+	if(btn == btnResetReferenceFrame)
+	{
+		planetarium->physics->referenceFrame.reset();
 	}
 
 	if(btn == btnRun)
