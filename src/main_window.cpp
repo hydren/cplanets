@@ -191,6 +191,10 @@ void CPlanets::showMainWindow()
 	packer.pack(btnSave);
 	toolbarNorthLayout->addComponent(btnSave);
 
+	btnAbout = new Button(window, 0, genericButtonSize, "About", onButtonPressed);
+	packer.pack(btnAbout);
+	toolbarNorthLayout->addComponent(btnAbout);
+
 	toolbarNorthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
 
 	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
@@ -200,10 +204,6 @@ void CPlanets::showMainWindow()
 	btnPause = new Button(window, 0, genericButtonSize, "Pause", onButtonPressed);
 	packer.pack(btnPause);
 	toolbarNorthLayout->addComponent(btnPause);
-
-	btnAbout = new Button(window, 0, genericButtonSize, "About", onButtonPressed);
-	packer.pack(btnAbout);
-	toolbarNorthLayout->addComponent(btnAbout);
 
 	toolbarNorthLayout->pack();
 

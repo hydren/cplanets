@@ -18,7 +18,8 @@
 #include "physics/physics2d.hpp"
 #include "physics/physics2d_solvers.hpp"
 
-using std::cout; using std::endl;
+using std::cout;
+using std::endl;
 using std::vector;
 using std::queue;
 using std::map;
