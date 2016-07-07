@@ -24,6 +24,7 @@ struct Physics2D
 
 	struct ReferenceFrame
 	{
+		friend class Physics2D;
 		Vector2D position() const;
 		Vector2D velocity() const;
 		bool isPointLike() const;

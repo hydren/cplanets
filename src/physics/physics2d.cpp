@@ -36,6 +36,10 @@ void Physics2D::step()
 
 	//resolve collisions
 	resolveCollisions();
+
+	//move reference frame manually if point-like (and frame has velocity)
+	if(referenceFrame.isPointLike() and not referenceFrame.velocity().isZero())
+		referenceFrame.customPosition.add(referenceFrame.velocity().times(solver.timestep));
 }
 
 Vector2D Physics2D::ReferenceFrame::position() const
