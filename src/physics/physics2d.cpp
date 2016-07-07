@@ -17,46 +17,12 @@ using futil::throw_exception;
 using std::vector;
 
 Physics2D::Physics2D()
-: universe(), referenceFrame(),
+: universe(),
   physics2DSolver(null),
+  referenceFrame(),
   onCollision(null),
   collisionListeners(null)
 {}
-
-Vector2D ReferenceFrame::getPosition() const
-{
-	Vector2D centerOfMass;
-	double totalMass = 0;
-	const_foreach(const Body2D*, body, vector<Body2D*>, bodies)
-	{
-		const Body2D& b = *body;
-		centerOfMass.add(b.position.times(b.mass));
-		totalMass += b.mass;
-	}
-
-	centerOfMass.scale(1.0/totalMass);
-
-	return centerOfMass;
-}
-
-Vector2D ReferenceFrame::getVelocity() const
-{
-	Vector2D totalVelocity;
-	double totalMass = 0;
-	const_foreach(const Body2D*, body, vector<Body2D*>, bodies)
-	{
-		const Body2D& b = *body;
-		totalVelocity.add(b.velocity.times(b.mass));
-		totalMass += b.mass;
-	}
-
-	totalVelocity.scale(1.0/totalMass);
-
-	std::cout << "refential velocity: " << totalVelocity.x << " " << totalVelocity.y << std::endl;
-	std::cout << "total mass of referential: " << totalMass << std::endl;
-
-	return totalVelocity;
-}
 
 void Physics2D::step()
 {
@@ -72,12 +38,80 @@ void Physics2D::step()
 	resolveCollisions();
 }
 
-void Physics2D::changeReferenceFrameTo(vector<Body2D*>& reference)
+Vector2D Physics2D::ReferenceFrame::position() const
 {
-	//FIXME TODO implement Physics2D::changeReferenceFrameTo
-	//compute center of mass of 'reference'
-	//compute total momentum for 'reference'
-	//subtract from all bodies the position and speed
+	if(bodies.size() == 0)
+		return customPosition;
+	else
+	{
+		Vector2D centerOfMass;
+		double totalMass = 0;
+		for(unsigned i = 0; i < bodies.size(); i++)
+		{
+			const Body2D& b = *(bodies[i]);
+			centerOfMass.add(b.position.times(b.mass));
+			totalMass += b.mass;
+		}
+
+		if(totalMass != 0) // this is for safety: obviously a total mass of 0 is something wrong...
+			centerOfMass.scale(1.0/totalMass);
+
+		return centerOfMass;
+	}
+}
+
+Vector2D Physics2D::ReferenceFrame::velocity() const
+{
+	if(bodies.size() == 0)
+		return customVelocity;
+	else
+	{
+		Vector2D totalVelocity;
+		double totalMass = 0;
+		for(unsigned i = 0; i < bodies.size(); i++)
+		{
+			const Body2D& b = *(bodies[i]);
+			totalVelocity.add(b.velocity.times(b.mass));
+			totalMass += b.mass;
+		}
+
+		if(totalMass != 0) // this is for safety: obviously a total mass of 0 is something wrong...
+			totalVelocity.scale(1.0/totalMass);
+
+		return totalVelocity;
+	}
+}
+
+bool Physics2D::ReferenceFrame::isPointLike() const
+{
+	return this->bodies.empty();
+}
+
+void Physics2D::ReferenceFrame::reset()
+{
+	this->bodies.clear();
+	this->customPosition = Vector2D();
+	this->customVelocity = Vector2D();
+}
+
+void Physics2D::ReferenceFrame::set(Vector2D position, Vector2D velocity)
+{
+	this->bodies.clear();
+	this->customPosition = position;
+	this->customVelocity = velocity;
+}
+
+void Physics2D::ReferenceFrame::set(const Body2D** reference, unsigned n)
+{
+	this->bodies.clear();
+	for(unsigned i = 0; i < n; i++)
+		this->bodies.push_back(reference[i]);
+}
+
+void Physics2D::ReferenceFrame::set(const std::vector<Body2D*>& reference)
+{
+	this->bodies.clear();
+	this->bodies.assign(reference.begin(), reference.end());
 }
 
 void Physics2D::addCollisionListener(CollisionListener* listener)
@@ -99,6 +133,8 @@ void Physics2D::removeCollisionListener(CollisionListener* listener)
 			this->collisionListeners->erase(this->collisionListeners->begin() + index);
 	}
 }
+
+
 
 vector<Body2D*>* collisionsOf(Body2D* body, vector< vector<Body2D*> >& collisions)
 {
@@ -152,7 +188,7 @@ void Physics2D::resolveCollisions()
 	}
 
 	if(not collisions.empty())
-		referenceFrame.bodies.clear();
+		this->referenceFrame.position();
 
 	//resolve collisions
 	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)

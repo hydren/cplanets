@@ -194,7 +194,7 @@ void Planetarium::draw()
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
 //	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
-	return position.difference(this->viewportPosition).scale(viewportZoom);
+	return position.difference(this->physics->referenceFrame.position()).subtract(this->viewportPosition).scale(viewportZoom);
 }
 
 void Planetarium::setRunning(bool run)

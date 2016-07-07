@@ -13,23 +13,32 @@
 #include "physics2dsolver.hpp"
 #include "universe2d.hpp"
 
-struct ReferenceFrame
-{
-	std::vector<Body2D*> bodies;
-	Vector2D getPosition() const;
-	Vector2D getVelocity() const;
-};
-
 struct Physics2D
 {
 	Universe2D universe;
-	ReferenceFrame referenceFrame;
 	AbstractPhysics2DSolver* physics2DSolver;
 
 	Physics2D();
 
 	void step();
-	void changeReferenceFrameTo(std::vector<Body2D*>& reference);
+
+	struct ReferenceFrame
+	{
+		Vector2D position() const;
+		Vector2D velocity() const;
+		bool isPointLike() const;
+
+		void reset();
+		void set(Vector2D position, Vector2D velocity=Vector2D());
+		void set(const Body2D** reference, unsigned n);
+		void set(const std::vector<Body2D*>& reference);
+
+		protected:
+		Vector2D customPosition, customVelocity;
+		std::vector<const Body2D*> bodies;
+	};
+
+	ReferenceFrame referenceFrame;
 
 	//callback when a collision occurs. ignored if null (default).
 	void (*onCollision)(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
@@ -44,8 +53,9 @@ struct Physics2D
 	void addCollisionListener(CollisionListener* listener);
 	void removeCollisionListener(CollisionListener* listener);
 
-	private:
+	protected:
 	std::vector<CollisionListener*>* collisionListeners; //null unless any listener is registered
+
 	void resolveCollisions();
 };
 
