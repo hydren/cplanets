@@ -101,21 +101,21 @@ void Physics2D::ReferenceFrame::reset()
 
 void Physics2D::ReferenceFrame::set(Vector2D position, Vector2D velocity)
 {
-	this->bodies.clear();
+	this->reset();
 	this->customPosition = position;
 	this->customVelocity = velocity;
 }
 
 void Physics2D::ReferenceFrame::set(const Body2D** reference, unsigned n)
 {
-	this->bodies.clear();
+	this->reset();
 	for(unsigned i = 0; i < n; i++)
 		this->bodies.push_back(reference[i]);
 }
 
 void Physics2D::ReferenceFrame::set(const std::vector<Body2D*>& reference)
 {
-	this->bodies.clear();
+	this->reset();
 	this->bodies.assign(reference.begin(), reference.end());
 }
 
