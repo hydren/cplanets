@@ -8,11 +8,12 @@
 #include "physics2d.hpp"
 
 #include <iostream>
-#include <cmath>
 #include <algorithm>
+#include <stdexcept>
+
+#include <cmath>
 
 #include "futil/futil.hpp"
-using futil::throw_exception;
 
 using std::vector;
 
@@ -27,7 +28,7 @@ Physics2D::Physics2D()
 void Physics2D::step()
 {
 	if(physics2DSolver == null)
-		throw_exception("Can't do step(): No physics solver specified!");
+		throw std::runtime_error("Can't do step(): No physics solver specified!");
 
 	AbstractPhysics2DSolver& solver = *physics2DSolver;
 
