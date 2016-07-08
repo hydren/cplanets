@@ -174,6 +174,8 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	bool isMouseLeftButtonDown;
 	Vector2D lastMouseClickPoint;
 
+	Vector2D getTransposedNoRef(const Vector2D& position) const;
+
 	void performPhysics(); //updates physics
 	void updateView(); //updates view
 	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener

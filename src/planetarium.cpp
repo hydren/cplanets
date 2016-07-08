@@ -195,7 +195,12 @@ void Planetarium::draw()
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
 //	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
-	return position.difference(this->physics->referenceFrame.position()).subtract(this->viewportPosition).scale(viewportZoom);
+	return (position - physics->referenceFrame.position() - viewportPosition)*viewportZoom;
+}
+
+Vector2D Planetarium::getTransposedNoRef(const Vector2D& position) const
+{
+	return (position - viewportPosition)*viewportZoom;
 }
 
 void Planetarium::setRunning(bool run)
@@ -335,7 +340,7 @@ Planetarium::OrbitTracer::OrbitTracer(Planetarium* p)
 
 void Planetarium::OrbitTracer::record(Body2D* body)
 {
-	this->traces[body].push(body->position);
+	this->traces[body].push(body->position-planetarium->physics->referenceFrame.position());
 	while(this->traces[body].size() > traceLength)
 		this->traces[body].pop();
 }
@@ -384,7 +389,7 @@ void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, SDL_C
 {
 	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 	{
-		Vector2D pv = planetarium->getTransposed(r);
+		Vector2D pv = planetarium->getTransposedNoRef(r);
 		pixelRGBA(planetarium->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 	}
 }
@@ -398,7 +403,7 @@ void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_C
 	{
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
-			Vector2D recPosTrans = planetarium->getTransposed(recordedPosition), prevPosTrans = planetarium->getTransposed(previousPosition);
+			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
 			line_function(planetarium->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 		}
 		previousPosition = recordedPosition;
@@ -418,8 +423,8 @@ void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
 			//fixme Fix quadratic bezier spline implementation
-			Vector2D supportPoint = planetarium->getTransposed(previousSupport);
-			Vector2D recPosTrans = planetarium->getTransposed(recordedPosition), prevPosTrans = planetarium->getTransposed(previousPosition);
+			Vector2D supportPoint = planetarium->getTransposedNoRef(previousSupport);
+			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
 			Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
 			Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
 			bezierRGBA(planetarium->win, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
