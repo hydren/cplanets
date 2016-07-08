@@ -927,7 +927,7 @@ void keepPressing(int keyVar, void (*procedure)(), bool useThread)
 		{
 			lastUpdateTime = SDL_GetTicks();
 			procedure();
-			SDL_Delay(3000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
+			SDL_Delay(5000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
 		}
 	}
 }
