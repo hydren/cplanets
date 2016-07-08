@@ -70,6 +70,17 @@ void workaround_sdl_stream_file_close() // part of workaround
 
 //**********************************************************************************
 
+/// A simple struct to hold some data to pass as void* to SDL_CreateThread() calls
+struct ThreadStub
+{
+	void (*fn)();
+	int* argv, argc;
+
+	ThreadStub(void (*procedure)(), int* args, int argc)
+	: fn(procedure), argv(args), argc(argc)
+	{}
+};
+
 //  ============= FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
@@ -93,6 +104,8 @@ void onBodyReFocusing();
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
+void addRandomBody();
+void keepPressing(int keyVar, void(*)(), bool useThread=true);
 
 void onSDLInit();
 
@@ -583,16 +596,8 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnAddRandom)
 	{
-		double az = 1/planetarium->viewportZoom;
-		double diameter = (planetarium->bodyCreationDiameterRatio * az) * Planetarium::BODY_CREATION_DIAMETER_FACTOR;
-		double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * diameter * diameter * diameter;
-		double speed = *spnBodyVelocity->getValue();
-		Vector2D randomPosition(randomBetween(0, planetarium->tw_area.w), randomBetween(0, planetarium->tw_area.h));
-		Vector2D randomVelocity(randomBetween(-speed * az, speed * az), randomBetween(-speed * az, speed * az));
-		randomPosition.scale(az).add(planetarium->viewportPosition);
-
-		//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
-		planetarium->addCustomBody(new Body2D(mass, diameter, randomPosition, randomVelocity, Vector2D::NULL_VECTOR), SDL_util::getRandomColor());
+		addRandomBody();
+		keepPressing(SDLK_r, addRandomBody);
 	}
 
 	if(btn == btnRemove)
@@ -885,4 +890,44 @@ void replaceUniverse(Universe2D* universe)
 	planetarium->setUniverse(universe);
 	refreshAllTxtBodies();
 	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
+}
+
+void addRandomBody()
+{
+	double az = 1/planetarium->viewportZoom;
+	double diameter = (planetarium->bodyCreationDiameterRatio * az) * Planetarium::BODY_CREATION_DIAMETER_FACTOR;
+	double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * diameter * diameter * diameter;
+	double speed = *spnBodyVelocity->getValue();
+	Vector2D randomPosition(randomBetween(0, planetarium->tw_area.w), randomBetween(0, planetarium->tw_area.h));
+	Vector2D randomVelocity(randomBetween(-speed * az, speed * az), randomBetween(-speed * az, speed * az));
+	randomPosition.scale(az).add(planetarium->viewportPosition);
+
+	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
+	planetarium->addCustomBody(new Body2D(mass, diameter, randomPosition, randomVelocity, Vector2D::NULL_VECTOR), SDL_util::getRandomColor());
+}
+
+int keepPressingThread(void* arg)
+{
+	keepPressing(static_cast<ThreadStub*>(arg)->argv[0], static_cast<ThreadStub*>(arg)->fn, false);
+	return 0;
+}
+
+void keepPressing(int keyVar, void (*procedure)(), bool useThread)
+{
+	if(useThread)
+	{
+		ThreadStub* stub = new ThreadStub(procedure, &keyVar, 1);
+		SDL_CreateThread(keepPressingThread, stub);
+	}
+	else
+	{
+		SDL_Delay(500);
+		long lastUpdateTime;
+		while(SDL_GetKeyState(null)[keyVar]==1)
+		{
+			lastUpdateTime = SDL_GetTicks();
+			procedure();
+			SDL_Delay(3000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
+		}
+	}
 }

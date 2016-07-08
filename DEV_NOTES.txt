@@ -23,7 +23,7 @@
 
 Implement view movement speed - done
 Implement capability to change observer's reference frame to the same as the mass center of some arbitrary set of bodies - done
-When holding R (add random body), after 1 second, starts spamming bodies until user releases the R key.
+When holding R (add random body), after 1 second, starts spamming bodies until user releases the R key. - done
 
 - 0.9 (physics milestone)
 
