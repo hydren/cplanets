@@ -47,6 +47,8 @@ Vector2D Physics2D::ReferenceFrame::position() const
 {
 	if(bodies.size() == 0)
 		return customPosition;
+	else if(bodies.size() == 1) //optimization for 1 body
+		return bodies[0]->position;
 	else
 	{
 		Vector2D centerOfMass;
@@ -69,6 +71,8 @@ Vector2D Physics2D::ReferenceFrame::velocity() const
 {
 	if(bodies.size() == 0)
 		return customVelocity;
+	else if(bodies.size() == 1) //optimization for 1 body
+		return bodies[0]->velocity;
 	else
 	{
 		Vector2D totalVelocity;
