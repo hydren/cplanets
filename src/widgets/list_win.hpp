@@ -99,10 +99,6 @@ namespace WidgetsExtra
 			ownData = false;
 		}
 
-		/// Optional function to be called to adjust this model's selection when changes occur in the list data related to this selection model.
-		/// If it is null (default), the selection will be cleared everytime the inner data changes.
-		void (*selectionAdjustmentFunction)(ListSelectionModel& selection, const std::vector<Type>* oldDataPtr, const std::vector<Type>* newDataPtr);
-
 		protected:
 		std::vector<Type>* listData;
 		bool ownData; // tells whether the listData was created by this instance. if true, then it will be deleted when this list is deleted or its listData is replaced.
@@ -122,6 +118,12 @@ namespace WidgetsExtra
 			}
 			else this->selectionAdjustmentFunction(this->selection, this->listData, newData);
 		}
+
+		public:
+
+		/// Optional function to be called to adjust this model's selection when changes occur in the list data related to this selection model.
+		/// If it is null (default), the selection will be cleared everytime the inner data changes.
+		void (*selectionAdjustmentFunction)(ListSelectionModel& selection, const std::vector<Type>* oldDataPtr, const std::vector<Type>* newDataPtr);
 	};
 }
 
