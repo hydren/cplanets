@@ -15,7 +15,6 @@
 #include "physics/physics2d_solvers.hpp"
 #include "main_window.hpp"
 #include "SDL_util.hpp"
-#include "util.hpp" //todo do we need this include?
 
 using std::string;
 using std::exception;
