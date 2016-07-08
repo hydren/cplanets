@@ -71,6 +71,8 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 	Vector2D getTransposed(const Vector2D& position) const;
 
+	Vector2D getAntiTransposed(const Vector2D& position) const;
+
 	/** If run is true (default), the physics thread is started/resumed. Otherwise the thread is put to sleep. */
 	void setRunning(bool run=true);
 

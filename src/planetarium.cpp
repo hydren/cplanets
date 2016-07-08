@@ -198,6 +198,12 @@ Vector2D Planetarium::getTransposed(const Vector2D& position) const
 	return (position - physics->referenceFrame.position() - viewportPosition)*viewportZoom;
 }
 
+Vector2D Planetarium::getAntiTransposed(const Vector2D& position) const
+{
+	return position*(1.0/viewportZoom) + viewportPosition + physics->referenceFrame.position();
+}
+
+//protected
 Vector2D Planetarium::getTransposedNoRef(const Vector2D& position) const
 {
 	return (position - viewportPosition)*viewportZoom;
@@ -570,8 +576,8 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 	{
 		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
 
-		Vector2D pointedPosition = Vector2D(x, y).scale(1.0/planetarium->viewportZoom).add(planetarium->viewportPosition);
-		Vector2D prevPointedPosition = planetarium->lastMouseClickPoint.times(1.0/planetarium->viewportZoom).add(planetarium->viewportPosition);
+		Vector2D pointedPosition = planetarium->getAntiTransposed(Vector2D(x, y));
+		Vector2D prevPointedPosition = planetarium->getAntiTransposed(planetarium->lastMouseClickPoint);
 
 		if(SDL_GetTicks() - planetarium->lastMouseLeftButtonDown < 250) //click event
 		{
