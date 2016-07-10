@@ -15,7 +15,7 @@ ScrollablePane::ScrollablePane(WinBase* parent, Style style, Rect bounds, Uint32
 : WinBase(parent, null, bounds.x, bounds.y, bounds.w, bounds.h, bgColor, id),
   offset(0, 0),
   scrollbarThickness(style.param != 0 ? style.param : ScrollablePane::DEFAULT_SCROLLBAR_THICKNESS),
-  content(this, Rect(0, 0, bounds.w - scrollbarThickness, bounds.h - scrollbarThickness), null, WidgetsExtra::drawBgrWin, null, null, null, bgColor, id),
+  content(this, Rect(0, 0, bounds.w - scrollbarThickness, bounds.h - scrollbarThickness), null, WidgetsExtra::drawBgrWin, scrollContentOnMouseWheel, null, null, bgColor, id),
   scrollbarHorizontal(this, Style(1,0,5), Rect(0, bounds.h - scrollbarThickness, bounds.w - scrollbarThickness, scrollbarThickness), content.tw_area.w, ScrollablePane::hscrollbarCallback, id),
   scrollbarVertical(this, Style(1,0,5), Rect(bounds.w - scrollbarThickness, 0, scrollbarThickness, bounds.h - scrollbarThickness), content.tw_area.h, ScrollablePane::vscrollbarCallback, id)
 {}
@@ -119,4 +119,13 @@ void ScrollablePane::vscrollbarCallback(VScrollbar* bar, int val, int range)
 {
 	ScrollablePane* self = static_cast<ScrollablePane*>(bar->parent);
 	self->setOffset(self->offset.x, -val);
+}
+
+void ScrollablePane::scrollContentOnMouseWheel(BgrWin* content, int x, int y, int but)
+{
+	ScrollablePane* self = static_cast<ScrollablePane*>(content->parent);
+	if(but == SDL_BUTTON_WHEELUP)
+		self->scrollbarVertical.inc_value(false);
+	else if(but == SDL_BUTTON_WHEELDOWN)
+		self->scrollbarVertical.inc_value(true);
 }

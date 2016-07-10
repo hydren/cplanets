@@ -37,10 +37,10 @@ namespace WidgetsExtra
 		virtual void refresh();
 
 		/// updates the offset displacing all childs of the 'content' BgrWin. dx and dy are deltas.
-		void updateOffset(int dx=0, int dy=0);
+		virtual void updateOffset(int dx=0, int dy=0);
 
 		/// updates the offset displacing all childs of the 'content' BgrWin.
-		void setOffset(int x, int y);
+		virtual void setOffset(int x, int y);
 
 		virtual void widen(int dx, int dy);
 
@@ -48,14 +48,15 @@ namespace WidgetsExtra
 		virtual void widenContent(int dx, int dy);
 
 		/// preferred way to enable/disable the vertical scrollbar
-		void setScrollbarVerticalVisible(bool desiredVisibility=true);
+		virtual void setScrollbarVerticalVisible(bool desiredVisibility=true);
 
 		/// preferred way to enable/disable the horizontal scrollbar
-		void setScrollbarHorizontalVisible(bool desiredVisibility=true);
+		virtual void setScrollbarHorizontalVisible(bool desiredVisibility=true);
 
 		protected:
 		static void hscrollbarCallback(HScrollbar*,int val,int range);
 		static void vscrollbarCallback(VScrollbar*,int val,int range);
+		static void scrollContentOnMouseWheel(BgrWin*,int x,int y,int but);
 	};
 
 }
