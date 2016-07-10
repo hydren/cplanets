@@ -4,7 +4,6 @@
 - Bezier spline is glitched due to wrong parametrization.
 - Selection on planetarium always unpauses when it should only unpause if it was paused before.
 
-- (SDL) application icon displays black instead of transparency.
 - (SDL_widgets) ScrollablePane does not support scrolling via mousewheel.
 
 -------------- To Do
