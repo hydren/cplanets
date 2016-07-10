@@ -108,6 +108,23 @@ void ScrollablePane::setScrollbarHorizontalVisible(bool visibleDesired)
 	}
 }
 
+void ScrollablePane::scrollContentOnMouseWheel(WinBase* component, int but)
+{
+	if(component == null) return;
+
+	while(component->parent != null and dynamic_cast<ScrollablePane*>(component->parent)==null)
+		component = component->parent;
+
+	ScrollablePane* self = dynamic_cast<ScrollablePane*>(component->parent);
+	if(self != null)
+	{
+		if(but == SDL_BUTTON_WHEELUP)
+			self->scrollbarVertical.inc_value(false);
+		else if(but == SDL_BUTTON_WHEELDOWN)
+			self->scrollbarVertical.inc_value(true);
+	}
+}
+
 void ScrollablePane::hscrollbarCallback(HScrollbar* bar, int val, int range)
 {
 	ScrollablePane* self = static_cast<ScrollablePane*>(bar->parent);

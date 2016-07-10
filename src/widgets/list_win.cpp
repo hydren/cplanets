@@ -6,6 +6,7 @@
  */
 
 #include "list_win.hpp"
+#include "scrollable_pane.hpp"
 
 using WidgetsExtra::AbstractListWin;
 
@@ -14,7 +15,7 @@ AbstractListWin::AbstractListWin(WinBase* parent, Style style, Rect rect, Id id)
   padding(1,1), spacing(1),
   textRenderer(draw_ttf), textRendererCaseSelected(draw_blue_ttf),
   bgcolCaseSelected(calc_color(0xffA0D0E0)),
-  selection(), preventRedrawOnClick(false), lastClickedIndex(0)
+  selection(), preventRedrawOnClick(false), enableScrollingIfScrollablePaneParent(true), lastClickedIndex(0)
 {}
 
 AbstractListWin::~AbstractListWin() {}
@@ -99,6 +100,7 @@ void AbstractListWin::clickList(const Point& point)
 
 void AbstractListWin::onMouseDown(Point point, int buttonNumber)
 {
+	if(this->enableScrollingIfScrollablePaneParent) ScrollablePane::scrollContentOnMouseWheel(this, buttonNumber);
 	if(buttonNumber != SDL_BUTTON_LEFT) return; // only accepts left-button clicks
 	this->clickList(point);
 	if(preventRedrawOnClick) return;

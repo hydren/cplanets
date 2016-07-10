@@ -27,6 +27,11 @@ namespace WidgetsExtra
 		/// If true, the list won't be re-drawed when clicked.
 		bool preventRedrawOnClick;
 
+		/// Optional flag to control whether this list is allowed to scroll through mouse wheel.
+		/// There is a marginal performance gain when setting this flag false.
+		/// If this ListWin isn't child of a ScrollablePane or you just want to disable mouse wheel scrolling, you should set this flag false.
+		bool enableScrollingIfScrollablePaneParent;
+
 		//can be called only after a TopWin has been constructed
 		AbstractListWin(WinBase *parent, Style, Rect rect, Id id=0);
 		virtual ~AbstractListWin();

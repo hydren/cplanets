@@ -53,6 +53,9 @@ namespace WidgetsExtra
 		/// preferred way to enable/disable the horizontal scrollbar
 		virtual void setScrollbarHorizontalVisible(bool desiredVisibility=true);
 
+		/// transverse all tree hierarchy searching for a ScrollablePane ancestral
+		static void scrollContentOnMouseWheel(WinBase* child, int but);
+
 		protected:
 		static void hscrollbarCallback(HScrollbar*,int val,int range);
 		static void vscrollbarCallback(VScrollbar*,int val,int range);
