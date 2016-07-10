@@ -5,10 +5,7 @@
 - Selection on planetarium always unpauses when it should only unpause if it was paused before.
 
 - (SDL) application icon displays black instead of transparency.
-
-- (SDL_widgets) When clicking on a DialogWin and then clicking on another one, the former doesn't remove the caret (a redraw is needed)
 - (SDL_widgets) ScrollablePane does not support scrolling via mousewheel.
-- (SDL_widgets) DialogWin does not recognize numpad digits.
 
 -------------- To Do
 
