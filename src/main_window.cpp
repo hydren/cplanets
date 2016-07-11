@@ -160,7 +160,7 @@ CheckBox* chckLegacyParameters;
 Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 
 PlanetariumPane* planetariumPane;
-Planetarium* planetarium;
+Planetarium* planetarium; ///helper pointer
 
 FlowLayout* toolbarRight;
 Button* btnAddBody, *btnAddRandom, *btnRemove, *btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;

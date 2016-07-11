@@ -25,6 +25,7 @@ struct PlanetariumPane extends BgrWin, Planetarium::SurfaceUpdateDispatcher
 	/** It's not recommended to call these directly. */
 	virtual void doRefresh();
 	virtual void onSurfaceUpdate();
+	virtual void widen(int dx,int dy);
 
 	static void drawPlanetarium(BgrWin* bgr);
 	static void onMouseDown(BgrWin* bgr, int x, int y, int but);

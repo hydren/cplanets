@@ -65,15 +65,23 @@ struct Planetarium extends Physics2D::CollisionListener
 	double bodyCreationDiameterRatio; //the default diameter of bodies, proportional to the view size. Zooming affects the diameter of newly created bodies.
 	double bodyCreationDensity; //The default density of newly created bodies. Thus, zooming affects the mass of newly created bodies.
 
+	/** Creates a planetarium with a surface size specified by 'rect'. Optionally a pixel depth can be specified, but it's not recommended pass anything but the default. */
 	Planetarium(SDL_Rect rect, Uint32 pixdepth=16);
 	virtual ~Planetarium();
 
+	/** Starts the threads responsible for physics and view update. */
 	void start();
 
+	/** The drawing method. Normally you should not need to call this directly. */
 	void draw();
 
+	/** Resizes the planetarium surface by the given amount. */
+	void widen(int dx, int dy);
+
+	/** Gets the given physics position in screen position. */
 	Vector2D getTransposed(const Vector2D& position) const;
 
+	/** Gets the given screen position in physics position. */
 	Vector2D getAntiTransposed(const Vector2D& position) const;
 
 	/** If run is true (default), the physics thread is started/resumed. Otherwise the thread is put to sleep. */
@@ -99,9 +107,11 @@ struct Planetarium extends Physics2D::CollisionListener
 	/** Safer way to replace the universe instance. */
 	void setUniverse(Universe2D* u);
 
-	void setFocusedBodies(Body2D** bodyarr, unsigned n);
+	/** Sets the given bodies as the focused/selected ones. 'bodyarr' should be an n-sized array of Body2D pointers. 'bodyarr' size is less than n, expect seg.faults. */
+	void setFocusedBodies(Body2D*const* bodyarr, unsigned n);
 
-	void setFocusedBodies(std::vector<Body2D*> bodies);
+	/** Sets the given bodies as the focused/selected ones. */
+	void setFocusedBodies(const std::vector<Body2D*>& bodies);
 
 	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
 	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
@@ -183,6 +193,7 @@ struct Planetarium extends Physics2D::CollisionListener
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
 
+	Uint32 pixelDepht;
 	long currentIterationCount;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;

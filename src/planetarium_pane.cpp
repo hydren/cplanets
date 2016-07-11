@@ -38,6 +38,12 @@ void PlanetariumPane::onSurfaceUpdate()
 	send_uev(USER_EVENT_ID__REDRAW_REQUESTED, this->id.id1);
 }
 
+void PlanetariumPane::widen(int dx, int dy)
+{
+	BgrWin::widen(dx, dy);
+	impl->widen(dx, dy);
+}
+
 void PlanetariumPane::onMouseDown(BgrWin* bgr, int x, int y, int but)
 {
 	static_cast<PlanetariumPane*>(bgr)->impl->onMouseButtonPressed(x, y, but);

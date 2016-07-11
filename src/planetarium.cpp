@@ -77,6 +77,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   drawDispatcher(null), listeners(), orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
+  pixelDepht(pixdepth),
   currentIterationCount(0),
   threadPhysics(null),
   threadViewUpdate(null),
@@ -331,7 +332,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	focusedBodies.clear();
 }
 
-void Planetarium::setFocusedBodies(Body2D** bodyarr, unsigned n)
+void Planetarium::setFocusedBodies(Body2D*const* bodyarr, unsigned n)
 {
 	focusedBodies.clear();
 	for(unsigned i = 0; i < n; i++)
@@ -340,10 +341,10 @@ void Planetarium::setFocusedBodies(Body2D** bodyarr, unsigned n)
 	}
 }
 
-void Planetarium::setFocusedBodies(vector<Body2D*> bodies)
+void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
 {
 	focusedBodies.clear();
-	foreach(Body2D*, body, vector<Body2D*>, bodies)
+	const_foreach(Body2D*, body, vector<Body2D*>, bodies)
 	{
 		focusedBodies.push_back(body);
 	}
@@ -691,6 +692,13 @@ int Planetarium::threadFunctionPhysics(void* arg)
 	}
 	cout << "physics thread stopped." << endl;
 	return 0;
+}
+
+void Planetarium::widen(int dx, int dy)
+{
+	SDL_FreeSurface(surf);
+	surf=SDL_CreateRGBSurface(SDL_SWSURFACE,size.w+dx,size.h+dy,pixelDepht,0,0,0,0);
+	size.w += dx; size.h += dy;
 }
 
 int Planetarium::threadFunctionPlanetariumUpdate(void* arg)
