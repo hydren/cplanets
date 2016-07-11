@@ -8,6 +8,7 @@ CPP_SRCS += \
 ../src/main.cpp \
 ../src/main_window.cpp \
 ../src/planetarium.cpp \
+../src/planetarium_pane.cpp \
 ../src/program_io.cpp 
 
 OBJS += \
@@ -15,6 +16,7 @@ OBJS += \
 ./src/main.o \
 ./src/main_window.o \
 ./src/planetarium.o \
+./src/planetarium_pane.o \
 ./src/program_io.o 
 
 CPP_DEPS += \
@@ -22,6 +24,7 @@ CPP_DEPS += \
 ./src/main.d \
 ./src/main_window.d \
 ./src/planetarium.d \
+./src/planetarium_pane.d \
 ./src/program_io.d 
 
 
