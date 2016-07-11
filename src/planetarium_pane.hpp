@@ -17,7 +17,7 @@ struct PlanetariumPane extends BgrWin, Planetarium::SurfaceUpdateDispatcher
 	/// SDL_widgets user event ID hinting that it should be redrawed. Catch such events with a 'handle_uev' function and call 'doRefresh()'.
 	static const int USER_EVENT_ID__REDRAW_REQUESTED = 192;
 
-	Planetarium* impl;
+	Planetarium* planetarium;
 
 	PlanetariumPane(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~PlanetariumPane();

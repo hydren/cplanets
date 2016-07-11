@@ -230,7 +230,7 @@ void CPlanets::showMainWindow()
 		windowSize.h - (2.1*TOOLBAR_SIZE)
 	);
 	planetariumPane = new PlanetariumPane(window, planetariumSize, PLANETARIUM_ID);
-	planetarium = planetariumPane->impl;
+	planetarium = planetariumPane->planetarium;
 	planetarium->listeners.addListener(&customListener);
 	planetarium->physics->universe.gravity = 9.807;
 

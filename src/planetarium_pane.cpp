@@ -9,28 +9,31 @@
 
 PlanetariumPane::PlanetariumPane(WinBase* parentWidget, Rect rect, Id _id)
 : BgrWin(parentWidget, rect, null, PlanetariumPane::drawPlanetarium, PlanetariumPane::onMouseDown, null, PlanetariumPane::onMouseUp, 0, _id),
-  SurfaceUpdateDispatcher(), impl(new Planetarium(rect))
+  SurfaceUpdateDispatcher(), planetarium(new Planetarium(rect))
 {
-	impl->drawDispatcher = this;
+	planetarium->drawDispatcher = this;
+	SDL_FreeSurface(planetarium->surf);
+	planetarium->surf = null;
 }
 
 PlanetariumPane::~PlanetariumPane()
 {
-	delete impl;
+	delete planetarium;
 }
 
 void PlanetariumPane::doRefresh()
 {
 	draw_blit_upd();
-	impl->isRedrawPending = false;
+	planetarium->isRedrawPending = false;
 }
 
 void PlanetariumPane::drawPlanetarium(BgrWin* bgr)
 {
 	PlanetariumPane* self = static_cast<PlanetariumPane*>(bgr);
 	self->init_gui();
-	self->impl->draw();
-	SDL_BlitSurface(self->impl->surf, null, self->win, null);
+	self->planetarium->surf = self->win; //make planetarium use this->win to increase performance
+	if(self->win == null) return; //if this->win is not ready, skip
+	self->planetarium->draw();
 }
 
 void PlanetariumPane::onSurfaceUpdate()
@@ -41,15 +44,16 @@ void PlanetariumPane::onSurfaceUpdate()
 void PlanetariumPane::widen(int dx, int dy)
 {
 	BgrWin::widen(dx, dy);
-	impl->widen(dx, dy);
+	planetarium->size.w += dx;
+	planetarium->size.h += dy;
 }
 
 void PlanetariumPane::onMouseDown(BgrWin* bgr, int x, int y, int but)
 {
-	static_cast<PlanetariumPane*>(bgr)->impl->onMouseButtonPressed(x, y, but);
+	static_cast<PlanetariumPane*>(bgr)->planetarium->onMouseButtonPressed(x, y, but);
 }
 
 void PlanetariumPane::onMouseUp(BgrWin* bgr, int x, int y, int but)
 {
-	static_cast<PlanetariumPane*>(bgr)->impl->onMouseButtonReleased(x, y, but);
+	static_cast<PlanetariumPane*>(bgr)->planetarium->onMouseButtonReleased(x, y, but);
 }
