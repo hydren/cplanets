@@ -590,8 +590,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnAddBody)
 	{
-		planetarium->running = false;
-		planetarium->bodyCreationState = Planetarium::POSITION_SELECTION;
+		planetarium->setBodyCreationMode();
 	}
 
 	if(btn == btnAddRandom)

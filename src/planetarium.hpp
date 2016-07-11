@@ -84,6 +84,9 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** Assign a new random color to every body on the current universe (the safe way) */
 	void recolorAllBodies();
 
+	/** Activates/Deactivates body creation mode; */
+	void setBodyCreationMode(bool enable=true);
+
 	/** Adds a custom body (the safe way) */
 	void addCustomBody(Body2D* body, SDL_Color* color);
 

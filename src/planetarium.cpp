@@ -236,6 +236,16 @@ void Planetarium::recolorAllBodies()
 	}
 }
 
+void Planetarium::setBodyCreationMode(bool enable)
+{
+	if(enable)
+	{
+		this->bodyCreationState = POSITION_SELECTION;
+		this->setRunning(false);
+	}
+	else this->bodyCreationState = IDLE;
+}
+
 void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 {
 	synchronized(physicsAccessMutex)
@@ -594,7 +604,7 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 				double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter;
 				Body2D* newBody = new Body2D(mass, planetarium->bodyCreationDiameter, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
 				planetarium->addCustomBody(newBody, SDL_util::getRandomColor());
-				planetarium->bodyCreationState = IDLE;
+				planetarium->setBodyCreationMode(IDLE);
 				planetarium->setRunning();
 			}
 			else //user tried to click a single body, or it was a mistake/random action.
