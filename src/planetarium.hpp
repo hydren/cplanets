@@ -193,7 +193,7 @@ struct Planetarium extends Physics2D::CollisionListener
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
 
-	Uint32 pixelDepht;
+	Uint32 pixelDepth;
 	long currentIterationCount;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;

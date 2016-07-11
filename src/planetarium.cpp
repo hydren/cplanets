@@ -77,7 +77,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   drawDispatcher(null), listeners(), orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
-  pixelDepht(pixdepth),
+  pixelDepth(pixdepth),
   currentIterationCount(0),
   threadPhysics(null),
   threadViewUpdate(null),
@@ -697,7 +697,7 @@ int Planetarium::threadFunctionPhysics(void* arg)
 void Planetarium::widen(int dx, int dy)
 {
 	SDL_FreeSurface(surf);
-	surf=SDL_CreateRGBSurface(SDL_SWSURFACE,size.w+dx,size.h+dy,pixelDepht,0,0,0,0);
+	surf=SDL_CreateRGBSurface(SDL_SWSURFACE,size.w+dx,size.h+dy,pixelDepth,0,0,0,0);
 	size.w += dx; size.h += dy;
 }
 
