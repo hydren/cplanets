@@ -24,6 +24,7 @@ Show info about system's energy (kinetic, potential, total, etc)
 Add random orbiting planet functionality
 Bouncing bodies
 G exp.
+Hightlight bodies inside the roche limit
 
 - 1.0 (planets-supersedure/usability milestone)
 
