@@ -439,7 +439,7 @@ void CPlanets::showMainWindow()
 //	WidgetsExtra::print_hierarchy(window);
 
 	//start
-	planetarium->setRunning();
+	planetarium->start();
 	get_events();
 	workaround_sdl_stream_file_close(); // part of workaround
 }

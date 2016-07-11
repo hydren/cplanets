@@ -77,8 +77,8 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
   isRedrawPending(false), currentIterationCount(0),
-  threadPhysics(SDL_CreateThread(threadFunctionPhysics, this)),
-  threadViewUpdate(SDL_CreateThread(threadFunctionPlanetariumUpdate, this)),
+  threadPhysics(null),
+  threadViewUpdate(null),
   physicsAccessMutex(SDL_CreateMutex()),
   bodyCreationPosition(), bodyCreationVelocity(), bodyCreationDiameter(),
   lastMouseLeftButtonDown(0), isMouseLeftButtonDown(false), lastMouseClickPoint()
@@ -92,6 +92,13 @@ Planetarium::~Planetarium()
 	SDL_KillThread(threadPhysics);
 	SDL_KillThread(threadViewUpdate);
 	SDL_DestroyMutex(physicsAccessMutex);
+}
+
+void Planetarium::start()
+{
+	threadPhysics = SDL_CreateThread(threadFunctionPhysics, this);
+	threadViewUpdate = SDL_CreateThread(threadFunctionPlanetariumUpdate, this);
+	running = true;
 }
 
 void Planetarium::draw()

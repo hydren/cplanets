@@ -67,6 +67,9 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 	Planetarium(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~Planetarium();
+
+	void start();
+
 	void draw();
 
 	Vector2D getTransposed(const Vector2D& position) const;
