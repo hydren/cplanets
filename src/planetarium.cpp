@@ -7,13 +7,14 @@
 
 #include "planetarium.hpp"
 
+#include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_gfxBlitFunc.h>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
 #include <queue>
 #include <map>
 
-#include "util.hpp"
 #include "SDL_util.hpp"
 #include "physics/physics2d.hpp"
 #include "physics/physics2d_solvers.hpp"
@@ -62,8 +63,8 @@ struct Planetarium::Physics2DEventsManager
 	~Physics2DEventsManager() { SDL_DestroyMutex(mutex); }
 };
 
-Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
-: BgrWin(parentWidget, rect, null, null, Planetarium::onMouseDown, null, Planetarium::onMouseUp, 0, _id),
+Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
+: surf(SDL_CreateRGBSurface(SDL_SWSURFACE,rect.w,rect.h,pixdepth,0,0,0,0)), size(rect), pos(rect), isRedrawPending(false),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY),
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE), strokeColorFocused(SDL_util::Color::ORANGE),
@@ -73,10 +74,11 @@ Planetarium::Planetarium(WinBase* parentWidget, Rect rect, Id _id)
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
   bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
-  listeners(), orbitTracer(this), bodyCreationState(IDLE),
+  drawDispatcher(null), listeners(), orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
-  isRedrawPending(false), currentIterationCount(0),
+  pixelDepht(pixdepth),
+  currentIterationCount(0),
   threadPhysics(null),
   threadViewUpdate(null),
   physicsAccessMutex(SDL_CreateMutex()),
@@ -92,6 +94,7 @@ Planetarium::~Planetarium()
 	SDL_KillThread(threadPhysics);
 	SDL_KillThread(threadViewUpdate);
 	SDL_DestroyMutex(physicsAccessMutex);
+	SDL_FreeSurface(surf);
 }
 
 void Planetarium::start()
@@ -103,8 +106,7 @@ void Planetarium::start()
 
 void Planetarium::draw()
 {
-	this->init_gui();
-	SDL_FillRect(this->win, null, colorToInt(this->win, bgColor)); //clears the screen
+	SDL_FillRect(this->surf, null, colorToInt(this->surf, bgColor)); //clears the screen
 
 	int (*circle_function) (SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aacircleRGBA : circleRGBA);
 	int (*line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aalineRGBA : lineRGBA);
@@ -153,18 +155,18 @@ void Planetarium::draw()
 		//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
 		if(strokeSize > 1)
 			//draw body border (middle part)
-			filledCircleRGBA(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//draw body
 		if(bodyColor != null) //if there is not body color information, skip
-			filledCircleRGBA(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//inner blending with stroke when the stroke is thick
 		if(strokeSize > 1)
-			circle_function(this->win, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			circle_function(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//draw body border (if stroke size is more than 1, it is the "border of the border" part)
-		circle_function(this->win, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+		circle_function(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//record position
 		if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
@@ -178,24 +180,24 @@ void Planetarium::draw()
 		{
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			mouseX -= this->area.x; mouseY -= this->area.y;
-			circle_function(this->win, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
+			mouseX -= this->pos.x; mouseY -= this->pos.y;
+			circle_function(this->surf, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
 		}
 		else if(bodyCreationState == VELOCITY_SELECTION)
 		{
 			Vector2D newBodyPos = this->getTransposed(bodyCreationPosition);
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			mouseX -= this->area.x; mouseY -= this->area.y;
-			circle_function(this->win, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
-			line_function(this->win, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
+			mouseX -= this->pos.x; mouseY -= this->pos.y;
+			circle_function(this->surf, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
+			line_function(this->surf, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
 		}
 	}
 	else if(isMouseLeftButtonDown) // rectangular mouse selection stubs
 	{
 		int mouseX, mouseY;
 		SDL_GetMouseState(&mouseX, &mouseY);
-		rectangleRGBA(this->win, lastMouseClickPoint.x, lastMouseClickPoint.y, mouseX - area.x, mouseY - area.y, 255, 255, 255, 255);
+		rectangleRGBA(this->surf, lastMouseClickPoint.x, lastMouseClickPoint.y, mouseX - pos.x, mouseY - pos.y, 255, 255, 255, 255);
 	}
 }
 
@@ -219,12 +221,6 @@ Vector2D Planetarium::getTransposedNoRef(const Vector2D& position) const
 void Planetarium::setRunning(bool run)
 {
 	this->running = run;
-}
-
-void Planetarium::doRefresh()
-{
-	draw_blit_upd();
-	isRedrawPending = false;
 }
 
 //--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
@@ -336,7 +332,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	focusedBodies.clear();
 }
 
-void Planetarium::setFocusedBodies(Body2D** bodyarr, unsigned n)
+void Planetarium::setFocusedBodies(Body2D*const* bodyarr, unsigned n)
 {
 	focusedBodies.clear();
 	for(unsigned i = 0; i < n; i++)
@@ -345,10 +341,10 @@ void Planetarium::setFocusedBodies(Body2D** bodyarr, unsigned n)
 	}
 }
 
-void Planetarium::setFocusedBodies(vector<Body2D*> bodies)
+void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
 {
 	focusedBodies.clear();
-	foreach(Body2D*, body, vector<Body2D*>, bodies)
+	const_foreach(Body2D*, body, vector<Body2D*>, bodies)
 	{
 		focusedBodies.push_back(body);
 	}
@@ -413,7 +409,7 @@ void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, SDL_C
 	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 	{
 		Vector2D pv = planetarium->getTransposedNoRef(r);
-		pixelRGBA(planetarium->win, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+		pixelRGBA(planetarium->surf, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 	}
 }
 
@@ -427,7 +423,7 @@ void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_C
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
 			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
-			line_function(planetarium->win, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			line_function(planetarium->surf, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 		}
 		previousPosition = recordedPosition;
 	}
@@ -450,7 +446,7 @@ void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace
 			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
 			Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
 			Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
-			bezierRGBA(planetarium->win, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			bezierRGBA(planetarium->surf, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
 		}
 		previousPosition = recordedPosition;
 		previousSupport = previousPosition.times(2).subtract(previousSupport);
@@ -510,8 +506,8 @@ void Planetarium::updateView()
 			this->viewportZoom *= this->currentViewportZoomChangeRate;
 
 			//center after zooming (if zoom changed)
-			this->viewportPosition.x += this->tw_area.w * (1/prevZoom - 1/viewportZoom) * 0.5;
-			this->viewportPosition.y += this->tw_area.h * (1/prevZoom - 1/viewportZoom) * 0.5;
+			this->viewportPosition.x += this->size.w * (1/prevZoom - 1/viewportZoom) * 0.5;
+			this->viewportPosition.y += this->size.h * (1/prevZoom - 1/viewportZoom) * 0.5;
 		}
 
 		const bool allowedByLegacy = not running || (currentIterationCount >= iterationsPerDisplay && (SDL_GetTicks() - lastRedrawRequestTime) > displayPeriod);
@@ -519,7 +515,11 @@ void Planetarium::updateView()
 		if(not isRedrawPending && (not legacyControl || allowedByLegacy) )
 		{
 			isRedrawPending = true;
-			send_uev(USER_EVENT_ID__REDRAW_REQUESTED, this->id.id1);
+
+			if(drawDispatcher != null)
+				drawDispatcher->onSurfaceUpdate();
+			else
+				draw();
 
 			//to aid legacy controls
 			currentIterationCount = 0;
@@ -573,75 +573,72 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	}
 }
 
-void Planetarium::onMouseDown(BgrWin* bgr, int x, int y, int but)
+void Planetarium::onMouseButtonPressed(int x, int y, int but)
 {
 	if(but == SDL_BUTTON_LEFT)
 	{
-		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
-		planetarium->lastMouseLeftButtonDown = SDL_GetTicks();
-		planetarium->isMouseLeftButtonDown = true;
-		planetarium->lastMouseClickPoint = Vector2D(x, y);
-		if(planetarium->pauseOnSelection)
-			planetarium->setRunning(false);
+		lastMouseLeftButtonDown = SDL_GetTicks();
+		isMouseLeftButtonDown = true;
+		lastMouseClickPoint = Vector2D(x, y);
+		if(pauseOnSelection)
+			setRunning(false);
 	}
 }
 
-void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
+void Planetarium::onMouseButtonReleased(int x, int y, int but)
 {
 	bool notToogling = not(SDL_GetModState() & KMOD_CTRL); // check if click-wise selection
 	if(but == SDL_BUTTON_LEFT)
 	{
-		Planetarium* planetarium = static_cast<Planetarium*>(bgr);
+		Vector2D pointedPosition = getAntiTransposed(Vector2D(x, y));
+		Vector2D prevPointedPosition = getAntiTransposed(lastMouseClickPoint);
 
-		Vector2D pointedPosition = planetarium->getAntiTransposed(Vector2D(x, y));
-		Vector2D prevPointedPosition = planetarium->getAntiTransposed(planetarium->lastMouseClickPoint);
-
-		if(SDL_GetTicks() - planetarium->lastMouseLeftButtonDown < 250) //click event
+		if(SDL_GetTicks() - lastMouseLeftButtonDown < 250) //click event
 		{
-			if(planetarium->bodyCreationState == POSITION_SELECTION)
+			if(bodyCreationState == POSITION_SELECTION)
 			{
-				planetarium->bodyCreationPosition = pointedPosition;
-				planetarium->bodyCreationDiameter = (planetarium->bodyCreationDiameterRatio/planetarium->viewportZoom) * BODY_CREATION_DIAMETER_FACTOR;
-				planetarium->bodyCreationState = VELOCITY_SELECTION;
+				bodyCreationPosition = pointedPosition;
+				bodyCreationDiameter = (bodyCreationDiameterRatio/viewportZoom) * BODY_CREATION_DIAMETER_FACTOR;
+				bodyCreationState = VELOCITY_SELECTION;
 				return;
 			}
-			if(planetarium->bodyCreationState == VELOCITY_SELECTION)
+			if(bodyCreationState == VELOCITY_SELECTION)
 			{
-				Vector2D selectedVelocity = pointedPosition.difference(planetarium->bodyCreationPosition);
-				double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter * planetarium->bodyCreationDiameter;
-				Body2D* newBody = new Body2D(mass, planetarium->bodyCreationDiameter, planetarium->bodyCreationPosition, selectedVelocity, Vector2D());
-				planetarium->addCustomBody(newBody, SDL_util::getRandomColor());
-				planetarium->setBodyCreationMode(IDLE);
-				planetarium->setRunning();
+				Vector2D selectedVelocity = pointedPosition.difference(bodyCreationPosition);
+				double mass = (Math::PI/6.0) * bodyCreationDensity * bodyCreationDiameter * bodyCreationDiameter * bodyCreationDiameter;
+				Body2D* newBody = new Body2D(mass, bodyCreationDiameter, bodyCreationPosition, selectedVelocity, Vector2D());
+				addCustomBody(newBody, SDL_util::getRandomColor());
+				setBodyCreationMode(IDLE);
+				setRunning();
 			}
 			else //user tried to click a single body, or it was a mistake/random action.
 			{
 				// Check if the clicked point is above a body. if yes, "focused" the body.
 
 				if(notToogling)
-					planetarium->focusedBodies.clear();
+					focusedBodies.clear();
 
-				SDL_mutex* collisionEventsMutex = planetarium->physicsEventsManager->mutex;
+				SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 				synchronized(collisionEventsMutex)
 				{
-					foreach(Body2D*, body, vector<Body2D*>, planetarium->physics->universe.bodies)
+					foreach(Body2D*, body, vector<Body2D*>, physics->universe.bodies)
 					{
 						if(body->position.distance(pointedPosition) <= body->diameter*0.5)
 						{
 							if(notToogling) //set focused
-								planetarium->focusedBodies.push_back(body);
+								focusedBodies.push_back(body);
 							else //toogle focus
-								if(Collections::removeElement(planetarium->focusedBodies, body) == false)
-									planetarium->focusedBodies.push_back(body);
+								if(Collections::removeElement(focusedBodies, body) == false)
+									focusedBodies.push_back(body);
 						}
 					}
 				}
-				if(planetarium->pauseOnSelection)
-					planetarium->setRunning();
+				if(pauseOnSelection)
+					setRunning();
 
 				//notify listeners about re-focusing of bodies
-				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-					planetarium->listeners[i]->onBodyReFocus();
+				for(unsigned i = 0; i < listeners.size(); i++)
+					listeners[i]->onBodyReFocus();
 			}
 		}
 		else //mouse up after holding down
@@ -649,35 +646,35 @@ void Planetarium::onMouseUp(BgrWin* bgr, int x, int y, int but)
 			// Make all bodies under this to be "focused"
 
 			if(notToogling)
-				planetarium->focusedBodies.clear();
+				focusedBodies.clear();
 
 			double rtix = min(prevPointedPosition.x, pointedPosition.x), rtfx = max(prevPointedPosition.x, pointedPosition.x),
 				   rtiy = min(prevPointedPosition.y, pointedPosition.y), rtfy = max(prevPointedPosition.y, pointedPosition.y);
 
-			SDL_mutex* collisionEventsMutex = planetarium->physicsEventsManager->mutex;
+			SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
 			synchronized(collisionEventsMutex)
 			{
-				foreach(Body2D*, body, vector<Body2D*>, planetarium->physics->universe.bodies)
+				foreach(Body2D*, body, vector<Body2D*>, physics->universe.bodies)
 				{
 					if(body->position.x >= rtix && body->position.x <= rtfx
 					&& body->position.y >= rtiy && body->position.y <= rtfy)
 					{
 						if(notToogling) //set focused
-							planetarium->focusedBodies.push_back(body);
+							focusedBodies.push_back(body);
 						else //toogle focus
-							if(Collections::removeElement(planetarium->focusedBodies, body) == false)
-								planetarium->focusedBodies.push_back(body);
+							if(Collections::removeElement(focusedBodies, body) == false)
+								focusedBodies.push_back(body);
 					}
 				}
 			}
-			if(planetarium->pauseOnSelection)
-				planetarium->setRunning();
+			if(pauseOnSelection)
+				setRunning();
 
 			//notify listeners about re-focusing of bodies
-			for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-				planetarium->listeners[i]->onBodyReFocus();
+			for(unsigned i = 0; i < listeners.size(); i++)
+				listeners[i]->onBodyReFocus();
 		}
-		planetarium->isMouseLeftButtonDown = false;
+		isMouseLeftButtonDown = false;
 	}
 }
 
@@ -695,6 +692,13 @@ int Planetarium::threadFunctionPhysics(void* arg)
 	}
 	cout << "physics thread stopped." << endl;
 	return 0;
+}
+
+void Planetarium::widen(int dx, int dy)
+{
+	SDL_FreeSurface(surf);
+	surf=SDL_CreateRGBSurface(SDL_SWSURFACE,size.w+dx,size.h+dy,pixelDepht,0,0,0,0);
+	size.w += dx; size.h += dy;
 }
 
 int Planetarium::threadFunctionPlanetariumUpdate(void* arg)

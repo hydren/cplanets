@@ -19,7 +19,7 @@
 #include "SDL_widgets/SDL_widgets.h"
 #include "SDL_util.hpp"
 
-#include "planetarium.hpp"
+#include "planetarium_pane.hpp"
 #include "program_io.hpp"
 #include "widgets/widgets_util.hpp"
 #include "widgets/widgets_debug.hpp"
@@ -159,7 +159,8 @@ DropDownMenu* ddmIntegrationMethod;
 CheckBox* chckLegacyParameters;
 Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 
-Planetarium* planetarium;
+PlanetariumPane* planetariumPane;
+Planetarium* planetarium; ///helper pointer
 
 FlowLayout* toolbarRight;
 Button* btnAddBody, *btnAddRandom, *btnRemove, *btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;
@@ -228,7 +229,8 @@ void CPlanets::showMainWindow()
 		windowSize.w - (BODIES_PANEL_WIDTH + TOOLBAR_SIZE + 2*WIDGETS_SPACING),
 		windowSize.h - (2.1*TOOLBAR_SIZE)
 	);
-	planetarium = new Planetarium(window, planetariumSize, PLANETARIUM_ID);
+	planetariumPane = new PlanetariumPane(window, planetariumSize, PLANETARIUM_ID);
+	planetarium = planetariumPane->planetarium;
 	planetarium->listeners.addListener(&customListener);
 	planetarium->physics->universe.gravity = 9.807;
 
@@ -502,7 +504,7 @@ void onWindowResize(int dw, int dh)
 
 	toolbarNorthLayout->pack();
 
-	planetarium->widen(dw, dh);
+	planetariumPane->widen(dw, dh);
 
 	//todo make a widenAll() method on TabSet
 	tabBodies->widen(0, dh);
@@ -613,8 +615,8 @@ void onButtonPressed(Button* btn)
 	{
 		const double az = 1/planetarium->viewportZoom;
 		planetarium->physics->referenceFrame.set(planetarium->focusedBodies);
-		planetarium->viewportPosition.x = -az*planetarium->tw_area.w/2;
-		planetarium->viewportPosition.y = -az*planetarium->tw_area.h/2;
+		planetarium->viewportPosition.x = -az*planetariumPane->tw_area.w/2;
+		planetarium->viewportPosition.y = -az*planetariumPane->tw_area.h/2;
 	}
 
 	if(btn == btnResetReferenceFrame)
@@ -622,8 +624,8 @@ void onButtonPressed(Button* btn)
 		const double az = 1/planetarium->viewportZoom;
 		planetarium->viewportPosition = planetarium->physics->referenceFrame.position();
 		planetarium->physics->referenceFrame.reset();
-		planetarium->viewportPosition.x -= az*planetarium->tw_area.w/2;
-		planetarium->viewportPosition.y -= az*planetarium->tw_area.h/2;
+		planetarium->viewportPosition.x -= az*planetariumPane->tw_area.w/2;
+		planetarium->viewportPosition.y -= az*planetariumPane->tw_area.h/2;
 	}
 
 	if(btn == btnRun)
@@ -753,11 +755,11 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 
 void onUserEvent(int cmd,int param,int param2)
 {
-	if(cmd == Planetarium::USER_EVENT_ID__REDRAW_REQUESTED)
+	if(cmd == PlanetariumPane::USER_EVENT_ID__REDRAW_REQUESTED)
 	{
-		if(param == planetarium->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
+		if(param == planetariumPane->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
 		{
-			planetarium->doRefresh();
+			planetariumPane->doRefresh();
 		}
 	}
 
@@ -897,7 +899,7 @@ void addRandomBody()
 	double diameter = (planetarium->bodyCreationDiameterRatio * az) * Planetarium::BODY_CREATION_DIAMETER_FACTOR;
 	double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * diameter * diameter * diameter;
 	double speed = *spnBodyVelocity->getValue();
-	Vector2D randomPosition(randomBetween(0, planetarium->tw_area.w), randomBetween(0, planetarium->tw_area.h));
+	Vector2D randomPosition(randomBetween(0, planetariumPane->tw_area.w), randomBetween(0, planetariumPane->tw_area.h));
 	Vector2D randomVelocity(randomBetween(-speed * az, speed * az), randomBetween(-speed * az, speed * az));
 	randomPosition.scale(az).add(planetarium->viewportPosition);
 
