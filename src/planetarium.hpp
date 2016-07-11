@@ -8,18 +8,14 @@
 #ifndef PLANETARIUM_HPP_
 #define PLANETARIUM_HPP_
 
+#include <SDL/SDL.h>
 #include <map>
 
-#include "SDL_widgets/SDL_widgets.h"
-
-#include "futil/futil.hpp"
 #include "physics/physics2d.hpp"
+#include "futil/futil.hpp"
 
-struct Planetarium extends BgrWin, Physics2D::CollisionListener
+struct Planetarium extends Physics2D::CollisionListener
 {
-	/// SDL_widgets user event ID hinting that it should be redrawed. Catch such events with a 'handle_uev' function and call 'doRefresh()'.
-	static const int USER_EVENT_ID__REDRAW_REQUESTED = 192;
-
 	static const double BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
 
 	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
@@ -31,6 +27,10 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	static const unsigned DEFAULT_SLEEPING_TIME = 25;
 	static const short DEFAULT_FPS = 60;
 	static const long DEFAULT_DISPLAY_PERIOD = 30, DEFAULT_ITERATIONS_PER_DISPLAY = 2;
+
+	SDL_Surface* surf;
+	SDL_Rect size, pos;
+	bool isRedrawPending; /// advanced flag
 
 	// auxiliar structure
 	struct Body2DClone;
@@ -65,7 +65,7 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	double bodyCreationDiameterRatio; //the default diameter of bodies, proportional to the view size. Zooming affects the diameter of newly created bodies.
 	double bodyCreationDensity; //The default density of newly created bodies. Thus, zooming affects the mass of newly created bodies.
 
-	Planetarium(WinBase* parentWidget, Rect rect, Id _id=0);
+	Planetarium(SDL_Rect rect, Uint32 pixdepth=16);
 	virtual ~Planetarium();
 
 	void start();
@@ -78,9 +78,6 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 
 	/** If run is true (default), the physics thread is started/resumed. Otherwise the thread is put to sleep. */
 	void setRunning(bool run=true);
-
-	/** It's not recommended to call this directly. */
-	void doRefresh();
 
 	//synchronized methods
 
@@ -109,6 +106,20 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
 	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
 	void removeFocusedBodies(bool alsoDelete = true);
+
+	/** Optional dispatcher to perform updates on the resulting surface. */
+	struct SurfaceUpdateDispatcher
+	{
+		/** Called when a surface needs to be updated. */
+		virtual void onSurfaceUpdate() abstract;
+		virtual ~SurfaceUpdateDispatcher(){}
+	}*drawDispatcher;
+
+	/** Action to be called when a mouse button is pressed */
+	void onMouseButtonPressed(int mouseX, int mouseY, int mouseButtonNumber);
+
+	/** Action to be called when a mouse button is released */
+	void onMouseButtonReleased(int mouseX, int mouseY, int mouseButtonNumber);
 
 	// :::::::::::::::::::::: Inner classes ::::::::::::::::::::::::::::::::
 
@@ -172,7 +183,6 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
 
-	bool isRedrawPending;
 	long currentIterationCount;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
 	SDL_mutex* physicsAccessMutex;
@@ -187,9 +197,6 @@ struct Planetarium extends BgrWin, Physics2D::CollisionListener
 	void performPhysics(); //updates physics
 	void updateView(); //updates view
 	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
-
-	static void onMouseDown(BgrWin*,int x,int y,int but);
-	static void onMouseUp(BgrWin*,int x,int y,int but);
 
 	static int threadFunctionPhysics(void* arg); //thread function
 	static int threadFunctionPlanetariumUpdate(void* arg); //thread function

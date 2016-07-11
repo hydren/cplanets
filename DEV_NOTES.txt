@@ -7,7 +7,6 @@
 -------------- To Do
 
 - Milestones
-- Make planetarium.hpp/cpp independent from SDL_widgets code.
 
 -------------- Backlog
 
