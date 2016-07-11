@@ -203,6 +203,10 @@ struct Planetarium extends Physics2D::CollisionListener
 	bool isMouseLeftButtonDown;
 	Vector2D lastMouseClickPoint;
 
+	//auxiliary variables
+	bool auxWasRunningBeforeSelection;
+	bool auxWasRunningBeforeBodyCreationMode;
+
 	Vector2D getTransposedNoRef(const Vector2D& position) const;
 
 	void performPhysics(); //updates physics

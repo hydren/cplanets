@@ -83,7 +83,11 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   threadViewUpdate(null),
   physicsAccessMutex(SDL_CreateMutex()),
   bodyCreationPosition(), bodyCreationVelocity(), bodyCreationDiameter(),
-  lastMouseLeftButtonDown(0), isMouseLeftButtonDown(false), lastMouseClickPoint()
+  lastMouseLeftButtonDown(0), isMouseLeftButtonDown(false), lastMouseClickPoint(),
+  //aux
+  auxWasRunningBeforeSelection(false),
+  auxWasRunningBeforeBodyCreationMode(false)
+
 {
 	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
 	this->physics->addCollisionListener(this);
@@ -243,8 +247,9 @@ void Planetarium::setBodyCreationMode(bool enable)
 {
 	if(enable)
 	{
-		this->bodyCreationState = POSITION_SELECTION;
-		this->setRunning(false);
+		bodyCreationState = POSITION_SELECTION;
+		auxWasRunningBeforeBodyCreationMode = running;
+		setRunning(false);
 	}
 	else this->bodyCreationState = IDLE;
 }
@@ -580,6 +585,7 @@ void Planetarium::onMouseButtonPressed(int x, int y, int but)
 		lastMouseLeftButtonDown = SDL_GetTicks();
 		isMouseLeftButtonDown = true;
 		lastMouseClickPoint = Vector2D(x, y);
+		auxWasRunningBeforeSelection = running;
 		if(pauseOnSelection)
 			setRunning(false);
 	}
@@ -609,7 +615,8 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 				Body2D* newBody = new Body2D(mass, bodyCreationDiameter, bodyCreationPosition, selectedVelocity, Vector2D());
 				addCustomBody(newBody, SDL_util::getRandomColor());
 				setBodyCreationMode(IDLE);
-				setRunning();
+				if(auxWasRunningBeforeBodyCreationMode)
+					setRunning();
 			}
 			else //user tried to click a single body, or it was a mistake/random action.
 			{
@@ -633,7 +640,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 						}
 					}
 				}
-				if(pauseOnSelection)
+				if(pauseOnSelection and auxWasRunningBeforeSelection)
 					setRunning();
 
 				//notify listeners about re-focusing of bodies
@@ -667,7 +674,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 					}
 				}
 			}
-			if(pauseOnSelection)
+			if(pauseOnSelection and auxWasRunningBeforeSelection)
 				setRunning();
 
 			//notify listeners about re-focusing of bodies
