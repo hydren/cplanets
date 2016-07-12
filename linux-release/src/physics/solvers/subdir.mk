@@ -4,26 +4,26 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/physics/body2d.cpp \
-../src/physics/physics2d.cpp \
-../src/physics/physics2dsolver.cpp \
-../src/physics/universe2d.cpp 
+../src/physics/solvers/euler_cromer_solver.cpp \
+../src/physics/solvers/euler_solver.cpp \
+../src/physics/solvers/leapfrog_solver.cpp \
+../src/physics/solvers/semi_implicit_euler_solver.cpp 
 
 OBJS += \
-./src/physics/body2d.o \
-./src/physics/physics2d.o \
-./src/physics/physics2dsolver.o \
-./src/physics/universe2d.o 
+./src/physics/solvers/euler_cromer_solver.o \
+./src/physics/solvers/euler_solver.o \
+./src/physics/solvers/leapfrog_solver.o \
+./src/physics/solvers/semi_implicit_euler_solver.o 
 
 CPP_DEPS += \
-./src/physics/body2d.d \
-./src/physics/physics2d.d \
-./src/physics/physics2dsolver.d \
-./src/physics/universe2d.d 
+./src/physics/solvers/euler_cromer_solver.d \
+./src/physics/solvers/euler_solver.d \
+./src/physics/solvers/leapfrog_solver.d \
+./src/physics/solvers/semi_implicit_euler_solver.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/physics/%.o: ../src/physics/%.cpp
+src/physics/solvers/%.o: ../src/physics/solvers/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
 	LC_ALL=C g++ -std=c++98 -I"/home/carlosfaruolo/Workspaces/cpp/cplanets/src_libs" -I"/home/carlosfaruolo/Workspaces/cpp/cplanets/src" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"

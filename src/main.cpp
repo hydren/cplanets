@@ -12,7 +12,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "physics/physics2d_solvers.hpp"
+#include "physics/solvers/built_in.hpp"
 #include "main_window.hpp"
 #include "SDL_util.hpp"
 
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		StandardPhysics2DSolvers::doRegister();
+		BuiltInSolvers::init();
 		CPlanets::showMainWindow();
 		return EXIT_SUCCESS;
 	}

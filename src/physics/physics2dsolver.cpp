@@ -14,6 +14,7 @@
 
 using std::vector;
 
+/// A collection of AbstractPhysics2DSolver factories, ready to be used. Each factory can instantiate some subclass of AbstractPhysics2DSolver.
 vector<const AbstractPhysics2DSolver::GenericFactory*> AbstractPhysics2DSolver::registeredFactories;
 
 void AbstractPhysics2DSolver::computeAllBodiesAccelerations()

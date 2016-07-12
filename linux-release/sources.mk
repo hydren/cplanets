@@ -26,6 +26,7 @@ SUBDIRS := \
 src \
 src/geometry \
 src/physics \
+src/physics/solvers \
 src/widgets \
 src/widgets/extra \
 src_libs/SDL_widgets \
