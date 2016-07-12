@@ -10,8 +10,7 @@
 #include <vector>
 using std::vector;
 
-const AbstractPhysics2DSolver::CustomFactory<LeapfrogSolver>
-LeapfrogSolver::CLASS_FACTORY("LeapfrogSolver", "Leapfrog");
+DEFINE_CLASS_FACTORY(LeapfrogSolver, "Leapfrog");
 
 LeapfrogSolver::LeapfrogSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.1)

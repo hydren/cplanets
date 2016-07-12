@@ -13,7 +13,7 @@
 
 struct LeapfrogSolver extends public AbstractPhysics2DSolver
 {
-	static const CustomFactory<LeapfrogSolver> CLASS_FACTORY;
+	DECLARE_CLASS_FACTORY(LeapfrogSolver);
 
 	LeapfrogSolver(Universe2D& u);
 	void step();

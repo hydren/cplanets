@@ -72,4 +72,13 @@ struct AbstractPhysics2DSolver
 	static std::vector<const GenericFactory*> registeredFactories;
 };
 
+/// Insert this in your solver class body if you intend to use the REGISTER_CLASS_FACTORY() macro (or declare the factory directly)
+#define DECLARE_CLASS_FACTORY(class_name) static const CustomFactory<class_name> CLASS_FACTORY
+
+/// Insert this in your solver class source file if you intend to use the REGISTER_CLASS_FACTORY() macro (or define the factory directly)
+#define DEFINE_CLASS_FACTORY(class_name, display_name) const AbstractPhysics2DSolver::CustomFactory<class_name> class_name::CLASS_FACTORY(#class_name, display_name)
+
+/// Use this to make the given solver class available in AbstractPhysics2DSolver::registeredFactories. 'class_name' must be the name of a subclass of AbstractPhysics2DSolver
+#define REGISTER_CLASS_FACTORY(class_name) AbstractPhysics2DSolver::registeredFactories.push_back(&class_name::CLASS_FACTORY)
+
 #endif /* PHYSICS_PHYSICS2DSOLVER_HPP_ */

@@ -13,7 +13,7 @@
 
 struct SemiImplicitEulerSolver extends public AbstractPhysics2DSolver
 {
-	static const CustomFactory<SemiImplicitEulerSolver> CLASS_FACTORY;
+	DECLARE_CLASS_FACTORY(SemiImplicitEulerSolver);
 
 	SemiImplicitEulerSolver(Universe2D& u);
 	void step();

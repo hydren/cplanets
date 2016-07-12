@@ -17,10 +17,10 @@ namespace BuiltInSolvers
 {
 	void init()
 	{
-		AbstractPhysics2DSolver::registeredFactories.push_back(&EulerSolver::CLASS_FACTORY);
-		AbstractPhysics2DSolver::registeredFactories.push_back(&SemiImplicitEulerSolver::CLASS_FACTORY);
-		AbstractPhysics2DSolver::registeredFactories.push_back(&EulerCromerSolver::CLASS_FACTORY);
-		AbstractPhysics2DSolver::registeredFactories.push_back(&LeapfrogSolver::CLASS_FACTORY);
+		REGISTER_CLASS_FACTORY(EulerSolver);
+		REGISTER_CLASS_FACTORY(SemiImplicitEulerSolver);
+		REGISTER_CLASS_FACTORY(EulerCromerSolver);
+		REGISTER_CLASS_FACTORY(LeapfrogSolver);
 	}
 }
 

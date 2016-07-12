@@ -10,8 +10,7 @@
 #include <vector>
 using std::vector;
 
-const AbstractPhysics2DSolver::CustomFactory<EulerSolver>
-EulerSolver::CLASS_FACTORY("EulerSolver", "Euler");
+DEFINE_CLASS_FACTORY(EulerSolver, "Euler");
 
 EulerSolver::EulerSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01)

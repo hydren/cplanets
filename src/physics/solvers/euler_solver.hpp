@@ -13,7 +13,7 @@
 
 struct EulerSolver extends public AbstractPhysics2DSolver
 {
-	static const CustomFactory<EulerSolver> CLASS_FACTORY;
+	DECLARE_CLASS_FACTORY(EulerSolver);
 
 	EulerSolver(Universe2D& u);
 	void step();

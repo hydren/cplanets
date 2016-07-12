@@ -10,8 +10,7 @@
 #include <vector>
 using std::vector;
 
-const AbstractPhysics2DSolver::CustomFactory<EulerCromerSolver>
-EulerCromerSolver::CLASS_FACTORY("EulerCromerSolver", "Semi-implicit Euler (Euler-Cromer)");
+DEFINE_CLASS_FACTORY(EulerCromerSolver, "Semi-implicit Euler (Euler-Cromer)");
 
 EulerCromerSolver::EulerCromerSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.1)
