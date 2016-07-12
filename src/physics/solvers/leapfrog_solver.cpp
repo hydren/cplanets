@@ -21,15 +21,14 @@ void LeapfrogSolver::step()
 {
 	computeAllBodiesAccelerations();
 
-	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
 	{
-		Body2D& b1 = *b1p;
 		if(timeElapsed == 0)
-			b1.velocity += b1.acceleration * (timestep*0.5);
+			body->velocity += body->acceleration * (timestep*0.5);
 		else
-			b1.velocity += b1.acceleration * timestep;
+			body->velocity += body->acceleration * timestep;
 
-		b1.position += b1.velocity * timestep;
+		body->position += body->velocity * timestep;
 	}
 
 	timeElapsed += timestep;

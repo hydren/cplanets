@@ -22,11 +22,10 @@ void EulerCromerSolver::step()
 	computeAllBodiesAccelerations();
 
 	//velocity & position loop
-	foreach(Body2D*, b1p, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
 	{
-		Body2D& b1 = *b1p;
-		b1.velocity += b1.acceleration * timestep;
-		b1.position += b1.velocity * timestep;
+		body->velocity += body->acceleration * timestep;
+		body->position += body->velocity * timestep;
 	}
 
 	timeElapsed += timestep;
