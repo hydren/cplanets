@@ -48,6 +48,7 @@ Show per body info (velocity, acceleration, mass, etc) - a body panel below bodi
 Dynamically change bodies attributes
 Implement load/save on other formats (csv, xml, json)
 Implement multi-step integration methods (Adams-Bashford, Adams-Molton)
+Implement optional Barnes-Hut tree to optimize calculations
 Hide left bar, hide all mode.
 Add optional single-threaded mode
 Implement load/save on other formats (ods, prop, yaml)
