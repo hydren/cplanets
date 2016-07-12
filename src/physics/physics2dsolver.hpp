@@ -33,7 +33,7 @@ struct AbstractPhysics2DSolver
 
 	protected:
 	void computeAllBodiesAccelerations();
-	Vector2D calculateAccelerationDueToNeighborhood(Vector2D position, Body2D body);
+	Vector2D calculateAccelerationDueToNeighborhood(Vector2D position, Body2D* body);
 
 	public:
 
