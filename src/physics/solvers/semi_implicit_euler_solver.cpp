@@ -33,7 +33,6 @@ void SemiImplicitEulerSolver::step()
 	{
 		Body2D& b1 = *b1p;
 		b1.velocity += b1.acceleration * timestep;
-		b1.position += b1.velocity * timestep;
 	}
 
 	timeElapsed += timestep;
