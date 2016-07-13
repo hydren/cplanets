@@ -8,11 +8,12 @@
 #ifndef PHYSICS_SOLVERS_BUILT_IN_HPP_
 #define PHYSICS_SOLVERS_BUILT_IN_HPP_
 
-#include <physics/solvers/stormer_verlet_solver.hpp>
 #include "euler_solver.hpp"
 #include "semi_implicit_euler_solver.hpp"
 #include "euler_cromer_solver.hpp"
 #include "leapfrog_solver.hpp"
+#include "stormer_verlet_solver.hpp"
+#include "velocity_verlet_solver.hpp"
 
 namespace BuiltInSolvers
 {
@@ -23,6 +24,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(EulerCromerSolver);
 		REGISTER_CLASS_FACTORY(LeapfrogSolver);
 		REGISTER_CLASS_FACTORY(StormerVerletSolver);
+		REGISTER_CLASS_FACTORY(VelocityVerlet);
 	}
 }
 
