@@ -32,8 +32,16 @@ struct AbstractPhysics2DSolver
 	virtual void step()=0;
 
 	protected:
+	/** Computes and updates all bodies' accelerations based on their mutual gravitation forces, using their current positions. */
 	void computeAccelerations();
-	Vector2D getAccelerationOnPosition(Vector2D position, Body2D* body);
+
+	/** Computes the acceleration (resulting from mutual gravitation forces) on the given body, at the specified position (and not at the given body current position).
+	 *  The resulting acceleration is returned. */
+	Vector2D getAccelerationOnPosition(const Vector2D& position, Body2D* body);
+
+	/** Computes the acceleration (resulting from mutual gravitation forces) on the given body, at the specified position (and not at the given body current position).
+	 *  The resulting acceleration is stored on 'accPtr'. */
+	void getAccelerationOnPosition(const Vector2D& position, Body2D* body, Vector2D* accPtr);
 
 	public:
 

@@ -18,31 +18,27 @@ vector<const AbstractPhysics2DSolver::GenericFactory*> AbstractPhysics2DSolver::
 
 void AbstractPhysics2DSolver::computeAccelerations()
 {
-	foreach(Body2D*, b1, vector<Body2D*>, universe.bodies)
-	{
-		b1->acceleration *= 0; //clear the acceleration
-
-		foreach(Body2D*, b2, vector<Body2D*>, universe.bodies)
-		{
-			if(b1 != b2)
-			{
-				double force = -universe.gravity*b1->mass*b2->mass / pow(b1->position.distance(b2->position), 2);
-				b1->acceleration += (b1->position - b2->position).normalize() * (force/b1->mass);
-			}
-		}
-	}
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+		getAccelerationOnPosition(body->position, body, &body->acceleration);
 }
 
-Vector2D AbstractPhysics2DSolver::getAccelerationOnPosition(Vector2D position, Body2D* body)
+Vector2D AbstractPhysics2DSolver::getAccelerationOnPosition(const Vector2D& position, Body2D* body)
 {
 	Vector2D acc;
+	getAccelerationOnPosition(position, body, &acc);
+	return acc;
+}
+
+void AbstractPhysics2DSolver::getAccelerationOnPosition(const Vector2D& position, Body2D* body, Vector2D* accPtr)
+{
+	const double& mass = body->mass;
+	Vector2D& acceleration = accPtr->scale(0); //clear the acceleration and reference it
 	foreach(Body2D*, neighbor, vector<Body2D*>, universe.bodies)
 	{
 		if(neighbor != body)
 		{
-			double force = -universe.gravity*body->mass*neighbor->mass / pow(position.distance(neighbor->position), 2);
-			acc += (position - neighbor->position).normalize() * (force/body->mass);
+			double force = (-universe.gravity * mass * neighbor->mass) / pow(position.distance(neighbor->position), 2);
+			acceleration += (position - neighbor->position).normalize() * (force/mass);
 		}
 	}
-	return acc;
 }
