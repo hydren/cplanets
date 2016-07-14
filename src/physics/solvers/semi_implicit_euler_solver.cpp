@@ -24,7 +24,7 @@ void SemiImplicitEulerSolver::step()
 		body->position += body->velocity * timestep;
 	}
 
-	computeAllBodiesAccelerations();
+	computeAccelerations();
 
 	//velocity loop
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)

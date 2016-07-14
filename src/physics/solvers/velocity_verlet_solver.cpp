@@ -19,7 +19,7 @@ VelocityVerlet::VelocityVerlet(Universe2D& u)
 void VelocityVerlet::step()
 {
 	if(timeElapsed == 0) //except for the first step, this is already calculated by the second part of the step
-		computeAllBodiesAccelerations();
+		computeAccelerations();
 
 	//velocity(pt.1) & position loop
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
@@ -29,7 +29,7 @@ void VelocityVerlet::step()
 	}
 
 	//we need a(n+1)
-	computeAllBodiesAccelerations();
+	computeAccelerations();
 
 	//velocity (pt.2) loop
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)

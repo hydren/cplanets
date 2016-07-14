@@ -18,7 +18,7 @@ EulerCromerSolver::EulerCromerSolver(Universe2D& u)
 
 void EulerCromerSolver::step()
 {
-	computeAllBodiesAccelerations();
+	computeAccelerations();
 
 	//velocity & position loop
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)

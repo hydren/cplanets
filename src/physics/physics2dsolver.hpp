@@ -32,8 +32,8 @@ struct AbstractPhysics2DSolver
 	virtual void step()=0;
 
 	protected:
-	void computeAllBodiesAccelerations();
-	Vector2D calculateAccelerationDueToNeighborhood(Vector2D position, Body2D* body);
+	void computeAccelerations();
+	Vector2D getAccelerationOnPosition(Vector2D position, Body2D* body);
 
 	public:
 

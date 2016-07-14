@@ -18,7 +18,7 @@ EulerSolver::EulerSolver(Universe2D& u)
 
 void EulerSolver::step()
 {
-	computeAllBodiesAccelerations();
+	computeAccelerations();
 
 	//velocity & position loop
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)

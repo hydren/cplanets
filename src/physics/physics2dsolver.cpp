@@ -16,7 +16,7 @@ using std::vector;
 /// A collection of AbstractPhysics2DSolver factories, ready to be used. Each factory can instantiate some subclass of AbstractPhysics2DSolver.
 vector<const AbstractPhysics2DSolver::GenericFactory*> AbstractPhysics2DSolver::registeredFactories;
 
-void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
+void AbstractPhysics2DSolver::computeAccelerations()
 {
 	foreach(Body2D*, b1, vector<Body2D*>, universe.bodies)
 	{
@@ -33,7 +33,7 @@ void AbstractPhysics2DSolver::computeAllBodiesAccelerations()
 	}
 }
 
-Vector2D AbstractPhysics2DSolver::calculateAccelerationDueToNeighborhood(Vector2D position, Body2D* body)
+Vector2D AbstractPhysics2DSolver::getAccelerationOnPosition(Vector2D position, Body2D* body)
 {
 	Vector2D acc;
 	foreach(Body2D*, neighbor, vector<Body2D*>, universe.bodies)
