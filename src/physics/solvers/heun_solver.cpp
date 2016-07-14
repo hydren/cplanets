@@ -1,22 +1,22 @@
 /*
- * euler_solver.cpp
+ * heun_solver.cpp
  *
- *  Created on: 12 de jul de 2016
+ *  Created on: 13 de jul de 2016
  *      Author: carlosfaruolo
  */
 
-#include "euler_solver.hpp"
+#include "heun_solver.hpp"
 
 #include <vector>
 using std::vector;
 
-DEFINE_CLASS_FACTORY(EulerSolver, "Euler");
+DEFINE_CLASS_FACTORY(HeunSolver, "Heun (RK2)");
 
-EulerSolver::EulerSolver(Universe2D& u)
+HeunSolver::HeunSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01)
 {}
 
-void EulerSolver::step()
+void HeunSolver::step()
 {
 	computeAccelerations();
 
