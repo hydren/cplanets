@@ -39,6 +39,7 @@ Basic "help" dialog
 
 - 1.x
 
+Rotate functionality
 Redo functionality
 Capability to change background color
 Add option to disable orbit trace (which would stop recording position, for performance's sake)
