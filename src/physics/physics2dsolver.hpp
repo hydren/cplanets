@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "universe2d.hpp"
 
@@ -35,13 +36,9 @@ struct AbstractPhysics2DSolver
 	/** Computes and updates all bodies' accelerations based on their mutual gravitation forces, using their current positions. */
 	void computeAccelerations();
 
-	/** Computes the acceleration (resulting from mutual gravitation forces) on the given body, at the specified position (and not at the given body current position).
-	 *  The resulting acceleration is returned. */
-	Vector2D getAccelerationOnPosition(const Vector2D& position, Body2D* body);
-
-	/** Computes the acceleration (resulting from mutual gravitation forces) on the given body, at the specified position (and not at the given body current position).
-	 *  The resulting acceleration is stored on 'accPtr'. */
-	void getAccelerationOnPosition(const Vector2D& position, Body2D* body, Vector2D* accPtr);
+	/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
+	 *  The resulting accelerations are stored on 'resultingAccelerations'. */
+	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations, const std::map<Body2D*, Vector2D>& positions);
 
 	public:
 
