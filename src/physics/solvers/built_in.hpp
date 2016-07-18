@@ -15,6 +15,7 @@
 #include "stormer_verlet_solver.hpp"
 #include "velocity_verlet_solver.hpp"
 #include "midpoint_solver.hpp"
+#include "classic_rk4_solver.hpp"
 
 namespace BuiltInSolvers
 {
@@ -27,6 +28,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(StormerVerletSolver);
 		REGISTER_CLASS_FACTORY(VelocityVerlet);
 		REGISTER_CLASS_FACTORY(MidpointSolver);
+		REGISTER_CLASS_FACTORY(ClassicRk4Solver);
 	}
 }
 
