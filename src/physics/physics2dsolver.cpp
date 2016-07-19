@@ -52,3 +52,9 @@ void AbstractPhysics2DSolver::computeAccelerations(map<Body2D*, Vector2D>& acc, 
 		}
 	}
 }
+
+void AbstractPhysics2DSolver::derive(map<Body2D*, Vector2D>& dvdt, map<Body2D*, Vector2D>& dydt, map<Body2D*, Vector2D>& vn, map<Body2D*, Vector2D>& yn)
+{
+	computeAccelerations(dvdt, yn);
+	dydt = vn;
+}

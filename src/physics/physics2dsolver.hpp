@@ -40,6 +40,8 @@ struct AbstractPhysics2DSolver
 	 *  The resulting accelerations are stored on 'resultingAccelerations'. */
 	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations, const std::map<Body2D*, Vector2D>& positions);
 
+	void derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt, std::map<Body2D*, Vector2D>& vn, std::map<Body2D*, Vector2D>& yn);
+
 	public:
 
 	/// A solver factory. It has only one method which returns a new instance of a AbstractPhysics2DSolver.
