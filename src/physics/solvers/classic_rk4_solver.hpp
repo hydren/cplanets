@@ -17,9 +17,6 @@ struct ClassicRk4Solver extends public AbstractPhysics2DSolver
 
 	ClassicRk4Solver(Universe2D& u);
 	void step();
-
-	struct deriver_aux;
-	friend class deriver_aux;
 };
 
 #endif /* PHYSICS_SOLVERS_CLASSIC_RK4_SOLVER_HPP_ */
