@@ -18,6 +18,7 @@
 #include "classic_rk4_solver.hpp"
 #include "implicit_midpoint_solver.hpp"
 #include "heun_solver.hpp"
+#include "ralston_solver.hpp"
 
 namespace BuiltInSolvers
 {
@@ -33,6 +34,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(ImplicitMidpointSolver);
 		REGISTER_CLASS_FACTORY(ClassicRk4Solver);
 		REGISTER_CLASS_FACTORY(HeunSolver);
+		REGISTER_CLASS_FACTORY(RalstonSolver);
 	}
 }
 
