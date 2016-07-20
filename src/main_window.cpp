@@ -924,7 +924,7 @@ void keepPressing(int keyVar, void (*procedure)(), bool useThread)
 	{
 		SDL_Delay(500);
 		long lastUpdateTime;
-		while(SDL_GetKeyState(null)[keyVar]==1)
+		while(SDL_GetKeyState(null)[keyVar]==1) //fixme SEGFAULT HERE. This code should not be called from a thread other than the SDL_widgets thread
 		{
 			lastUpdateTime = SDL_GetTicks();
 			procedure();

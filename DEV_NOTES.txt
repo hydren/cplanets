@@ -1,5 +1,6 @@
 -------------- Bugs
 
+- NEW! Crash when creating too many bodies (tested on win32). See main_window.cpp's keepPressing()
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
 - Bezier spline is glitched due to wrong parametrization.
 
