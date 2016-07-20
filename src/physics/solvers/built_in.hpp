@@ -21,6 +21,7 @@
 #include "ralston_solver.hpp"
 #include "3_8_rk4_solver.hpp"
 #include "rk3_solver.hpp"
+#include "rk3_v2_solver.hpp"
 
 namespace BuiltInSolvers
 {
@@ -39,6 +40,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(RalstonSolver);
 		REGISTER_CLASS_FACTORY(Rule38Rk4Solver);
 		REGISTER_CLASS_FACTORY(Rk3Solver);
+		REGISTER_CLASS_FACTORY(Rk3V2Solver);
 	}
 }
 
