@@ -164,3 +164,77 @@ void Rule38Rk4Solver::step()
 
 	timeElapsed += timestep;
 }
+
+DEFINE_CLASS_FACTORY(GillRk4Solver, "Runge-Kutta (4th order, Gill)");
+
+GillRk4Solver::GillRk4Solver(Universe2D& u)
+: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01)
+{}
+
+void GillRk4Solver::step()
+{
+	map<Body2D*, Vector2D> k1vs, k2vs, k3vs, k4vs,
+							k1rs, k2rs, k3rs, k4rs;
+
+	map<Body2D*, Vector2D> wvs, wrs;
+
+	map<Body2D*, Vector2D> y0, v0;
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		y0[body] = body->position;
+		v0[body] = body->velocity;
+	}
+
+	derive(k1vs, k1rs, v0, y0);
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		Vector2D& wv = wvs[body]; // w[0]
+		Vector2D& wr = wrs[body]; // w[1]
+		const Vector2D& k1v = k1vs[body]; // y[0]
+		const Vector2D& k1r = k1rs[body]; // u[1]
+
+		wv = body->velocity + k1v * (timestep * 0.5);
+		wr = body->position + k1r * (timestep * 0.5);
+	}
+
+	derive(k2vs, k2rs, wvs, wrs);
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		Vector2D& wv = wvs[body]; // w[0]
+		Vector2D& wr = wrs[body]; // w[1]
+		const Vector2D& k1v = k1vs[body]; // y[0]
+		const Vector2D& k1r = k1rs[body]; // u[1]
+		const Vector2D& k2v = k2vs[body]; // y[0]
+		const Vector2D& k2r = k2rs[body]; // u[1]
+
+		wv = body->velocity + k1v * (timestep * 0.5 *(-1+sqrt(2))) + k2v * (timestep * (1-0.5*sqrt(2)));
+		wr = body->position + k1r * (timestep * 0.5 *(-1+sqrt(2))) + k2r * (timestep * (1-0.5*sqrt(2)));
+	}
+
+	derive(k3vs, k3rs, wvs, wrs);
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		Vector2D& wv = wvs[body]; // w[0]
+		Vector2D& wr = wrs[body]; // w[1]
+		const Vector2D& k2v = k2vs[body]; // y[0]
+		const Vector2D& k2r = k2rs[body]; // u[1]
+		const Vector2D& k3v = k3vs[body]; // y[0]
+		const Vector2D& k3r = k3rs[body]; // u[1]
+
+		wv = body->velocity - k2v * (timestep * 0.5*sqrt(2)) + k3v * (timestep * (1 + 0.5*sqrt(2)));
+		wr = body->position - k2r * (timestep * 0.5*sqrt(2)) + k3r * (timestep * (1 + 0.5*sqrt(2)));
+	}
+
+	derive(k4vs, k4rs, wvs, wrs);
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		body->velocity += (k1vs[body] + k2vs[body]*(2-sqrt(2)) + k3vs[body]*(2+sqrt(2)) + k4vs[body]) * (1.0/6.0);
+		body->position += (k1rs[body] + k2rs[body]*(2-sqrt(2)) + k3rs[body]*(2+sqrt(2)) + k4rs[body]) * (1.0/6.0);
+	}
+
+	timeElapsed += timestep;
+}

@@ -27,4 +27,12 @@ struct Rule38Rk4Solver extends public AbstractPhysics2DSolver
 	void step();
 };
 
+struct GillRk4Solver extends public AbstractPhysics2DSolver
+{
+	DECLARE_CLASS_FACTORY(GillRk4Solver);
+
+	GillRk4Solver(Universe2D& u);
+	void step();
+};
+
 #endif /* PHYSICS_SOLVERS_RK4_HPP_ */

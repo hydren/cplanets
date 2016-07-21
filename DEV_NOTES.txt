@@ -4,6 +4,7 @@
 - Sometimes the time step spinner disappears
 - Sometimes the program crashes when switching solvers (seen on universe with a high number of planets and after a long simulation time)
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
+- Gill's RK4 is unstable
 - Bezier spline is glitched due to wrong parametrization.
 
 -------------- To Do
