@@ -1,14 +1,36 @@
 /*
- * velocity_verlet_solver.cpp
+ * order2.cpp
  *
- *  Created on: 13 de jul de 2016
+ *  Created on: 21 de jul de 2016
  *      Author: carlosfaruolo
  */
 
-#include "velocity_verlet_solver.hpp"
+#include "order2.hpp"
 
-#include <vector>
 using std::vector;
+
+DEFINE_CLASS_FACTORY(LeapfrogSolver, "Leapfrog");
+
+LeapfrogSolver::LeapfrogSolver(Universe2D& u)
+: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.1)
+{}
+
+void LeapfrogSolver::step()
+{
+	computeAccelerations();
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		if(timeElapsed == 0)
+			body->velocity += body->acceleration * (timestep*0.5);
+		else
+			body->velocity += body->acceleration * timestep;
+
+		body->position += body->velocity * timestep;
+	}
+
+	timeElapsed += timestep;
+}
 
 DEFINE_CLASS_FACTORY(VelocityVerlet, "Velocity Verlet");
 

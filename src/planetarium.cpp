@@ -17,7 +17,7 @@
 
 #include "SDL_util.hpp"
 #include "physics/physics2d.hpp"
-#include "physics/solvers/leapfrog_solver.hpp"
+#include "physics/solvers/order2.hpp"
 
 using std::cout;
 using std::endl;

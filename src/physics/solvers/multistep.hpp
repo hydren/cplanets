@@ -1,12 +1,12 @@
 /*
- * stormer_verlet_solver.hpp
+ * multistep.hpp
  *
- *  Created on: 13 de jul de 2016
+ *  Created on: 21 de jul de 2016
  *      Author: carlosfaruolo
  */
 
-#ifndef PHYSICS_SOLVERS_STORMER_VERLET_SOLVER_HPP_
-#define PHYSICS_SOLVERS_STORMER_VERLET_SOLVER_HPP_
+#ifndef PHYSICS_SOLVERS_MULTISTEP_HPP_
+#define PHYSICS_SOLVERS_MULTISTEP_HPP_
 
 #include "physics/physics2dsolver.hpp"
 #include "futil/futil.hpp"
@@ -26,4 +26,4 @@ struct StormerVerletSolver extends public AbstractPhysics2DSolver
 
 
 
-#endif /* PHYSICS_SOLVERS_STORMER_VERLET_SOLVER_HPP_ */
+#endif /* PHYSICS_SOLVERS_MULTISTEP_HPP_ */
