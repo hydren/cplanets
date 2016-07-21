@@ -70,17 +70,6 @@ void workaround_sdl_stream_file_close() // part of workaround
 
 //**********************************************************************************
 
-/// A simple struct to hold some data to pass as void* to SDL_CreateThread() calls
-struct ThreadStub
-{
-	void (*fn)();
-	int* argv, argc;
-
-	ThreadStub(void (*procedure)(), int* args, int argc)
-	: fn(procedure), argv(args), argc(argc)
-	{}
-};
-
 //  ============= FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
@@ -105,7 +94,7 @@ void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(Universe2D* universe);
 void addRandomBody();
-void keepPressing(int keyVar, void(*)(), bool useThread=true);
+int keepAddingRandomBodyWhilePressed(void* unused);
 
 void onSDLInit();
 
@@ -133,6 +122,7 @@ SDL_Surface* APP_LOGO;
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
 CustomListener customListener;
+bool aux_isPressed_SDLK_r = false;
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
@@ -558,6 +548,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			break;
 		case SDLK_r:
 			if(down) onButtonPressed(btnAddRandom);
+			aux_isPressed_SDLK_r = down;
 			break;
 		case SDLK_o:
 			if(down) onButtonPressed(btnRecolorAll);
@@ -598,7 +589,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnAddRandom)
 	{
 		addRandomBody();
-		keepPressing(SDLK_r, addRandomBody);
+		SDL_CreateThread(keepAddingRandomBodyWhilePressed, null);
 	}
 
 	if(btn == btnRemove)
@@ -907,28 +898,15 @@ void addRandomBody()
 	planetarium->addCustomBody(new Body2D(mass, diameter, randomPosition, randomVelocity, Vector2D::NULL_VECTOR), SDL_util::getRandomColor());
 }
 
-int keepPressingThread(void* arg)
+int keepAddingRandomBodyWhilePressed(void* unused)
 {
-	keepPressing(static_cast<ThreadStub*>(arg)->argv[0], static_cast<ThreadStub*>(arg)->fn, false);
+	SDL_Delay(500);
+	long lastUpdateTime;
+	while(aux_isPressed_SDLK_r)
+	{
+		lastUpdateTime = SDL_GetTicks();
+		addRandomBody();
+		SDL_Delay(5000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
+	}
 	return 0;
-}
-
-void keepPressing(int keyVar, void (*procedure)(), bool useThread)
-{
-	if(useThread)
-	{
-		ThreadStub* stub = new ThreadStub(procedure, &keyVar, 1);
-		SDL_CreateThread(keepPressingThread, stub);
-	}
-	else
-	{
-		SDL_Delay(500);
-		long lastUpdateTime;
-		while(SDL_GetKeyState(null)[keyVar]==1) //fixme SEGFAULT HERE. This code should not be called from a thread other than the SDL_widgets thread
-		{
-			lastUpdateTime = SDL_GetTicks();
-			procedure();
-			SDL_Delay(5000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
-		}
-	}
 }

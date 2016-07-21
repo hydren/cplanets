@@ -1,6 +1,5 @@
 -------------- Bugs
 
-- Crash when creating too many bodies (tested on win32). See main_window.cpp's keepPressing()
 - Sometimes the program crashes when switching solvers (seen on universe with a high number of planets and after a long simulation time)
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
 - Bezier spline is glitched due to wrong parametrization.
@@ -27,6 +26,7 @@ Add random orbiting planet functionality
 Bouncing bodies
 G exp.
 Hightlight bodies inside the roche limit
+Introduce variations to the parameters of newly created bodies
 
 - 1.0 (planets-supersedure/usability milestone)
 
