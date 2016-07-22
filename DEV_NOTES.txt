@@ -1,5 +1,7 @@
 -------------- Bugs
 
+- When resizing window, adjust reference frame position
+- When clicking in a blank space of the bodies list, clear the selection
 - When creating a new universe, the gravity is set to 1 when it should be set to 9.87...
 - Sometimes the time step spinner disappears
 - Sometimes the program crashes when switching solvers (seen on universe with a high number of planets and after a long simulation time)
