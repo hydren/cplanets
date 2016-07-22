@@ -9,7 +9,8 @@ CPP_SRCS += \
 ../src/physics/solvers/order2.cpp \
 ../src/physics/solvers/rk2.cpp \
 ../src/physics/solvers/rk3.cpp \
-../src/physics/solvers/rk4.cpp 
+../src/physics/solvers/rk4.cpp \
+../src/physics/solvers/runge_kutta.cpp 
 
 OBJS += \
 ./src/physics/solvers/euler.o \
@@ -17,7 +18,8 @@ OBJS += \
 ./src/physics/solvers/order2.o \
 ./src/physics/solvers/rk2.o \
 ./src/physics/solvers/rk3.o \
-./src/physics/solvers/rk4.o 
+./src/physics/solvers/rk4.o \
+./src/physics/solvers/runge_kutta.o 
 
 CPP_DEPS += \
 ./src/physics/solvers/euler.d \
@@ -25,7 +27,8 @@ CPP_DEPS += \
 ./src/physics/solvers/order2.d \
 ./src/physics/solvers/rk2.d \
 ./src/physics/solvers/rk3.d \
-./src/physics/solvers/rk4.d 
+./src/physics/solvers/rk4.d \
+./src/physics/solvers/runge_kutta.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
