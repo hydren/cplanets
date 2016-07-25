@@ -43,6 +43,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(RalstonRk4Solver);
 
 		REGISTER_CLASS_FACTORY(NystromRk5Solver);
+		REGISTER_CLASS_FACTORY(ButcherRk6Solver);
 	}
 }
 
