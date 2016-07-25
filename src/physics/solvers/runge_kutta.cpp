@@ -87,7 +87,7 @@ double ButcherTable::a(unsigned i, unsigned j) const
 {
 	if(i == 0 or j == 0 or i > size-1 or j > size-1)
 		throw std::out_of_range(string("ButcherTable::a() indexes out of range (")+i+", "+j+")");
-	return data[i][j];
+	return data[i-1][j];
 }
 
 double ButcherTable::b(unsigned index) const
