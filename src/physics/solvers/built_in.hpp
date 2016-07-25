@@ -14,6 +14,7 @@
 #include "rk2.hpp"
 #include "rk3.hpp"
 #include "rk4.hpp"
+#include "rk_high.hpp"
 
 namespace BuiltInSolvers
 {
@@ -40,9 +41,9 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(Rule38Rk4Solver);
 		REGISTER_CLASS_FACTORY(GillRk4Solver);
 		REGISTER_CLASS_FACTORY(RalstonRk4Solver);
+
+		REGISTER_CLASS_FACTORY(NystromRk5Solver);
 	}
 }
-
-
 
 #endif /* PHYSICS_SOLVERS_BUILT_IN_HPP_ */

@@ -56,7 +56,8 @@ struct ButcherTable
 		RK1_EULER,
 		RK3_1, RK3_2,
 		RK2_MIDPOINT, RK2_HEUN, RK2_RALSTON,
-		RK4_CLASSIC, RK4_RULE_3_8, RK4_GILL, RK4_RALSTON;
+		RK4_CLASSIC, RK4_RULE_3_8, RK4_GILL, RK4_RALSTON,
+		RK5_NYSTROM;
 };
 
 /// Generic "explicit" Runge-Kutta solver (order and butcher table are specifiable)
