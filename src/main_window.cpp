@@ -723,20 +723,27 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 			return; //avoid doing anything if the chosen integration method is the same as the current
 
 		typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
+		const SolverFactory* selectedSolverFactory = null;
 		const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
 		{
 			if(string(rbtn->label.str) == solverFactory->solverDisplayName)
 			{
-				AbstractPhysics2DSolver* old = planetarium->physics->physics2DSolver;
-				planetarium->physics->physics2DSolver = solverFactory->createSolver(planetarium->physics->universe); //swap solver
-				planetarium->physics->physics2DSolver->timeElapsed = old->timeElapsed;
-				planetarium->physics->physics2DSolver->timestep = old->timestep;
-				spnTimeStep->setValue(&planetarium->physics->physics2DSolver->timestep); //updates the backing value
-				delete old;
+				selectedSolverFactory = solverFactory;
 				goto break1;
 			}
 		}
 		break1:
+
+		// todo synchronize this part
+		if(selectedSolverFactory != null)
+		{
+			AbstractPhysics2DSolver* old = planetarium->physics->physics2DSolver;
+			planetarium->physics->physics2DSolver = selectedSolverFactory->createSolver(planetarium->physics->universe); //swap solver
+			planetarium->physics->physics2DSolver->timeElapsed = old->timeElapsed;
+			planetarium->physics->physics2DSolver->timestep = old->timestep;
+			spnTimeStep->setValue(&planetarium->physics->physics2DSolver->timestep); //updates the backing value
+			delete old;
+		}
 
 		ddmIntegrationMethod->cmdMenu->src->label = rbtn->label.str;
 		ddmIntegrationMethod->cmdMenu->src->draw_blit_upd();
