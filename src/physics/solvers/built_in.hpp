@@ -39,6 +39,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(ClassicRk4Solver);
 		REGISTER_CLASS_FACTORY(Rule38Rk4Solver);
 		REGISTER_CLASS_FACTORY(GillRk4Solver);
+		REGISTER_CLASS_FACTORY(RalstonRk4Solver);
 	}
 }
 
