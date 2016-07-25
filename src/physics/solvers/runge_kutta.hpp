@@ -22,7 +22,7 @@ struct ButcherTable
 	double b(unsigned index) const;
 	double c(unsigned index) const;
 
-	static const ButcherTable CLASSIC_RK4, RULE_3_8_RK4;
+	static const ButcherTable CLASSIC_RK4, RULE_3_8_RK4, GILL_RK4, RALSTON_RK4;
 };
 
 /// Generic "explicit" Runge-Kutta solver (order and butcher table are specifiable)
