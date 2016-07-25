@@ -8,23 +8,18 @@
 #ifndef PHYSICS_SOLVERS_RK3_HPP_
 #define PHYSICS_SOLVERS_RK3_HPP_
 
-#include "physics/physics2dsolver.hpp"
-#include "futil/futil.hpp"
+#include "runge_kutta.hpp"
 
-struct Rk3Solver extends public AbstractPhysics2DSolver
+struct Rk3Solver extends public RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(Rk3Solver);
-
 	Rk3Solver(Universe2D& u);
-	void step();
 };
 
-struct Rk3V2Solver extends public AbstractPhysics2DSolver
+struct Rk3V2Solver extends public RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(Rk3V2Solver);
-
 	Rk3V2Solver(Universe2D& u);
-	void step();
 };
 
 #endif /* PHYSICS_SOLVERS_RK3_HPP_ */
