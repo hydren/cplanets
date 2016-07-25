@@ -115,6 +115,7 @@ const unsigned WIDGETS_SPACING = 4;
 const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
 const int PLANETARIUM_ID = 959;
 const int USER_EVENT_ID__UPDATE_BODIES_LIST = 160;
+const double DEFAULT_GRAVITY = 9.807;
 string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
 
 SDL_Surface* APP_LOGO;
@@ -222,7 +223,7 @@ void CPlanets::showMainWindow()
 	planetariumPane = new PlanetariumPane(window, planetariumSize, PLANETARIUM_ID);
 	planetarium = planetariumPane->planetarium;
 	planetarium->listeners.addListener(&customListener);
-	planetarium->physics->universe.gravity = 9.807;
+	planetarium->physics->universe.gravity = DEFAULT_GRAVITY;
 
 
 	//+++++++++++++++ Tabs
@@ -643,6 +644,7 @@ void onButtonPressed(Button* btn)
 	if(btn == btnNew)
 	{
 		replaceUniverse(new Universe2D());
+		planetarium->physics->universe.gravity = DEFAULT_GRAVITY;
 		onButtonPressed(btnRun);
 	}
 
