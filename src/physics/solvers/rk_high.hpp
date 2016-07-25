@@ -22,4 +22,10 @@ struct ButcherRk6Solver extends public RungeKuttaSolver
 	ButcherRk6Solver(Universe2D& u);
 };
 
+struct VernerRk8Solver extends public RungeKuttaSolver
+{
+	DECLARE_CLASS_FACTORY(VernerRk8Solver);
+	VernerRk8Solver(Universe2D& u);
+};
+
 #endif /* PHYSICS_SOLVERS_RK_HIGH_HPP_ */
