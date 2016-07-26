@@ -24,6 +24,15 @@ struct StormerVerletSolver extends public AbstractPhysics2DSolver
 	std::map<Body2D*, Vector2D> previousPositions;
 };
 
+struct BeemanSolver extends public AbstractPhysics2DSolver
+{
+	DECLARE_CLASS_FACTORY(BeemanSolver);
 
+	BeemanSolver(Universe2D& u);
+	void step();
+
+	protected:
+	std::map<Body2D*, Vector2D> previousPositions;
+};
 
 #endif /* PHYSICS_SOLVERS_MULTISTEP_HPP_ */
