@@ -1,11 +1,11 @@
 /*
- * order2.cpp
+ * one_step.cpp
  *
- *  Created on: 21 de jul de 2016
+ *  Created on: 26 de jul de 2016
  *      Author: carlosfaruolo
  */
 
-#include "order2.hpp"
+#include "one_step.hpp"
 
 using std::vector;
 
@@ -61,3 +61,4 @@ void VelocityVerlet::step()
 
 	timeElapsed += timestep;
 }
+

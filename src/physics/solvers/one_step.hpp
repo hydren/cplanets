@@ -1,12 +1,12 @@
 /*
- * order2.hpp
+ * one_step.hpp
  *
- *  Created on: 21 de jul de 2016
+ *  Created on: 26 de jul de 2016
  *      Author: carlosfaruolo
  */
 
-#ifndef PHYSICS_SOLVERS_ORDER2_HPP_
-#define PHYSICS_SOLVERS_ORDER2_HPP_
+#ifndef PHYSICS_SOLVERS_ONE_STEP_HPP_
+#define PHYSICS_SOLVERS_ONE_STEP_HPP_
 
 #include "physics/physics2dsolver.hpp"
 #include "futil/futil.hpp"
@@ -27,4 +27,4 @@ struct VelocityVerlet extends public AbstractPhysics2DSolver
 	void step();
 };
 
-#endif /* PHYSICS_SOLVERS_ORDER2_HPP_ */
+#endif /* PHYSICS_SOLVERS_ONE_STEP_HPP_ */
