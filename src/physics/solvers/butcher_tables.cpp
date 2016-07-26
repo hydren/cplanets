@@ -56,13 +56,13 @@ const double RK2_RALSTON[3][3] = {
 };
 CREATE_BUILTIN_TABLE(RK2_RALSTON, 3);
 
-const double RK3_1[4][4] = {
+const double RK3_KUTTA[4][4] = {
 		{0,		X,			X, 			X},
 		{0.5,	0.5,		X, 			X},
 		{1,		-1,			2, 			X},
 		{X,		1.0/6.0,	2.0/3.0,	1.0/6.0}
 };
-CREATE_BUILTIN_TABLE(RK3_1, 4);
+CREATE_BUILTIN_TABLE(RK3_KUTTA, 4);
 
 const double RK3_2[4][4] = {
 		{0,			X,			X, 			X},

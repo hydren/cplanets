@@ -10,10 +10,10 @@
 
 #include "runge_kutta.hpp"
 
-struct Rk3Solver extends public RungeKuttaSolver
+struct KuttaRk3Solver extends public RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(Rk3Solver);
-	Rk3Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(KuttaRk3Solver);
+	KuttaRk3Solver(Universe2D& u);
 };
 
 struct Rk3V2Solver extends public RungeKuttaSolver

@@ -7,10 +7,10 @@
 
 #include "rk3.hpp"
 
-DEFINE_CLASS_FACTORY(Rk3Solver, "Runge-Kutta (3th order)");
+DEFINE_CLASS_FACTORY(KuttaRk3Solver, "Runge-Kutta (3th order, Kutta)");
 
-Rk3Solver::Rk3Solver(Universe2D& u)
-: RungeKuttaSolver(u, ButcherTable::RK3_1, &CLASS_FACTORY)
+KuttaRk3Solver::KuttaRk3Solver(Universe2D& u)
+: RungeKuttaSolver(u, ButcherTable::RK3_KUTTA, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(Rk3V2Solver, "Runge-Kutta (3th order, variation)");
