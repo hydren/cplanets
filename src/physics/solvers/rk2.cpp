@@ -54,32 +54,6 @@ void MidpointSolver::step()
 	timeElapsed += timestep;
 }
 
-DEFINE_CLASS_FACTORY(ImplicitMidpointSolver, "Implicit Midpoint (RK2)");
-
-ImplicitMidpointSolver::ImplicitMidpointSolver(Universe2D& u)
-: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01)
-{}
-
-void ImplicitMidpointSolver::step()
-{
-	//pre-estimation loop
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
-	{
-		body->position += body->velocity * (0.5 * timestep);
-	}
-
-	computeAccelerations();
-
-	//velocity & position loop
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
-	{
-		body->velocity += body->acceleration * timestep;
-		body->position += body->velocity * (0.5 * timestep);
-	}
-
-	timeElapsed += timestep;
-}
-
 DEFINE_CLASS_FACTORY(HeunSolver, "Improved Euler (Heun) (RK2)");
 
 HeunSolver::HeunSolver(Universe2D& u)

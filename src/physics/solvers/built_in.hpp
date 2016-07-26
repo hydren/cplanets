@@ -30,7 +30,6 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(StormerVerletSolver);
 
 		REGISTER_CLASS_FACTORY(MidpointSolver);
-		REGISTER_CLASS_FACTORY(ImplicitMidpointSolver);
 		REGISTER_CLASS_FACTORY(HeunSolver);
 		REGISTER_CLASS_FACTORY(RalstonSolver);
 

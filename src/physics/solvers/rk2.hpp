@@ -19,14 +19,6 @@ struct MidpointSolver extends public AbstractPhysics2DSolver
 	void step();
 };
 
-struct ImplicitMidpointSolver extends public AbstractPhysics2DSolver
-{
-	DECLARE_CLASS_FACTORY(ImplicitMidpointSolver);
-
-	ImplicitMidpointSolver(Universe2D& u);
-	void step();
-};
-
 struct HeunSolver extends public AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(HeunSolver);
