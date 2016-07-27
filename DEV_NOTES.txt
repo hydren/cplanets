@@ -6,6 +6,7 @@
 - Sometimes the program crashes when switching solvers (seen on universe with a high number of planets and after a long simulation time)
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
 - Simulation glitches when switching to Ralston RK4 solver (but only when switching - it works normally when after that)
+- Simulation glitches when switching to Backward Difference Correction solver (but only when switching - it works normally when after that)
 - Bezier spline is glitched due to wrong parametrization.
 
 -------------- To Do

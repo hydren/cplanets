@@ -35,4 +35,24 @@ struct BeemanSolver extends public AbstractPhysics2DSolver
 	std::map<Body2D*, Vector2D> previousPositions;
 };
 
+struct BackwardDifferenceCorrectionSolver extends AbstractPhysics2DSolver
+{
+	DECLARE_CLASS_FACTORY(BackwardDifferenceCorrectionSolver);
+
+	BackwardDifferenceCorrectionSolver(Universe2D& u);
+	void step();
+	void preStep();
+
+	protected:
+	struct History
+	{
+		History();
+		History(Body2D* body, double timestep);
+		Vector2D previousPosition, previousAcceleration, previousAcceleration2;
+	};
+
+	std::map<Body2D*, History> history;
+	unsigned preStepCounter;
+};
+
 #endif /* PHYSICS_SOLVERS_MULTISTEP_HPP_ */

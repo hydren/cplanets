@@ -89,3 +89,93 @@ void BeemanSolver::step()
 
 	timeElapsed += timestep;
 }
+
+DEFINE_CLASS_FACTORY(BackwardDifferenceCorrectionSolver, "Backward Difference Correction");
+
+BackwardDifferenceCorrectionSolver::BackwardDifferenceCorrectionSolver(Universe2D& u)
+: AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
+  history(), preStepCounter(0)
+{}
+
+/// Uses RK4 as pre-steps
+void BackwardDifferenceCorrectionSolver::preStep()
+{
+	map<Body2D*, Vector2D> k1vs, k2vs, k3vs, k4vs,
+							k1rs, k2rs, k3rs, k4rs;
+
+	map<Body2D*, Vector2D> wvs, wrs;
+
+	derive(k1vs, k1rs);
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		wvs[body] = body->velocity + k1vs[body] * (timestep * 0.5);
+		wrs[body] = body->position + k1rs[body] * (timestep * 0.5);
+	}
+
+	derive(k2vs, k2rs, wvs, wrs);
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		wvs[body] = body->velocity + k2vs[body] * (timestep * 0.5);
+		wrs[body] = body->position + k2rs[body] * (timestep * 0.5);
+	}
+
+	derive(k3vs, k3rs, wvs, wrs);
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		wvs[body] = body->velocity + k3vs[body] * timestep;
+		wrs[body] = body->position + k3rs[body] * timestep;
+	}
+
+	derive(k4vs, k4rs, wvs, wrs);
+
+	computeAccelerations(); //optional
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		History bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
+
+		bodyHistory.previousPosition = body->position;
+		bodyHistory.previousAcceleration2 = bodyHistory.previousAcceleration;
+		bodyHistory.previousAcceleration = body->acceleration;
+
+		body->velocity += (k1vs[body] + k2vs[body]*2 + k3vs[body]*2 + k4vs[body]) * (timestep/6.0);
+		body->position += (k1rs[body] + k2rs[body]*2 + k3rs[body]*2 + k4rs[body]) * (timestep/6.0);
+	}
+
+	timeElapsed += timestep;
+	preStepCounter++;
+}
+
+BackwardDifferenceCorrectionSolver::History::History(){}
+
+BackwardDifferenceCorrectionSolver::History::History(Body2D* body, double timestep)
+:	previousPosition(body->position - body->velocity*timestep),
+	previousAcceleration(), previousAcceleration2()
+{}
+
+void BackwardDifferenceCorrectionSolver::step()
+{
+	if(preStepCounter < 3) preStep();
+
+	computeAccelerations();
+
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		Vector2D  &fn_1 = history[body].previousAcceleration,
+						&fn_2 = history[body].previousAcceleration2,
+						previousPosition = history[body].previousPosition;
+
+		history[body].previousPosition = body->position;
+
+		body->position = body->position * 2 - previousPosition + (body->acceleration + (body->acceleration - fn_1*2.0 + fn_2)*(1.0/12.0))*pow(timestep, 2);
+
+		//estimate velocity
+		body->velocity = (body->position - history[body].previousPosition)*(1.0/timestep);
+
+		fn_2 = fn_1;
+		fn_1 = body->acceleration;
+	}
+}
