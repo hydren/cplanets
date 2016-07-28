@@ -43,6 +43,8 @@ struct BackwardDifferenceCorrectionSolver extends AbstractPhysics2DSolver
 	void step();
 	void preStep();
 
+	unsigned preStepsNeeded() const { return 2; }
+
 	protected:
 	struct History
 	{

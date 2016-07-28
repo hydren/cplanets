@@ -9,6 +9,7 @@
 #define PHYSICS_PHYSICS2D_HPP_
 
 #include <vector>
+#include <map>
 
 #include "physics2dsolver.hpp"
 #include "universe2d.hpp"
@@ -18,7 +19,7 @@
 struct Physics2D
 {
 	Universe2D universe;
-	AbstractPhysics2DSolver* physics2DSolver;
+	AbstractPhysics2DSolver* physics2DSolver, *requestedSolver;
 
 	Physics2D();
 
@@ -50,7 +51,13 @@ struct Physics2D
 
 	protected:
 
+	std::map<Body2D*, std::vector<Body2D::State> > transitionStates;
+	unsigned transitionLength, transitionCount;
+
 	void resolveCollisions();
+
+	void replaceSolver(AbstractPhysics2DSolver* solver);
+	void recordCurrentState();
 };
 
 #endif /* PHYSICS_PHYSICS2D_HPP_ */

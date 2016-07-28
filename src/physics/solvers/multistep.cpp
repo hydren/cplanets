@@ -90,7 +90,7 @@ void BeemanSolver::step()
 	timeElapsed += timestep;
 }
 
-DEFINE_CLASS_FACTORY(BackwardDifferenceCorrectionSolver, "Backward Difference Correction");
+DEFINE_CLASS_FACTORY_WITH_PRE_STEPS(BackwardDifferenceCorrectionSolver, "Backward Difference Correction", 2);
 
 BackwardDifferenceCorrectionSolver::BackwardDifferenceCorrectionSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
@@ -158,7 +158,25 @@ BackwardDifferenceCorrectionSolver::History::History(Body2D* body, double timest
 
 void BackwardDifferenceCorrectionSolver::step()
 {
-	if(preStepCounter < 3) { preStep(); return; }
+	if(preStepCounter < 2)
+	{
+		if(transitionStates != null)
+		{
+			foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+			{
+				History &bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
+				bodyHistory.previousAcceleration2 = (*transitionStates)[body][0].acceleration;
+				bodyHistory.previousAcceleration = (*transitionStates)[body][1].acceleration;
+				bodyHistory.previousPosition = (*transitionStates)[body][1].position;
+			}
+			preStepCounter = 2;
+		}
+		else
+		{
+			preStep();
+			return;
+		}
+	}
 
 	computeAccelerations();
 

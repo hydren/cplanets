@@ -20,8 +20,12 @@ using std::vector;
 Physics2D::Physics2D()
 : universe(),
   physics2DSolver(null),
+  requestedSolver(null),
   referenceFrame(),
-  listenerManager()
+  listenerManager(),
+  transitionStates(),
+  transitionLength(0),
+  transitionCount(0)
 {}
 
 void Physics2D::step()
@@ -29,26 +33,63 @@ void Physics2D::step()
 	if(physics2DSolver == null)
 		throw std::runtime_error("Can't do step(): No physics solver specified!");
 
-	AbstractPhysics2DSolver& solver = *physics2DSolver;
-
 	//update positions
-	solver.step();
+	physics2DSolver->step();
 
 	//resolve collisions
 	resolveCollisions();
 
 	//move reference frame manually if point-like (and frame has velocity)
 	if(referenceFrame.isPointLike() and not referenceFrame.velocity().isZero())
-		referenceFrame.customPosition.add(referenceFrame.velocity().times(solver.timestep));
+		referenceFrame.customPosition.add(referenceFrame.velocity().times(physics2DSolver->timestep));
+
+	//a solver was requested, do transition steps
+	if(requestedSolver != null)
+	{
+		//record transition steps using current solver to generate data for next solver
+		if(transitionCount < transitionLength)
+			recordCurrentState();
+
+		//if last one was the final step for transition
+		if(transitionCount == transitionLength)
+		{
+			requestedSolver->transitionStates = &transitionStates;
+			replaceSolver(requestedSolver);
+			requestedSolver = null;
+		}
+	}
 }
 
-void Physics2D::setSolver(AbstractPhysics2DSolver* solver)
+void Physics2D::recordCurrentState()
+{
+	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		Body2D::State state = {body->position, body->velocity, body->acceleration};
+		transitionStates[body].push_back(state);
+	}
+
+	transitionCount++;
+}
+
+void Physics2D::replaceSolver(AbstractPhysics2DSolver* solver)
 {
 	AbstractPhysics2DSolver* old = physics2DSolver;
 	physics2DSolver = solver; //swap solver
 	physics2DSolver->timeElapsed = old->timeElapsed;
 	physics2DSolver->timestep = old->timestep;
 	delete old;
+}
+
+void Physics2D::setSolver(AbstractPhysics2DSolver* solver)
+{
+	if(solver->factory->preStepsNeeded > 0)
+	{
+		requestedSolver = solver;
+		transitionCount = 0;
+		transitionLength = solver->factory->preStepsNeeded;
+		transitionStates.clear();
+	}
+	else replaceSolver(solver);
 }
 
 Vector2D Physics2D::ReferenceFrame::position() const

@@ -24,8 +24,11 @@ struct AbstractPhysics2DSolver
 	/// A reference to (what should be) this solver's corresponding static factory.
 	struct GenericFactory; const GenericFactory* const factory;
 
+	/// hint to be used as pre-steps if needed
+	std::map<Body2D*, std::vector<Body2D::State> >* transitionStates;
+
 	AbstractPhysics2DSolver(const GenericFactory* factory, Universe2D& u, double timestep=0)
-	: universe(u), timeElapsed(0), timestep(timestep), factory(factory)
+	: universe(u), timeElapsed(0), timestep(timestep), factory(factory), transitionStates(0)
 	{}
 
 	virtual ~AbstractPhysics2DSolver() {}
@@ -60,14 +63,14 @@ struct AbstractPhysics2DSolver
 		/// A human-readable name of the AbstractPhysics2DSolver subclass instantiated by this factory (should be, but not enforced).
 		const std::string solverDisplayName;
 
-		GenericFactory(const std::string& className, const std::string& displayName)
-		: solverClassName(className), solverDisplayName(displayName) {}
+		/// Hint used by the physics2d instance to improve results when switching solvers. Default is zero.
+		const unsigned preStepsNeeded;
+
+		GenericFactory(const std::string& className, const std::string& displayName, unsigned preStepsNeeded=0)
+		: solverClassName(className), solverDisplayName(displayName), preStepsNeeded(preStepsNeeded) {}
 
 		/// Creates a new instance of a AbstractPhysics2DSolver derived class (since distinct is abstract). Each factory should instantiate a specific subclass.
 		virtual AbstractPhysics2DSolver* createSolver(Universe2D& u) const=0;
-
-		/// Hint used by the physics2d instance to improve results when switching solvers.  Default is zero.
-		virtual unsigned preStepsNeeded() { return 0; }
 	};
 
 	/// A template class to ease the process of subclassing GenericFactory. The template parameter should be the desired AbstractPhysics2DSolver subclass.
@@ -77,8 +80,8 @@ struct AbstractPhysics2DSolver
 		/// Creates a custom solver factory for the solver type specified by the template parameter.
 		/// @param className should be a string representation of the template parameter class.
 		/// @param displayName should be a human-readable name.
-		CustomFactory(const std::string& className, const std::string& displayName)
-		: GenericFactory(className, displayName) {}
+		CustomFactory(const std::string& className, const std::string& displayName, unsigned preStepsNeeded=0)
+		: GenericFactory(className, displayName, preStepsNeeded) {}
 
 		AbstractPhysics2DSolver* createSolver(Universe2D& u) const { return new SpecificSolverType(u); }
 	};
@@ -92,6 +95,9 @@ struct AbstractPhysics2DSolver
 
 /// Insert this in your solver class source file if you intend to use the REGISTER_CLASS_FACTORY() macro (or define the factory directly)
 #define DEFINE_CLASS_FACTORY(class_name, display_name) const AbstractPhysics2DSolver::CustomFactory<class_name> class_name::CLASS_FACTORY(#class_name, display_name)
+
+/// Insert this in your solver class source file if you intend to use the REGISTER_CLASS_FACTORY() macro (or define the factory directly). This version specified the number of pre-steps required hint.
+#define DEFINE_CLASS_FACTORY_WITH_PRE_STEPS(class_name, display_name, preStepsNeeded) const AbstractPhysics2DSolver::CustomFactory<class_name> class_name::CLASS_FACTORY(#class_name, display_name, preStepsNeeded)
 
 /// Use this to make the given solver class available in AbstractPhysics2DSolver::registeredFactories. 'class_name' must be the name of a subclass of AbstractPhysics2DSolver
 #define REGISTER_CLASS_FACTORY(class_name) AbstractPhysics2DSolver::registeredFactories.push_back(&class_name::CLASS_FACTORY)
