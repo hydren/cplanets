@@ -89,7 +89,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   auxWasRunningBeforeBodyCreationMode(false)
 
 {
-	this->physics->physics2DSolver = new LeapfrogSolver(physics->universe);
+	this->physics->solver = new LeapfrogSolver(physics->universe);
 	this->physics->listenerManager.addListener(this);
 }
 
@@ -301,15 +301,36 @@ vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 void Planetarium::setUniverse(Universe2D* u)
 {
 	const_foreach(Body2D*, i, vector<Body2D*>, u->bodies)
-//		if(i->userObject == null) //fixme is this line needed or even correct?
+		if(i->userObject == null)
 			i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
 
 	synchronized(physicsAccessMutex)
 	{
-		AbstractPhysics2DSolver* oldSolver = physics->physics2DSolver;
-		physics->physics2DSolver = oldSolver->factory->createSolver(*u); //create new solver
-		physics->physics2DSolver->timestep = oldSolver->timestep; //use previously defined timestep
-		delete oldSolver; //delete older solver
+		//delete the user objects of the current universe, as setUniverse() will delete the current universe, but not its user objects
+		foreach(Body2D*, oldBody, vector<Body2D*>, physics->universe.bodies)
+			delete static_cast<PlanetariumUserObject*>(oldBody->userObject);
+
+		physics->setUniverse(*u);
+	}
+
+	delete u; //dont worry, it won't delete the user objects (as it shouldn't, because the copy instance uses them)
+}
+
+void Planetarium::setFocusedBodies(Body2D*const* bodyarr, unsigned n)
+{
+	focusedBodies.clear();
+	for(unsigned i = 0; i < n; i++)
+	{
+		focusedBodies.push_back(bodyarr[i]);
+	}
+}
+
+void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
+{
+	focusedBodies.clear();
+	const_foreach(Body2D*, body, vector<Body2D*>, bodies)
+	{
+		focusedBodies.push_back(body);
 	}
 }
 
@@ -335,24 +356,6 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	}
 
 	focusedBodies.clear();
-}
-
-void Planetarium::setFocusedBodies(Body2D*const* bodyarr, unsigned n)
-{
-	focusedBodies.clear();
-	for(unsigned i = 0; i < n; i++)
-	{
-		focusedBodies.push_back(bodyarr[i]);
-	}
-}
-
-void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
-{
-	focusedBodies.clear();
-	const_foreach(Body2D*, body, vector<Body2D*>, bodies)
-	{
-		focusedBodies.push_back(body);
-	}
 }
 
 //--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
@@ -462,7 +465,7 @@ void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace
 
 void Planetarium::performPhysics()
 {
-	AbstractPhysics2DSolver* previous = null;
+	AbstractPhysics2DSolver* previousSolver = null;
 	while(true)
 	{
 		if(running && (not legacyControl || currentIterationCount++ < iterationsPerDisplay))
@@ -475,10 +478,10 @@ void Planetarium::performPhysics()
 		SDL_Delay(legacyControl? 0 : stepDelay);
 
 		//debug
-		if(previous != this->physics->physics2DSolver)
+		if(previousSolver != this->physics->solver)
 		{
-			cout << "Now using " << physics->physics2DSolver->factory->solverDisplayName << " solver..." << endl;;
-			previous = this->physics->physics2DSolver;
+			cout << "Now using " << physics->solver->factory->solverDisplayName << " solver..." << endl;;
+			previousSolver = this->physics->solver;
 		}
 	}
 }

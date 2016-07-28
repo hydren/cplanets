@@ -19,36 +19,43 @@ using std::vector;
 
 Physics2D::Physics2D()
 : universe(),
-  physics2DSolver(null),
+  solver(null),
   referenceFrame(),
   listenerManager()
 {}
 
 void Physics2D::step()
 {
-	if(physics2DSolver == null)
+	if(solver == null)
 		throw std::runtime_error("Can't do step(): No physics solver specified!");
 
-	AbstractPhysics2DSolver& solver = *physics2DSolver;
-
 	//update positions
-	solver.step();
+	solver->step();
 
 	//resolve collisions
 	resolveCollisions();
 
 	//move reference frame manually if point-like (and frame has velocity)
 	if(referenceFrame.isPointLike() and not referenceFrame.velocity().isZero())
-		referenceFrame.customPosition.add(referenceFrame.velocity().times(solver.timestep));
+		referenceFrame.customPosition.add(referenceFrame.velocity().times(solver->timestep));
 }
 
-void Physics2D::setSolver(AbstractPhysics2DSolver* solver)
+/** Exchanges the planetarium current physics solver with the given instance. */
+void Physics2D::setSolver(AbstractPhysics2DSolver* newSolver)
 {
-	AbstractPhysics2DSolver* old = physics2DSolver;
-	physics2DSolver = solver; //swap solver
-	physics2DSolver->timeElapsed = old->timeElapsed;
-	physics2DSolver->timestep = old->timestep;
-	delete old;
+	AbstractPhysics2DSolver* older = solver;
+	solver = newSolver; //swap solver
+	delete older;
+}
+
+/** Exchanges the planetarium universe with a copy of the given instance. */
+void Physics2D::setUniverse(const Universe2D& universe)
+{
+	// todo should we copy older timeElapsed as well? would break Leapfrog solver, though.
+	double timestep = solver->timestep;
+	this->universe = universe; // copies the universe (through the assignment)
+	setSolver(solver->factory->createSolver(this->universe)); // create a solver with same class
+	solver->timestep = timestep;
 }
 
 Vector2D Physics2D::ReferenceFrame::position() const

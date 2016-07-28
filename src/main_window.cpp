@@ -305,7 +305,7 @@ void CPlanets::showMainWindow()
 
 	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
 	setComponentPosition(spnTimeStep, lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING);
-	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep), true);
+	spnTimeStep->setValue(&(planetarium->physics->solver->timestep), true);
 	spnTimeStep->setStepValue(0.1);
 
 	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
@@ -322,7 +322,7 @@ void CPlanets::showMainWindow()
 		factory.addItem(solverFactory->solverDisplayName.c_str());
 	}
 	ddmIntegrationMethod = factory.createAt(tabOptions);
-	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->physics2DSolver->factory->solverDisplayName.c_str());
+	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->solver->factory->solverDisplayName.c_str());
 	ddmIntegrationMethod->setPosition(Point(spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
@@ -721,7 +721,7 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 	if(btn == ddmIntegrationMethod->cmdMenu->buttons && fire)
 	{
 		RButton* rbtn = btn->act_button();
-		if(planetarium->physics->physics2DSolver->factory->solverDisplayName == string(rbtn->label.str))
+		if(planetarium->physics->solver->factory->solverDisplayName == string(rbtn->label.str))
 			return; //avoid doing anything if the chosen integration method is the same as the current
 
 		typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
@@ -740,7 +740,7 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		if(selectedSolverFactory != null)
 		{
 			planetarium->physics->setSolver(selectedSolverFactory->createSolver(planetarium->physics->universe));
-			spnTimeStep->setValue(&planetarium->physics->physics2DSolver->timestep); //updates the backing value
+			spnTimeStep->setValue(&planetarium->physics->solver->timestep); //updates the backing value
 		}
 
 		ddmIntegrationMethod->cmdMenu->src->label = rbtn->label.str;
@@ -886,7 +886,7 @@ void replaceUniverse(Universe2D* universe)
 	onButtonPressed(btnPause);
 	planetarium->setUniverse(universe);
 	refreshAllTxtBodies();
-	spnTimeStep->setValue(&(planetarium->physics->physics2DSolver->timestep));
+	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
 }
 
 void addRandomBody()

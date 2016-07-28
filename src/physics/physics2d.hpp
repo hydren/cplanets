@@ -18,14 +18,17 @@
 struct Physics2D
 {
 	Universe2D universe;
-	AbstractPhysics2DSolver* physics2DSolver;
+	AbstractPhysics2DSolver* solver;
 
 	Physics2D();
 
 	void step();
 
-	/** Exchanges the planetarium current physics solver with the given instance. */
+	/** Exchanges the planetarium current physics solver with the given instance. This is the proper way to do it. */
 	void setSolver(AbstractPhysics2DSolver* solver);
+
+	/** Exchanges the planetarium universe with a copy of the given instance. This is the proper way to do it. */
+	void setUniverse(const Universe2D& universe);
 
 	struct ReferenceFrame
 	{
