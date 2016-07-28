@@ -301,15 +301,15 @@ vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 void Planetarium::setUniverse(Universe2D* u)
 {
 	const_foreach(Body2D*, i, vector<Body2D*>, u->bodies)
-		i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
+//		if(i->userObject == null) //fixme is this line needed or even correct?
+			i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
 
 	synchronized(physicsAccessMutex)
 	{
-		double timeStep = physics->physics2DSolver->timestep; //record current timestep
-		physics->universe = *u; //overwrite instance
-		delete physics->physics2DSolver; //delete older solver
-		physics->physics2DSolver = new LeapfrogSolver(physics->universe); //create new solver
-		physics->physics2DSolver->timestep = timeStep; //use previously defined timestep
+		AbstractPhysics2DSolver* oldSolver = physics->physics2DSolver;
+		physics->physics2DSolver = oldSolver->factory->createSolver(*u); //create new solver
+		physics->physics2DSolver->timestep = oldSolver->timestep; //use previously defined timestep
+		delete oldSolver; //delete older solver
 	}
 }
 
