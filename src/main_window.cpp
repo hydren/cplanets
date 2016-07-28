@@ -739,7 +739,7 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		// todo synchronize this part
 		if(selectedSolverFactory != null)
 		{
-			planetarium->physics->setSolver(selectedSolverFactory);
+			planetarium->physics->setSolver(selectedSolverFactory->createSolver(planetarium->physics->universe));
 			spnTimeStep->setValue(&planetarium->physics->physics2DSolver->timestep); //updates the backing value
 		}
 
