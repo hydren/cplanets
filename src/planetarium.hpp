@@ -105,7 +105,7 @@ struct Planetarium extends Physics2D::Listener
 	std::vector<Body2DClone> getBodies() const;
 
 	/** Safer way to replace the universe instance. */
-	void setUniverse(Universe2D* u);
+	void setUniverse(const Universe2D& u);
 
 	/** Sets the given bodies as the focused/selected ones. 'bodyarr' should be an n-sized array of Body2D pointers. 'bodyarr' size is less than n, expect seg.faults. */
 	void setFocusedBodies(Body2D*const* bodyarr, unsigned n);

@@ -298,9 +298,9 @@ vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 	return bodies;
 }
 
-void Planetarium::setUniverse(Universe2D* u)
+void Planetarium::setUniverse(const Universe2D& u)
 {
-	const_foreach(Body2D*, i, vector<Body2D*>, u->bodies)
+	const_foreach(Body2D*, i, vector<Body2D*>, u.bodies)
 		if(i->userObject == null)
 			i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
 
@@ -310,10 +310,8 @@ void Planetarium::setUniverse(Universe2D* u)
 		foreach(Body2D*, oldBody, vector<Body2D*>, physics->universe.bodies)
 			delete static_cast<PlanetariumUserObject*>(oldBody->userObject);
 
-		physics->setUniverse(*u);
+		physics->setUniverse(u);
 	}
-
-	delete u; //dont worry, it won't delete the user objects (as it shouldn't, because the copy instance uses them)
 }
 
 void Planetarium::setFocusedBodies(Body2D*const* bodyarr, unsigned n)

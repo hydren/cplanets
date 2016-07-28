@@ -92,7 +92,7 @@ void onListSelectionChanged(unsigned, unsigned);
 void onBodyReFocusing();
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
-void replaceUniverse(Universe2D* universe);
+void replaceUniverse(const Universe2D& universeCopy);
 void addRandomBody();
 int keepAddingRandomBodyWhilePressed(void* unused);
 
@@ -643,8 +643,9 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnNew)
 	{
-		replaceUniverse(new Universe2D());
-		planetarium->physics->universe.gravity = DEFAULT_GRAVITY;
+		Universe2D emptyUniverse;
+		emptyUniverse.gravity = DEFAULT_GRAVITY;
+		replaceUniverse(emptyUniverse);
 		onButtonPressed(btnRun);
 	}
 
@@ -785,7 +786,10 @@ void onFileChosenOpenUniverse(FileDialog* dialog)
 			Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename.c_str()), ApplicationIO::FORMAT_DEFAULT);
 
 			if(u != null)
-				replaceUniverse(u);
+			{
+				replaceUniverse(*u);
+				delete u; //after copied, we don't need it
+			}
 
 			else alert("Invalid file!");
 		}
@@ -881,10 +885,10 @@ void closeDialogBgrWin(Button* btn)
 		self->onClosedCallback(self);
 }
 
-void replaceUniverse(Universe2D* universe)
+void replaceUniverse(const Universe2D& universeCopy)
 {
 	onButtonPressed(btnPause);
-	planetarium->setUniverse(universe);
+	planetarium->setUniverse(universeCopy);
 	refreshAllTxtBodies();
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
 }
