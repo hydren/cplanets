@@ -135,7 +135,7 @@ void BackwardDifferenceCorrectionSolver::preStep()
 
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
 	{
-		History bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
+		History& bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
 
 		bodyHistory.previousPosition = body->position;
 		bodyHistory.previousAcceleration2 = bodyHistory.previousAcceleration;
@@ -164,9 +164,11 @@ void BackwardDifferenceCorrectionSolver::step()
 
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
 	{
-		Vector2D  &fn_1 = history[body].previousAcceleration,
-						&fn_2 = history[body].previousAcceleration2,
-						previousPosition = history[body].previousPosition;
+		History& bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
+
+		Vector2D  &fn_1 = bodyHistory.previousAcceleration,
+						&fn_2 =bodyHistory.previousAcceleration2,
+						previousPosition = bodyHistory.previousPosition;
 
 		history[body].previousPosition = body->position;
 
