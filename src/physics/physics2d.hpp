@@ -13,6 +13,8 @@
 #include "physics2dsolver.hpp"
 #include "universe2d.hpp"
 
+#include "futil/futil_listener.hpp"
+
 struct Physics2D
 {
 	Universe2D universe;
@@ -44,21 +46,9 @@ struct Physics2D
 
 	ReferenceFrame referenceFrame;
 
-	//callback when a collision occurs. ignored if null (default).
-	void (*onCollision)(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
-
-	//a collision listener. this should be subclassed and registered with addCollisionListener()
-	struct CollisionListener
-	{
-		virtual ~CollisionListener(){}
-		virtual void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger)=0;
-	};
-
-	void addCollisionListener(CollisionListener* listener);
-	void removeCollisionListener(CollisionListener* listener);
+	MakeListenableAndNotifyAs(onCollision, (std::vector<Body2D*>& collidingList, Body2D& resultingMerger), (collidingList, resultingMerger));
 
 	protected:
-	std::vector<CollisionListener*>* collisionListeners; //null unless any listener is registered
 
 	void resolveCollisions();
 };

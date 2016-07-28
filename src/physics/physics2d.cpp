@@ -21,8 +21,7 @@ Physics2D::Physics2D()
 : universe(),
   physics2DSolver(null),
   referenceFrame(),
-  onCollision(null),
-  collisionListeners(null)
+  listenerManager()
 {}
 
 void Physics2D::step()
@@ -132,28 +131,6 @@ void Physics2D::ReferenceFrame::set(const std::vector<Body2D*>& reference)
 	this->bodies.assign(reference.begin(), reference.end());
 }
 
-void Physics2D::addCollisionListener(CollisionListener* listener)
-{
-	if(listener == null) return;
-	if(this->collisionListeners == null) //instantiate on demand
-		this->collisionListeners = new vector<CollisionListener*>();
-
-	this->collisionListeners->push_back(listener);
-}
-
-void Physics2D::removeCollisionListener(CollisionListener* listener)
-{
-	if(listener == null) return;
-	if(this->collisionListeners != null)
-	{
-		int index = Collections::indexOf(*(this->collisionListeners), listener);
-		if(index >= 0) //found it
-			this->collisionListeners->erase(this->collisionListeners->begin() + index);
-	}
-}
-
-
-
 vector<Body2D*>* collisionsOf(Body2D* body, vector< vector<Body2D*> >& collisions)
 {
 	foreach(vector<Body2D*>&, list1, vector< vector<Body2D*> >, collisions)
@@ -233,14 +210,7 @@ void Physics2D::resolveCollisions()
 
 		universe.bodies.push_back(new Body2D(merger)); //creates a copy and stores on universe.bodies
 
-		//callback for body collision
-		if(onCollision != null)
-			onCollision(collisionList, *universe.bodies.back());
-
-		//also notify if there are any listeners
-		if(collisionListeners != null)
-			foreach(CollisionListener*, listener, vector<CollisionListener*>, *(this->collisionListeners))
-				listener->onCollision(collisionList, *universe.bodies.back());
+		notifyAll(collisionList, *universe.bodies.back());
 	}
 
 	//cleanup

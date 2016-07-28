@@ -65,6 +65,9 @@ struct AbstractPhysics2DSolver
 
 		/// Creates a new instance of a AbstractPhysics2DSolver derived class (since distinct is abstract). Each factory should instantiate a specific subclass.
 		virtual AbstractPhysics2DSolver* createSolver(Universe2D& u) const=0;
+
+		/// Hint used by the physics2d instance to improve results when switching solvers.  Default is zero.
+		virtual unsigned preStepsNeeded() { return 0; }
 	};
 
 	/// A template class to ease the process of subclassing GenericFactory. The template parameter should be the desired AbstractPhysics2DSolver subclass.

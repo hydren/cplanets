@@ -14,7 +14,7 @@
 #include "physics/physics2d.hpp"
 #include "futil/futil.hpp"
 
-struct Planetarium extends Physics2D::CollisionListener
+struct Planetarium extends Physics2D::Listener
 {
 	static const double BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
 
