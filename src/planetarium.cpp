@@ -228,7 +228,7 @@ void Planetarium::setRunning(bool run)
 }
 
 //--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
-
+//todo reorganize this
 void Planetarium::recolorAllBodies()
 {
 	synchronized(physicsAccessMutex)
@@ -354,17 +354,6 @@ void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
 		focusedBodies.push_back(body);
 	}
 }
-
-// fixme this perhaps should be synchronized
-void Planetarium::setSolver(const AbstractPhysics2DSolver::GenericFactory* solverFactory)
-{
-	AbstractPhysics2DSolver* old = physics->physics2DSolver;
-	physics->physics2DSolver = solverFactory->createSolver(physics->universe); //swap solver
-	physics->physics2DSolver->timeElapsed = old->timeElapsed;
-	physics->physics2DSolver->timestep = old->timestep;
-	delete old;
-}
-
 
 //--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
 

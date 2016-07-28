@@ -117,9 +117,6 @@ struct Planetarium extends Physics2D::CollisionListener
 	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
 	void removeFocusedBodies(bool alsoDelete = true);
 
-	/** Exchanges the planetarium current physics solver with the another instance, provided by the given factory. */
-	void setSolver(const AbstractPhysics2DSolver::GenericFactory* solverFactory);
-
 	/** Optional dispatcher to perform updates on the resulting surface. */
 	struct SurfaceUpdateDispatcher
 	{

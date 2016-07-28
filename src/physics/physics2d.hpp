@@ -22,6 +22,9 @@ struct Physics2D
 
 	void step();
 
+	/** Exchanges the planetarium current physics solver with the another instance, provided by the given factory. */
+	void setSolver(const AbstractPhysics2DSolver::GenericFactory* solverFactory);
+
 	struct ReferenceFrame
 	{
 		friend class Physics2D;

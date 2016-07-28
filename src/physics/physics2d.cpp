@@ -43,6 +43,15 @@ void Physics2D::step()
 		referenceFrame.customPosition.add(referenceFrame.velocity().times(solver.timestep));
 }
 
+void Physics2D::setSolver(const AbstractPhysics2DSolver::GenericFactory* solverFactory)
+{
+	AbstractPhysics2DSolver* old = physics2DSolver;
+	physics2DSolver = solverFactory->createSolver(universe); //swap solver
+	physics2DSolver->timeElapsed = old->timeElapsed;
+	physics2DSolver->timestep = old->timestep;
+	delete old;
+}
+
 Vector2D Physics2D::ReferenceFrame::position() const
 {
 	if(bodies.size() == 0)
