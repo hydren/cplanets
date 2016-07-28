@@ -889,8 +889,12 @@ void replaceUniverse(const Universe2D& universeCopy)
 {
 	onButtonPressed(btnPause);
 	planetarium->setUniverse(universeCopy);
-	refreshAllTxtBodies();
+	spnGravity->setValue(&(planetarium->physics->universe.gravity)); // updating reference
+	spnGravity->refresh();
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
+	spnTimeStep->refresh();
+	refreshAllTxtBodies();
+	tabOptions->draw_blit_recur();
 }
 
 void addRandomBody()
