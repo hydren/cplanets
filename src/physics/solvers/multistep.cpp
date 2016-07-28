@@ -158,7 +158,7 @@ BackwardDifferenceCorrectionSolver::History::History(Body2D* body, double timest
 
 void BackwardDifferenceCorrectionSolver::step()
 {
-	if(preStepCounter < 3) preStep();
+	if(preStepCounter < 3) { preStep(); return; }
 
 	computeAccelerations();
 
