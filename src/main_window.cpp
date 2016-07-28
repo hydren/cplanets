@@ -650,7 +650,7 @@ void onButtonPressed(Button* btn)
 
 	//fixme there's got to be a better way to avoid file_chooser behind FileDialog bug
 	//xxx workaround for file_chooser behind FileDialog bug
-	if(btn == btnLoad || btn == btnSave)
+	if(btn == btnLoad or btn == btnSave)
 	{
 		static bool once = false;
 		if(not once)
@@ -739,12 +739,8 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		// todo synchronize this part
 		if(selectedSolverFactory != null)
 		{
-			AbstractPhysics2DSolver* old = planetarium->physics->physics2DSolver;
-			planetarium->physics->physics2DSolver = selectedSolverFactory->createSolver(planetarium->physics->universe); //swap solver
-			planetarium->physics->physics2DSolver->timeElapsed = old->timeElapsed;
-			planetarium->physics->physics2DSolver->timestep = old->timestep;
+			planetarium->setSolver(selectedSolverFactory);
 			spnTimeStep->setValue(&planetarium->physics->physics2DSolver->timestep); //updates the backing value
-			delete old;
 		}
 
 		ddmIntegrationMethod->cmdMenu->src->label = rbtn->label.str;
