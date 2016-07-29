@@ -205,6 +205,13 @@ void Planetarium::draw()
 	}
 }
 
+void Planetarium::widen(int dx, int dy)
+{
+	SDL_FreeSurface(surf);
+	surf=SDL_CreateRGBSurface(SDL_SWSURFACE,size.w+dx,size.h+dy,pixelDepth,0,0,0,0);
+	size.w += dx; size.h += dy;
+}
+
 Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
 //	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
@@ -524,7 +531,8 @@ void Planetarium::updateView()
 			this->viewportPosition.y += this->size.h * (1/prevZoom - 1/viewportZoom) * 0.5;
 		}
 
-		const bool allowedByLegacy = not running || (currentIterationCount >= iterationsPerDisplay && (SDL_GetTicks() - lastRedrawRequestTime) > displayPeriod);
+		const bool allowedByLegacy = not running or
+				(currentIterationCount >= ((long) iterationsPerDisplay) and (SDL_GetTicks() - lastRedrawRequestTime) > ((long) displayPeriod));
 
 		if(not isRedrawPending && (not legacyControl || allowedByLegacy) )
 		{
@@ -698,10 +706,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 
 int Planetarium::threadFunctionPhysics(void* arg)
 {
-	try
-	{
-		((Planetarium*) arg)->performPhysics();
-	}
+	try { ((Planetarium*) arg)->performPhysics(); }
 	catch(std::exception& e)
 	{
 		cout << "bad behavior on physics thread! " << e.what() << endl;
@@ -710,23 +715,13 @@ int Planetarium::threadFunctionPhysics(void* arg)
 	return 0;
 }
 
-void Planetarium::widen(int dx, int dy)
-{
-	SDL_FreeSurface(surf);
-	surf=SDL_CreateRGBSurface(SDL_SWSURFACE,size.w+dx,size.h+dy,pixelDepth,0,0,0,0);
-	size.w += dx; size.h += dy;
-}
-
 int Planetarium::threadFunctionPlanetariumUpdate(void* arg)
 {
-	try
-	{
-		((Planetarium*) arg)->updateView();
-		cout << "planetarium view update thread stopped." << endl;
-	}
+	try { ((Planetarium*) arg)->updateView(); }
 	catch(std::exception& e)
 	{
 		cout << "bad behavior on planetarium view update thread! " << e.what() << endl;
 	}
+	cout << "planetarium view update thread stopped." << endl;
 	return 0;
 }
