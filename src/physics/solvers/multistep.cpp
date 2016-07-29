@@ -12,7 +12,7 @@ using std::map;
 
 #include <cmath>
 
-DEFINE_CLASS_FACTORY(StormerVerletSolver, "Stormer-Verlet");
+DEFINE_CLASS_FACTORY(StormerVerletSolver, "Stormer-Verlet (Explicit Central Difference)");
 
 StormerVerletSolver::StormerVerletSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
@@ -40,7 +40,7 @@ void StormerVerletSolver::step()
 		// previousPositions[body] = curr;
 
 		// theory:
-		// x[n+1] = 2*x[n] - x[n-1] + a[n+1]*h^2
+		// x[n+1] = 2*x[n] - x[n-1] + a[n]*h^2
 		// x[n-1] = x[n]
 		// v[n+1] ~~ v[n+1/2] = (x[n+1] - x[n])/h, (plus something O(h^2))
 	}
