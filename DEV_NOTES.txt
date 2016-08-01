@@ -10,6 +10,7 @@
 
 -------------- To Do
 
+- Do transition steps when switching solvers.
 - Milestones
 
 -------------- Backlog

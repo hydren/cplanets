@@ -7,7 +7,12 @@
 
 #include "adams_bashforth.hpp"
 
+#include "runge_kutta.hpp"
+
 using std::vector;
+using std::deque;
+
+using Collections::coalesce2;
 
 #define MAXSTEP 5
 
@@ -21,6 +26,16 @@ const double coefficients[][MAXSTEP] = {
 
 #define b(index) coefficients[steps-1][index-1]
 
+// xxx this fake history greatly degrades accuracy
+deque<State> fakeHistory(Body2D* body, unsigned steps)
+{
+	deque<State> fake;
+	State stillState = {body->velocity, Vector2D()};
+	for(unsigned i = 0; i < steps; i++)
+		fake.push_back(stillState);
+	return fake;
+}
+
 AdamsBashforthSolver::AdamsBashforthSolver(Universe2D& u, unsigned s, const GenericFactory* factory)
 : AbstractPhysics2DSolver(factory, u, 0.01),
   steps(s > MAXSTEP? MAXSTEP : s), history()
@@ -33,17 +48,37 @@ void AdamsBashforthSolver::step()
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
 	{
 		State current = { body->velocity, body->acceleration };
+		deque<State>& bodyHistory = coalesce2(history, body, fakeHistory(body, steps)); //ensure history
 
 		body->position += body->velocity * b(1) * timestep;
 		body->velocity += body->acceleration * b(1) * timestep;
 
 		for(unsigned i = 2; i <= steps; i++)
 		{
-			body->position += ( history[body][i-2].velocity * b(i) * timestep ) * timestep;
-			body->velocity += ( history[body][i-2].acceleration * b(i)) * timestep;
+			body->position += ( bodyHistory[i-2].velocity * b(i) * timestep ) * timestep;
+			body->velocity += ( bodyHistory[i-2].acceleration * b(i)) * timestep;
 		}
 
-		history[body].push_front(current);
-		history[body].pop_back();
+		bodyHistory.push_front(current);
+		bodyHistory.pop_back();
 	}
 }
+
+DEFINE_CLASS_FACTORY(AdamsBashforth2StepSolver, "Adams-Bashforth (2-Step)");
+
+AdamsBashforth2StepSolver::AdamsBashforth2StepSolver(Universe2D& u)
+: AdamsBashforthSolver(u, 2, &CLASS_FACTORY)
+{}
+
+DEFINE_CLASS_FACTORY(AdamsBashforth3StepSolver, "Adams-Bashforth (3-Step)");
+
+AdamsBashforth3StepSolver::AdamsBashforth3StepSolver(Universe2D& u)
+: AdamsBashforthSolver(u, 3, &CLASS_FACTORY)
+{}
+
+DEFINE_CLASS_FACTORY(AdamsBashforth4StepSolver, "Adams-Bashforth (4-Step)");
+
+AdamsBashforth4StepSolver::AdamsBashforth4StepSolver(Universe2D& u)
+: AdamsBashforthSolver(u, 4, &CLASS_FACTORY)
+{}
+

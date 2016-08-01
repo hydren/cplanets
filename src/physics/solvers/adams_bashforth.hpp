@@ -26,4 +26,22 @@ struct AdamsBashforthSolver extends public AbstractPhysics2DSolver
 	std::map<Body2D*, std::deque<State> > history;
 };
 
+struct AdamsBashforth2StepSolver extends public AdamsBashforthSolver
+{
+	DECLARE_CLASS_FACTORY(AdamsBashforth2StepSolver);
+	AdamsBashforth2StepSolver(Universe2D& u);
+};
+
+struct AdamsBashforth3StepSolver extends public AdamsBashforthSolver
+{
+	DECLARE_CLASS_FACTORY(AdamsBashforth3StepSolver);
+	AdamsBashforth3StepSolver(Universe2D& u);
+};
+
+struct AdamsBashforth4StepSolver extends public AdamsBashforthSolver
+{
+	DECLARE_CLASS_FACTORY(AdamsBashforth4StepSolver);
+	AdamsBashforth4StepSolver(Universe2D& u);
+};
+
 #endif /* PHYSICS_SOLVERS_ADAMS_BASHFORTH_HPP_ */
