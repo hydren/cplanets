@@ -20,10 +20,13 @@ struct AdamsBashforthSolver extends AbstractPhysics2DSolver
 	const unsigned steps;
 
 	AdamsBashforthSolver(Universe2D& u, unsigned numberOfSteps, const GenericFactory* factory=null);
+	~AdamsBashforthSolver();
 	void step();
 
 	protected:
+	unsigned preStepsCounter;
 	std::map<Body2D*, std::deque<State> > history;
+	AbstractPhysics2DSolver& bootstrapSolver;
 };
 
 struct AdamsBashforth2StepSolver extends AdamsBashforthSolver

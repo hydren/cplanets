@@ -7,6 +7,7 @@
 
 #include "adams_bashforth.hpp"
 
+#include "euler.hpp"
 #include "runge_kutta.hpp"
 
 using std::vector;
@@ -26,41 +27,73 @@ const double coefficients[][MAXSTEP] = {
 
 #define b(index) coefficients[steps-1][index-1]
 
-// xxx this fake history greatly degrades accuracy
-deque<State> fakeHistory(Body2D* body, unsigned steps)
+AbstractPhysics2DSolver& chooseBootstrapSolver(unsigned numberOfSteps, Universe2D& u)
 {
-	deque<State> fake;
-	State stillState = {body->velocity, Vector2D()};
-	for(unsigned i = 0; i < steps; i++)
-		fake.push_back(stillState);
-	return fake;
+	AbstractPhysics2DSolver* solver;
+	switch (numberOfSteps) {
+		case 1: solver = new EulerCromerSolver(u); break;
+		case 2: solver = new RungeKuttaSolver(u, ButcherTable::RK2_HEUN); break;
+		case 3: solver = new RungeKuttaSolver(u, ButcherTable::RK3_KUTTA); break;
+		case 4: solver = new RungeKuttaSolver(u, ButcherTable::RK4_CLASSIC); break;
+		case 5: solver = new RungeKuttaSolver(u, ButcherTable::RK5_NYSTROM); break;
+		case 6: solver = new RungeKuttaSolver(u, ButcherTable::RK6_BUTCHER); break;
+		default: solver = new RungeKuttaSolver(u, ButcherTable::RK8_VERNER); break;
+	}
+	return *solver;
 }
 
 AdamsBashforthSolver::AdamsBashforthSolver(Universe2D& u, unsigned s, const GenericFactory* factory)
 : AbstractPhysics2DSolver(factory, u, 0.01),
-  steps(s > MAXSTEP? MAXSTEP : s), history()
+  steps(s > MAXSTEP? MAXSTEP : s), preStepsCounter(0), history(),
+  bootstrapSolver(chooseBootstrapSolver(s, u))
 {}
+
+AdamsBashforthSolver::~AdamsBashforthSolver()
+{
+	delete &bootstrapSolver;
+}
 
 void AdamsBashforthSolver::step()
 {
+	if(preStepsCounter < steps)
+	{
+		// store pre-steps
+		foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+		{
+			State state = { body->velocity, body->acceleration };
+			if(history[body].size() == 0 and preStepsCounter > 0) // newly added body during bootstrap
+				{ preStepsCounter = 0; return; } //reset bootstrap
+
+			if(preStepsCounter == 0) // if bootstrap start
+				history[body].clear(); // clear the history
+
+			history[body].push_front(state);
+		}
+
+		bootstrapSolver.timeElapsed = timeElapsed;
+		bootstrapSolver.step();
+		timeElapsed = bootstrapSolver.timeElapsed;
+		preStepsCounter++;
+		return;
+	}
+
 	computeAccelerations();
 
 	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
 	{
 		State current = { body->velocity, body->acceleration };
-		deque<State>& bodyHistory = coalesce2(history, body, fakeHistory(body, steps)); //ensure history
 
 		body->position += body->velocity * b(1) * timestep;
 		body->velocity += body->acceleration * b(1) * timestep;
 
 		for(unsigned i = 2; i <= steps; i++)
 		{
-			body->position += ( bodyHistory[i-2].velocity * b(i) * timestep ) * timestep;
-			body->velocity += ( bodyHistory[i-2].acceleration * b(i)) * timestep;
+			body->position += ( history[body][i-2].velocity * b(i) * timestep ) * timestep;
+			body->velocity += ( history[body][i-2].acceleration * b(i)) * timestep;
 		}
 
-		bodyHistory.push_front(current);
-		bodyHistory.pop_back();
+		history[body].push_front(current);
+		history[body].pop_back();
 	}
 }
 
@@ -80,5 +113,5 @@ DEFINE_CLASS_FACTORY(AdamsBashforth4StepSolver, "Adams-Bashforth (4-Step)");
 
 AdamsBashforth4StepSolver::AdamsBashforth4StepSolver(Universe2D& u)
 : AdamsBashforthSolver(u, 4, &CLASS_FACTORY)
-{}
-
+{
+}
