@@ -42,7 +42,7 @@ struct AbstractPhysics2DSolver
 
 	/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
 	 *  The resulting accelerations are stored on 'resultingAccelerations'. */
-	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations, const std::map<Body2D*, Vector2D>& positions);
+	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations, std::map<Body2D*, Vector2D>& positions);
 
 	void derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt);
 	void derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt, std::map<Body2D*, Vector2D>& vn, std::map<Body2D*, Vector2D>& yn);

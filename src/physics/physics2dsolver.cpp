@@ -9,10 +9,9 @@
 
 #include <cmath>
 
-#include "futil/futil.hpp"
-
 using std::vector;
 using std::map;
+
 
 /// A collection of AbstractPhysics2DSolver factories, ready to be used. Each factory can instantiate some subclass of AbstractPhysics2DSolver.
 vector<const AbstractPhysics2DSolver::GenericFactory*> AbstractPhysics2DSolver::registeredFactories;
@@ -20,53 +19,52 @@ vector<const AbstractPhysics2DSolver::GenericFactory*> AbstractPhysics2DSolver::
 /** Computes and updates all bodies' accelerations based on their mutual gravitation forces, using their current positions. */
 void AbstractPhysics2DSolver::computeAccelerations()
 {
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	vector<Body2D*>& b = universe.bodies;
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
 	{
-		body->acceleration *= 0; // let acceleration be zero
+		b[i]->acceleration *= 0; // let acceleration be zero
 
-		foreach(Body2D*, neighbor, vector<Body2D*>, universe.bodies)
-		if(neighbor != body)
+		for(unsigned j = 0; j < universe.bodies.size(); j++)
+		if(b[j] != b[i])
 		{
-			double forceMagnitude = (-universe.gravity * body->mass * neighbor->mass) / pow(body->position % neighbor->position, 2); // % is a distance operator
-			body->acceleration += (body->position - neighbor->position).normalize() * (forceMagnitude/body->mass);
+			double forceMagnitude = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position % b[j]->position, 2); // % is a distance operator
+			b[i]->acceleration += (b[i]->position - b[j]->position).normalize() * (forceMagnitude/b[i]->mass);
 		}
 	}
 }
-
 
 /** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, using their current positions.
  *  The resulting accelerations are stored on 'resultingAccelerations'. */
 void AbstractPhysics2DSolver::computeAccelerations(map<Body2D*, Vector2D>& acc)
 {
-	foreach(Body2D*, b, vector<Body2D*>, universe.bodies)
+	vector<Body2D*>& b = universe.bodies;
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
 	{
-		foreach(Body2D*, b2, vector<Body2D*>, universe.bodies)
+		acc[b[i]] *= 0; // let acceleration be zero
+
+		for(unsigned j = 0; j < universe.bodies.size(); j++)
+		if(b[i] != b[j])
 		{
-			if(b != b2)
-			{
-				double forceScalar = (-universe.gravity * b->mass * b2->mass) / pow(b->position.distance(b2->position), 2);
-				acc[b] += (b->position - b2->position).normalize() * (forceScalar/b->mass);
-			}
+			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position.distance(b[j]->position), 2);
+			acc[b[i]] += (b[i]->position - b[j]->position).normalize() * (forceScalar/b[i]->mass);
 		}
 	}
 }
 
 /** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
  *  The resulting accelerations are stored on 'resultingAccelerations'. */
-void AbstractPhysics2DSolver::computeAccelerations(map<Body2D*, Vector2D>& acc, const map<Body2D*, Vector2D>& pos)
+void AbstractPhysics2DSolver::computeAccelerations(map<Body2D*, Vector2D>& acc, map<Body2D*, Vector2D>& pos)
 {
-	foreach(Body2D*, b, vector<Body2D*>, universe.bodies)
+	vector<Body2D*>& b = universe.bodies;
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
 	{
-		foreach(Body2D*, b2, vector<Body2D*>, universe.bodies)
-		{
-			if(b != b2)
-			{
-				const Vector2D &b1pos = Collections::getValueAt(pos, b),
-						       &b2pos = Collections::getValueAt(pos, b2);
+		acc[b[i]] *= 0; // let acceleration be zero
 
-				double forceScalar = (-universe.gravity * b->mass * b2->mass) / pow(b1pos.distance(b2pos), 2);
-				acc[b] += (b1pos - b2pos).normalize() * (forceScalar/b->mass);
-			}
+		for(unsigned j = 0; j < universe.bodies.size(); j++)
+		if(b[i] != b[j])
+		{
+			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(pos[b[i]].distance(pos[b[j]]), 2);
+			acc[b[i]] += (pos[b[i]] - pos[b[j]]).normalize() * (forceScalar/b[i]->mass);
 		}
 	}
 }
@@ -74,8 +72,9 @@ void AbstractPhysics2DSolver::computeAccelerations(map<Body2D*, Vector2D>& acc, 
 void AbstractPhysics2DSolver::derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt)
 {
 	computeAccelerations(dvdt);
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
-		dydt[body] = body->velocity;
+
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+		dydt[universe.bodies[i]] = universe.bodies[i]->velocity;
 }
 
 void AbstractPhysics2DSolver::derive(map<Body2D*, Vector2D>& dvdt, map<Body2D*, Vector2D>& dydt, map<Body2D*, Vector2D>& vn, map<Body2D*, Vector2D>& yn)
