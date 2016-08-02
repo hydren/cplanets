@@ -50,17 +50,15 @@ void Physics2D::setSolver(AbstractPhysics2DSolver* newSolver)
 {
 	AbstractPhysics2DSolver* older = solver;
 	solver = newSolver; //swap solver
+	solver->timestep = older->timestep; //use same timestep
 	delete older;
 }
 
 /** Exchanges the planetarium universe with a copy of the given instance. */
 void Physics2D::setUniverse(const Universe2D& universe)
 {
-	// todo should we copy older timeElapsed as well? would break Leapfrog solver, though.
-	double timestep = solver->timestep;
 	this->universe = universe; // copies the universe (through the assignment)
 	setSolver(solver->factory->createSolver(this->universe)); // create a solver with same class
-	solver->timestep = timestep;
 }
 
 Vector2D Physics2D::ReferenceFrame::position() const
