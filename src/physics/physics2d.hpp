@@ -8,12 +8,10 @@
 #ifndef PHYSICS_PHYSICS2D_HPP_
 #define PHYSICS_PHYSICS2D_HPP_
 
-#include <vector>
-
-#include "physics2dsolver.hpp"
 #include "universe2d.hpp"
+#include "physics2dsolver.hpp"
 
-#include "futil/futil_listener.hpp"
+#include <vector>
 
 struct Physics2D
 {
@@ -49,11 +47,26 @@ struct Physics2D
 
 	ReferenceFrame referenceFrame;
 
-	MakeListenableAndNotifyAs(onCollision, (std::vector<Body2D*>& collidingList, Body2D& resultingMerger), (collidingList, resultingMerger));
+	protected:
+	void resolveCollisions();
+
+	// ============== Observer pattern to deal with collision "events" ===============================
+	public:
+	struct Listener
+	{
+		virtual ~Listener(){}
+		virtual void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger) = 0;
+	};
+	void (*onCollisionCallback)(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+	std::vector<Listener*> listeners;
 
 	protected:
+	void notifyAll(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
 
-	void resolveCollisions();
+	// =========== Utilities ================
+	public:
+	static bool containsBody(std::vector<Body2D*>& collection, const Body2D* body);
+	static bool removeBody(std::vector<Body2D*>& collection, const Body2D* element);
 };
 
 #endif /* PHYSICS_PHYSICS2D_HPP_ */

@@ -11,22 +11,27 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include <cstdlib>
 #include <cmath>
-
-#include "futil/futil.hpp"
 
 using std::vector;
 
+//aliases
+bool (*containsBody)(vector<Body2D*>&, const Body2D*) = Physics2D::containsBody;
+bool (*removeBody)(vector<Body2D*>&, const Body2D*) = Physics2D::removeBody;
+
+
 Physics2D::Physics2D()
 : universe(),
-  solver(null),
+  solver(NULL),
   referenceFrame(),
-  listenerManager()
+  onCollisionCallback(NULL),
+  listeners()
 {}
 
 void Physics2D::step()
 {
-	if(solver == null)
+	if(solver == NULL)
 		throw std::runtime_error("Can't do step(): No physics solver specified!");
 
 	//update positions
@@ -140,50 +145,54 @@ void Physics2D::ReferenceFrame::set(const std::vector<Body2D*>& reference)
 
 vector<Body2D*>* collisionsOf(Body2D* body, vector< vector<Body2D*> >& collisions)
 {
-	foreach(vector<Body2D*>&, list1, vector< vector<Body2D*> >, collisions)
-		if(Collections::containsElement(list1, body))
-				return &list1;
+	for(unsigned i = 0; i < collisions.size(); i++)
+	{
+		if(containsBody(collisions[i], body))
+			return &(collisions[i]);
+	}
 
-	return null;
+	return NULL;
 }
 
 void Physics2D::resolveCollisions()
 {
+	vector<Body2D*>& b = universe.bodies;
 	vector< vector<Body2D*> > collisions;
 
 	// detect collisions
-	foreach(Body2D*, b1, vector<Body2D*>, universe.bodies) foreach(Body2D*, b2, vector<Body2D*>, universe.bodies)
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+	for(unsigned j = 0; j < universe.bodies.size(); j++)
 	{
-		if(b1 != b2) // only make sense to deal with different bodies
+		if(b[i] != b[j]) // only make sense to deal with different bodies
 		{
-			if(b1->position.distance(b2->position) < b1->diameter/2.0 + b2->diameter/2.0)
+			if(b[i]->position.distance(b[j]->position) < b[i]->diameter/2.0 + b[j]->diameter/2.0)
 			{
-				vector<Body2D*>* b1_col_list = collisionsOf(b1, collisions), *b2_col_list = collisionsOf(b2, collisions);
-				const bool b1_alreadyAdded = b1_col_list != null;
-				const bool b2_alreadyAdded = b2_col_list != null;
+				vector<Body2D*>* bi_col_list = collisionsOf(b[i], collisions), *bj_col_list = collisionsOf(b[j], collisions);
+				const bool bi_alreadyAdded = (bi_col_list != NULL);
+				const bool bj_alreadyAdded = (bj_col_list != NULL);
 
-				if(b1_alreadyAdded && b2_alreadyAdded)
+				if(bi_alreadyAdded and bj_alreadyAdded)
 				{
-					if(b1_col_list != b2_col_list) // if they're both added but on different lists, merge lists
+					if(bi_col_list != bj_col_list) // if they're both added but on different lists, merge lists
 					{
-						b1_col_list->insert(b1_col_list->end(), b2_col_list->begin(), b2_col_list->end());
-						collisions.erase(std::find(collisions.begin(), collisions.end(), *b2_col_list));
+						bi_col_list->insert(bi_col_list->end(), bj_col_list->begin(), bj_col_list->end());
+						collisions.erase(std::find(collisions.begin(), collisions.end(), *bj_col_list));
 					}
 				}
-				else if(b1_alreadyAdded && not b2_alreadyAdded)
+				else if(bi_alreadyAdded and not bj_alreadyAdded)
 				{
-					b1_col_list->push_back(b2);
+					bi_col_list->push_back(b[j]);
 				}
-				else if(not b1_alreadyAdded && b2_alreadyAdded)
+				else if(not bi_alreadyAdded and bj_alreadyAdded)
 				{
-					b2_col_list->push_back(b1);
+					bj_col_list->push_back(b[i]);
 				}
 				else // both not added
 				{
 					collisions.push_back(vector<Body2D*>()); //push new list
 					vector<Body2D*>& newlist = collisions.back(); //grab the list to edit
-					newlist.push_back(b1);
-					newlist.push_back(b2);
+					newlist.push_back(b[i]);
+					newlist.push_back(b[j]);
 				}
 			}
 		}
@@ -194,12 +203,12 @@ void Physics2D::resolveCollisions()
 		this->referenceFrame.reset();
 
 	//resolve collisions
-	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
+	for(unsigned k = 0; k < collisions.size(); k++)
 	{
 		Body2D merger(0, 0, Vector2D(), Vector2D(), Vector2D());
-		foreach(Body2D*, bodyPtr, vector<Body2D*>, collisionList)
+		for(unsigned n = 0; n < collisions[k].size(); n++)
 		{
-			Body2D& body = *bodyPtr; //to simplify formulas
+			Body2D& body = *(collisions[k][n]); //to simplify formulas
 			merger.position.x += body.position.x * body.mass;
 			merger.position.y += body.position.y * body.mass;
 
@@ -209,7 +218,7 @@ void Physics2D::resolveCollisions()
 			merger.diameter = sqrt(merger.diameter*merger.diameter + body.diameter*body.diameter);
 			merger.mass += body.mass;
 
-			Collections::removeElement(universe.bodies, bodyPtr); //remove actual pointer
+			removeBody(universe.bodies, collisions[k][n]); //remove actual pointer
 		}
 
 		merger.position.x /= merger.mass;
@@ -217,12 +226,33 @@ void Physics2D::resolveCollisions()
 
 		universe.bodies.push_back(new Body2D(merger)); //creates a copy and stores on universe.bodies
 
-		notifyAll(collisionList, *universe.bodies.back());
+		this->notifyAll(collisions[k], *universe.bodies.back());
 	}
 
 	//cleanup
-	foreach(vector<Body2D*>&, collisionList, vector< vector<Body2D*> >, collisions)
-		foreach(Body2D*, trash, vector<Body2D*>, collisionList)
-			delete trash; //delete previously existing bodies individually
+	for(unsigned k = 0; k < collisions.size(); k++)
+	for(unsigned n = 0; n < collisions[k].size(); n++)
+		delete collisions[k][n]; //delete previously existing bodies individually
+
 	collisions.clear(); //removes all collisions lists
+}
+
+void Physics2D::notifyAll(vector<Body2D*>& collidingList, Body2D& resultingMerger)
+{
+	if(onCollisionCallback != NULL) onCollisionCallback(collidingList, resultingMerger);
+	for(unsigned i = 0; i < listeners.size(); i++) listeners[i]->onCollision(collidingList, resultingMerger);
+}
+
+bool Physics2D::containsBody(vector<Body2D*>& collection, const Body2D* body)
+{
+	vector<Body2D*>::iterator it = std::find(collection.begin(), collection.end(), body);
+	return it != collection.end();
+}
+
+bool Physics2D::removeBody(vector<Body2D*>& collection, const Body2D* element)
+{
+	vector<Body2D*>::iterator it = std::find(collection.begin(), collection.end(), element);
+	if(it == collection.end()) return false;
+	collection.erase(it);
+	return true;
 }
