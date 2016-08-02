@@ -15,7 +15,7 @@
 
 struct State { Vector2D velocity, acceleration; };
 
-struct AdamsBashforthSolver extends public AbstractPhysics2DSolver
+struct AdamsBashforthSolver extends AbstractPhysics2DSolver
 {
 	const unsigned steps;
 
@@ -26,19 +26,19 @@ struct AdamsBashforthSolver extends public AbstractPhysics2DSolver
 	std::map<Body2D*, std::deque<State> > history;
 };
 
-struct AdamsBashforth2StepSolver extends public AdamsBashforthSolver
+struct AdamsBashforth2StepSolver extends AdamsBashforthSolver
 {
 	DECLARE_CLASS_FACTORY(AdamsBashforth2StepSolver);
 	AdamsBashforth2StepSolver(Universe2D& u);
 };
 
-struct AdamsBashforth3StepSolver extends public AdamsBashforthSolver
+struct AdamsBashforth3StepSolver extends AdamsBashforthSolver
 {
 	DECLARE_CLASS_FACTORY(AdamsBashforth3StepSolver);
 	AdamsBashforth3StepSolver(Universe2D& u);
 };
 
-struct AdamsBashforth4StepSolver extends public AdamsBashforthSolver
+struct AdamsBashforth4StepSolver extends AdamsBashforthSolver
 {
 	DECLARE_CLASS_FACTORY(AdamsBashforth4StepSolver);
 	AdamsBashforth4StepSolver(Universe2D& u);

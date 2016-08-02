@@ -11,7 +11,7 @@
 #include "physics/physics2dsolver.hpp"
 #include "futil/futil.hpp"
 
-struct MidpointSolver extends public AbstractPhysics2DSolver
+struct MidpointSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(MidpointSolver);
 
@@ -19,7 +19,7 @@ struct MidpointSolver extends public AbstractPhysics2DSolver
 	void step();
 };
 
-struct HeunSolver extends public AbstractPhysics2DSolver
+struct HeunSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(HeunSolver);
 
@@ -27,7 +27,7 @@ struct HeunSolver extends public AbstractPhysics2DSolver
 	void step();
 };
 
-struct RalstonSolver extends public AbstractPhysics2DSolver
+struct RalstonSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(RalstonSolver);
 

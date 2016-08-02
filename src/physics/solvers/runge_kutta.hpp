@@ -61,7 +61,7 @@ struct ButcherTable
 };
 
 /// Generic "explicit" Runge-Kutta solver (order and butcher table are specifiable)
-struct RungeKuttaSolver extends public AbstractPhysics2DSolver
+struct RungeKuttaSolver extends AbstractPhysics2DSolver
 {
 	const ButcherTable butcherTable;
 	const unsigned order;

@@ -10,19 +10,19 @@
 
 #include "runge_kutta.hpp"
 
-struct NystromRk5Solver extends public RungeKuttaSolver
+struct NystromRk5Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(NystromRk5Solver);
 	NystromRk5Solver(Universe2D& u);
 };
 
-struct ButcherRk6Solver extends public RungeKuttaSolver
+struct ButcherRk6Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(ButcherRk6Solver);
 	ButcherRk6Solver(Universe2D& u);
 };
 
-struct VernerRk8Solver extends public RungeKuttaSolver
+struct VernerRk8Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(VernerRk8Solver);
 	VernerRk8Solver(Universe2D& u);

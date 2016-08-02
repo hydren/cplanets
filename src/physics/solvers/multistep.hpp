@@ -13,7 +13,7 @@
 
 #include <map>
 
-struct StormerVerletSolver extends public AbstractPhysics2DSolver
+struct StormerVerletSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(StormerVerletSolver);
 
@@ -24,7 +24,7 @@ struct StormerVerletSolver extends public AbstractPhysics2DSolver
 	std::map<Body2D*, Vector2D> previousPositions;
 };
 
-struct BeemanSolver extends public AbstractPhysics2DSolver
+struct BeemanSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(BeemanSolver);
 

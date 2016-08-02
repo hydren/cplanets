@@ -11,7 +11,7 @@
 #include "physics/physics2dsolver.hpp"
 #include "futil/futil.hpp"
 
-struct LeapfrogSolver extends public AbstractPhysics2DSolver
+struct LeapfrogSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(LeapfrogSolver);
 
@@ -19,7 +19,7 @@ struct LeapfrogSolver extends public AbstractPhysics2DSolver
 	void step();
 };
 
-struct VelocityVerlet extends public AbstractPhysics2DSolver
+struct VelocityVerlet extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(VelocityVerlet);
 
