@@ -90,7 +90,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
 
 {
 	this->physics->solver = new LeapfrogSolver(physics->universe);
-	this->physics->listenerManager.addListener(this);
+	this->physics->listeners.push_back(this);
 }
 
 Planetarium::~Planetarium()
