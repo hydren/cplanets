@@ -88,7 +88,7 @@ void AdamsBashforthSolver::step()
 
 		for(unsigned i = 2; i <= steps; i++)
 		{
-			body->position += ( history[body][i-2].velocity * b(i) * timestep ) * timestep;
+			body->position += ( history[body][i-2].velocity * b(i)) * timestep;
 			body->velocity += ( history[body][i-2].acceleration * b(i)) * timestep;
 		}
 
