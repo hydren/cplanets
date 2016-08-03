@@ -10,7 +10,11 @@
 
 -------------- To Do
 
-- Do transition steps when switching solvers.
+- Adams-Moulton
+- Implement embedded rk (maybe not. 2 options: implement non-adaptive timestep version or make a GUI for specifying max. error with adaptive timestep)
+- Gauss-Legendre with other RK as predictor.
+- Other implicit methods in predictor-corrector scheme.
+- Do transition steps when switching solvers. (maybe not. instead do rk pre-steps)
 - Milestones
 
 -------------- Backlog
