@@ -113,5 +113,10 @@ DEFINE_CLASS_FACTORY(AdamsBashforth4StepSolver, "Adams-Bashforth (4-Step)");
 
 AdamsBashforth4StepSolver::AdamsBashforth4StepSolver(Universe2D& u)
 : AdamsBashforthSolver(u, 4, &CLASS_FACTORY)
-{
-}
+{}
+
+DEFINE_CLASS_FACTORY(AdamsBashforth5StepSolver, "Adams-Bashforth (5-Step)");
+
+AdamsBashforth5StepSolver::AdamsBashforth5StepSolver(Universe2D& u)
+: AdamsBashforthSolver(u, 5, &CLASS_FACTORY)
+{}

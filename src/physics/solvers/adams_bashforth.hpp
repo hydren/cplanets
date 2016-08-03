@@ -47,4 +47,10 @@ struct AdamsBashforth4StepSolver extends AdamsBashforthSolver
 	AdamsBashforth4StepSolver(Universe2D& u);
 };
 
+struct AdamsBashforth5StepSolver extends AdamsBashforthSolver
+{
+	DECLARE_CLASS_FACTORY(AdamsBashforth5StepSolver);
+	AdamsBashforth5StepSolver(Universe2D& u);
+};
+
 #endif /* PHYSICS_SOLVERS_ADAMS_BASHFORTH_HPP_ */

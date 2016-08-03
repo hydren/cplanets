@@ -51,6 +51,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(AdamsBashforth2StepSolver);
 		REGISTER_CLASS_FACTORY(AdamsBashforth3StepSolver);
 		REGISTER_CLASS_FACTORY(AdamsBashforth4StepSolver);
+		REGISTER_CLASS_FACTORY(AdamsBashforth5StepSolver);
 	}
 }
 
