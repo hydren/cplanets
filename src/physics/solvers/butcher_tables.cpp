@@ -64,13 +64,13 @@ const double RK3_KUTTA[4][4] = {
 };
 CREATE_BUILTIN_TABLE(RK3_KUTTA, 4);
 
-const double RK3_2[4][4] = {
+const double RK3_HEUN[4][4] = {
 		{0,			X,			X, 			X},
 		{1.0/3.0,	1.0/3.0,	X, 			X},
 		{2.0/3.0,	0,			2.0/3.0,	X},
 		{X,			0.25,		0,			0.75}
 };
-CREATE_BUILTIN_TABLE(RK3_2, 4);
+CREATE_BUILTIN_TABLE(RK3_HEUN, 4);
 
 const double RK4_CLASSIC[5][5] = {
 		{0,		X,			X,			X,			X},

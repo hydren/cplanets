@@ -13,8 +13,8 @@ KuttaRK3Solver::KuttaRK3Solver(Universe2D& u)
 : RungeKuttaSolver(u, ButcherTable::RK3_KUTTA, &CLASS_FACTORY)
 {}
 
-DEFINE_CLASS_FACTORY(RK3V2Solver, "Runge-Kutta (3th order, variation)");
+DEFINE_CLASS_FACTORY(HeunRK3Solver, "Runge-Kutta (3th order, Heun)");
 
-RK3V2Solver::RK3V2Solver(Universe2D& u)
-: RungeKuttaSolver(u, ButcherTable::RK3_2, &CLASS_FACTORY)
+HeunRK3Solver::HeunRK3Solver(Universe2D& u)
+: RungeKuttaSolver(u, ButcherTable::RK3_HEUN, &CLASS_FACTORY)
 {}
