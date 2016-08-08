@@ -10,11 +10,6 @@
 
 -------------- To Do
 
-- Adams-Moulton
-- Implement embedded rk (maybe not. 2 options: implement non-adaptive timestep version or make a GUI for specifying max. error with adaptive timestep)
-- Gauss-Legendre with other RK as predictor.
-- Other implicit methods in predictor-corrector scheme.
-- Do transition steps when switching solvers. (maybe not. instead do rk pre-steps)
 - Milestones
 
 -------------- Backlog
@@ -29,6 +24,7 @@ When holding R (add random body), after 1 second, starts spamming bodies until u
 
 - 0.9 (physics milestone)
 
+Implement Rk2 and Rk4 integration methods - done
 Show info about system's energy (kinetic, potential, total, etc)
 Add random orbiting planet functionality
 Bouncing bodies
@@ -58,7 +54,9 @@ Show bodies id's on planetarium
 Show per body info (velocity, acceleration, mass, etc) - a body panel below bodies list
 Dynamically change bodies attributes
 Implement load/save on other formats (csv, xml, json)
-Implement multi-step integration methods (Adams-Bashford, Adams-Molton)
+Implement Rabiei's improved multi-step RK3.
+Implement Embedded/Adaptive RK (make a GUI for specifying max. error with adaptive timestep)
+Attempt to implement Gauss-Legendre's implicit RK with other RK as predictor.
 Implement optional Barnes-Hut tree to optimize calculations
 Hide left bar, hide all mode.
 Add optional single-threaded mode
