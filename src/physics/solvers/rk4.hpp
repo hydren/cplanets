@@ -10,28 +10,28 @@
 
 #include "runge_kutta.hpp"
 
-struct ClassicRk4Solver extends RungeKuttaSolver
+struct ClassicRK4Solver extends RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(ClassicRk4Solver);
-	ClassicRk4Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(ClassicRK4Solver);
+	ClassicRK4Solver(Universe2D& u);
 };
 
-struct Rule38Rk4Solver extends RungeKuttaSolver
+struct Rule38RK4Solver extends RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(Rule38Rk4Solver);
-	Rule38Rk4Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(Rule38RK4Solver);
+	Rule38RK4Solver(Universe2D& u);
 };
 
-struct GillRk4Solver extends RungeKuttaSolver
+struct GillRK4Solver extends RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(GillRk4Solver);
-	GillRk4Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(GillRK4Solver);
+	GillRK4Solver(Universe2D& u);
 };
 
-struct RalstonRk4Solver extends RungeKuttaSolver
+struct RalstonRK4Solver extends RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(RalstonRk4Solver);
-	RalstonRk4Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(RalstonRK4Solver);
+	RalstonRK4Solver(Universe2D& u);
 };
 
 #endif /* PHYSICS_SOLVERS_RK4_HPP_ */

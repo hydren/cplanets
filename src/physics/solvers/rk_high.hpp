@@ -10,22 +10,22 @@
 
 #include "runge_kutta.hpp"
 
-struct NystromRk5Solver extends RungeKuttaSolver
+struct NystromRK5Solver extends RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(NystromRk5Solver);
-	NystromRk5Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(NystromRK5Solver);
+	NystromRK5Solver(Universe2D& u);
 };
 
-struct ButcherRk6Solver extends RungeKuttaSolver
+struct ButcherRK6Solver extends RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(ButcherRk6Solver);
-	ButcherRk6Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(ButcherRK6Solver);
+	ButcherRK6Solver(Universe2D& u);
 };
 
-struct VernerRk8Solver extends RungeKuttaSolver
+struct VernerRK8Solver extends RungeKuttaSolver
 {
-	DECLARE_CLASS_FACTORY(VernerRk8Solver);
-	VernerRk8Solver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(VernerRK8Solver);
+	VernerRK8Solver(Universe2D& u);
 };
 
 #endif /* PHYSICS_SOLVERS_RK_HIGH_HPP_ */
