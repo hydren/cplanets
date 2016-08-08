@@ -25,7 +25,7 @@ const double adams_moulton_coefficients[MAXSTEP][MAXSTEP+1] = {
 		{ 251.0/720.0, 	646.0/720.0, 	-264.0/720.0,	106.0/720.0,	-19.0/720.0},
 };  //		predict			current 		n-1				n-2				n-3				...
 
-#define b(index) adams_moulton_coefficients[steps-1][index]
+#define b(index) adams_moulton_coefficients[steps-2][index]
 
 AdamsBashforthMoultonSolver::AdamsBashforthMoultonSolver(Universe2D& u, unsigned numberOfSteps, const GenericFactory* factory)
 : AdamsBashforthSolver(u, numberOfSteps+1, factory)
@@ -55,14 +55,40 @@ void AdamsBashforthMoultonSolver::step()
 			body->velocity = history[body][0].velocity; // actual current velocity is stored at 'history[body][0]' (or 'history[body].front()')
 			body->acceleration = history[body][0].acceleration; // same as above
 
-			body->position += prediciton.velocity * b(0) + body->velocity * b(1) * timestep;
-			body->velocity += prediciton.acceleration * b(0) + body->acceleration * b(1) * timestep;
+			body->position += prediciton.velocity * b(0) * timestep + body->velocity * b(1) * timestep;
+			body->velocity += prediciton.acceleration * b(0) * timestep + body->acceleration * b(1) * timestep;
 
-			for(unsigned i = 2; i <= steps; i++)
+			for(unsigned i = 2; i <= steps-1; i++)
 			{
+				double k = b(i);
 				body->position += ( history[body][i-1].velocity * b(i)) * timestep;
 				body->velocity += ( history[body][i-1].acceleration * b(i)) * timestep;
 			}
 		}
 	}
 }
+
+DEFINE_CLASS_FACTORY(ABM2Solver, "Adams-Bashforth-Moulton (2nd-order, Trapezoidal rule)");
+
+ABM2Solver::ABM2Solver(Universe2D& u)
+: AdamsBashforthMoultonSolver(u, 1, &CLASS_FACTORY)
+{}
+
+DEFINE_CLASS_FACTORY(ABM3Solver, "Adams-Bashforth-Moulton (3rd-order)");
+
+ABM3Solver::ABM3Solver(Universe2D& u)
+: AdamsBashforthMoultonSolver(u, 2, &CLASS_FACTORY)
+{}
+
+DEFINE_CLASS_FACTORY(ABM4Solver, "Adams-Bashforth-Moulton (4th-order)");
+
+ABM4Solver::ABM4Solver(Universe2D& u)
+: AdamsBashforthMoultonSolver(u, 3, &CLASS_FACTORY)
+{}
+
+DEFINE_CLASS_FACTORY(ABM5Solver, "Adams-Bashforth-Moulton (5th-order)");
+
+ABM5Solver::ABM5Solver(Universe2D& u)
+: AdamsBashforthMoultonSolver(u, 4, &CLASS_FACTORY)
+{}
+

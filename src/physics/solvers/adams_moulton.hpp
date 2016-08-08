@@ -16,4 +16,28 @@ struct AdamsBashforthMoultonSolver extends AdamsBashforthSolver
 	void step();
 };
 
+struct ABM2Solver extends AdamsBashforthMoultonSolver
+{
+	DECLARE_CLASS_FACTORY(ABM2Solver);
+	ABM2Solver(Universe2D& u);
+};
+
+struct ABM3Solver extends AdamsBashforthMoultonSolver
+{
+	DECLARE_CLASS_FACTORY(ABM3Solver);
+	ABM3Solver(Universe2D& u);
+};
+
+struct ABM4Solver extends AdamsBashforthMoultonSolver
+{
+	DECLARE_CLASS_FACTORY(ABM4Solver);
+	ABM4Solver(Universe2D& u);
+};
+
+struct ABM5Solver extends AdamsBashforthMoultonSolver
+{
+	DECLARE_CLASS_FACTORY(ABM5Solver);
+	ABM5Solver(Universe2D& u);
+};
+
 #endif /* PHYSICS_SOLVERS_ADAMS_MOULTON_HPP_ */

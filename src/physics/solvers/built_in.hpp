@@ -16,6 +16,7 @@
 #include "rk4.hpp"
 #include "rk_high.hpp"
 #include "adams_bashforth.hpp"
+#include "adams_moulton.hpp"
 
 namespace BuiltInSolvers
 {
@@ -52,6 +53,11 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(AdamsBashforth3StepSolver);
 		REGISTER_CLASS_FACTORY(AdamsBashforth4StepSolver);
 		REGISTER_CLASS_FACTORY(AdamsBashforth5StepSolver);
+
+		REGISTER_CLASS_FACTORY(ABM2Solver);
+		REGISTER_CLASS_FACTORY(ABM3Solver);
+		REGISTER_CLASS_FACTORY(ABM4Solver);
+		REGISTER_CLASS_FACTORY(ABM5Solver);
 	}
 }
 
