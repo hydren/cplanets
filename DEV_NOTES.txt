@@ -4,7 +4,7 @@
 - When clicking in a blank space of the bodies list, clear the selection
 - Sometimes the program crashes when switching solvers (seen on universe with a high number of planets and after a long simulation time)
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
-- Simulation glitches when switching to Ralston RK4 solver (but only when switching - it works normally when after that)
+- Simulation glitches when switching to Ralston RK4 solver (but only when switching - it works normally afterwards)
 - Simulation glitches when changing timestep on multi-step methods.
 - Bezier spline is glitched due to wrong parametrization.
 
@@ -56,6 +56,7 @@ Dynamically change bodies attributes
 Implement load/save on other formats (csv, xml, json)
 Implement Rabiei's improved multi-step RK3.
 Implement Embedded/Adaptive RK (make a GUI for specifying max. error with adaptive timestep)
+Attempt to implement Numerov's method-based solver.
 Attempt to implement Gauss-Legendre's implicit RK with other RK as predictor.
 Implement optional Barnes-Hut tree to optimize calculations
 Hide left bar, hide all mode.
@@ -73,3 +74,24 @@ Types of bodies (planet, star, etc)
 Chemical evolution of bodies (aging)
 Adaptive stepsize
 3D mode
+
+
+-------------- Misc. references
+
+RK methods
+https://github.com/scijs/ode-rk4
+http://mymathlib.com/diffeq/runge-kutta/runge_kutta.html
+http://www.scottsarra.org/nHam/nHam.html
+
+Gauss-Legendre
+https://en.wikipedia.org/wiki/Gauss%E2%80%93Legendre_method
+
+Numerov's method
+https://en.wikipedia.org/wiki/Numerov%27s_method
+http://www.mymathlib.com/diffeq/second_order/numerov.html
+
+ODE for N-body
+http://tutorial.math.lamar.edu/Classes/DE/SystemsDE.aspx
+http://www.kof.zcu.cz/st/dis/schwarzmeier/gravitational_simulation.html
+
+
