@@ -97,26 +97,26 @@ void AdamsBashforthSolver::step()
 	}
 }
 
-DEFINE_CLASS_FACTORY(AdamsBashforth2StepSolver, "Adams-Bashforth (2nd order)");
+DEFINE_CLASS_FACTORY(AB2Solver, "Adams-Bashforth (2nd order)");
 
-AdamsBashforth2StepSolver::AdamsBashforth2StepSolver(Universe2D& u)
+AB2Solver::AB2Solver(Universe2D& u)
 : AdamsBashforthSolver(u, 2, &CLASS_FACTORY)
 {}
 
-DEFINE_CLASS_FACTORY(AdamsBashforth3StepSolver, "Adams-Bashforth (3rd order)");
+DEFINE_CLASS_FACTORY(AB3Solver, "Adams-Bashforth (3rd order)");
 
-AdamsBashforth3StepSolver::AdamsBashforth3StepSolver(Universe2D& u)
+AB3Solver::AB3Solver(Universe2D& u)
 : AdamsBashforthSolver(u, 3, &CLASS_FACTORY)
 {}
 
-DEFINE_CLASS_FACTORY(AdamsBashforth4StepSolver, "Adams-Bashforth (4th order)");
+DEFINE_CLASS_FACTORY(AB4Solver, "Adams-Bashforth (4th order)");
 
-AdamsBashforth4StepSolver::AdamsBashforth4StepSolver(Universe2D& u)
+AB4Solver::AB4Solver(Universe2D& u)
 : AdamsBashforthSolver(u, 4, &CLASS_FACTORY)
 {}
 
-DEFINE_CLASS_FACTORY(AdamsBashforth5StepSolver, "Adams-Bashforth (5th order)");
+DEFINE_CLASS_FACTORY(AB5Solver, "Adams-Bashforth (5th order)");
 
-AdamsBashforth5StepSolver::AdamsBashforth5StepSolver(Universe2D& u)
+AB5Solver::AB5Solver(Universe2D& u)
 : AdamsBashforthSolver(u, 5, &CLASS_FACTORY)
 {}

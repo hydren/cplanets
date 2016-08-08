@@ -29,28 +29,28 @@ struct AdamsBashforthSolver extends AbstractPhysics2DSolver
 	AbstractPhysics2DSolver& bootstrapSolver;
 };
 
-struct AdamsBashforth2StepSolver extends AdamsBashforthSolver
+struct AB2Solver extends AdamsBashforthSolver
 {
-	DECLARE_CLASS_FACTORY(AdamsBashforth2StepSolver);
-	AdamsBashforth2StepSolver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(AB2Solver);
+	AB2Solver(Universe2D& u);
 };
 
-struct AdamsBashforth3StepSolver extends AdamsBashforthSolver
+struct AB3Solver extends AdamsBashforthSolver
 {
-	DECLARE_CLASS_FACTORY(AdamsBashforth3StepSolver);
-	AdamsBashforth3StepSolver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(AB3Solver);
+	AB3Solver(Universe2D& u);
 };
 
-struct AdamsBashforth4StepSolver extends AdamsBashforthSolver
+struct AB4Solver extends AdamsBashforthSolver
 {
-	DECLARE_CLASS_FACTORY(AdamsBashforth4StepSolver);
-	AdamsBashforth4StepSolver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(AB4Solver);
+	AB4Solver(Universe2D& u);
 };
 
-struct AdamsBashforth5StepSolver extends AdamsBashforthSolver
+struct AB5Solver extends AdamsBashforthSolver
 {
-	DECLARE_CLASS_FACTORY(AdamsBashforth5StepSolver);
-	AdamsBashforth5StepSolver(Universe2D& u);
+	DECLARE_CLASS_FACTORY(AB5Solver);
+	AB5Solver(Universe2D& u);
 };
 
 #endif /* PHYSICS_SOLVERS_ADAMS_BASHFORTH_HPP_ */
