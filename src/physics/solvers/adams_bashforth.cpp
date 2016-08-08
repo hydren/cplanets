@@ -17,15 +17,15 @@ using Collections::coalesce2;
 
 #define MAXSTEP 5
 
-const double coefficients[][MAXSTEP] = {
+const double adams_bashforth_coefficients[MAXSTEP][MAXSTEP] = {
 		{ 1 },
 		{ 1.5, 			-0.5 },
 		{ 23.0/12.0, 	-4.0/3.0, 		5.0/12.0 },
 		{ 55.0/24.0, 	-59.0/24.0, 	37.0/24.0,		-3.0/8.0},
-		{ 1901.0/720.0,	-1387.0/360.0,	109.0/30.0,		-637.0/360.0,		251.0/720.0 }
-};
+		{ 1901.0/720.0,	-1387.0/360.0,	109.0/30.0,		-637.0/360.0,	251.0/720.0 }
+};  //		current 		n-1				n-2				n-3				n-4				...
 
-#define b(index) coefficients[steps-1][index-1]
+#define b(index) adams_bashforth_coefficients[steps-1][index-1]
 
 AbstractPhysics2DSolver& chooseBootstrapSolver(unsigned numberOfSteps, Universe2D& u)
 {
@@ -44,7 +44,7 @@ AbstractPhysics2DSolver& chooseBootstrapSolver(unsigned numberOfSteps, Universe2
 
 AdamsBashforthSolver::AdamsBashforthSolver(Universe2D& u, unsigned s, const GenericFactory* factory)
 : AbstractPhysics2DSolver(factory, u, 0.01),
-  steps(s > MAXSTEP? MAXSTEP : s), preStepsCounter(0), history(),
+  steps(s > MAXSTEP? MAXSTEP : s == 0 ? 1 : s), preStepsCounter(0), history(),
   bootstrapSolver(chooseBootstrapSolver(s, u))
 {}
 
