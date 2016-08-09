@@ -16,7 +16,7 @@ DEFINE_CLASS_FACTORY(StormerVerletSolver, "Stormer-Verlet (Explicit Central Diff
 
 StormerVerletSolver::StormerVerletSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
-  previousPositions()
+  previousPositions(), previousTimestep(timestep)
 {}
 
 void StormerVerletSolver::step()
@@ -31,7 +31,10 @@ void StormerVerletSolver::step()
 		// get the previous position. if absent, estimate it through formula x[n-1] = x[n] - h*v[x]
 		Vector2D& prev = Collections::coalesce2(previousPositions, body, (body->position-(body->velocity*timestep)));
 
-		(body->position *= 2) += (body->acceleration * timestep * timestep) - prev;
+		if(timestep != previousTimestep and timeElapsed > 0) // adjusted formula to compensate for ocasional timestep variation
+			body->position += (body->position - prev) * (timestep/previousTimestep) + body->acceleration * timestep * (timestep + previousTimestep) * 0.5;
+		else
+			(body->position *= 2) += (body->acceleration * timestep * timestep) - prev;
 
 		//estimated velocity
 		body->velocity = (body->position - curr) * (1.0/timestep);
@@ -46,6 +49,7 @@ void StormerVerletSolver::step()
 	}
 
 	timeElapsed += timestep;
+	previousTimestep = timestep;
 }
 
 

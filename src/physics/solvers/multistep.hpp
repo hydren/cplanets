@@ -22,6 +22,7 @@ struct StormerVerletSolver extends AbstractPhysics2DSolver
 
 	protected:
 	std::map<Body2D*, Vector2D> previousPositions;
+	double previousTimestep;
 };
 
 struct BeemanSolver extends AbstractPhysics2DSolver
