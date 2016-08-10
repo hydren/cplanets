@@ -139,16 +139,16 @@ ListWin<Body2DClone>* txtBodies;
 ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
+DropDownMenu* ddmIntegrationMethod;
+Spinner<double>* spnTimeStep, *spnGravity;
+Spinner<long>* spnStepDelay;
+Spinner<short>* spnFPS;
+CheckBox* chckLegacyParameters;
+Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
 DropDownMenu* ddmTraceStyle;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
-Spinner<double>* spnTimeStep, *spnGravity;
-Spinner<long>* spnStepDelay;
-Spinner<short>* spnFPS;
-DropDownMenu* ddmIntegrationMethod;
-CheckBox* chckLegacyParameters;
-Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 
 PlanetariumPane* planetariumPane;
 Planetarium* planetarium; ///helper pointer
@@ -212,7 +212,6 @@ void CPlanets::showMainWindow()
 
 	toolbarNorthLayout->pack();
 
-
 	// ****Planetarium****
 	Rect planetariumSize(
 		BODIES_PANEL_WIDTH + WIDGETS_SPACING,
@@ -256,55 +255,28 @@ void CPlanets::showMainWindow()
 	tabs->layout.pack();
 	tabs->setActiveTab(tabBodies);
 
-	LabelWin lblOrbitTracing(tabOptions, Rect(), "Orbit tracing");
-	lblOrbitTracing.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblOrbitTracing, WIDGETS_SPACING, WIDGETS_SPACING);
-
-	chckTraceOrbit = new CheckBox(tabOptions, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
-	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
-	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + WIDGETS_SPACING);
-	packLabeledComponent(chckTraceOrbit);
-
-	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
-	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + WIDGETS_SPACING + 3);
-	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength), true);
-
-	DropDownMenuFactory factory;
-	factory.setLabel("Trace style: ", true);
-	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
-	factory.setSize(Rect(40, 40, 100, 20));
-	factory.addItem("Linear");
-	factory.addItem("Dotted");
-	factory.setCallback(onDropDownMenuButton);
-	ddmTraceStyle = factory.createAt(tabOptions);
-	ddmTraceStyle->setPosition(Point(spnTraceLength->area.x + spnTraceLength->tw_area.w + WIDGETS_SPACING, spnTraceLength->area.y - 3));
-	ddmTraceStyle->offset.y = -10;
-
-	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
-	lblBodyCreation.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblBodyCreation, spnTraceLength->area.x, ddmTraceStyle->getPosition().y + ddmTraceStyle->getSize().h + 2*WIDGETS_SPACING);
-
-	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
-	setComponentPosition(spnBodyDiameter, lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING);
-	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio), true);
-	spnBodyDiameter->setStepValue(0.1);
-
-	spnBodyDensity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
-	setComponentPosition(spnBodyDensity, spnBodyDiameter->area.x + spnBodyDiameter->tw_area.w + WIDGETS_SPACING, spnBodyDiameter->area.y);
-	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity), true);
-	spnBodyDensity->setStepValue(0.1);
-
-	spnBodyVelocity = new Spinner<double>(tabOptions, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
-	setComponentPosition(spnBodyVelocity, spnBodyDiameter->area.x, spnBodyDiameter->area.y + spnBodyDiameter->tw_area.h + WIDGETS_SPACING);
-	spnBodyVelocity->setValue(10);
-	spnBodyVelocity->setStepValue(0.1);
-
 	LabelWin lblSimulationParameters(tabOptions, Rect(), "Simulation parameters");
 	lblSimulationParameters.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblSimulationParameters, spnBodyVelocity->area.x, spnBodyVelocity->area.y + spnBodyVelocity->tw_area.h + 3*WIDGETS_SPACING);
+	setComponentPosition(&lblSimulationParameters, WIDGETS_SPACING, WIDGETS_SPACING);
+
+	DropDownMenuFactory factory;
+	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
+	factory.setCallback(onDropDownMenuButton);
+
+	factory.setLabel("Integration method: ", true);
+	factory.setSize(Rect(40, 40, 200, 20));
+	typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
+	const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
+	{
+		factory.addItem(solverFactory->solverDisplayName.c_str());
+	}
+	ddmIntegrationMethod = factory.createAt(tabOptions);
+	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->solver->factory->solverDisplayName.c_str());
+	ddmIntegrationMethod->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
+	ddmIntegrationMethod->offset.y = -10;
 
 	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
-	setComponentPosition(spnTimeStep, lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING);
+	setComponentPosition(spnTimeStep, ddmIntegrationMethod->getPosition().x, ddmIntegrationMethod->getPosition().y + ddmIntegrationMethod->getSize().h + WIDGETS_SPACING);
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep), true);
 	spnTimeStep->setStepValue(0.1);
 
@@ -313,21 +285,8 @@ void CPlanets::showMainWindow()
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
-	factory.setLabel("Integration method: ", true);
-	factory.setSize(Rect(40, 40, 200, 20));
-	factory.removeAllItems();
-	typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
-	const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
-	{
-		factory.addItem(solverFactory->solverDisplayName.c_str());
-	}
-	ddmIntegrationMethod = factory.createAt(tabOptions);
-	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->solver->factory->solverDisplayName.c_str());
-	ddmIntegrationMethod->setPosition(Point(spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING));
-	ddmIntegrationMethod->offset.y = -10;
-
 	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,3.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay (ms):");
-	setComponentPosition(spnStepDelay, ddmIntegrationMethod->getPosition().x, ddmIntegrationMethod->getPosition().y + ddmIntegrationMethod->getSize().h + WIDGETS_SPACING);
+	setComponentPosition(spnStepDelay, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
 	spnStepDelay->setValue(&(planetarium->stepDelay), true);
 
 	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
@@ -346,6 +305,47 @@ void CPlanets::showMainWindow()
 	spnIterPerDisplay = new Spinner<long>(tabOptions, Rect(0,0,2.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "Iter/display:");
 	setComponentPosition(spnIterPerDisplay, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
 	spnIterPerDisplay->setValue(&(planetarium->iterationsPerDisplay));
+
+	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
+	lblBodyCreation.setTextRenderer(draw_title_ttf);
+	setComponentPosition(&lblBodyCreation, spnDisplayPeriod->area.x, spnIterPerDisplay->area.y + spnIterPerDisplay->tw_area.h + 2*WIDGETS_SPACING);
+
+	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
+	setComponentPosition(spnBodyDiameter, lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING);
+	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio), true);
+	spnBodyDiameter->setStepValue(0.1);
+
+	spnBodyDensity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
+	setComponentPosition(spnBodyDensity, spnBodyDiameter->area.x + spnBodyDiameter->tw_area.w + WIDGETS_SPACING, spnBodyDiameter->area.y);
+	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity), true);
+	spnBodyDensity->setStepValue(0.1);
+
+	spnBodyVelocity = new Spinner<double>(tabOptions, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
+	setComponentPosition(spnBodyVelocity, spnBodyDiameter->area.x, spnBodyDiameter->area.y + spnBodyDiameter->tw_area.h + WIDGETS_SPACING);
+	spnBodyVelocity->setValue(10);
+	spnBodyVelocity->setStepValue(0.1);
+
+	LabelWin lblOrbitTracing(tabOptions, Rect(), "Orbit tracing");
+	lblOrbitTracing.setTextRenderer(draw_title_ttf);
+	setComponentPosition(&lblOrbitTracing, spnBodyVelocity->area.x, spnBodyVelocity->area.y + spnBodyVelocity->tw_area.h + 3*WIDGETS_SPACING);
+
+	chckTraceOrbit = new CheckBox(tabOptions, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
+	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
+	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + WIDGETS_SPACING);
+	packLabeledComponent(chckTraceOrbit);
+
+	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
+	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + WIDGETS_SPACING + 3);
+	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength), true);
+
+	factory.removeAllItems();
+	factory.setLabel("Trace style: ", true);
+	factory.setSize(Rect(40, 40, 100, 20));
+	factory.addItem("Linear");
+	factory.addItem("Dotted");
+	ddmTraceStyle = factory.createAt(tabOptions);
+	ddmTraceStyle->setPosition(Point(spnTraceLength->area.x + spnTraceLength->tw_area.w + WIDGETS_SPACING, spnTraceLength->area.y - 3));
+	ddmTraceStyle->offset.y = -10;
 
 	//+++++++++++++++ East (right) toolbar
 	toolbarRight = new FlowLayout(planetariumSize.x + planetariumSize.w + WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING);
