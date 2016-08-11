@@ -12,7 +12,7 @@ using std::map;
 
 #include <cmath>
 
-DEFINE_CLASS_FACTORY(StormerVerletSolver, "Stormer-Verlet (Explicit Central Difference)");
+DEFINE_CLASS_FACTORY(StormerVerletSolver, "Stormer-Verlet (Explicit Central Diff.)");
 
 StormerVerletSolver::StormerVerletSolver(Universe2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
