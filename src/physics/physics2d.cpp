@@ -25,6 +25,7 @@ Physics2D::Physics2D()
 : universe(),
   solver(NULL),
   referenceFrame(),
+  totalPotentialEnergy(0), totalKineticEnergy(0),
   onCollisionCallback(NULL),
   listeners()
 {}
@@ -34,11 +35,9 @@ void Physics2D::step()
 	if(solver == NULL)
 		throw std::runtime_error("Can't do step(): No physics solver specified!");
 
-	//update positions
-	solver->step();
-
-	//resolve collisions
+	solver->step();	//update positions
 	resolveCollisions();
+	computeEnergy();
 
 	//move reference frame manually if point-like (and frame has velocity)
 	if(referenceFrame.isPointLike() and not referenceFrame.velocity().isZero())
@@ -233,6 +232,20 @@ void Physics2D::resolveCollisions()
 		delete collisions[k][n]; //delete previously existing bodies individually
 
 	collisions.clear(); //removes all collisions lists
+}
+
+void Physics2D::computeEnergy()
+{
+	totalPotentialEnergy = totalKineticEnergy = 0;
+	vector<Body2D*>& b = universe.bodies;
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+	{
+		totalKineticEnergy += b[i]->kineticEnergy();
+		for(unsigned j = 0; j < i; j++)
+			if(b[i] != b[j])
+				totalPotentialEnergy += (b[i]->mass * b[j]->mass) / (b[i]->position - b[j]->position).magnitude();
+	}
+	totalPotentialEnergy *= universe.gravity;
 }
 
 void Physics2D::notifyAll(vector<Body2D*>& collidingList, Body2D& resultingMerger)

@@ -45,6 +45,9 @@ struct Body2D
 	bool operator<(const Body2D& b) const { return this->id < b.id; }
 	bool operator==(const Body2D& b) const { return this->id == b.id; }
 	bool operator!=(const Body2D& b) const { return this->id != b.id; }
+
+	Vector2D momentum() const;
+	double kineticEnergy() const;
 };
 
 

@@ -47,8 +47,11 @@ struct Physics2D
 
 	ReferenceFrame referenceFrame;
 
+	long double totalPotentialEnergy, totalKineticEnergy;
+
 	protected:
 	void resolveCollisions();
+	void computeEnergy();
 
 	// ============== Observer pattern to deal with collision "events" ===============================
 	public:

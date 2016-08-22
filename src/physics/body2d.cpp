@@ -9,6 +9,8 @@
 
 #include "futil/futil.hpp"
 
+#include <cmath>
+
 using std::string;
 
 string generateRandomName()
@@ -33,4 +35,14 @@ Body2D::Body2D()
 string Body2D::toString()
 {
 	return id + " ("+mass+"Kg, "+diameter+"Km)";
+}
+
+Vector2D Body2D::momentum() const
+{
+	return velocity.times(mass);
+}
+
+double Body2D::kineticEnergy() const
+{
+	return pow(velocity.magnitude(), 2) * mass * 0.5;
 }
