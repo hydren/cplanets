@@ -104,6 +104,10 @@ struct Planetarium extends Physics2D::Listener
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2DClone> getBodies() const;
 
+	long double getTotalKineticEnergy() const; //synchronized version
+	long double getTotalPotentialEnergy() const; //synchronized version
+	unsigned getBodyCount() const; //synchronized version
+
 	/** Safer way to replace the universe instance. */
 	void setUniverse(const Universe2D& u);
 

@@ -305,6 +305,36 @@ vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 	return bodies;
 }
 
+long double Planetarium::getTotalKineticEnergy() const
+{
+	long double value;
+	synchronized(physicsAccessMutex)
+	{
+		value = physics->totalKineticEnergy;
+	}
+	return value;
+}
+
+long double Planetarium::getTotalPotentialEnergy() const
+{
+	long double value;
+	synchronized(physicsAccessMutex)
+	{
+		value = physics->totalPotentialEnergy;
+	}
+	return value;
+}
+
+unsigned Planetarium::getBodyCount() const
+{
+	unsigned value;
+	synchronized(physicsAccessMutex)
+	{
+		value = physics->bodyCount;
+	}
+	return value;
+}
+
 void Planetarium::setUniverse(const Universe2D& u)
 {
 	const_foreach(Body2D*, i, vector<Body2D*>, u.bodies)
