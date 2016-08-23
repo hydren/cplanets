@@ -48,6 +48,7 @@ struct Physics2D
 	ReferenceFrame referenceFrame;
 
 	long double totalPotentialEnergy, totalKineticEnergy;
+	unsigned bodyCount;
 
 	protected:
 	void resolveCollisions();
