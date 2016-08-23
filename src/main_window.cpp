@@ -34,6 +34,7 @@
 #include "widgets/scrollable_pane.hpp"
 #include "widgets/list_win.hpp"
 #include "widgets/list_selection_model_extra.hpp"
+#include "widgets/value_shower.hpp"
 
 using std::cout;
 using std::endl;
@@ -56,6 +57,7 @@ using WidgetsExtra::FileDialog;
 using WidgetsExtra::ScrollablePane;
 using WidgetsExtra::DialogBgrWin;
 using WidgetsExtra::ListWin;
+using WidgetsExtra::ValueShower;
 
 typedef Planetarium::Body2DClone Body2DClone;
 
@@ -160,6 +162,7 @@ FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
 Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
 ToogleButton* tgbAA;
+ValueShower* msgLogK, *msgLogP, *msgLogE, *msgBodyCount;
 
 
 DialogBgrWin* dialogAbout;
@@ -403,6 +406,26 @@ void CPlanets::showMainWindow()
 	packer.pack(tgbAA, tgbAA->label);
 	toolbarSouthLayout->addComponent(tgbAA);
 
+	toolbarSouthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+
+	msgBodyCount = new ValueShower(window, Style(2), Point(), 8, "Count:");
+	toolbarSouthLayout->addComponent(msgBodyCount);
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+
+	msgLogK = new ValueShower(window, Style(2), Point(), 10, "Log K.:");
+	toolbarSouthLayout->addComponent(msgLogK);
+
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+
+	msgLogP = new ValueShower(window, Style(2), Point(), 10, "Log P.:");
+	toolbarSouthLayout->addComponent(msgLogP);
+
+	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+
+	msgLogE = new ValueShower(window, Style(2), Point(), 10, "Log E.:");
+	toolbarSouthLayout->addComponent(msgLogE);
+
 	toolbarSouthLayout->pack();
 
 	vector<string> strFiletypes;
@@ -457,8 +480,12 @@ void onSDLInit()
 void draw()
 {
 	window->clear();
-	Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
-	draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
+	//Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
+	//draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
+	msgLogK->draw_label();
+	msgLogP->draw_label();
+	msgLogE->draw_label();
+	msgBodyCount->draw_label();
 }
 
 void drawAboutDialog(BgrWin* bw)
@@ -757,6 +784,10 @@ void onUserEvent(int cmd,int param,int param2)
 		if(param == planetariumPane->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
 		{
 			planetariumPane->doRefresh();
+			msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
+			msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
+			msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
+			msgBodyCount->draw_mes("%u", planetarium->physics->bodyCount);
 		}
 	}
 
