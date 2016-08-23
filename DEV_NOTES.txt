@@ -15,6 +15,8 @@
 
 -------------- Backlog
 
+Refactor the 'widgets' folder as a separate extension to sdl-widgets (or develop a fully separate toolkit with it, i.e. SDL_toolkit)
+
 -------------- Milestones
 
 - 0.8 (japla-supersedure milestone)
