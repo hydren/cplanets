@@ -28,7 +28,7 @@ When holding R (add random body), after 1 second, starts spamming bodies until u
 - 0.9 (physics milestone)
 
 Implement Rk2 and Rk4 integration methods - done
-Show info about system's energy (kinetic, potential, total, etc)
+Show info about system's energy (kinetic, potential, total, etc) - done
 Add random orbiting planet functionality
 Bouncing bodies
 G exp.
