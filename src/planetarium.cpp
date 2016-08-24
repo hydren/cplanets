@@ -234,8 +234,61 @@ void Planetarium::setRunning(bool run)
 	this->running = run;
 }
 
-//--------------- \/ \/ SYNCHRONIZED METHODS \/ \/ -----------
-//todo reorganize this
+void Planetarium::setBodyCreationMode(bool enable)
+{
+	if(enable)
+	{
+		bodyCreationState = POSITION_SELECTION;
+		auxWasRunningBeforeBodyCreationMode = running;
+		setRunning(false);
+	}
+	else this->bodyCreationState = IDLE;
+}
+
+void Planetarium::setFocusedBodies(Body2D*const* bodyarr, unsigned n)
+{
+	focusedBodies.clear();
+	for(unsigned i = 0; i < n; i++)
+	{
+		focusedBodies.push_back(bodyarr[i]);
+	}
+}
+
+void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
+{
+	focusedBodies.clear();
+	const_foreach(Body2D*, body, vector<Body2D*>, bodies)
+	{
+		focusedBodies.push_back(body);
+	}
+}
+
+//------------------------------------ \/ \/ SYNCHRONIZED METHODS \/ \/ -----------------------------------
+
+void Planetarium::removeFocusedBodies(bool alsoDelete)
+{
+	synchronized(physicsAccessMutex)
+	{
+		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
+		{
+			Collections::removeElement(physics->universe.bodies, body);
+		}
+	}
+
+	foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
+	{
+		//notify listeners about the body deleted
+		for(unsigned i = 0; i < listeners.size(); i++)
+			listeners[i]->onBodyDeletion(body);
+
+		orbitTracer.clearTrace(body);
+
+		if(alsoDelete) delete body;
+	}
+
+	focusedBodies.clear();
+}
+
 void Planetarium::recolorAllBodies()
 {
 	synchronized(physicsAccessMutex)
@@ -248,17 +301,6 @@ void Planetarium::recolorAllBodies()
 			delete oldColor;
 		}
 	}
-}
-
-void Planetarium::setBodyCreationMode(bool enable)
-{
-	if(enable)
-	{
-		bodyCreationState = POSITION_SELECTION;
-		auxWasRunningBeforeBodyCreationMode = running;
-		setRunning(false);
-	}
-	else this->bodyCreationState = IDLE;
 }
 
 void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
@@ -305,6 +347,22 @@ vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 	return bodies;
 }
 
+void Planetarium::setUniverse(const Universe2D& u)
+{
+	const_foreach(Body2D*, i, vector<Body2D*>, u.bodies)
+		if(i->userObject == null)
+			i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
+
+	synchronized(physicsAccessMutex)
+	{
+		//delete the user objects of the current universe, as setUniverse() will delete the current universe, but not its user objects
+		foreach(Body2D*, oldBody, vector<Body2D*>, physics->universe.bodies)
+			delete static_cast<PlanetariumUserObject*>(oldBody->userObject);
+
+		physics->setUniverse(u);
+	}
+}
+
 long double Planetarium::getTotalKineticEnergy() const
 {
 	long double value;
@@ -335,65 +393,114 @@ unsigned Planetarium::getBodyCount() const
 	return value;
 }
 
-void Planetarium::setUniverse(const Universe2D& u)
+//---------------------------------- /\ /\ SYNCHRONIZED METHODS /\ /\ ------------------------------------------
+
+void Planetarium::onMouseButtonPressed(int x, int y, int but)
 {
-	const_foreach(Body2D*, i, vector<Body2D*>, u.bodies)
-		if(i->userObject == null)
-			i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
-
-	synchronized(physicsAccessMutex)
+	if(but == SDL_BUTTON_LEFT)
 	{
-		//delete the user objects of the current universe, as setUniverse() will delete the current universe, but not its user objects
-		foreach(Body2D*, oldBody, vector<Body2D*>, physics->universe.bodies)
-			delete static_cast<PlanetariumUserObject*>(oldBody->userObject);
-
-		physics->setUniverse(u);
+		lastMouseLeftButtonDown = SDL_GetTicks();
+		isMouseLeftButtonDown = true;
+		lastMouseClickPoint = Vector2D(x, y);
+		auxWasRunningBeforeSelection = running;
+		if(pauseOnSelection)
+			setRunning(false);
 	}
 }
 
-void Planetarium::setFocusedBodies(Body2D*const* bodyarr, unsigned n)
+void Planetarium::onMouseButtonReleased(int x, int y, int but)
 {
-	focusedBodies.clear();
-	for(unsigned i = 0; i < n; i++)
+	bool notToogling = not(SDL_GetModState() & KMOD_CTRL); // check if click-wise selection
+	if(but == SDL_BUTTON_LEFT)
 	{
-		focusedBodies.push_back(bodyarr[i]);
-	}
-}
+		Vector2D pointedPosition = getAntiTransposed(Vector2D(x, y));
+		Vector2D prevPointedPosition = getAntiTransposed(lastMouseClickPoint);
 
-void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
-{
-	focusedBodies.clear();
-	const_foreach(Body2D*, body, vector<Body2D*>, bodies)
-	{
-		focusedBodies.push_back(body);
-	}
-}
-
-void Planetarium::removeFocusedBodies(bool alsoDelete)
-{
-	synchronized(physicsAccessMutex)
-	{
-		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
+		if(SDL_GetTicks() - lastMouseLeftButtonDown < 250) //click event
 		{
-			Collections::removeElement(physics->universe.bodies, body);
+			if(bodyCreationState == POSITION_SELECTION)
+			{
+				bodyCreationPosition = pointedPosition;
+				bodyCreationDiameter = (bodyCreationDiameterRatio/viewportZoom) * BODY_CREATION_DIAMETER_FACTOR;
+				bodyCreationState = VELOCITY_SELECTION;
+				return;
+			}
+			if(bodyCreationState == VELOCITY_SELECTION)
+			{
+				Vector2D selectedVelocity = pointedPosition.difference(bodyCreationPosition);
+				double mass = (Math::PI/6.0) * bodyCreationDensity * bodyCreationDiameter * bodyCreationDiameter * bodyCreationDiameter;
+				Body2D* newBody = new Body2D(mass, bodyCreationDiameter, bodyCreationPosition, selectedVelocity, Vector2D());
+				addCustomBody(newBody, SDL_util::getRandomColor());
+				setBodyCreationMode(IDLE);
+				if(auxWasRunningBeforeBodyCreationMode)
+					setRunning();
+			}
+			else //user tried to click a single body, or it was a mistake/random action.
+			{
+				// Check if the clicked point is above a body. if yes, "focused" the body.
+
+				if(notToogling)
+					focusedBodies.clear();
+
+				SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
+				synchronized(collisionEventsMutex)
+				{
+					foreach(Body2D*, body, vector<Body2D*>, physics->universe.bodies)
+					{
+						if(body->position.distance(pointedPosition) <= body->diameter*0.5)
+						{
+							if(notToogling) //set focused
+								focusedBodies.push_back(body);
+							else //toogle focus
+								if(Collections::removeElement(focusedBodies, body) == false)
+									focusedBodies.push_back(body);
+						}
+					}
+				}
+				if(pauseOnSelection and auxWasRunningBeforeSelection)
+					setRunning();
+
+				//notify listeners about re-focusing of bodies
+				for(unsigned i = 0; i < listeners.size(); i++)
+					listeners[i]->onBodyReFocus();
+			}
 		}
+		else //mouse up after holding down
+		{
+			// Make all bodies under this to be "focused"
+
+			if(notToogling)
+				focusedBodies.clear();
+
+			double rtix = min(prevPointedPosition.x, pointedPosition.x), rtfx = max(prevPointedPosition.x, pointedPosition.x),
+				   rtiy = min(prevPointedPosition.y, pointedPosition.y), rtfy = max(prevPointedPosition.y, pointedPosition.y);
+
+			SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
+			synchronized(collisionEventsMutex)
+			{
+				foreach(Body2D*, body, vector<Body2D*>, physics->universe.bodies)
+				{
+					if(body->position.x >= rtix && body->position.x <= rtfx
+					&& body->position.y >= rtiy && body->position.y <= rtfy)
+					{
+						if(notToogling) //set focused
+							focusedBodies.push_back(body);
+						else //toogle focus
+							if(Collections::removeElement(focusedBodies, body) == false)
+								focusedBodies.push_back(body);
+					}
+				}
+			}
+			if(pauseOnSelection and auxWasRunningBeforeSelection)
+				setRunning();
+
+			//notify listeners about re-focusing of bodies
+			for(unsigned i = 0; i < listeners.size(); i++)
+				listeners[i]->onBodyReFocus();
+		}
+		isMouseLeftButtonDown = false;
 	}
-
-	foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
-	{
-		//notify listeners about the body deleted
-		for(unsigned i = 0; i < listeners.size(); i++)
-			listeners[i]->onBodyDeletion(body);
-
-		orbitTracer.clearTrace(body);
-
-		if(alsoDelete) delete body;
-	}
-
-	focusedBodies.clear();
 }
-
-//--------------- /\ /\ SYNCHRONIZED METHODS /\ /\ -----------
 
 Planetarium::OrbitTracer::OrbitTracer(Planetarium* p)
 : style(LINEAR), isActive(false), traceLength(20), traces(),
@@ -622,113 +729,6 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	{
 		//add collision event to be consumed
 		physicsEventsManager->collisionEvents.push(ev); //provided list and merger must be copies
-	}
-}
-
-void Planetarium::onMouseButtonPressed(int x, int y, int but)
-{
-	if(but == SDL_BUTTON_LEFT)
-	{
-		lastMouseLeftButtonDown = SDL_GetTicks();
-		isMouseLeftButtonDown = true;
-		lastMouseClickPoint = Vector2D(x, y);
-		auxWasRunningBeforeSelection = running;
-		if(pauseOnSelection)
-			setRunning(false);
-	}
-}
-
-void Planetarium::onMouseButtonReleased(int x, int y, int but)
-{
-	bool notToogling = not(SDL_GetModState() & KMOD_CTRL); // check if click-wise selection
-	if(but == SDL_BUTTON_LEFT)
-	{
-		Vector2D pointedPosition = getAntiTransposed(Vector2D(x, y));
-		Vector2D prevPointedPosition = getAntiTransposed(lastMouseClickPoint);
-
-		if(SDL_GetTicks() - lastMouseLeftButtonDown < 250) //click event
-		{
-			if(bodyCreationState == POSITION_SELECTION)
-			{
-				bodyCreationPosition = pointedPosition;
-				bodyCreationDiameter = (bodyCreationDiameterRatio/viewportZoom) * BODY_CREATION_DIAMETER_FACTOR;
-				bodyCreationState = VELOCITY_SELECTION;
-				return;
-			}
-			if(bodyCreationState == VELOCITY_SELECTION)
-			{
-				Vector2D selectedVelocity = pointedPosition.difference(bodyCreationPosition);
-				double mass = (Math::PI/6.0) * bodyCreationDensity * bodyCreationDiameter * bodyCreationDiameter * bodyCreationDiameter;
-				Body2D* newBody = new Body2D(mass, bodyCreationDiameter, bodyCreationPosition, selectedVelocity, Vector2D());
-				addCustomBody(newBody, SDL_util::getRandomColor());
-				setBodyCreationMode(IDLE);
-				if(auxWasRunningBeforeBodyCreationMode)
-					setRunning();
-			}
-			else //user tried to click a single body, or it was a mistake/random action.
-			{
-				// Check if the clicked point is above a body. if yes, "focused" the body.
-
-				if(notToogling)
-					focusedBodies.clear();
-
-				SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
-				synchronized(collisionEventsMutex)
-				{
-					foreach(Body2D*, body, vector<Body2D*>, physics->universe.bodies)
-					{
-						if(body->position.distance(pointedPosition) <= body->diameter*0.5)
-						{
-							if(notToogling) //set focused
-								focusedBodies.push_back(body);
-							else //toogle focus
-								if(Collections::removeElement(focusedBodies, body) == false)
-									focusedBodies.push_back(body);
-						}
-					}
-				}
-				if(pauseOnSelection and auxWasRunningBeforeSelection)
-					setRunning();
-
-				//notify listeners about re-focusing of bodies
-				for(unsigned i = 0; i < listeners.size(); i++)
-					listeners[i]->onBodyReFocus();
-			}
-		}
-		else //mouse up after holding down
-		{
-			// Make all bodies under this to be "focused"
-
-			if(notToogling)
-				focusedBodies.clear();
-
-			double rtix = min(prevPointedPosition.x, pointedPosition.x), rtfx = max(prevPointedPosition.x, pointedPosition.x),
-				   rtiy = min(prevPointedPosition.y, pointedPosition.y), rtfy = max(prevPointedPosition.y, pointedPosition.y);
-
-			SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
-			synchronized(collisionEventsMutex)
-			{
-				foreach(Body2D*, body, vector<Body2D*>, physics->universe.bodies)
-				{
-					if(body->position.x >= rtix && body->position.x <= rtfx
-					&& body->position.y >= rtiy && body->position.y <= rtfy)
-					{
-						if(notToogling) //set focused
-							focusedBodies.push_back(body);
-						else //toogle focus
-							if(Collections::removeElement(focusedBodies, body) == false)
-								focusedBodies.push_back(body);
-					}
-				}
-			}
-			if(pauseOnSelection and auxWasRunningBeforeSelection)
-				setRunning();
-
-			//notify listeners about re-focusing of bodies
-			for(unsigned i = 0; i < listeners.size(); i++)
-				listeners[i]->onBodyReFocus();
-		}
-		isMouseLeftButtonDown = false;
 	}
 }
 

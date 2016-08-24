@@ -87,13 +87,23 @@ struct Planetarium extends Physics2D::Listener
 	/** If run is true (default), the physics thread is started/resumed. Otherwise the thread is put to sleep. */
 	void setRunning(bool run=true);
 
+	/** Activates/Deactivates body creation mode; */
+	void setBodyCreationMode(bool enable=true);
+
+	/** Sets the given bodies as the focused/selected ones. 'bodyarr' should be an n-sized array of Body2D pointers. 'bodyarr' size is less than n, expect seg.faults. */
+	void setFocusedBodies(Body2D*const* bodyarr, unsigned n);
+
+	/** Sets the given bodies as the focused/selected ones. */
+	void setFocusedBodies(const std::vector<Body2D*>& bodies);
+
 	//synchronized methods
+
+	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
+	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
+	void removeFocusedBodies(bool alsoDelete = true);
 
 	/** Assign a new random color to every body on the current universe (the safe way) */
 	void recolorAllBodies();
-
-	/** Activates/Deactivates body creation mode; */
-	void setBodyCreationMode(bool enable=true);
 
 	/** Adds a custom body (the safe way) */
 	void addCustomBody(Body2D* body, SDL_Color* color);
@@ -104,22 +114,12 @@ struct Planetarium extends Physics2D::Listener
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2DClone> getBodies() const;
 
-	long double getTotalKineticEnergy() const; //synchronized version
-	long double getTotalPotentialEnergy() const; //synchronized version
-	unsigned getBodyCount() const; //synchronized version
-
 	/** Safer way to replace the universe instance. */
 	void setUniverse(const Universe2D& u);
 
-	/** Sets the given bodies as the focused/selected ones. 'bodyarr' should be an n-sized array of Body2D pointers. 'bodyarr' size is less than n, expect seg.faults. */
-	void setFocusedBodies(Body2D*const* bodyarr, unsigned n);
-
-	/** Sets the given bodies as the focused/selected ones. */
-	void setFocusedBodies(const std::vector<Body2D*>& bodies);
-
-	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
-	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
-	void removeFocusedBodies(bool alsoDelete = true);
+	long double getTotalKineticEnergy() const; //synchronized version
+	long double getTotalPotentialEnergy() const; //synchronized version
+	unsigned getBodyCount() const; //synchronized version
 
 	/** Optional dispatcher to perform updates on the resulting surface. */
 	struct SurfaceUpdateDispatcher
