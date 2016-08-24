@@ -930,20 +930,15 @@ void replaceUniverse(const Universe2D& universeCopy)
 
 void addRandomBody()
 {
-	double az = 1/planetarium->viewportZoom;
-	double diameter = (planetarium->bodyCreationDiameterRatio * az) * Planetarium::BODY_CREATION_DIAMETER_FACTOR;
-	double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * pow(diameter, 3);
-	double speed = *spnBodyVelocity->getValue() * az;
-	double area[4] = {planetarium->viewportPosition.x, planetarium->viewportPosition.y, planetariumPane->tw_area.w*az, planetariumPane->tw_area.h*az};
+	const double az = 1/planetarium->viewportZoom;
+	const double area[4] = {planetarium->viewportPosition.x, planetarium->viewportPosition.y, planetariumPane->tw_area.w*az, planetariumPane->tw_area.h*az};
 
-	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
-
-	planetarium->addRandomBody(mass, diameter, speed, area);
+	planetarium->addRandomBody(area);
 }
 
 int keepAddingRandomBodyWhilePressed(void* unused)
 {
-	SDL_Delay(500);
+	SDL_Delay(500); // todo make this delay adjustable
 	long lastUpdateTime;
 	while(aux_isPressed_SDLK_r)
 	{

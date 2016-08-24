@@ -116,6 +116,9 @@ struct Planetarium extends Physics2D::Listener
 	/** Adds a random body with resulting characteristics being, on average, the given parameters. If an area is specified, the resulting body will be positioned randomly within it.*/
 	void addRandomBody(double avMass, double avDiameter, double avVelocity, const double area[4]=null);
 
+	/** Adds a random body with random traits. If an area is specified, the resulting body will be positioned randomly within it.*/
+	void addRandomBody(const double area[4]=null);
+
 	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
 	void removeBody(Body2D* body, bool alsoDelete = false);
 

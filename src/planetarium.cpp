@@ -346,6 +346,19 @@ void Planetarium::addRandomBody(double avMass, double avDiameter, double avSpeed
 	);
 }
 
+/** Adds a random body with random traits. If an area is specified, the resulting body will be positioned randomly within it.*/
+void Planetarium::addRandomBody(const double area[4])
+{
+	double az = 1/viewportZoom;
+	double diameter = (bodyCreationDiameterRatio * az) * BODY_CREATION_DIAMETER_FACTOR;
+	double mass = (Math::PI/6.0) * bodyCreationDensity * pow(diameter, 3);
+	double speed = bodyCreationSpeed * az;
+
+	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
+
+	addRandomBody(mass, diameter, speed, area);
+}
+
 void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
