@@ -22,6 +22,7 @@ struct Planetarium extends Physics2D::Listener
 	static const double DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE = 0.1;
 	static const double DEFAULT_BODY_CREATION_DIAMETER_RATIO = 1.0;
 	static const double DEFAULT_BODY_CREATION_DENSITY = 1.0;
+	static const double DEFAULT_BODY_CREATION_SPEED = 20.0;
 	static const unsigned DEFAULT_STROKE_SIZE_NORMAL = 1, DEFAULT_STROKE_SIZE_FOCUSED = 2;
 	static const double DEFAULT_MINIMUM_BODY_RENDERING_RADIUS = 3.0;
 	static const unsigned DEFAULT_SLEEPING_TIME = 25;
@@ -62,8 +63,9 @@ struct Planetarium extends Physics2D::Listener
 	double viewportZoomChangeRateValue; //the intensity of zoom change when zooming
 	Vector2D currentViewportTranlationRate; //non-zero when translating
 	double currentViewportZoomChangeRate; //non-zero when zooming
-	double bodyCreationDiameterRatio; //the default diameter of bodies, proportional to the view size. Zooming affects the diameter of newly created bodies.
-	double bodyCreationDensity; //The default density of newly created bodies. Thus, zooming affects the mass of newly created bodies.
+	double bodyCreationDiameterRatio; //the average diameter of newly created bodies, proportional to the zoom.
+	double bodyCreationDensity; //the average density of newly created bodies. Zooming affects the mass of newly created bodies.
+	double bodyCreationSpeed; //the average speed of newly created bodies. Zooming affects the velocity of newly created bodies.
 
 	/** Creates a planetarium with a surface size specified by 'rect'. Optionally a pixel depth can be specified, but it's not recommended pass anything but the default. */
 	Planetarium(SDL_Rect rect, Uint32 pixdepth=16);

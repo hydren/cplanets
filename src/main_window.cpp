@@ -325,7 +325,7 @@ void CPlanets::showMainWindow()
 
 	spnBodyVelocity = new Spinner<double>(tabOptions, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
 	setComponentPosition(spnBodyVelocity, spnBodyDiameter->area.x, spnBodyDiameter->area.y + spnBodyDiameter->tw_area.h + WIDGETS_SPACING);
-	spnBodyVelocity->setValue(10);
+	spnBodyVelocity->setValue(&(planetarium->bodyCreationSpeed), true);
 	spnBodyVelocity->setStepValue(0.1);
 
 	LabelWin lblOrbitTracing(tabOptions, Rect(), "Orbit tracing");

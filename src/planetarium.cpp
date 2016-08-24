@@ -75,7 +75,9 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(DEFAULT_MINIMUM_BODY_RENDERING_RADIUS), focusedBodies(), tryAA(false),
   viewportTranlationRateValue(DEFAULT_VIEWPORT_TRANSLATE_RATE), viewportZoomChangeRateValue(DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE),
   currentViewportTranlationRate(), currentViewportZoomChangeRate(1),
-  bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO), bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
+  bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO),
+  bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
+  bodyCreationSpeed(DEFAULT_BODY_CREATION_SPEED),
   drawDispatcher(null), listeners(), orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
