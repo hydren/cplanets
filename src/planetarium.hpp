@@ -105,8 +105,14 @@ struct Planetarium extends Physics2D::Listener
 	/** Assign a new random color to every body on the current universe (the safe way) */
 	void recolorAllBodies();
 
-	/** Adds a custom body (the safe way) */
-	void addCustomBody(Body2D* body, SDL_Color* color);
+	/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
+	void addCustomBody(Body2D* body, SDL_Color* color=null);
+
+	/** Adds (safely) a custom body with the given parameters. If no color is specified, a random color will be used. */
+	void addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, SDL_Color* color=null);
+
+	/** Adds a random body with resulting characteristics being, on average, the given parameters. If an area is specified, the resulting body will be positioned randomly within it.*/
+	void addRandomBody(double avMass, double avDiameter, double avVelocity, const double area[4]=null);
 
 	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
 	void removeBody(Body2D* body, bool alsoDelete = false);

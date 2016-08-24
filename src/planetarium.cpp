@@ -9,6 +9,8 @@
 
 #include <SDL/SDL_gfxPrimitives.h>
 
+#include <cfloat>
+
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -303,8 +305,12 @@ void Planetarium::recolorAllBodies()
 	}
 }
 
+/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
 void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 {
+	if(color == null)
+		color = SDL_util::getRandomColor();
+
 	synchronized(physicsAccessMutex)
 	{
 		physics->universe.bodies.push_back(body);
@@ -314,6 +320,28 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 		for(unsigned i = 0; i < listeners.size(); i++)
 			listeners[i]->onBodyCreation(*physics->universe.bodies.back());
 	}
+}
+
+/** Adds (safely) a custom body with the given parameters. If no color is specified, a random color will be used. */
+void Planetarium::addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, SDL_Color* color)
+{
+	addCustomBody(new Body2D(mass, diameter, position, velocity, Vector2D()), color);
+}
+
+/** Adds a random body with resulting characteristics being, on average, the given parameters. If an area is specified, the resulting body will be positioned randomly within it.*/
+void Planetarium::addRandomBody(double avMass, double avDiameter, double avVelocity, const double area[4])
+{
+	const double minPosX = area != null ? area[0] : DBL_MIN,
+				 minPosY = area != null ? area[1] : DBL_MIN,
+				 maxPosX = area != null ? area[0] + area[2] : DBL_MAX,
+				 maxPosY = area != null ? area[1] + area[3] : DBL_MAX;
+
+	addCustomBody(
+		Math::randomNormalBetween(avMass*0.9, avMass*1.1),
+		Math::randomNormalBetween(avDiameter*0.9, avDiameter*1.1),
+		Vector2D(Math::randomBetween(minPosX, maxPosX), Math::randomBetween(minPosY, maxPosY)),
+		Vector2D(Math::randomBetween(-1, 1), Math::randomBetween(-1, 1)).normalize().scale(Math::randomNormalBetween(avVelocity*0.9, avVelocity*1.1))
+	);
 }
 
 void Planetarium::removeBody(Body2D* body, bool alsoDelete)
