@@ -23,6 +23,14 @@ const Vector2D Vector2D::X_VERSOR (1, 0);
 /** A vector codirectional with the Y axis, with length 1. */
 const Vector2D Vector2D::Y_VERSOR (0, 1);
 
+Vector2D::Vector2D(double magnitude)
+: x(), y()
+{
+	double angle = Math::randomBetween(0.0, 2.0*Math::PI);
+	x = magnitude*cos(angle);
+	y = magnitude*sin(angle);
+}
+
 // ------ equality & utils
 
 bool Vector2D::operator ==(const Vector2D& v) const

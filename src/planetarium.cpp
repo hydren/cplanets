@@ -331,7 +331,7 @@ void Planetarium::addCustomBody(double mass, double diameter, const Vector2D& po
 }
 
 /** Adds a random body with resulting characteristics being, on average, the given parameters. If an area is specified, the resulting body will be positioned randomly within it.*/
-void Planetarium::addRandomBody(double avMass, double avDiameter, double avVelocity, const double area[4])
+void Planetarium::addRandomBody(double avMass, double avDiameter, double avSpeed, const double area[4])
 {
 	const double minPosX = area != null ? area[0] : DBL_MIN,
 				 minPosY = area != null ? area[1] : DBL_MIN,
@@ -342,7 +342,7 @@ void Planetarium::addRandomBody(double avMass, double avDiameter, double avVeloc
 		Math::randomNormalBetween(avMass*0.9, avMass*1.1),
 		Math::randomNormalBetween(avDiameter*0.9, avDiameter*1.1),
 		Vector2D(Math::randomBetween(minPosX, maxPosX), Math::randomBetween(minPosY, maxPosY)),
-		Vector2D(Math::randomBetween(-1, 1), Math::randomBetween(-1, 1)).normalize().scale(Math::randomNormalBetween(avVelocity*0.9, avVelocity*1.1))
+		Vector2D(Math::randomNormalBetween(avSpeed*0.9, avSpeed*1.1))
 	);
 }
 

@@ -28,6 +28,9 @@ struct Vector2D
 	Vector2D(const Vector2D& v)
 	: x(v.x), y(v.y) {}
 
+	/** Creates a vector with the given magnitude and random direction. */
+	Vector2D(double magnitude);
+
 	// ------ equality
 
 	bool operator ==(const Vector2D& v) const;
