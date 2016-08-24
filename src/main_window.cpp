@@ -932,14 +932,13 @@ void addRandomBody()
 {
 	double az = 1/planetarium->viewportZoom;
 	double diameter = (planetarium->bodyCreationDiameterRatio * az) * Planetarium::BODY_CREATION_DIAMETER_FACTOR;
-	double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * diameter * diameter * diameter;
-	double speed = *spnBodyVelocity->getValue();
-	Vector2D randomPosition(randomBetween(0, planetariumPane->tw_area.w), randomBetween(0, planetariumPane->tw_area.h));
-	Vector2D randomVelocity(randomBetween(-speed * az, speed * az), randomBetween(-speed * az, speed * az));
-	randomPosition.scale(az).add(planetarium->viewportPosition);
+	double mass = (Math::PI/6.0) * planetarium->bodyCreationDensity * pow(diameter, 3);
+	double speed = *spnBodyVelocity->getValue() * az;
+	double area[4] = {planetarium->viewportPosition.x, planetarium->viewportPosition.y, planetariumPane->tw_area.w*az, planetariumPane->tw_area.h*az};
 
 	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
-	planetarium->addCustomBody(new Body2D(mass, diameter, randomPosition, randomVelocity, Vector2D::NULL_VECTOR), SDL_util::getRandomColor());
+
+	planetarium->addRandomBody(mass, diameter, speed, area);
 }
 
 int keepAddingRandomBodyWhilePressed(void* unused)
