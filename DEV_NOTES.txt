@@ -35,7 +35,7 @@ Add random orbiting planet functionality - done
 Bouncing bodies
 G exp.
 Hightlight bodies inside the roche limit
-Introduce variations to the parameters of newly created bodies
+Introduce variations to the parameters of newly created bodies - done
 
 - 1.0 (planets-supersedure/usability milestone)
 
