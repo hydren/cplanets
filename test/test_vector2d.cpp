@@ -163,6 +163,12 @@ unit_test(unary_minus_operator_test)
 	test((-v1).x == -v1.x and (-v1).y == -v1.y, "A unary-minus vector should have oposite signal coordinates");
 }
 
+unit_test(rotation_operator_test)
+{
+	Vector2D v1(1, 0);
+	test((v1 < Math::PI) == Vector2D(0, 1), "Rotation operator failed with versor rotation");
+}
+
 //============== semantic tests ==============
 
 unit_test(no_arg_constructed_vector_length)
@@ -202,6 +208,6 @@ int main(int arc, char* argv[])
 		equality_operator_random_test();
 	}
 
-	cout << "\nTest finished. " << fail_count << " failures." << endl;
+	cout << "\nTest finished. " << fail_count << " failure(s)." << endl;
 }
 
