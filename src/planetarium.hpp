@@ -231,7 +231,7 @@ struct Planetarium extends Physics2D::Listener
 	void performPhysics(); //updates physics
 	void updateView(); //updates view
 	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
-	void getCurrentOrbitalReference(Vector2D& position, double& mass);
+	void getCurrentOrbitalReference(Vector2D& position, Vector2D& velocity, double& mass);
 
 	static int threadFunctionPhysics(void* arg); //thread function
 	static int threadFunctionPlanetariumUpdate(void* arg); //thread function

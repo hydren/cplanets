@@ -943,8 +943,8 @@ void replaceUniverse(const Universe2D& universeCopy)
 
 void addRandomBody(bool orbiting)
 {
-	const double az = 1/planetarium->viewportZoom;
-	const double area[4] = {planetarium->viewportPosition.x, planetarium->viewportPosition.y, planetariumPane->tw_area.w*az, planetariumPane->tw_area.h*az};
+	const Vector2D minPos = planetarium->getAntiTransposed(Vector2D()), maxPos = planetarium->getAntiTransposed(Vector2D(planetariumPane->tw_area.w, planetariumPane->tw_area.h));
+	const double area[4] = {minPos.x, minPos.y, maxPos.x - minPos.x, maxPos.y - minPos.y};
 
 	if(orbiting)
 		planetarium->addRandomOrbitingBody(area);

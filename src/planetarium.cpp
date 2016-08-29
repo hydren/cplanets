@@ -373,16 +373,17 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 
 	Vector2D position(Math::randomBetween(minPosX, maxPosX), Math::randomBetween(minPosY, maxPosY));
 
-	Vector2D centerOfMass;
+	Vector2D centerOfMass, centerOfMassVelocity;
 	double totalMass;
 
-	getCurrentOrbitalReference(centerOfMass, totalMass);
+	getCurrentOrbitalReference(centerOfMass, centerOfMassVelocity, totalMass);
 
 	Vector2D distanceToCenter = position.difference(centerOfMass);
 
 	double speed = sqrt((2*physics->universe.gravity*totalMass)/distanceToCenter.length());
-	speed = Math::randomNormalBetween(speed*0.8, speed*0.9);
+	speed = Math::randomNormalBetween(speed*0.7, speed*0.9);
 	Vector2D velocity = distanceToCenter.unit().perpendicular().scale(speed);
+	velocity.add(centerOfMassVelocity);
 
 	addCustomBody(mass, diameter, position, velocity);
 
@@ -806,42 +807,44 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	}
 }
 
-void Planetarium::getCurrentOrbitalReference(Vector2D& position, double& mass)
+void Planetarium::getCurrentOrbitalReference(Vector2D& position, Vector2D& velocity, double& mass)
 {
 	if(physics->referenceFrame.isPointLike())
 	{
 		vector<Planetarium::Body2DClone> bodies = getBodies();
 		if(bodies.size() == 0)
 		{
-			position = Vector2D::NULL_VECTOR;
+			position = velocity = Vector2D::NULL_VECTOR;
 			mass = 0;
 		}
 		else if(bodies.size() == 1)
 		{
 			position = bodies[0].clone.position;
+			velocity = bodies[0].clone.velocity;
 			mass = bodies[0].clone.mass;
 		}
 		else
 		{
-			Vector2D centerOfMass;
-			double totalMass = 0;
+			position.scale(0);
+			velocity.scale(0);
 			for(unsigned i = 0; i < bodies.size(); i++)
 			{
-				const Body2D& b = bodies[0].clone;
-				centerOfMass.add(b.position.times(b.mass));
-				totalMass += b.mass;
+				position.add(bodies[0].clone.position.times(bodies[0].clone.mass));
+				velocity.add(bodies[0].clone.velocity.times(bodies[0].clone.mass));
+				mass += bodies[0].clone.mass;
 			}
 
-			if(totalMass != 0) // this is for safety: obviously a total mass of 0 is something wrong...
-				centerOfMass.scale(1.0/totalMass);
-
-			position = centerOfMass;
-			mass = totalMass;
+			if(mass != 0)
+			{
+				position.scale(1.0/mass);
+				velocity.scale(1.0/mass);
+			}
 		}
 	}
 	else
 	{
 		position = physics->referenceFrame.position();
+		velocity = physics->referenceFrame.velocity();
 		mass = physics->referenceFrame.mass();
 	}
 }
