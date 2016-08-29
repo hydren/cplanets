@@ -109,6 +109,22 @@ Vector2D Physics2D::ReferenceFrame::velocity() const
 	}
 }
 
+double Physics2D::ReferenceFrame::mass() const
+{
+	if(bodies.empty())
+		return 0;
+	else if(bodies.size() == 1)
+		return bodies[0]->mass;
+	else
+	{
+		double totalMass = 0;
+		for(unsigned i = 0; i < bodies.size(); i++)
+			totalMass += bodies[i]->mass;
+
+		return totalMass;
+	}
+}
+
 bool Physics2D::ReferenceFrame::isPointLike() const
 {
 	return this->bodies.empty();

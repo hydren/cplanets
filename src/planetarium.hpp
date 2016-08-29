@@ -119,6 +119,10 @@ struct Planetarium extends Physics2D::Listener
 	/** Adds a random body with random traits. If an area is specified, the resulting body will be positioned randomly within it.*/
 	void addRandomBody(const double area[4]=null);
 
+	/** Adds a random body with random traits, orbiting the center of mass.
+	 *  If an area is specified, the resulting body will be positioned randomly within it.*/
+	void addRandomOrbitingBody(const double area[4]=null);
+
 	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
 	void removeBody(Body2D* body, bool alsoDelete = false);
 
@@ -227,6 +231,7 @@ struct Planetarium extends Physics2D::Listener
 	void performPhysics(); //updates physics
 	void updateView(); //updates view
 	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
+	void getCurrentOrbitalReference(Vector2D& position, double& mass);
 
 	static int threadFunctionPhysics(void* arg); //thread function
 	static int threadFunctionPlanetariumUpdate(void* arg); //thread function

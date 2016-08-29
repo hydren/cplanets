@@ -354,9 +354,39 @@ void Planetarium::addRandomBody(const double area[4])
 	double mass = (Math::PI/6.0) * bodyCreationDensity * pow(diameter, 3);
 	double speed = bodyCreationSpeed * az;
 
-	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
-
 	addRandomBody(mass, diameter, speed, area);
+}
+
+/** Adds a random body with random traits. If an area is specified, the resulting body will be positioned randomly within it.*/
+void Planetarium::addRandomOrbitingBody(const double area[4])
+{
+	double az = 1/viewportZoom;
+	double diameter = (bodyCreationDiameterRatio * az) * BODY_CREATION_DIAMETER_FACTOR;
+	diameter = Math::randomNormalBetween(diameter*0.9, diameter*1.1);
+	double mass = (Math::PI/6.0) * bodyCreationDensity * pow(diameter, 3);
+	mass = Math::randomNormalBetween(mass*0.9, mass*1.1);
+
+	const double minPosX = area != null ? area[0] : DBL_MIN,
+				 minPosY = area != null ? area[1] : DBL_MIN,
+				 maxPosX = area != null ? area[0] + area[2] : DBL_MAX,
+				 maxPosY = area != null ? area[1] + area[3] : DBL_MAX;
+
+	Vector2D position(Math::randomBetween(minPosX, maxPosX), Math::randomBetween(minPosY, maxPosY));
+
+	Vector2D centerOfMass;
+	double totalMass;
+
+	getCurrentOrbitalReference(centerOfMass, totalMass);
+
+	Vector2D distanceToCenter = position.difference(centerOfMass);
+
+	double speed = sqrt((2*physics->universe.gravity*totalMass)/distanceToCenter.length());
+	speed = Math::randomNormalBetween(speed*0.8, speed*0.9);
+	Vector2D velocity = distanceToCenter.unit().perpendicular().scale(speed);
+
+	addCustomBody(mass, diameter, position, velocity);
+
+	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
 }
 
 void Planetarium::removeBody(Body2D* body, bool alsoDelete)
@@ -772,6 +802,46 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	{
 		//add collision event to be consumed
 		physicsEventsManager->collisionEvents.push(ev); //provided list and merger must be copies
+	}
+}
+
+void Planetarium::getCurrentOrbitalReference(Vector2D& position, double& mass)
+{
+	if(physics->referenceFrame.isPointLike())
+	{
+		vector<Planetarium::Body2DClone> bodies = getBodies();
+		if(bodies.size() == 0)
+		{
+			position = Vector2D::NULL_VECTOR;
+			mass = 0;
+		}
+		else if(bodies.size() == 1)
+		{
+			position = bodies[0].clone.position;
+			mass = bodies[0].clone.mass;
+		}
+		else
+		{
+			Vector2D centerOfMass;
+			double totalMass = 0;
+			for(unsigned i = 0; i < bodies.size(); i++)
+			{
+				const Body2D& b = bodies[0].clone;
+				centerOfMass.add(b.position.times(b.mass));
+				totalMass += b.mass;
+			}
+
+			if(totalMass != 0) // this is for safety: obviously a total mass of 0 is something wrong...
+				centerOfMass.scale(1.0/totalMass);
+
+			position = centerOfMass;
+			mass = totalMass;
+		}
+	}
+	else
+	{
+		position = physics->referenceFrame.position();
+		mass = physics->referenceFrame.mass();
 	}
 }
 

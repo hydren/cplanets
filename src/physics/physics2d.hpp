@@ -33,6 +33,7 @@ struct Physics2D
 		friend class Physics2D;
 		Vector2D position() const;
 		Vector2D velocity() const;
+		double mass() const;
 		bool isPointLike() const;
 
 		void reset();
