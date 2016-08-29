@@ -20,12 +20,13 @@ struct AbstractPhysics2DSolver
 
 	double timeElapsed;
 	double timestep;
+	double gExp;
 
 	/// A reference to (what should be) this solver's corresponding static factory.
 	struct GenericFactory; const GenericFactory* const factory;
 
 	AbstractPhysics2DSolver(const GenericFactory* factory, Universe2D& u, double timestep=0)
-	: universe(u), timeElapsed(0), timestep(timestep), factory(factory)
+	: universe(u), timeElapsed(0), timestep(timestep), gExp(2.0), factory(factory)
 	{}
 
 	virtual ~AbstractPhysics2DSolver() {}

@@ -142,7 +142,7 @@ ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
 DropDownMenu* ddmIntegrationMethod;
-Spinner<double>* spnGravity;
+Spinner<double>* spnGravity, *spnGExp;
 Spinner<short>* spnFPS;
 Spinner<double>* spnTimeStep;
 Spinner<long>* spnStepDelay;
@@ -285,8 +285,13 @@ void CPlanets::showMainWindow()
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
+	spnGExp = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
+	setComponentPosition(spnGExp, spnGravity->area.x + spnGravity->tw_area.w + WIDGETS_SPACING, spnGravity->area.y);
+	spnGExp->setValue(&(planetarium->physics->solver->gExp), true);
+	spnGExp->setStepValue(0.1);
+
 	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
-	setComponentPosition(spnFPS, spnGravity->area.x + spnGravity->tw_area.w + WIDGETS_SPACING, spnGravity->area.y);
+	setComponentPosition(spnFPS, spnGExp->area.x + spnGExp->tw_area.w + WIDGETS_SPACING, spnGExp->area.y);
 	spnFPS->setValue(&(planetarium->fps), true);
 
 	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
@@ -793,11 +798,13 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		{
 			planetarium->physics->setSolver(selectedSolverFactory->createSolver(planetarium->physics->universe));
 			spnTimeStep->setValue(&planetarium->physics->solver->timestep); //updates the backing value
+			spnGExp->setValue(&(planetarium->physics->solver->gExp)); //updates the backing value
 		}
 
 		ddmIntegrationMethod->cmdMenu->src->label = rbtn->label.str;
 		ddmIntegrationMethod->cmdMenu->src->draw_blit_upd();
 		spnTimeStep->refresh();
+		spnGExp->refresh();
 	}
 }
 
@@ -948,6 +955,8 @@ void replaceUniverse(const Universe2D& universeCopy)
 	spnGravity->refresh();
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
 	spnTimeStep->refresh();
+	spnGExp->setValue(&(planetarium->physics->solver->gExp));
+	spnGExp->refresh();
 	refreshAllTxtBodies();
 	tabOptions->draw_blit_recur();
 }

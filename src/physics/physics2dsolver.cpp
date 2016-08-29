@@ -27,7 +27,7 @@ void AbstractPhysics2DSolver::computeAccelerations()
 		for(unsigned j = 0; j < universe.bodies.size(); j++)
 		if(b[j] != b[i])
 		{
-			double forceMagnitude = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position % b[j]->position, 2); // % is a distance operator
+			double forceMagnitude = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position % b[j]->position, gExp); // % is a distance operator
 			b[i]->acceleration += (b[i]->position - b[j]->position).normalize() * (forceMagnitude/b[i]->mass);
 		}
 	}
@@ -45,7 +45,7 @@ void AbstractPhysics2DSolver::computeAccelerations(map<Body2D*, Vector2D>& acc)
 		for(unsigned j = 0; j < universe.bodies.size(); j++)
 		if(b[i] != b[j])
 		{
-			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position.distance(b[j]->position), 2);
+			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position.distance(b[j]->position), gExp);
 			acc[b[i]] += (b[i]->position - b[j]->position).normalize() * (forceScalar/b[i]->mass);
 		}
 	}
@@ -63,7 +63,7 @@ void AbstractPhysics2DSolver::computeAccelerations(map<Body2D*, Vector2D>& acc, 
 		for(unsigned j = 0; j < universe.bodies.size(); j++)
 		if(b[i] != b[j])
 		{
-			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(pos[b[i]].distance(pos[b[j]]), 2);
+			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(pos[b[i]].distance(pos[b[j]]), gExp);
 			acc[b[i]] += (pos[b[i]] - pos[b[j]]).normalize() * (forceScalar/b[i]->mass);
 		}
 	}
