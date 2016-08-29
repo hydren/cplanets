@@ -1,5 +1,6 @@
 -------------- Bugs
 
+- Add random orbiting bodies function fails quite often when not using a reference frame.
 - Shaking bodies when using reference frame with certain parameters
 - When resizing window, adjust reference frame position
 - When clicking in a blank space of the bodies list, clear the selection
@@ -30,7 +31,7 @@ When holding R (add random body), after 1 second, starts spamming bodies until u
 
 Implement Rk2 and Rk4 integration methods - done
 Show info about system's energy (kinetic, potential, total, etc) - done
-Add random orbiting planet functionality
+Add random orbiting planet functionality - done
 Bouncing bodies
 G exp.
 Hightlight bodies inside the roche limit
