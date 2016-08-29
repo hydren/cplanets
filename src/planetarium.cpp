@@ -685,7 +685,7 @@ void Planetarium::performPhysics()
 	AbstractPhysics2DSolver* previousSolver = null;
 	while(true)
 	{
-		if(running && (not legacyControl || currentIterationCount++ < iterationsPerDisplay))
+		if(running and (not legacyControl or currentIterationCount++ < iterationsPerDisplay))
 		{
 			synchronized(physicsAccessMutex)
 			{

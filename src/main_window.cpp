@@ -142,9 +142,10 @@ ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
 DropDownMenu* ddmIntegrationMethod;
-Spinner<double>* spnTimeStep, *spnGravity;
-Spinner<long>* spnStepDelay;
+Spinner<double>* spnGravity;
 Spinner<short>* spnFPS;
+Spinner<double>* spnTimeStep;
+Spinner<long>* spnStepDelay;
 CheckBox* chckLegacyParameters;
 Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 CheckBox* chckTraceOrbit;
@@ -278,27 +279,27 @@ void CPlanets::showMainWindow()
 	ddmIntegrationMethod->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
-	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
-	setComponentPosition(spnTimeStep, ddmIntegrationMethod->getPosition().x, ddmIntegrationMethod->getPosition().y + ddmIntegrationMethod->getSize().h + WIDGETS_SPACING);
-	spnTimeStep->setValue(&(planetarium->physics->solver->timestep), true);
-	spnTimeStep->setStepValue(0.1);
-
 	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
-	setComponentPosition(spnGravity, spnTimeStep->area.x + spnTimeStep->tw_area.w + WIDGETS_SPACING, spnTimeStep->area.y);
+	setComponentPosition(spnGravity, ddmIntegrationMethod->getPosition().x, ddmIntegrationMethod->getPosition().y + ddmIntegrationMethod->getSize().h + WIDGETS_SPACING);
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
-	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,3.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay (ms):");
-	setComponentPosition(spnStepDelay, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
-	spnStepDelay->setValue(&(planetarium->stepDelay), true);
-
 	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
-	setComponentPosition(spnFPS, spnStepDelay->area.x + spnStepDelay->tw_area.w + WIDGETS_SPACING, spnStepDelay->area.y);
+	setComponentPosition(spnFPS, spnGravity->area.x + spnGravity->tw_area.w + WIDGETS_SPACING, spnGravity->area.y);
 	spnFPS->setValue(&(planetarium->fps), true);
+
+	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
+	setComponentPosition(spnTimeStep, spnGravity->area.x, spnGravity->area.y + spnGravity->tw_area.h + WIDGETS_SPACING);
+	spnTimeStep->setValue(&(planetarium->physics->solver->timestep), true);
+	spnTimeStep->setStepValue(0.1);
+
+	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,3.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay (ms):");
+	setComponentPosition(spnStepDelay, spnTimeStep->area.x + spnTimeStep->tw_area.w + WIDGETS_SPACING, spnTimeStep->area.y);
+	spnStepDelay->setValue(&(planetarium->stepDelay), true);
 
 	chckLegacyParameters = new CheckBox(tabOptions, 0, genericButtonSize, "Use legacy parameters:", onCheckBoxPressed);
 	chckLegacyParameters->d = &(planetarium->legacyControl);  // binds the checkbox to the variable
-	setComponentPosition(chckLegacyParameters, spnStepDelay->area.x, spnStepDelay->area.y + spnStepDelay->tw_area.h + WIDGETS_SPACING);
+	setComponentPosition(chckLegacyParameters, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
 	packLabeledComponent(chckLegacyParameters);
 
 	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.6*TOOLBAR_SIZE, TOOLBAR_SIZE), "Disp. period (ms):");
