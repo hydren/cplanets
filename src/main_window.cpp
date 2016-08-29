@@ -578,6 +578,14 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(btnAddRandom);
 			aux_isPressed_SDLK_r = down;
 			break;
+		case SDLK_j:
+			if(down)
+			{
+				const double az = 1/planetarium->viewportZoom;
+				const double area[4] = {planetarium->viewportPosition.x, planetarium->viewportPosition.y, planetariumPane->tw_area.w*az, planetariumPane->tw_area.h*az};
+				planetarium->addRandomOrbitingBody(area);
+			}
+			break;
 		case SDLK_o:
 			if(down) onButtonPressed(btnRecolorAll);
 			break;

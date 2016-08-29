@@ -387,6 +387,7 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 	addCustomBody(mass, diameter, position, velocity);
 
 	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
+	//http://physics.stackexchange.com/questions/227502/orbital-mechanics-will-a-satellite-crash?rq=1
 }
 
 void Planetarium::removeBody(Body2D* body, bool alsoDelete)
