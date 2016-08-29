@@ -148,6 +148,7 @@ Spinner<double>* spnTimeStep;
 Spinner<long>* spnStepDelay;
 CheckBox* chckLegacyParameters;
 Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
+CheckBox* chckBouncingOnCollision;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
 DropDownMenu* ddmTraceStyle;
@@ -310,9 +311,13 @@ void CPlanets::showMainWindow()
 	setComponentPosition(spnIterPerDisplay, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
 	spnIterPerDisplay->setValue(&(planetarium->iterationsPerDisplay));
 
+	chckBouncingOnCollision = new CheckBox(tabOptions, 0, genericButtonSize, "Bounce on collision (experimental)", onCheckBoxPressed);
+	setComponentPosition(chckBouncingOnCollision, spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING);
+	packLabeledComponent(chckBouncingOnCollision);
+
 	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
 	lblBodyCreation.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblBodyCreation, spnDisplayPeriod->area.x, spnIterPerDisplay->area.y + spnIterPerDisplay->tw_area.h + 2*WIDGETS_SPACING);
+	setComponentPosition(&lblBodyCreation, chckBouncingOnCollision->area.x, chckBouncingOnCollision->area.y + chckBouncingOnCollision->tw_area.h + 2*WIDGETS_SPACING);
 
 	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
 	setComponentPosition(spnBodyDiameter, lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING);
@@ -734,10 +739,15 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 		chck->draw_blit_upd(); //update the widget graphics
 	}
 
-	if(chck == chckTraceOrbit || tgbTraceOrbit) //update each other graphics as they share value
+	if(chck == chckTraceOrbit or chck == tgbTraceOrbit) //update each other graphics as they share value
 	{
 		tgbTraceOrbit->draw_blit_upd();
 		chckTraceOrbit->draw_blit_upd();
+	}
+
+	if(chck == chckBouncingOnCollision)
+	{
+		planetarium->physics->collisionMode = chckBouncingOnCollision->value()? Physics2D::BOUNCE_ON_COLLISION : Physics2D::MERGE_ON_COLLISION;
 	}
 }
 
