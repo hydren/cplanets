@@ -827,6 +827,7 @@ void Planetarium::getCurrentOrbitalReference(Vector2D& position, Vector2D& veloc
 		{
 			position.scale(0);
 			velocity.scale(0);
+			mass = 0;
 			for(unsigned i = 0; i < bodies.size(); i++)
 			{
 				position.add(bodies[0].clone.position.times(bodies[0].clone.mass));
