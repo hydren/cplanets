@@ -95,7 +95,7 @@ void onBodyReFocusing();
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(const Universe2D& universeCopy);
-void addRandomBody();
+void addRandomBody(bool orbiting=false);
 int keepAddingRandomBodyWhilePressed(void* unused);
 
 void onSDLInit();
@@ -156,7 +156,7 @@ PlanetariumPane* planetariumPane;
 Planetarium* planetarium; ///helper pointer
 
 FlowLayout* toolbarRight;
-Button* btnAddBody, *btnAddRandom, *btnRemove, *btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;
+Button* btnAddBody, *btnAddRandom, *btnAddRandomOrbiting, *btnRemove, *btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;
 
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
@@ -363,6 +363,9 @@ void CPlanets::showMainWindow()
 
 	btnAddRandom = new Button(window, 0, sideButtonSize, "AdR", onButtonPressed);
 	toolbarRight->addComponent(btnAddRandom);
+
+	btnAddRandomOrbiting = new Button(window, 0, sideButtonSize, "AdO", onButtonPressed);
+	toolbarRight->addComponent(btnAddRandomOrbiting);
 
 	btnRemove = new Button(window, 0, sideButtonSize, "Rem", onButtonPressed);
 	toolbarRight->addComponent(btnRemove);
@@ -579,12 +582,8 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			aux_isPressed_SDLK_r = down;
 			break;
 		case SDLK_j:
-			if(down)
-			{
-				const double az = 1/planetarium->viewportZoom;
-				const double area[4] = {planetarium->viewportPosition.x, planetarium->viewportPosition.y, planetariumPane->tw_area.w*az, planetariumPane->tw_area.h*az};
-				planetarium->addRandomOrbitingBody(area);
-			}
+			if(down) onButtonPressed(btnAddRandomOrbiting);
+			aux_isPressed_SDLK_r = down;
 			break;
 		case SDLK_o:
 			if(down) onButtonPressed(btnRecolorAll);
@@ -625,7 +624,13 @@ void onButtonPressed(Button* btn)
 	if(btn == btnAddRandom)
 	{
 		addRandomBody();
-		SDL_CreateThread(keepAddingRandomBodyWhilePressed, null);
+		SDL_CreateThread(keepAddingRandomBodyWhilePressed, new bool(false));
+	}
+
+	if(btn == btnAddRandomOrbiting)
+	{
+		addRandomBody(true);
+		SDL_CreateThread(keepAddingRandomBodyWhilePressed, new bool(true));
 	}
 
 	if(btn == btnRemove)
@@ -936,22 +941,25 @@ void replaceUniverse(const Universe2D& universeCopy)
 	tabOptions->draw_blit_recur();
 }
 
-void addRandomBody()
+void addRandomBody(bool orbiting)
 {
 	const double az = 1/planetarium->viewportZoom;
 	const double area[4] = {planetarium->viewportPosition.x, planetarium->viewportPosition.y, planetariumPane->tw_area.w*az, planetariumPane->tw_area.h*az};
 
-	planetarium->addRandomBody(area);
+	if(orbiting)
+		planetarium->addRandomOrbitingBody(area);
+	else
+		planetarium->addRandomBody(area);
 }
 
-int keepAddingRandomBodyWhilePressed(void* unused)
+int keepAddingRandomBodyWhilePressed(void* boolCreateOrbiting)
 {
 	SDL_Delay(500); // todo make this delay adjustable
 	long lastUpdateTime;
 	while(aux_isPressed_SDLK_r)
 	{
 		lastUpdateTime = SDL_GetTicks();
-		addRandomBody();
+		addRandomBody(*static_cast<bool*>(boolCreateOrbiting));
 		SDL_Delay(5000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
 	}
 	return 0;
