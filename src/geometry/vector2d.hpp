@@ -167,9 +167,9 @@ struct Vector2D
 
 	Vector2D rotation(const double& radians) const;
 
-	Vector2D& rotate(const double& radians);
-
 	Vector2D& operator <<(const double& radians);
+
+	Vector2D& rotate(const double& radians);
 
 	Vector2D perpendicular() const;
 

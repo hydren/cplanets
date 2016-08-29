@@ -291,30 +291,30 @@ Vector2D Vector2D::reflection(const Vector2D& v) const
 
 Vector2D Vector2D::operator <(const double& radians) const
 {
-	return Vector2D(x*cos(radians) - y*sin(radians), x*sin(radians) - y*cos(radians));
+	return Vector2D(x*cos(radians) - y*sin(radians), x*sin(radians) + y*cos(radians));
 }
 
 Vector2D Vector2D::rotation(const double& radians) const
 {
-	return (*this)<radians;
+	return (*this) < radians;
 }
 
-Vector2D& Vector2D::rotate(const double& radians)
+Vector2D& Vector2D::operator <<(const double& radians)
 {
 	double
 	nx = x*cos(radians) - y*sin(radians),
-	ny = x*sin(radians) - y*cos(radians);
+	ny = x*sin(radians) + y*cos(radians);
 	x = nx; y = ny;
 	return *this;
 }
 
-Vector2D& Vector2D::operator <<(const double& radians)
+Vector2D& Vector2D::rotate(const double& radians)
 {
 	return (*this) << radians;
 }
 
 Vector2D Vector2D::perpendicular() const
 {
-	return rotation(Math::PI);
+	return (*this) < 1.57079632679489661923; // rotate by pi/2 radians
 }
 
