@@ -17,6 +17,7 @@ struct Physics2D
 {
 	Universe2D universe;
 	AbstractPhysics2DSolver* solver;
+	enum {MERGE_ON_COLLISION, BOUNCE_ON_COLLISION} collisionMode;
 
 	Physics2D();
 
@@ -54,6 +55,9 @@ struct Physics2D
 	protected:
 	void resolveCollisions();
 	void computeEnergy();
+
+	void resolveCollisionsByMerging();
+	void resolveCollisionsByBouncing();
 
 	// ============== Observer pattern to deal with collision "events" ===============================
 	public:

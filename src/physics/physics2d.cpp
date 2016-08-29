@@ -24,6 +24,7 @@ bool (*removeBody)(vector<Body2D*>&, const Body2D*) = Physics2D::removeBody;
 Physics2D::Physics2D()
 : universe(),
   solver(NULL),
+  collisionMode(MERGE_ON_COLLISION),
   referenceFrame(),
   totalPotentialEnergy(0), totalKineticEnergy(0), bodyCount(0),
   onCollisionCallback(NULL),
@@ -170,6 +171,15 @@ vector<Body2D*>* collisionsOf(Body2D* body, vector< vector<Body2D*> >& collision
 
 void Physics2D::resolveCollisions()
 {
+	if(collisionMode == MERGE_ON_COLLISION)
+		resolveCollisionsByMerging();
+
+	else if(collisionMode == BOUNCE_ON_COLLISION)
+		resolveCollisionsByBouncing();
+}
+
+void Physics2D::resolveCollisionsByMerging()
+{
 	vector<Body2D*>& b = universe.bodies;
 	vector< vector<Body2D*> > collisions;
 
@@ -249,6 +259,33 @@ void Physics2D::resolveCollisions()
 		delete collisions[k][n]; //delete previously existing bodies individually
 
 	collisions.clear(); //removes all collisions lists
+}
+
+void Physics2D::resolveCollisionsByBouncing()
+{
+	vector<Body2D*>& b = universe.bodies;
+
+	// detect collisions
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+	for(unsigned j = 0; j < i; j++)
+	{
+		const double distance = b[i]->position.distance(b[j]->position), radiiSum=0.5*(b[i]->diameter + b[j]->diameter);
+		if(distance < radiiSum)
+		{
+			// ease formula
+			const Vector2D diff_i = b[i]->position - b[j]->position, diff_j = b[j]->position - b[i]->position;
+
+			//computing new velocities
+			const Vector2D vi_2 = b[i]->velocity - diff_i*((b[i]->velocity-b[j]->velocity)^diff_i)*(1.0/pow(diff_i.length(), 2))*(2.0*b[j]->mass/(b[i]->mass+b[j]->mass));
+			const Vector2D vj_2 = b[j]->velocity - diff_j*((b[j]->velocity-b[i]->velocity)^diff_j)*(1.0/pow(diff_j.length(), 2))*(2.0*b[i]->mass/(b[i]->mass+b[j]->mass));
+			b[i]->velocity = vi_2;
+			b[j]->velocity = vj_2;
+
+			//make bodies not overlap
+			b[i]->position += b[i]->velocity.unit()*(radiiSum-distance)*(b[j]->mass/(b[i]->mass+b[j]->mass));
+			b[j]->position += b[j]->velocity.unit()*(radiiSum-distance)*(b[i]->mass/(b[i]->mass+b[j]->mass));
+		}
+	}
 }
 
 void Physics2D::computeEnergy()
