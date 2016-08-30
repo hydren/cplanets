@@ -47,7 +47,7 @@ struct Planetarium extends Physics2D::Listener
 	long displayPeriod, iterationsPerDisplay;
 
 	//widget parameters
-	SDL_Color bgColor, strokeColorNormal, strokeColorFocused;
+	SDL_Color bgColor, strokeColorNormal, strokeColorFocused, strokeColorRocheLimit;
 	int strokeSizeNormal, strokeSizeFocused;
 	bool isViewportTranslationRateProportionalToZoom;
 	bool pauseOnSelection;
@@ -232,6 +232,7 @@ struct Planetarium extends Physics2D::Listener
 	void updateView(); //updates view
 	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
 	void getCurrentOrbitalReference(Vector2D& position, Vector2D& velocity, double& mass);
+	bool isPastRocheLimit(const Body2D& body, const Vector2D& primaryPosition, const double& primaryMass);
 
 	static int threadFunctionPhysics(void* arg); //thread function
 	static int threadFunctionPlanetariumUpdate(void* arg); //thread function

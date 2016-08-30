@@ -69,7 +69,8 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
 : surf(SDL_CreateRGBSurface(SDL_SWSURFACE,rect.w,rect.h,pixdepth,0,0,0,0)), size(rect), pos(rect), isRedrawPending(false),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY),
-  bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE), strokeColorFocused(SDL_util::Color::ORANGE),
+  bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE),
+  strokeColorFocused(SDL_util::Color::ORANGE), strokeColorRocheLimit(SDL_util::Color::RED),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
   isViewportTranslationRateProportionalToZoom(true), pauseOnSelection(true),
   viewportPosition(), viewportZoom(1.0), minimumBodyRenderingRadius(DEFAULT_MINIMUM_BODY_RENDERING_RADIUS), focusedBodies(), tryAA(false),
@@ -141,6 +142,10 @@ void Planetarium::draw()
 		orbitTracer.drawTrace(body);
 	}
 
+	Vector2D primaryPosition, dummy;
+	double primaryMass;
+	getCurrentOrbitalReference(primaryPosition, dummy, primaryMass);
+
 	//draw all bodies
 	foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
 	{
@@ -158,7 +163,7 @@ void Planetarium::draw()
 		int& strokeSize = isFocused? strokeSizeFocused : strokeSizeNormal;
 
 		//if body is focused draw its border with 'strokeColorFocused' color, otherwise use 'strokeColorNormal'
-		SDL_Color& borderColor = isFocused? strokeColorFocused : strokeColorNormal;
+		SDL_Color& borderColor = isFocused? strokeColorFocused : isPastRocheLimit(body.clone, primaryPosition, primaryMass)? strokeColorRocheLimit : strokeColorNormal;
 
 		//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
 		if(strokeSize > 1)
@@ -848,6 +853,16 @@ void Planetarium::getCurrentOrbitalReference(Vector2D& position, Vector2D& veloc
 		velocity = physics->referenceFrame.velocity();
 		mass = physics->referenceFrame.mass();
 	}
+}
+
+bool Planetarium::isPastRocheLimit(const Body2D& body, const Vector2D& primaryPosition, const double& primaryMass)
+{
+	const double distance = body.position.distance(primaryPosition);
+	if(distance < 0.5*body.diameter)
+		return false;
+
+	const double rocheLimit = 0.5*body.diameter*pow(2.0*primaryMass/body.mass, 1.0/3.0);
+	return distance < rocheLimit;
 }
 
 //  -----------------------------  thread functions ------------------------------------------------
