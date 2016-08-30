@@ -592,7 +592,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			break;
 		//key bindings
 		case SDLK_e:
-			if(down) onButtonPressed(btnNew);
+			if(down) onButtonPressed(btnClear);
 			break;
 		case SDLK_a:
 			if(down) onButtonPressed(btnAddBody);
