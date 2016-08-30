@@ -292,8 +292,13 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 			listeners[i]->onBodyDeletion(body);
 
 		orbitTracer.clearTrace(body);
+		physics->referenceFrame.dissociate(body);
 
-		if(alsoDelete) delete body;
+		if(alsoDelete)
+		{
+			delete static_cast<PlanetariumUserObject*>(body->userObject);
+			delete body;
+		}
 	}
 
 	focusedBodies.clear();
@@ -306,15 +311,19 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 		Collections::removeElement(physics->universe.bodies, body);
 	}
 
-	Collections::removeElement(focusedBodies, body);
-
 	//notify listeners about the body deleted
 	for(unsigned i = 0; i < listeners.size(); i++)
 		listeners[i]->onBodyDeletion(body);
 
 	orbitTracer.clearTrace(body);
+	physics->referenceFrame.dissociate(body);
+	Collections::removeElement(focusedBodies, body);
 
-	if(alsoDelete) delete body;
+	if(alsoDelete)
+	{
+		delete static_cast<PlanetariumUserObject*>(body->userObject);
+		delete body;
+	}
 }
 
 
