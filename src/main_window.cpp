@@ -280,17 +280,17 @@ void CPlanets::showMainWindow()
 	ddmIntegrationMethod->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
-	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
+	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
 	setComponentPosition(spnGravity, ddmIntegrationMethod->getPosition().x, ddmIntegrationMethod->getPosition().y + ddmIntegrationMethod->getSize().h + WIDGETS_SPACING);
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
-	spnGExp = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
+	spnGExp = new Spinner<double>(tabOptions, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
 	setComponentPosition(spnGExp, spnGravity->area.x + spnGravity->tw_area.w + WIDGETS_SPACING, spnGravity->area.y);
 	spnGExp->setValue(&(planetarium->physics->solver->gExp), true);
 	spnGExp->setStepValue(0.1);
 
-	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,2*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
+	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
 	setComponentPosition(spnFPS, spnGExp->area.x + spnGExp->tw_area.w + WIDGETS_SPACING, spnGExp->area.y);
 	spnFPS->setValue(&(planetarium->fps), true);
 
@@ -299,7 +299,7 @@ void CPlanets::showMainWindow()
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep), true);
 	spnTimeStep->setStepValue(0.1);
 
-	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,3.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay (ms):");
+	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,2.5*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay:");
 	setComponentPosition(spnStepDelay, spnTimeStep->area.x + spnTimeStep->tw_area.w + WIDGETS_SPACING, spnTimeStep->area.y);
 	spnStepDelay->setValue(&(planetarium->stepDelay), true);
 
@@ -341,15 +341,15 @@ void CPlanets::showMainWindow()
 
 	LabelWin lblOrbitTracing(tabOptions, Rect(), "Orbit tracing");
 	lblOrbitTracing.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblOrbitTracing, spnBodyVelocity->area.x, spnBodyVelocity->area.y + spnBodyVelocity->tw_area.h + 3*WIDGETS_SPACING);
+	setComponentPosition(&lblOrbitTracing, spnBodyVelocity->area.x, spnBodyVelocity->area.y + spnBodyVelocity->tw_area.h + 1.6*WIDGETS_SPACING);
 
 	chckTraceOrbit = new CheckBox(tabOptions, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
-	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + WIDGETS_SPACING);
+	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + 1.5*WIDGETS_SPACING);
 	packLabeledComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
-	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + WIDGETS_SPACING + 3);
+	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + 0.5*WIDGETS_SPACING + 3);
 	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength), true);
 
 	factory.removeAllItems();

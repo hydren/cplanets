@@ -12,7 +12,6 @@
 
 -------------- To Do
 
-- Fix the FPS' spinner alignment
 - Make it possible to optionally disable computing the roche limit (to improve performance)
 - Make it possible to optionally disable computing the system's energy (to improve performance)
 - Persist G. Exp when clearing universe
