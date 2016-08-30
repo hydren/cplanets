@@ -68,7 +68,7 @@ struct Planetarium::Physics2DEventsManager
 Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
 : surf(SDL_CreateRGBSurface(SDL_SWSURFACE,rect.w,rect.h,pixdepth,0,0,0,0)), size(rect), pos(rect), isRedrawPending(false),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
-  legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY),
+  legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY), rocheLimitComputingEnabled(false),
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE),
   strokeColorFocused(SDL_util::Color::ORANGE), strokeColorRocheLimit(SDL_util::Color::RED),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
@@ -144,7 +144,8 @@ void Planetarium::draw()
 
 	Vector2D primaryPosition, dummy;
 	double primaryMass;
-	getCurrentOrbitalReference(primaryPosition, dummy, primaryMass);
+	if(rocheLimitComputingEnabled)
+		getCurrentOrbitalReference(primaryPosition, dummy, primaryMass);
 
 	//draw all bodies
 	foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
@@ -163,7 +164,7 @@ void Planetarium::draw()
 		int& strokeSize = isFocused? strokeSizeFocused : strokeSizeNormal;
 
 		//if body is focused draw its border with 'strokeColorFocused' color, otherwise use 'strokeColorNormal'
-		SDL_Color& borderColor = isFocused? strokeColorFocused : isPastRocheLimit(body.clone, primaryPosition, primaryMass)? strokeColorRocheLimit : strokeColorNormal;
+		SDL_Color& borderColor = isFocused? strokeColorFocused : rocheLimitComputingEnabled and isPastRocheLimit(body.clone, primaryPosition, primaryMass)? strokeColorRocheLimit : strokeColorNormal;
 
 		//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
 		if(strokeSize > 1)

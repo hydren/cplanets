@@ -45,6 +45,7 @@ struct Planetarium extends Physics2D::Listener
 	short fps;
 	bool legacyControl;
 	long displayPeriod, iterationsPerDisplay;
+	bool rocheLimitComputingEnabled;
 
 	//widget parameters
 	SDL_Color bgColor, strokeColorNormal, strokeColorFocused, strokeColorRocheLimit;
