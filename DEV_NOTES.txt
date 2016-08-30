@@ -17,8 +17,6 @@
 - Delete/Remove all bodies when pressing the 'e' key (and also create a 'clear' button) instead of creating a new universe instance
 - Do a changes.txt file
 - Make the spacebar change the reference frame to the current universe's center of mass (follow all bodies)
-- Make the G. Exp a universe attribute (and not the solver's)
-- Save the G. Exp when saving a universe
 - Highlight red the log P/E energy info when not using G.Exp=2 (as logP computation is incorrect for G.Exp != 2)
 - (Optionally/to decide) Move the computeAccelerations()/derive() methods to Physics2D and make the solver point to a instance of physics instead of a Universe one.
 - Milestones

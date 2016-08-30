@@ -80,6 +80,7 @@ void ApplicationIO::save(const Universe2D& universe, const std::string& barefile
 	{
 		string content = "universe definition";
 		content = content + "\ngravity is " + universe.gravity;
+		if(universe.gExp != 2.0) content = content + "\ngexp is " + universe.gExp;
 
 		const_foreach(const Body2D*, body, vector<Body2D*>, universe.bodies)
 		{
@@ -124,13 +125,23 @@ Universe2D* ApplicationIO::load(std::string filename, FileFormat format)
 		while(fis.good() && String::trim(string(buffer)) == "");
 
 		if(not String::startsWith(String::trim(string(buffer)), "gravity is ")) return null; //should gave gravity specified
-
 		string gravityStr = String::split(String::trim(string(buffer)), ' ').back();
-
 		if(not String::parseable<double>(gravityStr)) return null; //gravity value should be parseable
+		double tmpGravity = String::parse<double>(gravityStr);
+
+		// skip spaces
+		do fis.getline(buffer, 512);
+		while(fis.good() && String::trim(string(buffer)) == "");
+
+		string gExpStr("2.0");
+		if(String::startsWith(String::trim(string(buffer)), "gexp is ")) //case gExp was specified
+			gExpStr = String::split(String::trim(string(buffer)), ' ').back();
+		if(not String::parseable<double>(gExpStr)) return null; //gExp value should be parseable (or not specified at all)
+		double tmpGExp = String::parse<double>(gExpStr);
 
 		Universe2D* universe = new Universe2D();
-		universe->gravity = String::parse<double>(gravityStr);
+		universe->gravity = tmpGravity;
+		universe->gExp = tmpGExp;
 
 		string line;
 		while(fis.good())
