@@ -287,7 +287,7 @@ void CPlanets::showMainWindow()
 
 	spnGExp = new Spinner<double>(tabOptions, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
 	setComponentPosition(spnGExp, spnGravity->area.x + spnGravity->tw_area.w + WIDGETS_SPACING, spnGravity->area.y);
-	spnGExp->setValue(&(planetarium->physics->solver->gExp), true);
+	spnGExp->setValue(&(planetarium->physics->universe.gExp), true);
 	spnGExp->setStepValue(0.1);
 
 	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
@@ -803,7 +803,7 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		{
 			planetarium->physics->setSolver(selectedSolverFactory->createSolver(planetarium->physics->universe));
 			spnTimeStep->setValue(&planetarium->physics->solver->timestep); //updates the backing value
-			spnGExp->setValue(&(planetarium->physics->solver->gExp)); //updates the backing value
+			spnGExp->setValue(&(planetarium->physics->universe.gExp)); //updates the backing value
 		}
 
 		ddmIntegrationMethod->cmdMenu->src->label = rbtn->label.str;
@@ -960,7 +960,7 @@ void replaceUniverse(const Universe2D& universeCopy)
 	spnGravity->refresh();
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
 	spnTimeStep->refresh();
-	spnGExp->setValue(&(planetarium->physics->solver->gExp));
+	spnGExp->setValue(&(planetarium->physics->universe.gExp));
 	spnGExp->refresh();
 	refreshAllTxtBodies();
 	tabOptions->draw_blit_recur();

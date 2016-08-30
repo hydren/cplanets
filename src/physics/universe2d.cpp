@@ -12,11 +12,11 @@
 using std::vector;
 
 Universe2D::Universe2D()
-: gravity(1)
+: gravity(1), gExp(2.0)
 {}
 
 Universe2D::Universe2D(const Universe2D& u)
-: gravity(u.gravity)
+: gravity(u.gravity), gExp(u.gExp)
 {
 	const_foreach(Body2D*, i, vector<Body2D*>, u.bodies)
 	{

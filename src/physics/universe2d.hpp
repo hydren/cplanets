@@ -14,7 +14,7 @@
 
 struct Universe2D
 {
-	double gravity;
+	double gravity, gExp;
 	std::vector<Body2D*> bodies;
 
 	/** Creates an empty universe with gravity value equal to 1. */
