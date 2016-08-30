@@ -836,9 +836,12 @@ void onUserEvent(int cmd,int param,int param2)
 		if(param == planetariumPane->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
 		{
 			planetariumPane->doRefresh();
-			msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
-			msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
-			msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
+			if(planetarium->physics->systemEnergyComputingEnabled)
+			{
+				msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
+				msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
+				msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
+			}
 			msgBodyCount->draw_mes("%u", planetarium->physics->bodyCount);
 		}
 	}

@@ -25,7 +25,7 @@ Physics2D::Physics2D()
 : universe(),
   solver(NULL),
   collisionMode(MERGE_ON_COLLISION),
-  referenceFrame(),
+  referenceFrame(), systemEnergyComputingEnabled(true),
   totalPotentialEnergy(0), totalKineticEnergy(0), bodyCount(0),
   onCollisionCallback(NULL),
   listeners()
@@ -38,7 +38,8 @@ void Physics2D::step()
 
 	solver->step();	//update positions
 	resolveCollisions();
-	computeEnergy();
+	if(systemEnergyComputingEnabled)
+		computeEnergy();
 	bodyCount = universe.bodies.size();
 
 	//move reference frame manually if point-like (and frame has velocity)

@@ -73,6 +73,7 @@ struct Physics2D
 
 	ReferenceFrame referenceFrame;
 
+	bool systemEnergyComputingEnabled;
 	long double totalPotentialEnergy, totalKineticEnergy;
 	unsigned bodyCount;
 
