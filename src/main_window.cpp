@@ -165,6 +165,7 @@ FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
 Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
 ToogleButton* tgbAA;
+CheckBox* chckComputeEnergy;
 ValueShower* msgLogK, *msgLogP, *msgLogE, *msgBodyCount;
 
 
@@ -435,6 +436,11 @@ void CPlanets::showMainWindow()
 	msgBodyCount = new ValueShower(window, Style(2), Point(), 8, "Count:");
 	toolbarSouthLayout->addComponent(msgBodyCount);
 	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+
+	chckComputeEnergy = new CheckBox(window, 0, genericButtonSize, "", onCheckBoxPressed);
+	chckComputeEnergy->d = &(planetarium->physics->systemEnergyComputingEnabled);  // binds the checkbox to the variable
+	packLabeledComponent(chckComputeEnergy);
+	toolbarSouthLayout->addComponent(chckComputeEnergy);
 
 	msgLogK = new ValueShower(window, Style(2), Point(), 10, "Log K.:");
 	toolbarSouthLayout->addComponent(msgLogK);
@@ -774,6 +780,22 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 	if(chck == chckBouncingOnCollision)
 	{
 		planetarium->physics->collisionMode = chckBouncingOnCollision->value()? Physics2D::BOUNCE_ON_COLLISION : Physics2D::MERGE_ON_COLLISION;
+	}
+
+	if(chck == chckComputeEnergy)
+	{
+		if(planetarium->physics->systemEnergyComputingEnabled)
+		{
+			msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
+			msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
+			msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
+		}
+		else
+		{
+			msgLogK->draw_mes("--");
+			msgLogP->draw_mes("--");
+			msgLogE->draw_mes("--");
+		}
 	}
 }
 

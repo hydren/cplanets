@@ -12,9 +12,7 @@
 
 -------------- To Do
 
-- Make it possible to optionally disable computing the system's energy (to improve performance)
 - Do a changes.txt file
-- Highlight red the log P/E energy info when not using G.Exp=2 (as logP computation is incorrect for G.Exp != 2)
 - (Optionally/to decide) Move the computeAccelerations()/derive() methods to Physics2D and make the solver point to a instance of physics instead of a Universe one.
 - Milestones
 
@@ -57,6 +55,7 @@ Basic "help" dialog
 
 Make a spinner to specify new body creation parameters' deviation.
 Make it possible to optionally disable orbit tracing inner computation, as the current checkbox only hides it (to improve performance)
+Highlight red the log P/E energy info when not using G.Exp=2 (as logP computation is incorrect for G.Exp != 2)
 Rotate functionality
 Redo functionality
 Capability to change background color
