@@ -158,7 +158,8 @@ PlanetariumPane* planetariumPane;
 Planetarium* planetarium; ///helper pointer
 
 FlowLayout* toolbarRight;
-Button* btnAddBody, *btnAddRandom, *btnAddRandomOrbiting, *btnRemove, *btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;
+Button* btnAddBody, *btnAddRandom, *btnAddRandomOrbiting, *btnRemove, *btnClear,
+	*btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;
 
 FlowLayout* toolbarSouthLayout;
 ToogleButton* tgbTraceOrbit;
@@ -385,6 +386,9 @@ void CPlanets::showMainWindow()
 
 	btnRemove = new Button(window, 0, sideButtonSize, "Rem", onButtonPressed);
 	toolbarRight->addComponent(btnRemove);
+
+	btnClear = new Button(window, 0, sideButtonSize, "Clr", onButtonPressed);
+	toolbarRight->addComponent(btnClear);
 
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
 
@@ -652,6 +656,11 @@ void onButtonPressed(Button* btn)
 	if(btn == btnRemove)
 	{
 		planetarium->removeFocusedBodies(true);
+	}
+
+	if(btn == btnClear)
+	{
+		planetarium->removeAllBodies();
 	}
 
 	if(btn == btnRecolorAll)
