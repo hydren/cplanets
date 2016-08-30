@@ -14,7 +14,6 @@
 
 - Make it possible to optionally disable computing the system's energy (to improve performance)
 - Do a changes.txt file
-- Make the spacebar change the reference frame to the current universe's center of mass (follow all bodies)
 - Highlight red the log P/E energy info when not using G.Exp=2 (as logP computation is incorrect for G.Exp != 2)
 - (Optionally/to decide) Move the computeAccelerations()/derive() methods to Physics2D and make the solver point to a instance of physics instead of a Universe one.
 - Milestones

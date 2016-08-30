@@ -623,6 +623,13 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_s:
 			if(down) onCheckBoxPressed(tgbAA, true);
 			break;
+		case SDLK_SPACE:
+			if(down)
+			{
+				planetarium->setFocusedBodies(planetarium->physics->universe.bodies);
+				onButtonPressed(btnFollowSelection);
+			}
+			break;
 		default:break;
 	}
 }
