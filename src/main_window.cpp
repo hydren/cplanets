@@ -148,7 +148,7 @@ Spinner<double>* spnTimeStep;
 Spinner<long>* spnStepDelay;
 CheckBox* chckLegacyParameters;
 Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
-CheckBox* chckBouncingOnCollision;
+CheckBox* chckBouncingOnCollision, *chckComputeRocheLimit;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
 DropDownMenu* ddmTraceStyle;
@@ -320,9 +320,14 @@ void CPlanets::showMainWindow()
 	setComponentPosition(chckBouncingOnCollision, spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING);
 	packLabeledComponent(chckBouncingOnCollision);
 
+	chckComputeRocheLimit = new CheckBox(tabOptions, 0, genericButtonSize, "Highlight bodies within roche limit", onCheckBoxPressed);
+	chckComputeRocheLimit->d = &(planetarium->rocheLimitComputingEnabled);
+	setComponentPosition(chckComputeRocheLimit, chckBouncingOnCollision->area.x, chckBouncingOnCollision->area.y + chckBouncingOnCollision->tw_area.h + WIDGETS_SPACING);
+	packLabeledComponent(chckComputeRocheLimit);
+
 	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
 	lblBodyCreation.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblBodyCreation, chckBouncingOnCollision->area.x, chckBouncingOnCollision->area.y + chckBouncingOnCollision->tw_area.h + 2*WIDGETS_SPACING);
+	setComponentPosition(&lblBodyCreation, chckComputeRocheLimit->area.x, chckComputeRocheLimit->area.y + chckComputeRocheLimit->tw_area.h + 1.8*WIDGETS_SPACING);
 
 	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
 	setComponentPosition(spnBodyDiameter, lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING);
