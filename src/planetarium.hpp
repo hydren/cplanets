@@ -108,6 +108,9 @@ struct Planetarium extends Physics2D::Listener
 	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
 	void removeBody(Body2D* body, bool alsoDelete = false);
 
+	/** Removes (and deletes) all bodies from the universe. */
+	void removeAllBodies();
+
 	/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
 	void addCustomBody(Body2D* body, SDL_Color* color=null);
 

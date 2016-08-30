@@ -317,6 +317,38 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 	if(alsoDelete) delete body;
 }
 
+
+/** Removes (and deletes) all bodies from the universe. */
+void Planetarium::removeAllBodies()
+{
+	vector<Body2D*> removedBodiesPointers;
+	synchronized(physicsAccessMutex)
+	{
+		// write down all bodies
+		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
+			removedBodiesPointers.push_back(body);
+
+		//detatch bodies/remove references
+		this->physics->universe.bodies.clear();
+	}
+
+	focusedBodies.clear();
+	physics->referenceFrame.reset();
+
+	foreach(Body2D*, body, vector<Body2D*>, removedBodiesPointers)
+	{
+		//notify listeners about the body deleted
+		for(unsigned i = 0; i < listeners.size(); i++)
+			listeners[i]->onBodyDeletion(body);
+
+		orbitTracer.clearTrace(body);
+
+		//trash it
+		delete static_cast<PlanetariumUserObject*>(body->userObject);
+		delete body;
+	}
+}
+
 /** Adds (safely) a custom body. If no color is specified, a random color will be used. */
 void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 {
