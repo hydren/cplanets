@@ -105,8 +105,8 @@ struct Planetarium extends Physics2D::Listener
 	 *  Note that even if you prevent deletion of the focused bodies, you'll need to copy the vector of focused bodies beforehand, as this method also clears the 'focusedBodies' vector. */
 	void removeFocusedBodies(bool alsoDelete = true);
 
-	/** Assign a new random color to every body on the current universe (the safe way) */
-	void recolorAllBodies();
+	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
+	void removeBody(Body2D* body, bool alsoDelete = false);
 
 	/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
 	void addCustomBody(Body2D* body, SDL_Color* color=null);
@@ -124,8 +124,8 @@ struct Planetarium extends Physics2D::Listener
 	 *  If an area is specified, the resulting body will be positioned randomly within it.*/
 	void addRandomOrbitingBody(const double area[4]=null);
 
-	/** Removes 'body' from the universe, if it contains it. If 'alsoDelete' is true, calls the the destructor of 'body' after its removal. If the universe does't contain 'body', then 'body' remains intact. */
-	void removeBody(Body2D* body, bool alsoDelete = false);
+	/** Assign a new random color to every body on the current universe (the safe way) */
+	void recolorAllBodies();
 
 	/** Returns a list of bodies on planetarium (the safe way). Changes on it does not reflect on the planetarium. */
 	std::vector<Body2DClone> getBodies() const;

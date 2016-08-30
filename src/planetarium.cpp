@@ -299,18 +299,22 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	focusedBodies.clear();
 }
 
-void Planetarium::recolorAllBodies()
+void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
-		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
-		{
-			PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
-			SDL_Color* oldColor = custom->color;
-			custom->color = SDL_util::getRandomColor();
-			delete oldColor;
-		}
+		Collections::removeElement(physics->universe.bodies, body);
 	}
+
+	Collections::removeElement(focusedBodies, body);
+
+	//notify listeners about the body deleted
+	for(unsigned i = 0; i < listeners.size(); i++)
+		listeners[i]->onBodyDeletion(body);
+
+	orbitTracer.clearTrace(body);
+
+	if(alsoDelete) delete body;
 }
 
 /** Adds (safely) a custom body. If no color is specified, a random color will be used. */
@@ -393,26 +397,22 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 
 	addCustomBody(mass, diameter, position, velocity);
 
-	//TODO set velocity to orbit: ve = sqrt(2GM/r) when adding orbiting body
+	//source info:
 	//http://physics.stackexchange.com/questions/227502/orbital-mechanics-will-a-satellite-crash?rq=1
 }
 
-void Planetarium::removeBody(Body2D* body, bool alsoDelete)
+void Planetarium::recolorAllBodies()
 {
 	synchronized(physicsAccessMutex)
 	{
-		Collections::removeElement(physics->universe.bodies, body);
+		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
+		{
+			PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
+			SDL_Color* oldColor = custom->color;
+			custom->color = SDL_util::getRandomColor();
+			delete oldColor;
+		}
 	}
-
-	Collections::removeElement(focusedBodies, body);
-
-	//notify listeners about the body deleted
-	for(unsigned i = 0; i < listeners.size(); i++)
-		listeners[i]->onBodyDeletion(body);
-
-	orbitTracer.clearTrace(body);
-
-	if(alsoDelete) delete body;
 }
 
 vector<Planetarium::Body2DClone> Planetarium::getBodies() const
