@@ -12,7 +12,16 @@
 
 -------------- To Do
 
+- Fix the FPS' spinner alignment
+- Make it possible to optionally disable computing the roche limit (to improve performance)
+- Make it possible to optionally disable computing the system's energy (to improve performance)
+- Persist G. Exp when clearing universe
+- Delete/Remove all bodies when pressing the 'e' key (and also create a 'clear' button) instead of creating a new universe instance
 - Do a changes.txt file
+- Make the spacebar change the reference frame to the current universe's center of mass (follow all bodies)
+- Make the G. Exp a universe attribute (and not the solver's)
+- Save the G. Exp when saving a universe
+- (Optionally/to decide) Move the computeAccelerations()/derive() methods to Physics2D and make the solver point to a instance of physics instead of a Universe one.
 - Milestones
 
 -------------- Backlog
@@ -34,11 +43,12 @@ Show info about system's energy (kinetic, potential, total, etc) - done
 Add random orbiting planet functionality - done
 Bouncing bodies - done
 G exp. - done
-Hightlight bodies inside the roche limit
+Hightlight bodies inside the roche limit - done
 Introduce variations to the parameters of newly created bodies - done
 
 - 1.0 (planets-supersedure/usability milestone)
 
+Draw a arrow on the cursor's tip when selecting new body velocity
 Undo functionality
 Show paused/resumed state more explicitly
 Save preferences (window positions, paths, etc)
@@ -50,6 +60,8 @@ Basic "help" dialog
 
 - 1.x
 
+Make a spinner to specify new body creation parameters' deviation.
+Make it possible to optionally disable orbit tracing inner computation, as the current checkbox only hides it (to improve performance)
 Rotate functionality
 Redo functionality
 Capability to change background color
