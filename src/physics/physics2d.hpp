@@ -63,6 +63,9 @@ struct Physics2D
 		/** Sets this reference frame as the center of mass of the given set of bodies */
 		void set(const std::vector<Body2D*>& reference);
 
+		/** If this reference frame is not point-like and contains the given body in its set of tracked bodies, removes the given body from the tracked bodies. Otherwise this method does nothing. */
+		void dissociate(const Body2D* body);
+
 		protected:
 		Vector2D customPosition, customVelocity;
 		std::vector<const Body2D*> bodies;

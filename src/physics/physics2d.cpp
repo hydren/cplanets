@@ -158,6 +158,13 @@ void Physics2D::ReferenceFrame::set(const std::vector<Body2D*>& reference)
 	this->bodies.assign(reference.begin(), reference.end());
 }
 
+void Physics2D::ReferenceFrame::dissociate(const Body2D* body)
+{
+	vector<const Body2D*>::iterator it = std::find(this->bodies.begin(), this->bodies.end(), body);
+	if(it == this->bodies.end()) return;
+	this->bodies.erase(it);
+}
+
 vector<Body2D*>* collisionsOf(Body2D* body, vector< vector<Body2D*> >& collisions)
 {
 	for(unsigned i = 0; i < collisions.size(); i++)
