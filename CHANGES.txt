@@ -1,6 +1,10 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.0 - 31/08/2016
++ Big time refactoring
+* Updated makefile
+
 0.8.12 - 30/08/2016
 + Added 'Clr' ("Clear") button to remove all bodies (with keybindings to 'e' key). This is different than creating a new universe, as clearing keeps current parameters (gravity, g.exp., etc);
 ~ Saving/loading G.Exp from universe files;

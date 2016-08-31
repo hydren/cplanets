@@ -17,6 +17,7 @@ CPP_SRCS += \
 ../src/widgets/tab_control.cpp \
 ../src/widgets/tab_set.cpp \
 ../src/widgets/toogle_button.cpp \
+../src/widgets/value_shower.cpp \
 ../src/widgets/widgets_debug.cpp \
 ../src/widgets/widgets_util.cpp 
 
@@ -34,6 +35,7 @@ OBJS += \
 ./src/widgets/tab_control.o \
 ./src/widgets/tab_set.o \
 ./src/widgets/toogle_button.o \
+./src/widgets/value_shower.o \
 ./src/widgets/widgets_debug.o \
 ./src/widgets/widgets_util.o 
 
@@ -51,6 +53,7 @@ CPP_DEPS += \
 ./src/widgets/tab_control.d \
 ./src/widgets/tab_set.d \
 ./src/widgets/toogle_button.d \
+./src/widgets/value_shower.d \
 ./src/widgets/widgets_debug.d \
 ./src/widgets/widgets_util.d 
 
