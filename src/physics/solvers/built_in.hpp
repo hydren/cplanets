@@ -27,7 +27,7 @@ namespace BuiltInSolvers
 		REGISTER_CLASS_FACTORY(EulerCromerSolver);
 
 		REGISTER_CLASS_FACTORY(LeapfrogSolver);
-		REGISTER_CLASS_FACTORY(VelocityVerlet);
+		REGISTER_CLASS_FACTORY(VelocityVerletSolver);
 
 		REGISTER_CLASS_FACTORY(StormerVerletSolver);
 		REGISTER_CLASS_FACTORY(BeemanSolver);

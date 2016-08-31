@@ -32,13 +32,13 @@ void LeapfrogSolver::step()
 	timeElapsed += timestep;
 }
 
-DEFINE_CLASS_FACTORY(VelocityVerlet, "Velocity Verlet");
+DEFINE_CLASS_FACTORY(VelocityVerletSolver, "Velocity Verlet");
 
-VelocityVerlet::VelocityVerlet(Physics2D& u)
+VelocityVerletSolver::VelocityVerletSolver(Physics2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01)
 {}
 
-void VelocityVerlet::step()
+void VelocityVerletSolver::step()
 {
 	if(timeElapsed == 0) //except for the first step, this is already calculated by the second part of the step
 		physics.computeAccelerations();

@@ -19,11 +19,11 @@ struct LeapfrogSolver extends AbstractPhysics2DSolver
 	void step();
 };
 
-struct VelocityVerlet extends AbstractPhysics2DSolver
+struct VelocityVerletSolver extends AbstractPhysics2DSolver
 {
-	DECLARE_CLASS_FACTORY(VelocityVerlet);
+	DECLARE_CLASS_FACTORY(VelocityVerletSolver);
 
-	VelocityVerlet(Physics2D& u);
+	VelocityVerletSolver(Physics2D& u);
 	void step();
 };
 
