@@ -1,0 +1,244 @@
+(+ added, ~ changed, * fixed, - removed)
+
+History:
+0.8.12 - 30/08/2016
++ Added 'Clr' ("Clear") button to remove all bodies (with keybindings to 'e' key). This is different than creating a new universe, as clearing keeps current parameters (gravity, g.exp., etc);
+~ Saving/loading G.Exp from universe files;
++ Added spacebar keybinding to follow all bodies (change the reference frame to the center of mass of the universe);
++ Added checkbox to enable/disable computation about the system's energy info (as it could affect performace);
+* Fixed a few memory leaks.
+~ Refactoring;
+
+0.8.11 - 30/08/2016
++ Specify gravity force exponent (G. Exp.) functionality.
++ Added option to highlight bodies within their Roche limit in relation to the current orbital reference.
+* Fixed adding random orbiting body when the program was not set to follow bodies (ref. frames)
+
+0.8.10 - 29/08/2016
++ Added experimental bouncing collisions mode.
+~ Reorganized options tab.
+
+0.8.9 - 29/08/2016
++ Add random orbiting body functionality ('AdO' button or 'j' key)
+* Fixed creating random bodies when using a (fast) moving reference frame.
+~ Introduced minor stochastic variations to newly created bodies characteristics (diameter, mass, speed).
+~ Refactoring
+
+0.8.8 - 23/08/2016
++ Showing computed system energy on the bottom toolbar.
+
+0.8.7 - 11/08/2016
++ Added Adams-Bashforth-Moulton solvers (2-5th order).
+~ RK3 v2 solver now is listed as Heun's RK3.
+* Fixed Ralston's RK4 solver.
+* Fixed Stormer-Verlet solver behavior when changing timestep
+dynamically.
+~ Rearranged widgets on the "Options" tab.
+
+0.8.6 - 09/08/2016
++ Added Adams-Bashforth solvers (2 to 5-steps).
+~ Preserve timestep when changing solvers.
+* Fixed bug in parameters after changing universe (loading, clearing).
+and possible memory leak.
+* Fixed visual glitch after using the file dialog.
+~ Other minor changes.
+~ Refactoring.
+
+0.8.5 - 08/08/2016
++ Added Beeman's method solver.
++ Added Backward Difference Correction method solver.
+* Fixed Midpoint solver.
+~ Preserve solver type after loading universes.
+- Removed implicit midpoint solver (it actually was a leapfrog solver)
+~ RK3 v1 now is listed as Kutta's RK3
+
+0.8.4 - 25/07/2016
++ Added Gill's RK4 solver.
++ Added Ralston's RK4 solver.
++ Added Nystrom's RK5 solver.
++ Added Butcher's RK6 solver.
++ Added Verner's RK8 solver.
++ Added generic Runge-Kutta solver implementation (not available from GUI).
+* Fixed gravity being set to 1 when creating a new universe.
+
+0.8.3 - 21/07/2016
++ Added Heun solver (2nd-order RK)
++ Added Ralston solver (2nd-order RK)
++ Added 3/8-Rule 4th-order RK solver
++ Added two 3rd-order RK solvers
+~ Improved implementation of Classic 4th-order RK
+* Fixed crash when too many bodies were created through pressing 'R' key
+
+0.8.2 - 18/07/2016
++ Added 4th-order Runge-Kutta solver.
++ Added Midpoint solver (2nd-order R-K)
+
+0.8.1 - 14/07/2016
+* Fixed semi-implicit Euler solver.
++ Added 2 new solvers: Stormer-Verlet and Verlet Velocity.
+~ Refactored all solvers.
+
+0.8.0 - 11/07/2016
+~ Scrollable pane now can be scrolled through mouse wheel scrolling.
+~ Planetarium class is SDL_widgets-independent. A SDL_widgets adapter
+was conceived around it, namely PlanetariumPane.
+* Many bug fixes
+
+0.7.5 - 08/07/2016
+~ Holding R will start spamming random bodies
+
+0.7.4 - 08/07/2016
+* Fixed orbit tracing, body creation and selection under reference frames.
+~ Minor optimizations.
+
+0.7.2 - 07/07/2016
++ Partially implemented reference frame (follows a selected group of bodies)
+
+0.7.1 - 07/07/2016
+~ Moved about button to the left button group.
+~ Internal changes: preliminar support for reference frames.
+
+0.7.0 - 06/07/2016
+~ Minor refactoring.
+~ Version bump.
+
+0.6.6 - 05/07/2016
++ Added -h/--help argument.
+~ Selecting bodies in the list will highlight them. Also works by selecting bodies on the planetarium.
+
+0.6.5 - 04/07/2016
++ Preliminar makefile for linux build.
+~ Program shows custom icon.
++ Now accepting -v or --version argument, which shows the version and exit.
++ Now accepting -c or --centered, which makes the window centered on start (setting SDL_VIDEO_CENTERED=1 environment variable also works).
+~ Better "About" dialog.
+* Minor fixes
++ Bodies list now supports selection (using custom widget). Multi-selection is supported.
+~ Internal changes, refatoring.
+
+0.6.1 - 08/06/2016
++ Added Remove button.
+* Fixed a bug when colliding a large number of bodies.
+~ Internal refactoring.
+
+0.6.0 - 07/06/2016
++ Added controls for step delay and FPS.
++ Added functional legacy 'planets'-style controls (display period and iterations per display)
+~ Display period has a different meaning; Previously it incorrectly worked as a delay between each iterator
+- Removed spline trace style option and renamed "Point" style to "Dotted"
+~ Better internal thread control
+~ A lot of refactoring and some fixes
+
+0.5.4 - 07/06/2016
+* Fixed crash when too many bodies collided at the same time
++ Body selection through selection and double-click
+~ Changed default gravity to 9.807
+~ Minor changes
+
+0.5.3 - 01/06/2016
++ Added possibility to switch the integration method.
+~ Minor changes.
+~ Minor code cleanup.
++ Experimental spline trace type now available.
+
+0.5.2b - 25/05/2016
+* Fixed compilation on win32 build.
+
+0.5.2 - 20/05/2016
+* Fix pausing when pressing "New" button.
++ Added field to select new random body velocity.
+~ Beatified About dialog.
+
+0.5.1 - 19/05/2016
+* Fixed bodies list capacity.
++ Added scrollbar to bodies list.
+~ Internal changes
+
+0.5.0 - 13/05/2016
++ Added file load/save capability with dialogs.
++ Created DialogBgrWin widget.
++ Created FileDialog widget.
+~ Renamed widgets namespace from SDL_util to WidgetsExtra, to better reflect their purpose.
+* Fixed occasional bug when creating/colliding bodies.
+* Fixed orbit trace glitch on newly created/collided bodies.
+
+0.4.6 - 11/05/2016
++ Universe IO API, 'New' and 'Load' button working.
+~ Using SDL_widgets revision that contains a improved 'configure' to generate the config.h file properly (config.h is not versioned anymore).
+
+0.4.5 - 03/05/2016
++ Drawing with antialiasing option. 
+~ Rearranged ui.
+~ Decoupled Planetarium code.
+
+0.4.1 - 11/05/2016
++ Added AA hint option.
+
+0.4.0 - 02/05/2016
+~ Tabbed options.
+~ Refreshed buttons.
++ New widgets.
+~ Big refactoring.
+
+0.3.7 - 27/04/2016
++ Body creation parameters. 
+~ Proper "Add random body" button.
+
+0.3.6 - 26/04/2016
+* Newly created bodies via gui have proper mass and radius.
+
+0.3.5 - 26/04/2016
+* Minor fixes.
+- Removed some old kludges and used Observer pattern/static method pointer instead. 
+- Removed a dependency from planetarium (main_window.cpp).
+~ Significant refactoring.
+    
+0.3.1 - 26/04/2016
+~ Improved the new widgets.
+
+0.3.0 - 20/04/2016
++ Added new widgets.
+~ Major refactoring. 
+
+0.2.6 - 10/04/2016
++ Added orbit tracing functionality.
+
+0.2.5 - 06/04/2016
++ Implemented zoom and FPS limiting
+
+0.2.4 - 05/04/2016
++ Created Spacer widget, run and pause buttons.
+
+0.2.3 - 05/04/2016
+~ Refactoring.
+* Some fixes.
+
+0.2.2 - 02/04/2016
+* Fixed crashes related to race conditions.
+
+0.2.1 - 30/03/2016
+* Bodies list working.
+* Body collision working.
+
+0.2.0 - 30/03/2016
+~ Critical internal changes.
++ Added "Bodies" panel (still work-in-progress).
+
+0.1.3 - 29/03/2016
+* Working flow layout.
++ Added recolor bodies functionality.
+
+0.1.2 - 28/03/2016
+* Working body translations. 
++ Added first add button.
+~ Minor improvements.
+
+0.1.1 - 28/03/2016
+* Fixes to work on win32. Also fixes others OSes situations.
+
+0.1 - 25/03/2016
++ Resizeable window and planetarium. 
++ Simple physics.
+
+Older than 0.1 - since 01/03/2015 
+Porting from Japla program
