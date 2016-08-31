@@ -13,25 +13,25 @@
 struct ClassicRK4Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(ClassicRK4Solver);
-	ClassicRK4Solver(Universe2D& u);
+	ClassicRK4Solver(Physics2D& u);
 };
 
 struct Rule38RK4Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(Rule38RK4Solver);
-	Rule38RK4Solver(Universe2D& u);
+	Rule38RK4Solver(Physics2D& u);
 };
 
 struct GillRK4Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(GillRK4Solver);
-	GillRK4Solver(Universe2D& u);
+	GillRK4Solver(Physics2D& u);
 };
 
 struct RalstonRK4Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(RalstonRK4Solver);
-	RalstonRK4Solver(Universe2D& u);
+	RalstonRK4Solver(Physics2D& u);
 };
 
 #endif /* PHYSICS_SOLVERS_RK4_HPP_ */

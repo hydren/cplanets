@@ -15,7 +15,7 @@ struct LeapfrogSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(LeapfrogSolver);
 
-	LeapfrogSolver(Universe2D& u);
+	LeapfrogSolver(Physics2D& u);
 	void step();
 };
 
@@ -23,7 +23,7 @@ struct VelocityVerlet extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(VelocityVerlet);
 
-	VelocityVerlet(Universe2D& u);
+	VelocityVerlet(Physics2D& u);
 	void step();
 };
 

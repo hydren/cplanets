@@ -12,7 +12,6 @@
 
 -------------- To Do
 
-- (Optionally/to decide) Move the computeAccelerations()/derive() methods to Physics2D and make the solver point to a instance of physics instead of a Universe one.
 - Milestones
 
 -------------- Backlog

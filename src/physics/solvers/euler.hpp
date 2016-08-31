@@ -15,7 +15,7 @@ struct EulerSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(EulerSolver);
 
-	EulerSolver(Universe2D& u);
+	EulerSolver(Physics2D& u);
 	void step();
 };
 
@@ -23,7 +23,7 @@ struct SemiImplicitEulerSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(SemiImplicitEulerSolver);
 
-	SemiImplicitEulerSolver(Universe2D& u);
+	SemiImplicitEulerSolver(Physics2D& u);
 	void step();
 };
 
@@ -31,7 +31,7 @@ struct EulerCromerSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(EulerCromerSolver);
 
-	EulerCromerSolver(Universe2D& u);
+	EulerCromerSolver(Physics2D& u);
 	void step();
 };
 

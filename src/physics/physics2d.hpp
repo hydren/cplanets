@@ -12,6 +12,10 @@
 #include "physics2dsolver.hpp"
 
 #include <vector>
+#include <map>
+
+// foward declaration needed to avoid compilation bugs
+struct AbstractPhysics2DSolver;
 
 struct Physics2D
 {
@@ -28,6 +32,20 @@ struct Physics2D
 
 	/** Exchanges the planetarium universe with a copy of the given instance. This is the proper way to do it. */
 	void setUniverse(const Universe2D& universe);
+
+	/** Computes and updates all bodies' accelerations based on their mutual gravitation forces, using their current positions. */
+	void computeAccelerations();
+
+	/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
+	 *  The resulting accelerations are stored on 'resultingAccelerations'. */
+	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations);
+
+	/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
+	 *  The resulting accelerations are stored on 'resultingAccelerations'. */
+	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations, std::map<Body2D*, Vector2D>& positions);
+
+	void derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt);
+	void derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt, std::map<Body2D*, Vector2D>& vn, std::map<Body2D*, Vector2D>& yn);
 
 	/** Structure holding data about needed to compute a reference frame scheme.
 	 *  A ReferenceFrame can either be set as:

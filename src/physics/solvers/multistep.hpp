@@ -17,7 +17,7 @@ struct StormerVerletSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(StormerVerletSolver);
 
-	StormerVerletSolver(Universe2D& u);
+	StormerVerletSolver(Physics2D& u);
 	void step();
 
 	protected:
@@ -29,7 +29,7 @@ struct BeemanSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(BeemanSolver);
 
-	BeemanSolver(Universe2D& u);
+	BeemanSolver(Physics2D& u);
 	void step();
 
 	protected:
@@ -40,7 +40,7 @@ struct BackwardDifferenceCorrectionSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(BackwardDifferenceCorrectionSolver);
 
-	BackwardDifferenceCorrectionSolver(Universe2D& u);
+	BackwardDifferenceCorrectionSolver(Physics2D& u);
 	void step();
 	void preStep();
 

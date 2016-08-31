@@ -14,17 +14,17 @@ using std::map;
 
 DEFINE_CLASS_FACTORY(StormerVerletSolver, "Stormer-Verlet (Explicit Central Diff.)");
 
-StormerVerletSolver::StormerVerletSolver(Universe2D& u)
+StormerVerletSolver::StormerVerletSolver(Physics2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
   previousPositions(), previousTimestep(timestep)
 {}
 
 void StormerVerletSolver::step()
 {
-	computeAccelerations();
+	physics.computeAccelerations();
 
 	//velocity & position loop
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		Vector2D curr = body->position;
 
@@ -55,7 +55,7 @@ void StormerVerletSolver::step()
 
 DEFINE_CLASS_FACTORY(BeemanSolver, "Beeman");
 
-BeemanSolver::BeemanSolver(Universe2D& u)
+BeemanSolver::BeemanSolver(Physics2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
   previousPositions()
 {}
@@ -64,14 +64,14 @@ void BeemanSolver::step()
 {
 	map<Body2D*, Vector2D> accPrev, accCurr;
 
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 		Collections::coalesce2(previousPositions, body, (body->position-(body->velocity*timestep))); // ensure presence of a previous position
 
-	computeAccelerations(accPrev, previousPositions);
-	computeAccelerations(accCurr);
+	physics.computeAccelerations(accPrev, previousPositions);
+	physics.computeAccelerations(accCurr);
 
 	//position loop
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		Vector2D curr = body->position;
 
@@ -83,10 +83,10 @@ void BeemanSolver::step()
 		prev = curr; // remember the previous position
 	}
 
-	computeAccelerations();
+	physics.computeAccelerations();
 
 	//velocity loop
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		body->velocity += (body->acceleration*2 + accCurr[body]*5 - accPrev[body])*timestep*(1.0/6.0);
 	}
@@ -96,7 +96,7 @@ void BeemanSolver::step()
 
 DEFINE_CLASS_FACTORY(BackwardDifferenceCorrectionSolver, "Backward Difference Correction");
 
-BackwardDifferenceCorrectionSolver::BackwardDifferenceCorrectionSolver(Universe2D& u)
+BackwardDifferenceCorrectionSolver::BackwardDifferenceCorrectionSolver(Physics2D& u)
 : AbstractPhysics2DSolver(&CLASS_FACTORY, u, 0.01),
   history(), preStepCounter(0)
 {}
@@ -109,35 +109,35 @@ void BackwardDifferenceCorrectionSolver::preStep()
 
 	map<Body2D*, Vector2D> wvs, wrs;
 
-	derive(k1vs, k1rs);
+	physics.derive(k1vs, k1rs);
 
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		wvs[body] = body->velocity + k1vs[body] * (timestep * 0.5);
 		wrs[body] = body->position + k1rs[body] * (timestep * 0.5);
 	}
 
-	derive(k2vs, k2rs, wvs, wrs);
+	physics.derive(k2vs, k2rs, wvs, wrs);
 
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		wvs[body] = body->velocity + k2vs[body] * (timestep * 0.5);
 		wrs[body] = body->position + k2rs[body] * (timestep * 0.5);
 	}
 
-	derive(k3vs, k3rs, wvs, wrs);
+	physics.derive(k3vs, k3rs, wvs, wrs);
 
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		wvs[body] = body->velocity + k3vs[body] * timestep;
 		wrs[body] = body->position + k3rs[body] * timestep;
 	}
 
-	derive(k4vs, k4rs, wvs, wrs);
+	physics.derive(k4vs, k4rs, wvs, wrs);
 
-	computeAccelerations(); //optional
+	physics.computeAccelerations(); //optional
 
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		History& bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
 
@@ -164,9 +164,9 @@ void BackwardDifferenceCorrectionSolver::step()
 {
 	if(preStepCounter < 3) { preStep(); return; }
 
-	computeAccelerations();
+	physics.computeAccelerations();
 
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		History& bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
 

@@ -27,7 +27,7 @@ const double adams_bashforth_coefficients[MAXSTEP][MAXSTEP] = {
 
 #define b(index) adams_bashforth_coefficients[steps-1][index-1]
 
-AbstractPhysics2DSolver& chooseBootstrapSolver(unsigned numberOfSteps, Universe2D& u)
+AbstractPhysics2DSolver& chooseBootstrapSolver(unsigned numberOfSteps, Physics2D& u)
 {
 	AbstractPhysics2DSolver* solver;
 	switch (numberOfSteps) {
@@ -42,7 +42,7 @@ AbstractPhysics2DSolver& chooseBootstrapSolver(unsigned numberOfSteps, Universe2
 	return *solver;
 }
 
-AdamsBashforthSolver::AdamsBashforthSolver(Universe2D& u, unsigned s, const GenericFactory* factory)
+AdamsBashforthSolver::AdamsBashforthSolver(Physics2D& u, unsigned s, const GenericFactory* factory)
 : AbstractPhysics2DSolver(factory, u, 0.01),
   steps(s > MAXSTEP? MAXSTEP : s == 0 ? 1 : s), preStepsCounter(0), history(),
   bootstrapSolver(chooseBootstrapSolver(s, u))
@@ -58,7 +58,7 @@ void AdamsBashforthSolver::step()
 	if(preStepsCounter < steps)
 	{
 		// store pre-steps
-		foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+		foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 		{
 			State state = { body->velocity, body->acceleration };
 			if(history[body].size() == 0 and preStepsCounter > 0) // newly added body during bootstrap
@@ -77,9 +77,9 @@ void AdamsBashforthSolver::step()
 		return;
 	}
 
-	computeAccelerations();
+	physics.computeAccelerations();
 
-	foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
 		State current = { body->velocity, body->acceleration };
 
@@ -99,24 +99,24 @@ void AdamsBashforthSolver::step()
 
 DEFINE_CLASS_FACTORY(AB2Solver, "Adams-Bashforth (2nd order)");
 
-AB2Solver::AB2Solver(Universe2D& u)
+AB2Solver::AB2Solver(Physics2D& u)
 : AdamsBashforthSolver(u, 2, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(AB3Solver, "Adams-Bashforth (3rd order)");
 
-AB3Solver::AB3Solver(Universe2D& u)
+AB3Solver::AB3Solver(Physics2D& u)
 : AdamsBashforthSolver(u, 3, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(AB4Solver, "Adams-Bashforth (4th order)");
 
-AB4Solver::AB4Solver(Universe2D& u)
+AB4Solver::AB4Solver(Physics2D& u)
 : AdamsBashforthSolver(u, 4, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(AB5Solver, "Adams-Bashforth (5th order)");
 
-AB5Solver::AB5Solver(Universe2D& u)
+AB5Solver::AB5Solver(Physics2D& u)
 : AdamsBashforthSolver(u, 5, &CLASS_FACTORY)
 {}

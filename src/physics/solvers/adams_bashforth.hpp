@@ -19,7 +19,7 @@ struct AdamsBashforthSolver extends AbstractPhysics2DSolver
 {
 	const unsigned steps;
 
-	AdamsBashforthSolver(Universe2D& u, unsigned numberOfSteps, const GenericFactory* factory=null);
+	AdamsBashforthSolver(Physics2D& u, unsigned numberOfSteps, const GenericFactory* factory=null);
 	~AdamsBashforthSolver();
 	void step();
 
@@ -32,25 +32,25 @@ struct AdamsBashforthSolver extends AbstractPhysics2DSolver
 struct AB2Solver extends AdamsBashforthSolver
 {
 	DECLARE_CLASS_FACTORY(AB2Solver);
-	AB2Solver(Universe2D& u);
+	AB2Solver(Physics2D& u);
 };
 
 struct AB3Solver extends AdamsBashforthSolver
 {
 	DECLARE_CLASS_FACTORY(AB3Solver);
-	AB3Solver(Universe2D& u);
+	AB3Solver(Physics2D& u);
 };
 
 struct AB4Solver extends AdamsBashforthSolver
 {
 	DECLARE_CLASS_FACTORY(AB4Solver);
-	AB4Solver(Universe2D& u);
+	AB4Solver(Physics2D& u);
 };
 
 struct AB5Solver extends AdamsBashforthSolver
 {
 	DECLARE_CLASS_FACTORY(AB5Solver);
-	AB5Solver(Universe2D& u);
+	AB5Solver(Physics2D& u);
 };
 
 #endif /* PHYSICS_SOLVERS_ADAMS_BASHFORTH_HPP_ */

@@ -15,7 +15,7 @@ struct MidpointSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(MidpointSolver);
 
-	MidpointSolver(Universe2D& u);
+	MidpointSolver(Physics2D& u);
 	void step();
 };
 
@@ -23,7 +23,7 @@ struct HeunSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(HeunSolver);
 
-	HeunSolver(Universe2D& u);
+	HeunSolver(Physics2D& u);
 	void step();
 };
 
@@ -31,7 +31,7 @@ struct RalstonSolver extends AbstractPhysics2DSolver
 {
 	DECLARE_CLASS_FACTORY(RalstonSolver);
 
-	RalstonSolver(Universe2D& u);
+	RalstonSolver(Physics2D& u);
 	void step();
 };
 

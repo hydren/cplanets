@@ -13,19 +13,19 @@
 struct NystromRK5Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(NystromRK5Solver);
-	NystromRK5Solver(Universe2D& u);
+	NystromRK5Solver(Physics2D& u);
 };
 
 struct ButcherRK6Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(ButcherRK6Solver);
-	ButcherRK6Solver(Universe2D& u);
+	ButcherRK6Solver(Physics2D& u);
 };
 
 struct VernerRK8Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(VernerRK8Solver);
-	VernerRK8Solver(Universe2D& u);
+	VernerRK8Solver(Physics2D& u);
 };
 
 #endif /* PHYSICS_SOLVERS_RK_HIGH_HPP_ */

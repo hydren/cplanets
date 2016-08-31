@@ -94,7 +94,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   auxWasRunningBeforeBodyCreationMode(false)
 
 {
-	this->physics->solver = new LeapfrogSolver(physics->universe);
+	this->physics->solver = new LeapfrogSolver(*physics);
 	this->physics->listeners.push_back(this);
 }
 

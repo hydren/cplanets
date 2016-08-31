@@ -27,7 +27,7 @@ const double adams_moulton_coefficients[MAXSTEP][MAXSTEP+1] = {
 
 #define b(index) adams_moulton_coefficients[steps-2][index]
 
-AdamsBashforthMoultonSolver::AdamsBashforthMoultonSolver(Universe2D& u, unsigned numberOfSteps, const GenericFactory* factory)
+AdamsBashforthMoultonSolver::AdamsBashforthMoultonSolver(Physics2D& u, unsigned numberOfSteps, const GenericFactory* factory)
 : AdamsBashforthSolver(u, numberOfSteps+1, factory)
 {}
 
@@ -39,14 +39,14 @@ void AdamsBashforthMoultonSolver::step()
 	else
 	{
 		std::map<Body2D*, Vector2D > aux;
-		foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+		foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 			aux[body] = body->position; // save current position
 
 		// adams-bashforth solver will put a predition on body->position/velocity
 		AdamsBashforthSolver::step();
-		computeAccelerations();
+		physics.computeAccelerations();
 
-		foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+		foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 		{
 			// 'body->position' and 'body->velocity' are currently holding a prediction
 			const State prediciton = { body->velocity, body->acceleration };
@@ -69,25 +69,25 @@ void AdamsBashforthMoultonSolver::step()
 
 DEFINE_CLASS_FACTORY(ABM2Solver, "Adams-Moulton (2nd-order)(Trapr.)");
 
-ABM2Solver::ABM2Solver(Universe2D& u)
+ABM2Solver::ABM2Solver(Physics2D& u)
 : AdamsBashforthMoultonSolver(u, 1, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(ABM3Solver, "Adams-Moulton (3rd-order)");
 
-ABM3Solver::ABM3Solver(Universe2D& u)
+ABM3Solver::ABM3Solver(Physics2D& u)
 : AdamsBashforthMoultonSolver(u, 2, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(ABM4Solver, "Adams-Moulton (4th-order)");
 
-ABM4Solver::ABM4Solver(Universe2D& u)
+ABM4Solver::ABM4Solver(Physics2D& u)
 : AdamsBashforthMoultonSolver(u, 3, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(ABM5Solver, "Adams-Moulton (5th-order)");
 
-ABM5Solver::ABM5Solver(Universe2D& u)
+ABM5Solver::ABM5Solver(Physics2D& u)
 : AdamsBashforthMoultonSolver(u, 4, &CLASS_FACTORY)
 {}
 

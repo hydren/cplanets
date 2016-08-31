@@ -13,13 +13,13 @@
 struct KuttaRK3Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(KuttaRK3Solver);
-	KuttaRK3Solver(Universe2D& u);
+	KuttaRK3Solver(Physics2D& u);
 };
 
 struct HeunRK3Solver extends RungeKuttaSolver
 {
 	DECLARE_CLASS_FACTORY(HeunRK3Solver);
-	HeunRK3Solver(Universe2D& u);
+	HeunRK3Solver(Physics2D& u);
 };
 
 #endif /* PHYSICS_SOLVERS_RK3_HPP_ */

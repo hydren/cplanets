@@ -15,6 +15,7 @@
 #include <cmath>
 
 using std::vector;
+using std::map;
 
 //aliases
 bool (*containsBody)(vector<Body2D*>&, const Body2D*) = Physics2D::containsBody;
@@ -60,7 +61,73 @@ void Physics2D::setSolver(AbstractPhysics2DSolver* newSolver)
 void Physics2D::setUniverse(const Universe2D& universe)
 {
 	this->universe = universe; // copies the universe (through the assignment)
-	setSolver(solver->factory->createSolver(this->universe)); // create a solver with same class
+}
+
+/** Computes and updates all bodies' accelerations based on their mutual gravitation forces, using their current positions. */
+void Physics2D::computeAccelerations()
+{
+	vector<Body2D*>& b = universe.bodies;
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+	{
+		b[i]->acceleration *= 0; // let acceleration be zero
+
+		for(unsigned j = 0; j < universe.bodies.size(); j++)
+		if(b[j] != b[i])
+		{
+			double forceMagnitude = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position % b[j]->position, universe.gExp); // % is a distance operator
+			b[i]->acceleration += (b[i]->position - b[j]->position).normalize() * (forceMagnitude/b[i]->mass);
+		}
+	}
+}
+
+/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, using their current positions.
+ *  The resulting accelerations are stored on 'resultingAccelerations'. */
+void Physics2D::computeAccelerations(map<Body2D*, Vector2D>& acc)
+{
+	vector<Body2D*>& b = universe.bodies;
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+	{
+		acc[b[i]] *= 0; // let acceleration be zero
+
+		for(unsigned j = 0; j < universe.bodies.size(); j++)
+		if(b[i] != b[j])
+		{
+			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(b[i]->position.distance(b[j]->position), universe.gExp);
+			acc[b[i]] += (b[i]->position - b[j]->position).normalize() * (forceScalar/b[i]->mass);
+		}
+	}
+}
+
+/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
+ *  The resulting accelerations are stored on 'resultingAccelerations'. */
+void Physics2D::computeAccelerations(map<Body2D*, Vector2D>& acc, map<Body2D*, Vector2D>& pos)
+{
+	vector<Body2D*>& b = universe.bodies;
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+	{
+		acc[b[i]] *= 0; // let acceleration be zero
+
+		for(unsigned j = 0; j < universe.bodies.size(); j++)
+		if(b[i] != b[j])
+		{
+			double forceScalar = (-universe.gravity * b[i]->mass * b[j]->mass) / pow(pos[b[i]].distance(pos[b[j]]), universe.gExp);
+			acc[b[i]] += (pos[b[i]] - pos[b[j]]).normalize() * (forceScalar/b[i]->mass);
+		}
+	}
+}
+
+void Physics2D::derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt)
+{
+	computeAccelerations(dvdt);
+
+	for(unsigned i = 0; i < universe.bodies.size(); i++)
+		dydt[universe.bodies[i]] = universe.bodies[i]->velocity;
+}
+
+void Physics2D::derive(map<Body2D*, Vector2D>& dvdt, map<Body2D*, Vector2D>& dydt, map<Body2D*, Vector2D>& vn, map<Body2D*, Vector2D>& yn)
+{
+	computeAccelerations(dvdt, yn);
+	dydt = vn;
 }
 
 Vector2D Physics2D::ReferenceFrame::position() const

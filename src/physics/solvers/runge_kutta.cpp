@@ -16,7 +16,7 @@ using std::vector;
 #define B(index) butcherTable.b(index)
 #define C(index) butcherTable.c(index)
 
-RungeKuttaSolver::RungeKuttaSolver(Universe2D& u, ButcherTable bt, const GenericFactory* factory)
+RungeKuttaSolver::RungeKuttaSolver(Physics2D& u, ButcherTable bt, const GenericFactory* factory)
 : AbstractPhysics2DSolver(factory, u, 0.01),
   butcherTable(bt), order(bt.size-1)
 {}
@@ -29,7 +29,7 @@ void RungeKuttaSolver::step()
 
 	for(unsigned i = 1; i <= order; i++)
 	{
-		foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+		foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 		{
 			Vector2D skv, skr;
 			for(unsigned j = 1; j < i; j++) //sum all previous k's (weighted according to butcher table)
@@ -44,7 +44,7 @@ void RungeKuttaSolver::step()
 			wrs[body] = body->position + skr * timestep; //position
 		}
 
-		derive(kvs[i], krs[i], wvs, wrs);
+		physics.derive(kvs[i], krs[i], wvs, wrs);
 	}
 
 	// compute next position/velocity
@@ -53,7 +53,7 @@ void RungeKuttaSolver::step()
 		if(B(i) == 0) continue; //don't sum if coefficient is zero (optimization)
 
 		//for all bodies, adds a weighted sum of k's for velocity and position
-		foreach(Body2D*, body, vector<Body2D*>, universe.bodies)
+		foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 		{
 			body->velocity += kvs[i][body] * timestep * B(i); //velocity
 			body->position += krs[i][body] * timestep * B(i); //position

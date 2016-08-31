@@ -10,13 +10,15 @@
 
 #include <string>
 #include <vector>
-#include <map>
 
-#include "universe2d.hpp"
+#include "physics2d.hpp"
+
+// foward declaration needed to avoid compilation bugs
+struct Physics2D;
 
 struct AbstractPhysics2DSolver
 {
-	Universe2D& universe;
+	Physics2D& physics;
 
 	double timeElapsed;
 	double timestep;
@@ -24,30 +26,13 @@ struct AbstractPhysics2DSolver
 	/// A reference to (what should be) this solver's corresponding static factory.
 	struct GenericFactory; const GenericFactory* const factory;
 
-	AbstractPhysics2DSolver(const GenericFactory* factory, Universe2D& u, double timestep=0)
-	: universe(u), timeElapsed(0), timestep(timestep), factory(factory)
+	AbstractPhysics2DSolver(const GenericFactory* factory, Physics2D& physics, double timestep=0)
+	: physics(physics), timeElapsed(0), timestep(timestep), factory(factory)
 	{}
 
 	virtual ~AbstractPhysics2DSolver() {}
 
 	virtual void step()=0;
-
-	protected:
-	/** Computes and updates all bodies' accelerations based on their mutual gravitation forces, using their current positions. */
-	void computeAccelerations();
-
-	/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
-	 *  The resulting accelerations are stored on 'resultingAccelerations'. */
-	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations);
-
-	/** Computes the acceleration (resulting from mutual gravitation forces) of all bodies, at the specified positions (instead of the bodies' current position).
-	 *  The resulting accelerations are stored on 'resultingAccelerations'. */
-	void computeAccelerations(std::map<Body2D*, Vector2D>& resultingAccelerations, std::map<Body2D*, Vector2D>& positions);
-
-	void derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt);
-	void derive(std::map<Body2D*, Vector2D>& dvdt, std::map<Body2D*, Vector2D>& dydt, std::map<Body2D*, Vector2D>& vn, std::map<Body2D*, Vector2D>& yn);
-
-	public:
 
 	/// A solver factory. It has only one method which returns a new instance of a AbstractPhysics2DSolver.
 	/// This class is meant to be subclassed for each AbstractPhysics2DSolver subclass, so its possible to instantiate the subclass through this factory.
@@ -64,7 +49,7 @@ struct AbstractPhysics2DSolver
 		: solverClassName(className), solverDisplayName(displayName) {}
 
 		/// Creates a new instance of a AbstractPhysics2DSolver derived class (since distinct is abstract). Each factory should instantiate a specific subclass.
-		virtual AbstractPhysics2DSolver* createSolver(Universe2D& u) const=0;
+		virtual AbstractPhysics2DSolver* createSolver(Physics2D& physics) const=0;
 	};
 
 	/// A template class to ease the process of subclassing GenericFactory. The template parameter should be the desired AbstractPhysics2DSolver subclass.
@@ -77,7 +62,7 @@ struct AbstractPhysics2DSolver
 		CustomFactory(const std::string& className, const std::string& displayName)
 		: GenericFactory(className, displayName) {}
 
-		AbstractPhysics2DSolver* createSolver(Universe2D& u) const { return new SpecificSolverType(u); }
+		AbstractPhysics2DSolver* createSolver(Physics2D& physics) const { return new SpecificSolverType(physics); }
 	};
 
 	/// A collection of AbstractPhysics2DSolver factories, ready to be used. Each factory can instantiate some subclass of AbstractPhysics2DSolver.

@@ -66,7 +66,7 @@ struct RungeKuttaSolver extends AbstractPhysics2DSolver
 	const ButcherTable butcherTable;
 	const unsigned order;
 
-	RungeKuttaSolver(Universe2D& u, ButcherTable bt=ButcherTable::RK4_CLASSIC, const GenericFactory* factory=null);
+	RungeKuttaSolver(Physics2D& u, ButcherTable bt=ButcherTable::RK4_CLASSIC, const GenericFactory* factory=null);
 
 	void step();
 };

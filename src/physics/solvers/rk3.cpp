@@ -9,12 +9,12 @@
 
 DEFINE_CLASS_FACTORY(KuttaRK3Solver, "Runge-Kutta (3th order, Kutta)");
 
-KuttaRK3Solver::KuttaRK3Solver(Universe2D& u)
+KuttaRK3Solver::KuttaRK3Solver(Physics2D& u)
 : RungeKuttaSolver(u, ButcherTable::RK3_KUTTA, &CLASS_FACTORY)
 {}
 
 DEFINE_CLASS_FACTORY(HeunRK3Solver, "Runge-Kutta (3th order, Heun)");
 
-HeunRK3Solver::HeunRK3Solver(Universe2D& u)
+HeunRK3Solver::HeunRK3Solver(Physics2D& u)
 : RungeKuttaSolver(u, ButcherTable::RK3_HEUN, &CLASS_FACTORY)
 {}
