@@ -12,5 +12,5 @@ DPATH=${PWD}
 echo "Ready to touch .mk files within the current folder (and subfolders, recursively)."
 echo "This will replace $OLD tokens with $INCLUDE_PATH" 
 
-find $DPATH -name '*.mk' -type f -exec echo "Patched " {} \;
+find $DPATH -name '*.mk' -type f -exec echo "Touched " {} \;
 find $DPATH -name '*.mk' -type f -exec sed -i "s,$OLD,$INCLUDE_PATH,g" {} \;
