@@ -1,8 +1,12 @@
 #!/bin/sh
 
 cd ../src_libs/SDL_widgets
-echo "Running configure script for SDL_widgets at $PWD ..."
-./configure
+if [ -e "config.h" ]; then
+	echo "File config.h is already present on SDL_widgets folder."
+else
+	echo "Running configure script for SDL_widgets at $PWD ..."
+	./configure
+fi
 cd ../../build
 
 OLD="BUILD_PATH"
