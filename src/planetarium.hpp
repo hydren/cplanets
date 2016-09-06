@@ -9,6 +9,7 @@
 #define PLANETARIUM_HPP_
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 #include <map>
 
 #include "physics/physics2d.hpp"
