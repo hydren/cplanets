@@ -77,7 +77,7 @@ bool FlowLayout::needsStretching() const
 
 unsigned FlowLayout::computeFreeHorizontalSpaceOnLayout() const
 {
-	int space = this->maxWidth == 0? SDL_GetVideoInfo()->current_w - this->position.x : this->maxWidth;
+	int space = this->maxWidth == 0? SDL_GetVideoSurface()->w - this->position.x : this->maxWidth;
 	const_foreach(const Element*, component, vector<Element*>, this->components)
 	{
 		if(not component->isStretched())
@@ -91,7 +91,7 @@ unsigned FlowLayout::computeFreeHorizontalSpaceOnLayout() const
 
 unsigned FlowLayout::computeFreeVerticalSpaceOnLayout() const
 {
-	int space = this->maxHeight == 0? SDL_GetVideoInfo()->current_h - this->position.y : this->maxHeight;
+	int space = this->maxHeight == 0? SDL_GetVideoSurface()->h - this->position.y : this->maxHeight;
 	const_foreach(const Element*, component, vector<Element*>, this->components)
 	{
 		if(not component->isStretched())
@@ -109,9 +109,9 @@ int FlowLayout::computeAlignment(Element* e, int pos) const
 
 	int space;
 	if(orientation == HORIZONTAL)
-		space = this->maxHeight == 0? SDL_GetVideoInfo()->current_h - this->position.y : this->maxHeight;
+		space = this->maxHeight == 0? SDL_GetVideoSurface()->h - this->position.y : this->maxHeight;
 	else
-		space = this->maxWidth == 0? SDL_GetVideoInfo()->current_w - this->position.x : this->maxWidth;
+		space = this->maxWidth == 0? SDL_GetVideoSurface()->w - this->position.x : this->maxWidth;
 
 	space -= e->getSize().h;
 
