@@ -19,7 +19,7 @@
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1295235176" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix"/>
 							<option id="cdt.managedbuild.option.gnu.cross.path.440608681" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.957483232" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder buildPath="${workspace_loc:/japla}/cross-debug" errorParsers="" id="cdt.managedbuild.builder.gnu.cross.179369399" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross">
+							<builder buildPath="${workspace_loc:/cplanets}/cross-debug" errorParsers="" id="cdt.managedbuild.builder.gnu.cross.179369399" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross">
 								<outputEntries>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="cross-debug"/>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="cross-release"/>
@@ -57,10 +57,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.693092314" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.cross.assembler.2137391137" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.512095829" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../cplanets/include"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL"/>
-								</option>
+								<option id="gnu.both.asm.option.include.paths.512095829" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1105072020" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
@@ -69,7 +66,6 @@
 						<entry excluding="src_libs|test|src|include" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="SDL_widgets/testsw.cpp|SDL_widgets/example.cpp|SDL_widgets/make-waves|SDL_widgets/hello|SDL_widgets/bouncy-tune" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src_libs"/>
-						<entry excluding="test_vector2d.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -93,7 +89,7 @@
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1002065348" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix"/>
 							<option id="cdt.managedbuild.option.gnu.cross.path.712199034" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.96646238" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder buildPath="${workspace_loc:/japla}/cross-release" errorParsers="" id="cdt.managedbuild.builder.gnu.cross.636963442" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/cplanets}/cross-release" errorParsers="" id="cdt.managedbuild.builder.gnu.cross.636963442" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.cross.c.compiler.196079174" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.option.optimization.level.1452824693" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1291259739" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -134,7 +130,6 @@
 						<entry excluding="src_libs|test|include|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="SDL_widgets/testsw.cpp|SDL_widgets/example.cpp|SDL_widgets/make-waves|SDL_widgets/hello|SDL_widgets/bouncy-tune" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src_libs"/>
-						<entry excluding="test_vector2d.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -156,7 +151,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.mingw.base.1495803455" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.mingw.base.1069776936" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
-							<builder buildPath="${workspace_loc:/japla}/windows-debug" errorParsers="" id="cdt.managedbuild.tool.gnu.builder.mingw.base.564360025" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
+							<builder buildPath="${workspace_loc:/cplanets}/windows-debug" errorParsers="" id="cdt.managedbuild.tool.gnu.builder.mingw.base.564360025" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.assembler.mingw.base.42013050" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
 								<option id="gnu.both.asm.option.include.paths.19815928" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1153543136" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -201,7 +196,6 @@
 						<entry excluding="src_libs|test|include|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="SDL_widgets/testsw.cpp|SDL_widgets/example.cpp|SDL_widgets/make-waves|SDL_widgets/hello|SDL_widgets/bouncy-tune" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src_libs"/>
-						<entry excluding="test_vector2d.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -223,7 +217,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.exe.debug.1612396915" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.exe.debug.1930634505" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
-							<builder buildPath="${workspace_loc:/japla}/Debug" errorParsers="" id="cdt.managedbuild.target.gnu.builder.exe.debug.1613957560" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.target.gnu.builder.exe.debug">
+							<builder buildPath="${workspace_loc:/cplanets}/Debug" errorParsers="" id="cdt.managedbuild.target.gnu.builder.exe.debug.1613957560" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.target.gnu.builder.exe.debug">
 								<outputEntries>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Debug"/>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Release"/>
@@ -271,7 +265,6 @@
 						<entry excluding="src_libs|test|include|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="SDL_widgets/testsw.cpp|SDL_widgets/example.cpp|SDL_widgets/make-waves|SDL_widgets/hello|SDL_widgets/bouncy-tune" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src_libs"/>
-						<entry excluding="test_vector2d.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -286,6 +279,8 @@
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -293,7 +288,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.809514379.130176394." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.exe.release.1600402788" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.release">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.exe.release.1154749343" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.release"/>
-							<builder buildPath="${workspace_loc:/japla}/Release" errorParsers="" id="cdt.managedbuild.target.gnu.builder.exe.release.1777889006" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.release"/>
+							<builder buildPath="${workspace_loc:/cplanets}/linux-release" id="cdt.managedbuild.builder.gnu.cross.1333874870" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.732893794" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool commandLinePattern="LC_ALL=C ${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.181791955" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release">
 								<option id="gnu.cpp.compiler.exe.release.option.optimization.level.526878027" name="Optimization Level" superClass="gnu.cpp.compiler.exe.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
@@ -333,7 +328,6 @@
 						<entry excluding="src_libs|test|include|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="SDL_widgets/testsw.cpp|SDL_widgets/example.cpp|SDL_widgets/make-waves|SDL_widgets/hello|SDL_widgets/bouncy-tune" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src_libs"/>
-						<entry excluding="test_vector2d.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -396,14 +390,13 @@
 						<entry excluding="src_libs|test|include|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="SDL_widgets/testsw.cpp|SDL_widgets/example.cpp|SDL_widgets/make-waves|SDL_widgets/hello|SDL_widgets/bouncy-tune" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src_libs"/>
-						<entry excluding="test_vector2d.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981" moduleId="org.eclipse.cdt.core.settings" name="cross-test-geometry">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981" moduleId="org.eclipse.cdt.core.settings" name="tests-geometry">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -414,13 +407,13 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}_test_geometry" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981" name="cross-test-geometry" parent="cdt.managedbuild.config.gnu.exe.debug" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactName="${ProjName}_test_geometry" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981" name="tests-geometry" parent="cdt.managedbuild.config.gnu.exe.debug" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.cross.base.199292409" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1336892461" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix"/>
 							<option id="cdt.managedbuild.option.gnu.cross.path.1376022710" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1717559666" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder buildPath="${workspace_loc:/japla}/cross-debug" errorParsers="" id="cdt.managedbuild.builder.gnu.cross.55480079" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross">
+							<builder buildPath="${workspace_loc:/cplanets}/cross-debug" errorParsers="" id="cdt.managedbuild.builder.gnu.cross.55480079" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross">
 								<outputEntries>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="cross-debug"/>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="cross-release"/>
@@ -458,17 +451,14 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.2125724430" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.cross.assembler.354700206" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.1562369125" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../cplanets/include"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL"/>
-								</option>
+								<option id="gnu.both.asm.option.include.paths.1562369125" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.695026788" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src_libs/SDL_widgets|test|src|include" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry excluding="planetarium_pane.cpp|physics|widgets|SDL_util.cpp|program_io.cpp|planetarium.cpp|main_window.cpp|main.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src/geometry"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src_libs/futil"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test"/>
 					</sourceEntries>
 				</configuration>
@@ -481,17 +471,18 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/japla"/>
-		</configuration>
 		<configuration configurationName="windows-debug"/>
-		<configuration configurationName="linux-debug"/>
-		<configuration configurationName="cross-debug"/>
-		<configuration configurationName="linux-release"/>
-		<configuration configurationName="cross-release"/>
 		<configuration configurationName="windows-release"/>
+		<configuration configurationName="cross-debug"/>
+		<configuration configurationName="cross-release"/>
+		<configuration configurationName="linux-debug"/>
+		<configuration configurationName="linux-release"/>
+		<configuration configurationName="cross-test-geometry"/>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/cplanets"/>
+		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/japla"/>
+			<resource resourceType="PROJECT" workspacePath="/cplanets"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings">
