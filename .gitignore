@@ -31,10 +31,15 @@
 language.settings.xml
 
 # Debug builds' folders
+/tests-geometry/
 /cross-debug/
 /linux-debug/
 /windows-debug/
 
+# Obsolete debug builds' folders
+/cross-test-geometry/
+
 # cplanets executables
 cplanets
-/cross-test-geometry/
+
+
