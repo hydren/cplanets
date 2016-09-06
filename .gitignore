@@ -30,6 +30,9 @@
 # Eclipse annoying file
 language.settings.xml
 
+# cplanets executables
+cplanets
+
 # Debug builds' folders
 /tests-geometry/
 /cross-debug/
@@ -39,7 +42,7 @@ language.settings.xml
 # Obsolete debug builds' folders
 /cross-test-geometry/
 
-# cplanets executables
-cplanets
+# Dev. release builds' folders
+/linux-release/
 
 
