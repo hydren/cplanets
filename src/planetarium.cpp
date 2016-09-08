@@ -169,18 +169,18 @@ void Planetarium::draw()
 		//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
 		if(strokeSize > 1)
 			//draw body border (middle part)
-			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+			filledCircleRGBA(this->surf, v.x, v.y, Math::round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//draw body
 		if(bodyColor != null) //if there is not body color information, skip
-			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			filledCircleRGBA(this->surf, v.x, v.y, Math::round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//inner blending with stroke when the stroke is thick
 		if(strokeSize > 1)
-			circle_function(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			circle_function(this->surf, v.x, v.y, Math::round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//draw body border (if stroke size is more than 1, it is the "border of the border" part)
-		circle_function(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+		circle_function(this->surf, v.x, v.y, Math::round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//record position
 		if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
@@ -195,7 +195,7 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->pos.x; mouseY -= this->pos.y;
-			circle_function(this->surf, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
+			circle_function(this->surf, mouseX, mouseY, Math::round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
 		}
 		else if(bodyCreationState == VELOCITY_SELECTION)
 		{
@@ -203,7 +203,7 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->pos.x; mouseY -= this->pos.y;
-			circle_function(this->surf, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
+			circle_function(this->surf, newBodyPos.x, newBodyPos.y, Math::round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
 			line_function(this->surf, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
 		}
 	}
@@ -681,7 +681,7 @@ void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, SDL_C
 	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 	{
 		Vector2D pv = planetarium->getTransposedNoRef(r);
-		pixelRGBA(planetarium->surf, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+		pixelRGBA(planetarium->surf, Math::round(pv.x), Math::round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 	}
 }
 
@@ -695,7 +695,7 @@ void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_C
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
 			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
-			line_function(planetarium->surf, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			line_function(planetarium->surf, Math::round(prevPosTrans.x), Math::round(prevPosTrans.y), Math::round(recPosTrans.x), Math::round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 		}
 		previousPosition = recordedPosition;
 	}
