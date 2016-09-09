@@ -13,7 +13,9 @@
 #include <map>
 
 #include "physics/physics2d.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/collection/iterable_queue.hpp"
+#include "futil/listener.hpp"
 
 struct Planetarium extends Physics2D::Listener
 {

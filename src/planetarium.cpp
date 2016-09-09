@@ -5,6 +5,8 @@
  *      Author: carlosfaruolo
  */
 
+#define _USE_MATH_DEFINES
+
 #include "planetarium.hpp"
 
 #include <SDL/SDL_gfxPrimitives.h>
@@ -18,6 +20,11 @@
 #include <map>
 
 #include "SDL_util.hpp"
+#include "futil/math/round.h"
+#include "futil/math/more_random.h"
+#include "futil/math/gauss_random.h"
+#include "futil/math/miscellaneous.hpp"
+#include "futil/collection/actions.hpp"
 #include "physics/physics2d.hpp"
 #include "physics/solvers/one_step.hpp"
 
@@ -28,8 +35,6 @@ using std::queue;
 using std::map;
 using SDL_util::colorToInt;
 using futil::iterable_queue;
-using Math::max;
-using Math::min;
 
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
@@ -158,7 +163,7 @@ void Planetarium::draw()
 		if(size < this->minimumBodyRenderingRadius)
 			size = this->minimumBodyRenderingRadius;
 
-		bool isFocused = Collections::containsElement(this->focusedBodies, body.original);
+		bool isFocused = contains_element(this->focusedBodies, body.original);
 
 		//if body is focused draw its border with 'strokeSizeFocused' size, otherwise use 'strokeSizeNormal'
 		int& strokeSize = isFocused? strokeSizeFocused : strokeSizeNormal;
@@ -169,18 +174,18 @@ void Planetarium::draw()
 		//if stroke size is more than 1px wide, draw a bigger circle to thicken the body border
 		if(strokeSize > 1)
 			//draw body border (middle part)
-			filledCircleRGBA(this->surf, v.x, v.y, Math::round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//draw body
 		if(bodyColor != null) //if there is not body color information, skip
-			filledCircleRGBA(this->surf, v.x, v.y, Math::round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//inner blending with stroke when the stroke is thick
 		if(strokeSize > 1)
-			circle_function(this->surf, v.x, v.y, Math::round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			circle_function(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//draw body border (if stroke size is more than 1, it is the "border of the border" part)
-		circle_function(this->surf, v.x, v.y, Math::round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+		circle_function(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//record position
 		if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
@@ -195,7 +200,7 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->pos.x; mouseY -= this->pos.y;
-			circle_function(this->surf, mouseX, mouseY, Math::round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
+			circle_function(this->surf, mouseX, mouseY, round(this->bodyCreationDiameterRatio*BODY_CREATION_DIAMETER_FACTOR*0.5), 255, 255, 255, 255);
 		}
 		else if(bodyCreationState == VELOCITY_SELECTION)
 		{
@@ -203,7 +208,7 @@ void Planetarium::draw()
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->pos.x; mouseY -= this->pos.y;
-			circle_function(this->surf, newBodyPos.x, newBodyPos.y, Math::round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
+			circle_function(this->surf, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
 			line_function(this->surf, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
 		}
 	}
@@ -281,7 +286,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 	{
 		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
 		{
-			Collections::removeElement(physics->universe.bodies, body);
+			remove_element(physics->universe.bodies, body);
 		}
 	}
 
@@ -308,7 +313,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
-		Collections::removeElement(physics->universe.bodies, body);
+		remove_element(physics->universe.bodies, body);
 	}
 
 	//notify listeners about the body deleted
@@ -317,7 +322,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 
 	orbitTracer.clearTrace(body);
 	physics->referenceFrame.dissociate(body);
-	Collections::removeElement(focusedBodies, body);
+	remove_element(focusedBodies, body);
 
 	if(alsoDelete)
 	{
@@ -390,10 +395,10 @@ void Planetarium::addRandomBody(double avMass, double avDiameter, double avSpeed
 				 maxPosY = area != null ? area[1] + area[3] : DBL_MAX;
 
 	addCustomBody(
-		Math::randomNormalBetween(avMass*0.9, avMass*1.1),
-		Math::randomNormalBetween(avDiameter*0.9, avDiameter*1.1),
-		Vector2D(Math::randomBetween(minPosX, maxPosX), Math::randomBetween(minPosY, maxPosY)),
-		Vector2D(Math::randomNormalBetween(avSpeed*0.9, avSpeed*1.1))
+		gauss_random_between(avMass*0.9, avMass*1.1),
+		gauss_random_between(avDiameter*0.9, avDiameter*1.1),
+		Vector2D(random_between(minPosX, maxPosX), random_between(minPosY, maxPosY)),
+		Vector2D(gauss_random_between(avSpeed*0.9, avSpeed*1.1))
 	);
 }
 
@@ -402,7 +407,7 @@ void Planetarium::addRandomBody(const double area[4])
 {
 	double az = 1/viewportZoom;
 	double diameter = (bodyCreationDiameterRatio * az) * BODY_CREATION_DIAMETER_FACTOR;
-	double mass = (Math::PI/6.0) * bodyCreationDensity * pow(diameter, 3);
+	double mass = (M_PI/6.0) * bodyCreationDensity * pow(diameter, 3);
 	double speed = bodyCreationSpeed * az;
 
 	addRandomBody(mass, diameter, speed, area);
@@ -413,16 +418,16 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 {
 	double az = 1/viewportZoom;
 	double diameter = (bodyCreationDiameterRatio * az) * BODY_CREATION_DIAMETER_FACTOR;
-	diameter = Math::randomNormalBetween(diameter*0.9, diameter*1.1);
-	double mass = (Math::PI/6.0) * bodyCreationDensity * pow(diameter, 3);
-	mass = Math::randomNormalBetween(mass*0.9, mass*1.1);
+	diameter = gauss_random_between(diameter*0.9, diameter*1.1);
+	double mass = (M_PI/6.0) * bodyCreationDensity * pow(diameter, 3);
+	mass = gauss_random_between(mass*0.9, mass*1.1);
 
 	const double minPosX = area != null ? area[0] : DBL_MIN,
 				 minPosY = area != null ? area[1] : DBL_MIN,
 				 maxPosX = area != null ? area[0] + area[2] : DBL_MAX,
 				 maxPosY = area != null ? area[1] + area[3] : DBL_MAX;
 
-	Vector2D position(Math::randomBetween(minPosX, maxPosX), Math::randomBetween(minPosY, maxPosY));
+	Vector2D position(random_between(minPosX, maxPosX), random_between(minPosY, maxPosY));
 
 	Vector2D centerOfMass, centerOfMassVelocity;
 	double totalMass;
@@ -432,7 +437,7 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 	Vector2D distanceToCenter = position.difference(centerOfMass);
 
 	double speed = sqrt((2*physics->universe.gravity*totalMass)/distanceToCenter.length());
-	speed = Math::randomNormalBetween(speed*0.7, speed*0.9);
+	speed = gauss_random_between(speed*0.7, speed*0.9);
 	Vector2D velocity = distanceToCenter.unit().perpendicular().scale(speed);
 	velocity.add(centerOfMassVelocity);
 
@@ -550,7 +555,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 			if(bodyCreationState == VELOCITY_SELECTION)
 			{
 				Vector2D selectedVelocity = pointedPosition.difference(bodyCreationPosition);
-				double mass = (Math::PI/6.0) * bodyCreationDensity * bodyCreationDiameter * bodyCreationDiameter * bodyCreationDiameter;
+				double mass = (M_PI/6.0) * bodyCreationDensity * bodyCreationDiameter * bodyCreationDiameter * bodyCreationDiameter;
 				Body2D* newBody = new Body2D(mass, bodyCreationDiameter, bodyCreationPosition, selectedVelocity, Vector2D());
 				addCustomBody(newBody, SDL_util::getRandomColor());
 				setBodyCreationMode(IDLE);
@@ -574,7 +579,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 							if(notToogling) //set focused
 								focusedBodies.push_back(body);
 							else //toogle focus
-								if(Collections::removeElement(focusedBodies, body) == false)
+								if(remove_element(focusedBodies, body) == false)
 									focusedBodies.push_back(body);
 						}
 					}
@@ -608,7 +613,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 						if(notToogling) //set focused
 							focusedBodies.push_back(body);
 						else //toogle focus
-							if(Collections::removeElement(focusedBodies, body) == false)
+							if(remove_element(focusedBodies, body) == false)
 								focusedBodies.push_back(body);
 					}
 				}
@@ -681,7 +686,7 @@ void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, SDL_C
 	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 	{
 		Vector2D pv = planetarium->getTransposedNoRef(r);
-		pixelRGBA(planetarium->surf, Math::round(pv.x), Math::round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+		pixelRGBA(planetarium->surf, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 	}
 }
 
@@ -695,7 +700,7 @@ void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_C
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
 			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
-			line_function(planetarium->surf, Math::round(prevPosTrans.x), Math::round(prevPosTrans.y), Math::round(recPosTrans.x), Math::round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			line_function(planetarium->surf, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 		}
 		previousPosition = recordedPosition;
 	}

@@ -8,6 +8,11 @@
 #ifndef WIDGETS_FILE_DIALOG_HPP_
 #define WIDGETS_FILE_DIALOG_HPP_
 
+#include <string>
+#include <vector>
+
+#include "futil/general/language.hpp"
+
 #include "dialog_bgrwin.hpp"
 #include "label_win.hpp"
 #include "flow_layout.hpp"
@@ -18,10 +23,10 @@ namespace WidgetsExtra
 	struct FileDialog extends WidgetsExtra::DialogBgrWin
 	{
 		void (*onFinishedCallback)(FileDialog* dialog);
-		string selectedFilename, selectedType;
+		std::string selectedFilename, selectedType;
 
 		enum FileDialogMode { SELECT_FILE, SAVE_FILE, SELECT_FOLDER };
-		FileDialog(FileDialogMode mode=SELECT_FILE, void (*onFinished)(FileDialog* dialog)=null, const std::vector<string>& fileTypes=std::vector<string>());
+		FileDialog(FileDialogMode mode=SELECT_FILE, void (*onFinished)(FileDialog* dialog)=null, const std::vector<std::string>& fileTypes=std::vector<std::string>());
 		virtual ~FileDialog();
 
 		protected:

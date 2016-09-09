@@ -11,6 +11,7 @@
 
 #include <map>
 
+using std::string;
 using WidgetsExtra::GenericSpinner;
 
 // helpers

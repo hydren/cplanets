@@ -11,8 +11,12 @@
 #include <map>
 #include <utility>
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/string/more_operators.hpp"
+#include "futil/string/actions.hpp"
+#include "futil/math/parse_number.hpp"
 
+using std::string;
 using std::map;
 using std::vector;
 using std::pair;
@@ -44,7 +48,7 @@ FileFormat inferFormat(const string& filename)
 	typedef map<string, FileFormat> Map;
 	foreach(Pair, p, Map, formatOf)
 	{
-		if(String::endsWith(filename, "." + p.first))
+		if(ends_with(filename, "." + p.first))
 		{
 			return p.second;
 		}
@@ -118,26 +122,26 @@ Universe2D* ApplicationIO::load(std::string filename, FileFormat format)
 		char buffer[512];
 		FileInputStream fis(filename.c_str());
 		fis.getline(buffer, 512);
-		if(String::trim(string(buffer)) != "universe definition") return null; //invalid header
+		if(trim(string(buffer)) != "universe definition") return null; //invalid header
 
 		// skip spaces
 		do fis.getline(buffer, 512);
-		while(fis.good() && String::trim(string(buffer)) == "");
+		while(fis.good() && trim(string(buffer)) == "");
 
-		if(not String::startsWith(String::trim(string(buffer)), "gravity is ")) return null; //should gave gravity specified
-		string gravityStr = String::split(String::trim(string(buffer)), ' ').back();
-		if(not String::parseable<double>(gravityStr)) return null; //gravity value should be parseable
-		double tmpGravity = String::parse<double>(gravityStr);
+		if(not starts_with(trim(string(buffer)), "gravity is ")) return null; //should gave gravity specified
+		string gravityStr = split(trim(string(buffer)), ' ').back();
+		if(not parseable<double>(gravityStr)) return null; //gravity value should be parseable
+		double tmpGravity = parse<double>(gravityStr);
 
 		// skip spaces
 		do fis.getline(buffer, 512);
-		while(fis.good() && String::trim(string(buffer)) == "");
+		while(fis.good() && trim(string(buffer)) == "");
 
 		string gExpStr("2.0");
-		if(String::startsWith(String::trim(string(buffer)), "gexp is ")) //case gExp was specified
-			gExpStr = String::split(String::trim(string(buffer)), ' ').back();
-		if(not String::parseable<double>(gExpStr)) return null; //gExp value should be parseable (or not specified at all)
-		double tmpGExp = String::parse<double>(gExpStr);
+		if(starts_with(trim(string(buffer)), "gexp is ")) //case gExp was specified
+			gExpStr = split(trim(string(buffer)), ' ').back();
+		if(not parseable<double>(gExpStr)) return null; //gExp value should be parseable (or not specified at all)
+		double tmpGExp = parse<double>(gExpStr);
 
 		Universe2D* universe = new Universe2D();
 		universe->gravity = tmpGravity;
@@ -147,55 +151,55 @@ Universe2D* ApplicationIO::load(std::string filename, FileFormat format)
 		while(fis.good())
 		{
 			fis.getline(buffer, 512);
-			line = String::trim(string(buffer));
+			line = trim(string(buffer));
 
 			if(line == "") continue; // skip spaces
 
-			if(String::startsWith(String::trim(line), "body ") && String::contains(line, ":"))
+			if(starts_with(trim(line), "body ") && contains(line, ":"))
 			{
-				vector<string> tokens = String::split(String::trim(line), ':');
+				vector<string> tokens = split(trim(line), ':');
 				if(tokens.size() != 2) continue; //should have only one ':' separator
 
-				string head = String::trim(tokens[0]);
-				if(String::split(head, ' ').size() < 2) continue; //should have a id
+				string head = trim(tokens[0]);
+				if(split(head, ' ').size() < 2) continue; //should have a id
 
-				string id = String::split(head, ' ').back();
+				string id = split(head, ' ').back();
 
-				tokens = String::split(tokens[1], ',');
+				tokens = split(tokens[1], ',');
 				if(tokens.size() != 6) continue; //should have 6 named parameters
 
-				if(not String::startsWith(String::trim(tokens[0]), "mass ")
-				|| not String::startsWith(String::trim(tokens[1]), "diameter ")
-				|| not String::startsWith(String::trim(tokens[2]), "position_x ")
-				|| not String::startsWith(String::trim(tokens[3]), "position_y ")
-				|| not String::startsWith(String::trim(tokens[4]), "velocity_x ")
-				|| not String::startsWith(String::trim(tokens[5]), "velocity_y "))
+				if(not starts_with(trim(tokens[0]), "mass ")
+				|| not starts_with(trim(tokens[1]), "diameter ")
+				|| not starts_with(trim(tokens[2]), "position_x ")
+				|| not starts_with(trim(tokens[3]), "position_y ")
+				|| not starts_with(trim(tokens[4]), "velocity_x ")
+				|| not starts_with(trim(tokens[5]), "velocity_y "))
 					continue; //should have parameters named like these
 
 				string token;
-				token = String::split(String::trim(tokens[0]), ' ').back();
-				if(not String::parseable<double>(token)) continue; //should have a parseable value
-				double mass = String::parse<double>(token);
+				token = split(trim(tokens[0]), ' ').back();
+				if(not parseable<double>(token)) continue; //should have a parseable value
+				double mass = parse<double>(token);
 
-				token = String::split(String::trim(tokens[1]), ' ').back();
-				if(not String::parseable<double>(token)) continue; //should have a parseable value
-				double diameter = String::parse<double>(token);
+				token = split(trim(tokens[1]), ' ').back();
+				if(not parseable<double>(token)) continue; //should have a parseable value
+				double diameter = parse<double>(token);
 
-				token = String::split(String::trim(tokens[2]), ' ').back();
-				if(not String::parseable<double>(token)) continue; //should have a parseable value
-				double position_x = String::parse<double>(token);
+				token = split(trim(tokens[2]), ' ').back();
+				if(not parseable<double>(token)) continue; //should have a parseable value
+				double position_x = parse<double>(token);
 
-				token = String::split(String::trim(tokens[3]), ' ').back();
-				if(not String::parseable<double>(token)) continue; //should have a parseable value
-				double position_y = String::parse<double>(token);
+				token = split(trim(tokens[3]), ' ').back();
+				if(not parseable<double>(token)) continue; //should have a parseable value
+				double position_y = parse<double>(token);
 
-				token = String::split(String::trim(tokens[4]), ' ').back();
-				if(not String::parseable<double>(token)) continue; //should have a parseable value
-				double velocity_x = String::parse<double>(token);
+				token = split(trim(tokens[4]), ' ').back();
+				if(not parseable<double>(token)) continue; //should have a parseable value
+				double velocity_x = parse<double>(token);
 
-				token = String::split(String::trim(tokens[5]), ' ').back();
-				if(not String::parseable<double>(token)) continue; //should have a parseable value
-				double velocity_y = String::parse<double>(token);
+				token = split(trim(tokens[5]), ' ').back();
+				if(not parseable<double>(token)) continue; //should have a parseable value
+				double velocity_y = parse<double>(token);
 
 				//add successfully read body
 				universe->bodies.push_back(new Body2D(mass, diameter, Vector2D(position_x, position_y), Vector2D(velocity_x, velocity_y), Vector2D::NULL_VECTOR));

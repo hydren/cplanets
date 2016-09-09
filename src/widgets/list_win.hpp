@@ -10,7 +10,8 @@
 
 #include "SDL_widgets/SDL_widgets.h"
 #include "list_selection_model.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/string/callbacks.hpp"
 
 namespace WidgetsExtra
 {
@@ -67,7 +68,7 @@ namespace WidgetsExtra
 		  listData(new std::vector<Type>()), ownData(true),
 
 		  //advanced usage
-		  stringfyFunction(String::Callbacks::stringfy_by_cast<Type>),
+		  stringfyFunction(stringfy_by_cast<Type>),
 		  selectionAdjustmentFunction(null)
 		{}
 

@@ -9,7 +9,7 @@
 #define PHYSICS_SOLVERS_ONE_STEP_HPP_
 
 #include "physics/physics2dsolver.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 struct LeapfrogSolver extends AbstractPhysics2DSolver
 {

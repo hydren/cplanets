@@ -8,7 +8,6 @@
 #include "tab_set.hpp"
 
 #include "widgets_util.hpp"
-#include "futil/futil.hpp"
 
 using WidgetsExtra::TabSet;
 using WidgetsExtra::FlowLayout;

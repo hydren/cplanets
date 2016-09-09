@@ -8,7 +8,9 @@
 #include "runge_kutta.hpp"
 
 #include <stdexcept>
+#include "futil/string/more_operators.hpp"
 
+using std::string;
 using std::map;
 using std::vector;
 

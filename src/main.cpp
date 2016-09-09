@@ -16,6 +16,8 @@
 #include "main_window.hpp"
 #include "SDL_util.hpp"
 
+#include "util.hpp"
+
 using std::string;
 using std::exception;
 using std::cout; using std::endl;

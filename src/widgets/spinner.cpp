@@ -10,6 +10,7 @@
 
 #include "widgets_util.hpp"
 
+using std::string;
 using WidgetsExtra::AbstractSpinner;
 using WidgetsExtra::Spinner;
 

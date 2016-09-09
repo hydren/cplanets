@@ -10,7 +10,8 @@
 #include <stdexcept>
 #include <map>
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/collection/actions.hpp"
 
 using std::vector;
 using std::map;
@@ -44,7 +45,7 @@ void TabController::setActiveTab(unsigned index)
 
 void TabController::setActiveTab(BgrWin* tabContent)
 {
-	int index = Collections::indexOf(tabsPanels, tabContent);
+	int index = index_of(tabsPanels, tabContent);
 	if(index != -1)
 		setActiveTab(index);
 	// else throw std::invalid_argument; //should we?
@@ -58,7 +59,7 @@ void TabController::onTabButtonClicked(RExtButton* rbTab, bool is_act)
 		panel->hide();
 	}
 
-	int index = Collections::indexOf(controller->tabButtons, rbTab);
+	int index = index_of(controller->tabButtons, rbTab);
 	controller->tabsPanels[index]->draw_blit_recur();
 	controller->tabsPanels[index]->show();
 }

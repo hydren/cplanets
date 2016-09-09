@@ -8,7 +8,7 @@
 #ifndef UTIL_HPP_
 #define UTIL_HPP_
 
-#include "futil/futil.hpp"
+#include <futil/general/language.hpp>
 
 //needed to display the version
 extern const std::string CPLANETS_VERSION;

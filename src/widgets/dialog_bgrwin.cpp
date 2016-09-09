@@ -10,6 +10,7 @@
 #include "widgets_util.hpp"
 
 using WidgetsExtra::DialogBgrWin;
+using std::string;
 
 DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWin*))
 : BgrWin(null, bounds, null, DialogBgrWin::draw, DialogBgrWin::custom_mwin_down, mwin::move, mwin::up, 0),

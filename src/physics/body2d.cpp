@@ -7,7 +7,9 @@
 
 #include "body2d.hpp"
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/string/more_operators.hpp"
+#include "futil/math/more_random.h"
 
 #include <cmath>
 
@@ -15,7 +17,7 @@ using std::string;
 
 string generateRandomName()
 {
-	return string("B")+Math::randomBetween(0, 10000);
+	return string("B")+random_between(0, 10000);
 }
 
 Body2D::Body2D(double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration)

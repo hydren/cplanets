@@ -9,7 +9,9 @@
 #define WIDGETS_LIST_MODEL_HPP_
 
 #include "abstract_list_model.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+
+#include <vector>
 
 namespace WidgetsExtra
 {

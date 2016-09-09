@@ -12,6 +12,8 @@ using std::map;
 
 #include <cmath>
 
+#include "futil/collection/map_actions.hpp"
+
 DEFINE_CLASS_FACTORY(StormerVerletSolver, "Stormer-Verlet (Explicit Central Diff.)");
 
 StormerVerletSolver::StormerVerletSolver(Physics2D& u)
@@ -29,7 +31,7 @@ void StormerVerletSolver::step()
 		Vector2D curr = body->position;
 
 		// get the previous position. if absent, estimate it through formula x[n-1] = x[n] - h*v[x]
-		Vector2D& prev = Collections::coalesce2(previousPositions, body, (body->position-(body->velocity*timestep)));
+		Vector2D& prev = coalesce_in(previousPositions, body, (body->position-(body->velocity*timestep)));
 
 		if(timestep != previousTimestep and timeElapsed > 0) // adjusted formula to compensate for ocasional timestep variation
 			body->position += (body->position - prev) * (timestep/previousTimestep) + body->acceleration * timestep * (timestep + previousTimestep) * 0.5;
@@ -65,7 +67,7 @@ void BeemanSolver::step()
 	map<Body2D*, Vector2D> accPrev, accCurr;
 
 	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
-		Collections::coalesce2(previousPositions, body, (body->position-(body->velocity*timestep))); // ensure presence of a previous position
+		coalesce_in(previousPositions, body, (body->position-(body->velocity*timestep))); // ensure presence of a previous position
 
 	physics.computeAccelerations(accPrev, previousPositions);
 	physics.computeAccelerations(accCurr);
@@ -139,7 +141,7 @@ void BackwardDifferenceCorrectionSolver::preStep()
 
 	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
-		History& bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
+		History& bodyHistory = coalesce_in(history, body, History(body, timestep)); // ensure presence of a previous history
 
 		bodyHistory.previousPosition = body->position;
 		bodyHistory.previousAcceleration2 = bodyHistory.previousAcceleration;
@@ -168,7 +170,7 @@ void BackwardDifferenceCorrectionSolver::step()
 
 	foreach(Body2D*, body, vector<Body2D*>, physics.universe.bodies)
 	{
-		History& bodyHistory = Collections::coalesce2(history, body, History(body, timestep)); // ensure presence of a previous history
+		History& bodyHistory = coalesce_in(history, body, History(body, timestep)); // ensure presence of a previous history
 
 		Vector2D  &fn_1 = bodyHistory.previousAcceleration,
 						&fn_2 =bodyHistory.previousAcceleration2,

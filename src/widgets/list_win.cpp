@@ -8,6 +8,7 @@
 #include "list_win.hpp"
 #include "scrollable_pane.hpp"
 
+using std::string;
 using WidgetsExtra::AbstractListWin;
 
 AbstractListWin::AbstractListWin(WinBase* parent, Style style, Rect rect, Id id)

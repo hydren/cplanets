@@ -12,7 +12,10 @@
 
 #include <stdexcept>
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/math/parse_number.hpp"
+#include "futil/listener.hpp"
+
 #include "widgets/abstract_layout.hpp"
 
 namespace WidgetsExtra
@@ -122,9 +125,9 @@ namespace WidgetsExtra
 		/// Returns true if the spinner value was changed as a result of this call.
 		virtual bool assign(const char* txtVal)
 		{
-			if(String::parseable<Type>(string(txtVal))) //if we can figure out something from the field
+			if(parseable<Type>(std::string(txtVal))) //if we can figure out something from the field
 			{
-				Type val = String::parse<Type>(string(txtVal));
+				Type val = parse<Type>(std::string(txtVal));
 				if(this->isValidValue(val)) //if value type is inside bounds
 					*(this->value) = val;
 
@@ -261,7 +264,7 @@ namespace WidgetsExtra
 		/// Updates the text field content and redraw's the Spinner.
 		virtual void refresh()
 		{
-			string strValue = string() + *(this->value);
+			std::string strValue = std::string() + *(this->value);
 			this->dlwTextField.dialog_def(strValue.c_str(), this->dlwTextField.cmd, this->dlwTextField.cmd_id);
 			this->dlwTextField.unset_cursor();
 			this->btnInc.draw_blit_upd();
@@ -301,9 +304,9 @@ namespace WidgetsExtra
 		//overrides AbstractSpinner's
 		virtual void parseIfValid(const char* txtVal)
 		{
-			if(String::parseable<Type>(string(txtVal))) //if we can figure out something from the field
+			if(parseable<Type>(std::string(txtVal))) //if we can figure out something from the field
 			{
-				Type val = String::parse<Type>(string(txtVal));
+				Type val = parse<Type>(std::string(txtVal));
 				if(this->isValidValue(val)) //if value type is inside bounds
 					*(this->value) = val;
 			}

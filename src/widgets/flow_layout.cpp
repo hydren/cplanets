@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 using std::vector;
 

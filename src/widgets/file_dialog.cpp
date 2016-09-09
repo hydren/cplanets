@@ -21,6 +21,7 @@
 using WidgetsExtra::FileDialog;
 using std::map;
 using std::vector;
+using std::string;
 
 char buffer[1024];
 
