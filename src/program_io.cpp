@@ -14,6 +14,7 @@
 #include "futil/general/language.hpp"
 #include "futil/string/more_operators.hpp"
 #include "futil/string/actions.hpp"
+#include "futil/string/split.hpp"
 #include "futil/math/parse_number.hpp"
 
 using std::string;
