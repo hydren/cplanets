@@ -7,6 +7,7 @@
 
 #include "runge_kutta.hpp"
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #define X 0

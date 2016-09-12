@@ -7,12 +7,13 @@
 
 #include "physics2d.hpp"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include <cstdlib>
+
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
-
-#include <cstdlib>
-#include <cmath>
 
 using std::vector;
 using std::map;

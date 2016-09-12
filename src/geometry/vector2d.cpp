@@ -5,10 +5,9 @@
  *      Author: Carlos Faruolo <5carlosfelipe5@gmail.com>felipe
  */
 
-#define _USE_MATH_CONSTANTS
-
 #include "vector2d.hpp"
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <string>
 

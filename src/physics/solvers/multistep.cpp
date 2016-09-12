@@ -10,6 +10,7 @@
 using std::vector;
 using std::map;
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "futil/collection/map_actions.hpp"

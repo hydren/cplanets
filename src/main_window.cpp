@@ -9,11 +9,12 @@
 
 #include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
 
-#include <iostream>
-#include <fstream>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstring>
 #include <climits>
+#include <iostream>
+#include <fstream>
 
 #include "futil/math/more_random.h"
 #include "futil/math/miscellaneous.hpp"
