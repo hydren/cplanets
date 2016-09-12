@@ -11,9 +11,9 @@
 #include <cmath>
 
 #define X 0
-#define s2 sqrt(2)
-#define s5 sqrt(5)
-#define s21 sqrt(21)
+#define s2 sqrt((double) 2)
+#define s5 sqrt((double) 5)
+#define s21 sqrt((double) 21)
 
 #define CREATE_BUILTIN_TABLE(name, size) const ButcherTable ButcherTable::name(size, copytable<size>(::name))
 
