@@ -7,6 +7,7 @@
 
 #ifndef WIDGETS_ABSTRACT_LAYOUT_HPP_
 #define WIDGETS_ABSTRACT_LAYOUT_HPP_
+#include <ciso646>
 
 #include <vector>
 

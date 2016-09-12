@@ -7,6 +7,7 @@
 
 #ifndef WIDGETS_WIDGETS_UTIL_HPP_
 #define WIDGETS_WIDGETS_UTIL_HPP_
+#include <ciso646>
 
 #include "SDL_widgets/SDL_widgets.h"
 
