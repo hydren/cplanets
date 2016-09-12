@@ -70,6 +70,19 @@ struct Planetarium::Physics2DEventsManager
 	~Physics2DEventsManager() { SDL_DestroyMutex(mutex); }
 };
 
+const double Planetarium::BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
+
+const unsigned Planetarium::DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
+const double Planetarium::DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE = 0.1;
+const double Planetarium::DEFAULT_BODY_CREATION_DIAMETER_RATIO = 1.0;
+const double Planetarium::DEFAULT_BODY_CREATION_DENSITY = 1.0;
+const double Planetarium::DEFAULT_BODY_CREATION_SPEED = 20.0;
+const unsigned Planetarium::DEFAULT_STROKE_SIZE_NORMAL = 1, Planetarium::DEFAULT_STROKE_SIZE_FOCUSED = 2;
+const double Planetarium::DEFAULT_MINIMUM_BODY_RENDERING_RADIUS = 3.0;
+const unsigned Planetarium::DEFAULT_SLEEPING_TIME = 25;
+const short Planetarium::DEFAULT_FPS = 60;
+const long Planetarium::DEFAULT_DISPLAY_PERIOD = 30, Planetarium::DEFAULT_ITERATIONS_PER_DISPLAY = 2;
+
 Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
 : surf(SDL_CreateRGBSurface(SDL_SWSURFACE,rect.w,rect.h,pixdepth,0,0,0,0)), size(rect), pos(rect), isRedrawPending(false),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),

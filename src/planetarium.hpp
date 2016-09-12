@@ -19,18 +19,20 @@
 
 struct Planetarium extends Physics2D::Listener
 {
-	static const double BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
+	static const double BODY_CREATION_DIAMETER_FACTOR; // = 32.0, refinement factor
 
-	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
-	static const double DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE = 0.1;
-	static const double DEFAULT_BODY_CREATION_DIAMETER_RATIO = 1.0;
-	static const double DEFAULT_BODY_CREATION_DENSITY = 1.0;
-	static const double DEFAULT_BODY_CREATION_SPEED = 20.0;
-	static const unsigned DEFAULT_STROKE_SIZE_NORMAL = 1, DEFAULT_STROKE_SIZE_FOCUSED = 2;
-	static const double DEFAULT_MINIMUM_BODY_RENDERING_RADIUS = 3.0;
-	static const unsigned DEFAULT_SLEEPING_TIME = 25;
-	static const short DEFAULT_FPS = 60;
-	static const long DEFAULT_DISPLAY_PERIOD = 30, DEFAULT_ITERATIONS_PER_DISPLAY = 2;
+	static const unsigned DEFAULT_VIEWPORT_TRANSLATE_RATE; // = 8
+	static const double DEFAULT_VIEWPORT_ZOOM_CHANGE_RATE; // = 0.1
+	static const double DEFAULT_BODY_CREATION_DIAMETER_RATIO; // = 1.0
+	static const double DEFAULT_BODY_CREATION_DENSITY; // = 1.0
+	static const double DEFAULT_BODY_CREATION_SPEED; // = 20.0
+	static const unsigned DEFAULT_STROKE_SIZE_NORMAL; // = 1
+	static const unsigned DEFAULT_STROKE_SIZE_FOCUSED; // = 2
+	static const double DEFAULT_MINIMUM_BODY_RENDERING_RADIUS; // = 3.0
+	static const unsigned DEFAULT_SLEEPING_TIME; // = 25
+	static const short DEFAULT_FPS; // = 60
+	static const long DEFAULT_DISPLAY_PERIOD; // = 30
+	static const long DEFAULT_ITERATIONS_PER_DISPLAY; // = 2
 
 	SDL_Surface* surf;
 	SDL_Rect size, pos;
