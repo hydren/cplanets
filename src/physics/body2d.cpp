@@ -11,7 +11,6 @@
 #include "futil/string/more_operators.hpp"
 #include "futil/math/more_random.h"
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 using std::string;

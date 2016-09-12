@@ -9,7 +9,6 @@
 
 #include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstring>
 #include <climits>

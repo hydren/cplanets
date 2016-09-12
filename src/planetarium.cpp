@@ -5,8 +5,6 @@
  *      Author: carlosfaruolo
  */
 
-#define _USE_MATH_DEFINES
-
 #include "planetarium.hpp"
 
 #include <SDL/SDL_gfxPrimitives.h>

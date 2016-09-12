@@ -7,10 +7,10 @@
 
 #include "vector2d.hpp"
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <string>
 
+#include "futil/math/constants.h"
 #include "futil/math/more_random.h"
 #include "futil/string/more_operators.hpp"
 
