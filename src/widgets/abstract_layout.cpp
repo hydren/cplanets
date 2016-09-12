@@ -7,6 +7,7 @@
 
 #include "abstract_layout.hpp"
 
+#include <stdexcept>
 #include <typeinfo>
 
 #include "futil/collection/actions.hpp"
