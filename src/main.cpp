@@ -20,7 +20,8 @@
 
 using std::string;
 using std::exception;
-using std::cout; using std::endl;
+using std::cout;
+using std::endl;
 
 const string CPLANETS_VERSION = "0.9.0-beta";
 
