@@ -9,6 +9,8 @@
 
 #include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
 
+#include <cstdlib>
+
 #include "futil/general/language.hpp"
 #include "futil/math/more_random.h"
 
