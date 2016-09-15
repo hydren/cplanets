@@ -136,7 +136,7 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913" moduleId="org.eclipse.cdt.core.settings" name="windows-debug">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913" moduleId="org.eclipse.cdt.core.settings" name="mingw-debug">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -147,7 +147,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913" name="windows-debug" parent="cdt.managedbuild.config.gnu.exe.debug" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913" name="mingw-debug" parent="cdt.managedbuild.config.gnu.exe.debug" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.mingw.base.1495803455" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.mingw.base.1069776936" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
@@ -202,7 +202,7 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441" moduleId="org.eclipse.cdt.core.settings" name="linux-debug">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441" moduleId="org.eclipse.cdt.core.settings" name="linux-gcc-debug">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -213,7 +213,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441" name="linux-debug" parent="cdt.managedbuild.config.gnu.exe.debug" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441" name="linux-gcc-debug" parent="cdt.managedbuild.config.gnu.exe.debug" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.exe.debug.1612396915" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.exe.debug.1930634505" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
@@ -271,7 +271,7 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.809514379.130176394">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.809514379.130176394" moduleId="org.eclipse.cdt.core.settings" name="linux-release">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.809514379.130176394" moduleId="org.eclipse.cdt.core.settings" name="linux-gcc-release">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -284,7 +284,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.release.809514379.130176394" name="linux-release" parent="cdt.managedbuild.config.gnu.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.release.809514379.130176394" name="linux-gcc-release" parent="cdt.managedbuild.config.gnu.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.809514379.130176394." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.exe.release.1600402788" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.release">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.PE;org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.exe.release.1154749343" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.release"/>
@@ -334,7 +334,7 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167" moduleId="org.eclipse.cdt.core.settings" name="windows-release">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167" moduleId="org.eclipse.cdt.core.settings" name="mingw-release">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -344,7 +344,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167" name="windows-release" parent="cdt.managedbuild.config.gnu.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167" name="mingw-release" parent="cdt.managedbuild.config.gnu.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.464251113" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.1125236217" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
@@ -477,7 +477,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="(VC10)" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916" name="msvc-release" parent="cdt.managedbuild.config.gnu.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="VC10" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916" name="msvc-release" parent="cdt.managedbuild.config.gnu.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916." name="/" resourcePath="">
 						<toolChain id="org.eclipse.cdt.msvc.toolchain.dll.debug.1345821579" name="Microsoft Visual C++" superClass="org.eclipse.cdt.msvc.toolchain.dll.debug">
 							<targetPlatform id="org.eclipse.cdt.msvc.targetPlatform.dll.debug.1975309147" superClass="org.eclipse.cdt.msvc.targetPlatform.dll.debug"/>
@@ -507,7 +507,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="SDL_ttf.lib"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="SDL_gfx.lib"/>
 								</option>
-								<option id="org.eclipse.cdt.msvc.link.option.others.539796733" superClass="org.eclipse.cdt.msvc.link.option.others" useByScannerDiscovery="false" valueType="stringList">
+								<option id="org.eclipse.cdt.msvc.link.option.others.539796733" name="Other Options" superClass="org.eclipse.cdt.msvc.link.option.others" useByScannerDiscovery="false" valueType="stringList">
 									<listOptionValue builtIn="false" value="/SUBSYSTEM:WINDOWS"/>
 								</option>
 								<inputType id="org.eclipse.cdt.msvc.link.inputType.1889443188" superClass="org.eclipse.cdt.msvc.link.inputType"/>
@@ -548,42 +548,6 @@
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913;cdt.managedbuild.config.gnu.exe.debug.360717897.168367913.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.905320665;cdt.managedbuild.tool.gnu.c.compiler.input.2046512615">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913;cdt.managedbuild.config.gnu.exe.debug.360717897.168367913.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.529521496;cdt.managedbuild.tool.gnu.cpp.compiler.input.1079898967">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1643577570;cdt.managedbuild.tool.gnu.cpp.compiler.input.1450962671">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916.;org.eclipse.cdt.msvc.cl.dll.debug.1927225089;org.eclipse.cdt.msvc.cl.inputType.131326418">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981;cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.916296173;cdt.managedbuild.tool.gnu.cpp.compiler.input.827389360">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379;cdt.managedbuild.config.gnu.exe.release.809514379.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.143259355;cdt.managedbuild.tool.gnu.cpp.compiler.input.102634426">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441;cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.226785425;cdt.managedbuild.tool.gnu.cpp.compiler.input.2004850733">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.130176394;cdt.managedbuild.config.gnu.exe.release.809514379.130176394.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.181791955;cdt.managedbuild.tool.gnu.cpp.compiler.input.750832545">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1929696386;cdt.managedbuild.tool.gnu.c.compiler.input.1332520718">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981;cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981.;cdt.managedbuild.tool.gnu.cross.c.compiler.1347918538;cdt.managedbuild.tool.gnu.c.compiler.input.1130075564">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.;org.eclipse.cdt.msvc.cl.dll.debug.1164962709;org.eclipse.cdt.msvc.cl.inputType.27010182">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916.;org.eclipse.cdt.msvc.cl.c.dll.debug.390906209;org.eclipse.cdt.msvc.cl.inputType.c.1039127118">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
-		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.516399459;cdt.managedbuild.tool.gnu.cpp.compiler.input.114273549">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
@@ -592,9 +556,6 @@
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379;cdt.managedbuild.config.gnu.exe.release.809514379.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1299195993;cdt.managedbuild.tool.gnu.cpp.compiler.input.1140531753">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913;cdt.managedbuild.config.gnu.exe.debug.360717897.168367913.;org.eclipse.cdt.msvc.cl.c.dll.debug.1159700820;org.eclipse.cdt.msvc.cl.inputType.c.1064039642">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897;cdt.managedbuild.config.gnu.exe.debug.360717897.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.499056753;cdt.managedbuild.tool.gnu.cpp.compiler.input.474742877">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -605,25 +566,46 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441;cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1551996692;cdt.managedbuild.tool.gnu.c.compiler.input.1978696034">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913;cdt.managedbuild.config.gnu.exe.debug.360717897.168367913.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.905320665;cdt.managedbuild.tool.gnu.c.compiler.input.2046512615">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913;cdt.managedbuild.config.gnu.exe.debug.360717897.168367913.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.529521496;cdt.managedbuild.tool.gnu.cpp.compiler.input.1079898967">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897;cdt.managedbuild.config.gnu.exe.debug.360717897.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1515939645;cdt.managedbuild.tool.gnu.cpp.compiler.input.590735548">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1643577570;cdt.managedbuild.tool.gnu.cpp.compiler.input.1450962671">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897;cdt.managedbuild.config.gnu.exe.debug.360717897.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.761423144;cdt.managedbuild.tool.gnu.c.compiler.input.486342765">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.168367913;cdt.managedbuild.config.gnu.exe.debug.360717897.168367913.;org.eclipse.cdt.msvc.cl.dll.debug.701710475;org.eclipse.cdt.msvc.cl.inputType.1889168765">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981;cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.916296173;cdt.managedbuild.tool.gnu.cpp.compiler.input.827389360">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379;cdt.managedbuild.config.gnu.exe.release.809514379.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.143259355;cdt.managedbuild.tool.gnu.cpp.compiler.input.102634426">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441;cdt.managedbuild.config.gnu.exe.debug.360717897.1727755441.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.226785425;cdt.managedbuild.tool.gnu.cpp.compiler.input.2004850733">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379;cdt.managedbuild.config.gnu.exe.release.809514379.;cdt.managedbuild.tool.gnu.cross.c.compiler.196079174;cdt.managedbuild.tool.gnu.c.compiler.input.1413207672">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.;org.eclipse.cdt.msvc.cl.c.dll.debug.597685706;org.eclipse.cdt.msvc.cl.inputType.c.806489010">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.130176394;cdt.managedbuild.config.gnu.exe.release.809514379.130176394.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.181791955;cdt.managedbuild.tool.gnu.cpp.compiler.input.750832545">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379;cdt.managedbuild.config.gnu.exe.release.809514379.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1915433082;cdt.managedbuild.tool.gnu.c.compiler.input.889967066">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897;cdt.managedbuild.config.gnu.exe.debug.360717897.;cdt.managedbuild.tool.gnu.cross.c.compiler.1714792805;cdt.managedbuild.tool.gnu.c.compiler.input.1632029807">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1929696386;cdt.managedbuild.tool.gnu.c.compiler.input.1332520718">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981;cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981.;cdt.managedbuild.tool.gnu.cross.c.compiler.1347918538;cdt.managedbuild.tool.gnu.c.compiler.input.1130075564">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
