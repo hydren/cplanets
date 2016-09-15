@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/INCLUDE/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/INCLUDE/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/INCLUDE/value=C\:\\Program Files\\Microsoft Visual Studio 10.0\\VC\\Include;C\:\\Program Files\\Microsoft SDKs\\Windows\\v7.0A\\Include;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/LIB/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/LIB/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/LIB/value=C\:\\Program Files\\Microsoft Visual Studio 10.0\\VC\\Lib;C\:\\Program Files\\Microsoft SDKs\\Windows\\v7.0A\\Lib;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916/appendContributed=true
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/INCLUDE/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/INCLUDE/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/INCLUDE/value=C\:\\Program Files\\Microsoft Visual Studio 10.0\\VC\\Include;C\:\\Program Files\\Microsoft SDKs\\Windows\\v7.0A\\Include;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/LIB/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/LIB/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/LIB/value=C\:\\Program Files\\Microsoft Visual Studio 10.0\\VC\\Lib;C\:\\Program Files\\Microsoft SDKs\\Windows\\v7.0A\\Lib;
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.release.809514379.1064205167/appendContributed=true
