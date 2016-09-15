@@ -166,9 +166,9 @@ void FileDialog::triggerNavigation(Button* navButton)
 	Point fchooserPos(navButton->tw_area.x + navButton->tw_area.w * 0.5, navButton->tw_area.y + navButton->tw_area.h * 0.5);
 
 	if(self->mode == SELECT_FILE)
-		file_chooser(FileDialog::fileSelected, self->id, true, fchooserPos.x, fchooserPos.y);
+		file_chooser(FileDialog::fileSelected, self->id, fchooserPos.x, fchooserPos.y);
 	else if(self->mode == SAVE_FILE || self->mode == SELECT_FOLDER)
-		working_dir(FileDialog::folderOpened, self->id, true, fchooserPos.x, fchooserPos.y);
+		working_dir(FileDialog::folderOpened, self->id, fchooserPos.x, fchooserPos.y);
 }
 
 //called when selected a file when browsing
