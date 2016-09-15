@@ -11,6 +11,7 @@
 
 using WidgetsExtra::GenericListWin;
 using WidgetsExtra::DefaultUIListModel;
+using WidgetsExtra::UIListModel;
 
 using std::vector;
 using std::string;
