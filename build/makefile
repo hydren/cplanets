@@ -8,6 +8,9 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include src_libs/futil/string/subdir.mk
+-include src_libs/futil/math/subdir.mk
+-include src_libs/futil/general/subdir.mk
 -include src_libs/futil/subdir.mk
 -include src_libs/SDL_widgets/subdir.mk
 -include src/widgets/extra/subdir.mk
