@@ -27,8 +27,9 @@
 # Makefile dependency-lists
 *.d
 
-# Eclipse annoying file
+# Eclipse local configuration files
 language.settings.xml
+org.eclipse.cdt.managedbuilder.core.prefs
 
 # Eclipse build folders
 /tests-geometry/
