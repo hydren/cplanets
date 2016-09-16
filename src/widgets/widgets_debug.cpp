@@ -10,7 +10,7 @@
 #include <iostream>
 #include <cstdio>
 
-#include "futil/general/snprintf_alternative.h"
+#include "futil/general/snprintf.h"
 
 #include "toogle_button.hpp"
 #include "abstract_layout.hpp"
