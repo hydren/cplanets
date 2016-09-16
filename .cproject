@@ -485,12 +485,16 @@
 							<tool id="org.eclipse.cdt.msvc.cl.c.dll.debug.390906209" name="C Compiler (cl)" superClass="org.eclipse.cdt.msvc.cl.c.dll.debug">
 								<option id="org.eclipse.cdt.msvc.cl.option.optimization.1322695070" name="Optimization" superClass="org.eclipse.cdt.msvc.cl.option.optimization"/>
 								<option id="org.eclipse.cdt.msvc.cl.option.debugFormat.688778419" name="Debug Information Format" superClass="org.eclipse.cdt.msvc.cl.option.debugFormat"/>
+								<option id="org.eclipse.cdt.msvc.cl.option.includes.1089244074" name="Include Path (/I)" superClass="org.eclipse.cdt.msvc.cl.option.includes" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${WINSDK_INCLUDE_PATH}&quot;"/>
+								</option>
 								<inputType id="org.eclipse.cdt.msvc.cl.inputType.c.1039127118" superClass="org.eclipse.cdt.msvc.cl.inputType.c"/>
 							</tool>
 							<tool id="org.eclipse.cdt.msvc.cl.dll.debug.1927225089" name="C++ Compiler (cl)" superClass="org.eclipse.cdt.msvc.cl.dll.debug">
-								<option id="org.eclipse.cdt.msvc.cl.option.includes.1811479591" name="Include Path (/I)" superClass="org.eclipse.cdt.msvc.cl.option.includes" valueType="includePath">
+								<option id="org.eclipse.cdt.msvc.cl.option.includes.1811479591" name="Include Path (/I)" superClass="org.eclipse.cdt.msvc.cl.option.includes" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src_libs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WINSDK_INCLUDE_PATH}&quot;"/>
 								</option>
 								<option id="org.eclipse.cdt.msvc.cl.option.optimization.1850203994" name="Optimization" superClass="org.eclipse.cdt.msvc.cl.option.optimization"/>
 								<option id="org.eclipse.cdt.msvc.cl.option.debugFormat.69474577" name="Debug Information Format" superClass="org.eclipse.cdt.msvc.cl.option.debugFormat"/>
@@ -509,6 +513,10 @@
 								</option>
 								<option id="org.eclipse.cdt.msvc.link.option.others.539796733" name="Other Options" superClass="org.eclipse.cdt.msvc.link.option.others" useByScannerDiscovery="false" valueType="stringList">
 									<listOptionValue builtIn="false" value="/SUBSYSTEM:WINDOWS"/>
+								</option>
+								<option id="org.eclipse.cdt.msvc.link.option.libpath.336612075" name="Additional Libpath (/libpath)" superClass="org.eclipse.cdt.msvc.link.option.libpath" useByScannerDiscovery="false" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${MSVC_LIB_PATH}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WINSDK_LIB_PATH}&quot;"/>
 								</option>
 								<inputType id="org.eclipse.cdt.msvc.link.inputType.1889443188" superClass="org.eclipse.cdt.msvc.link.inputType"/>
 							</tool>
@@ -581,6 +589,9 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897;cdt.managedbuild.config.gnu.exe.debug.360717897.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.761423144;cdt.managedbuild.tool.gnu.c.compiler.input.486342765">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916.;org.eclipse.cdt.msvc.cl.dll.debug.1927225089;org.eclipse.cdt.msvc.cl.inputType.131326418">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981;cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.916296173;cdt.managedbuild.tool.gnu.cpp.compiler.input.827389360">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
@@ -607,6 +618,9 @@
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981;cdt.managedbuild.config.gnu.exe.debug.360717897.1045885981.;cdt.managedbuild.tool.gnu.cross.c.compiler.1347918538;cdt.managedbuild.tool.gnu.c.compiler.input.1130075564">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916;cdt.managedbuild.config.gnu.exe.release.809514379.1064205167.420863916.;org.eclipse.cdt.msvc.cl.c.dll.debug.390906209;org.eclipse.cdt.msvc.cl.inputType.c.1039127118">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
 </cproject>
