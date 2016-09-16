@@ -7,7 +7,7 @@
 
 #include "list_selection_model.hpp"
 
-#include <cstddef>
+#include <cstdlib>
 #include <algorithm>
 
 using WidgetsExtra::ListSelectionModel;

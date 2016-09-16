@@ -9,7 +9,10 @@
 
 #include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
 
-#include "futil/futil.hpp"
+#include <cstdlib>
+
+#include "futil/general/language.hpp"
+#include "futil/math/more_random.h"
 
 int SDL_util::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA)
 {
@@ -24,9 +27,9 @@ int SDL_util::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool f
 SDL_Color* SDL_util::getRandomColor()
 {
 	SDL_Color* somecolor = new SDL_Color();
-	somecolor->r = Math::randomBetween(0, 255);
-	somecolor->g = Math::randomBetween(0, 255);
-	somecolor->b = Math::randomBetween(0, 255);
+	somecolor->r = random_between(0, 255);
+	somecolor->g = random_between(0, 255);
+	somecolor->b = random_between(0, 255);
 	return somecolor;
 }
 

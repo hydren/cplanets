@@ -8,7 +8,9 @@
 #include "runge_kutta.hpp"
 
 #include <stdexcept>
+#include "futil/string/more_operators.hpp"
 
+using std::string;
 using std::map;
 using std::vector;
 
@@ -25,7 +27,9 @@ void RungeKuttaSolver::step()
 {
 	// wvs and wrs are temporary variables used to compute the velocity derivative (acceleration) and position derivative (velocity)
 	// kvs[i] and krs[i] are the K's values for position and velocity for each body and for each order (1, 2, 3, ..., order)
-	map<Body2D*, Vector2D> wvs, wrs, kvs[order+1], krs[order+1];
+	map<Body2D*, Vector2D> wvs, wrs, *kvs, *krs;
+	kvs = new map<Body2D*, Vector2D>[order+1];
+	krs = new map<Body2D*, Vector2D>[order+1];
 
 	for(unsigned i = 1; i <= order; i++)
 	{
@@ -61,6 +65,8 @@ void RungeKuttaSolver::step()
 	}
 
 	timeElapsed += timestep;
+	delete kvs;
+	delete krs;
 }
 
 // ===========================================================================================================

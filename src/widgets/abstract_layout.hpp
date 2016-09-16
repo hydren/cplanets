@@ -7,11 +7,12 @@
 
 #ifndef WIDGETS_ABSTRACT_LAYOUT_HPP_
 #define WIDGETS_ABSTRACT_LAYOUT_HPP_
+#include <ciso646>
 
 #include <vector>
 
 #include "SDL_widgets/SDL_widgets.h"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 namespace WidgetsExtra
 {

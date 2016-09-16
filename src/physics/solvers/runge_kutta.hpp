@@ -9,7 +9,7 @@
 #define PHYSICS_SOLVERS_RUNGE_KUTTA_HPP_
 
 #include "physics/physics2dsolver.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 /**
  *	Represents a Butcher tableau, a mnemonic device to arrange data of Runge-Kutta coefficient matrices.

@@ -7,6 +7,11 @@
 
 #include "widgets_debug.hpp"
 
+#include <iostream>
+#include <cstdio>
+
+#include "futil/general/snprintf_alternative.h"
+
 #include "toogle_button.hpp"
 #include "abstract_layout.hpp"
 #include "spinner.hpp"
@@ -15,9 +20,6 @@
 #include "file_dialog.hpp"
 #include "scrollable_pane.hpp"
 #include "list_win.hpp"
-
-#include <iostream>
-#include <cstdio>
 
 namespace WidgetsExtra
 {

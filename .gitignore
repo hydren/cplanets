@@ -27,22 +27,19 @@
 # Makefile dependency-lists
 *.d
 
-# Eclipse annoying file
+# Eclipse local configuration files
 language.settings.xml
+org.eclipse.cdt.managedbuilder.core.prefs
+
+# Eclipse build folders
+/tests-geometry/
+/cross-debug/
+/cross-release/
+/linux-gcc-debug/
+/linux-gcc-release/
+/mingw-debug/
+/mingw-release/
+/msvc-release/
 
 # cplanets executables
 cplanets
-
-# Debug builds' folders
-/tests-geometry/
-/cross-debug/
-/linux-debug/
-/windows-debug/
-
-# Obsolete debug builds' folders
-/cross-test-geometry/
-
-# Dev. release builds' folders
-/linux-release/
-
-

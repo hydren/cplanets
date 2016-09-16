@@ -7,12 +7,12 @@
 
 #include "physics2d.hpp"
 
+#include <cmath>
+#include <cstdlib>
+
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
-
-#include <cstdlib>
-#include <cmath>
 
 using std::vector;
 using std::map;

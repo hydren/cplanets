@@ -11,8 +11,10 @@
 
 using WidgetsExtra::GenericListWin;
 using WidgetsExtra::DefaultUIListModel;
+using WidgetsExtra::UIListModel;
 
 using std::vector;
+using std::string;
 
 GenericListWin::GenericListWin(WinBase *parent, Style style, Rect rect, Id id)
 : AbstractListWin(parent, style, rect, id),

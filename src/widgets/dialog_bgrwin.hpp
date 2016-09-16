@@ -8,20 +8,22 @@
 #ifndef WIDGETS_DIALOG_BGRWIN_HPP_
 #define WIDGETS_DIALOG_BGRWIN_HPP_
 
+#include <string>
+
 #include "SDL_widgets/SDL_widgets.h"
 
 #include "abstract_layout.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 namespace WidgetsExtra
 {
 	struct DialogBgrWin extends BgrWin, Layout::WinBaseWrapper
 	{
 		void (*onClosedCallback)(DialogBgrWin*);
-		string titleStr;
+		std::string titleStr;
 		Rect titleBarArea; //automatically set
 
-		DialogBgrWin(Rect bounds, string title="", void (*onClosed)(DialogBgrWin*)=null);
+		DialogBgrWin(Rect bounds, std::string title="", void (*onClosed)(DialogBgrWin*)=null);
 		virtual ~DialogBgrWin();
 
 		virtual void setVisible(bool visible=true);

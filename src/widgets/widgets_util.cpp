@@ -7,7 +7,8 @@
 
 #include "widgets_util.hpp"
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/string/actions.hpp"
 
 // xxx This function is experimental, but proved to work in many cases. Still, it should be avoided when possible.
 void setComponentRawPosition(WinBase* wb, int x, int y)
@@ -125,7 +126,7 @@ std::vector<std::string>* WidgetsExtra::getLineWrappedText(std::string fullText,
 			exceed = true;
 		else
 		{
-			string substr = String::replaceAll(fullText.substr(lf, cr+1), "\n", " ");
+			string substr = replace_all(fullText.substr(lf, cr+1), "\n", " ");
 			if((unsigned) drawer->text_width(substr.c_str()) > maxWidth)
 				exceed = true;
 		}
@@ -133,7 +134,7 @@ std::vector<std::string>* WidgetsExtra::getLineWrappedText(std::string fullText,
 		if(exceed)
 		{
 			//separate from text pointer, 'cr' caracters
-			string substr = String::replaceAll(fullText.substr(lf, cr), "\n", " ");
+			string substr = replace_all(fullText.substr(lf, cr), "\n", " ");
 			lines->push_back(substr);
 			lf += cr; //increase text pointer
 			cr = 0; //"caret" position is reset

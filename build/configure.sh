@@ -34,9 +34,6 @@ else
 	echo "Running configure script for SDL_widgets at $PWD ..."
 	./configure
 fi
-cd ../futil
-echo "Enable FUTIL_DISABLE_RECT flag (if not enabled already)..."
-sed -i "s,//#define FUTIL_DISABLE_RECT,#define FUTIL_DISABLE_RECT,g" flags.h
 cd ../../build
 
 OLD="BUILD_PATH"

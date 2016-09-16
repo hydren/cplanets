@@ -13,7 +13,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/math/parse_number.hpp"
+#include "futil/string/more_operators.hpp"
 #include "abstract_layout.hpp"
 
 namespace WidgetsExtra
@@ -168,9 +170,9 @@ namespace WidgetsExtra
 		//implements as declared by AbstractSpinner
 		virtual void assignValue(const char* txtVal)
 		{
-			if(String::parseable<Type>(string(txtVal))) //if we can figure out something from the field
+			if(parseable<Type>(std::string(txtVal))) //if we can figure out something from the field
 			{
-				Type val = String::parse<Type>(string(txtVal));
+				Type val = parse<Type>(std::string(txtVal));
 				if(this->isValidValue(val)) //if value type is inside bounds
 					*(this->value) = val;
 			}
@@ -180,7 +182,7 @@ namespace WidgetsExtra
 		/// Returns a string representation of the spinner's current value. The value type must be compatible with operator + and string
 		virtual std::string valueToString()
 		{
-			return string() + *(this->value);
+			return std::string() + *(this->value);
 		}
 	};
 }

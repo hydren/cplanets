@@ -7,6 +7,7 @@
 
 #ifndef VECTOR2D_HPP_
 #define VECTOR2D_HPP_
+#include <ciso646>
 
 #include <string>
 

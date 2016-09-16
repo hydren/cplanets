@@ -14,8 +14,6 @@ using std::deque;
 using std::pair;
 using std::make_pair;
 
-using Collections::coalesce2;
-
 #define MAXSTEP 4
 
 const double adams_moulton_coefficients[MAXSTEP][MAXSTEP+1] = {

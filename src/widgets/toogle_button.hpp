@@ -9,7 +9,7 @@
 #define WIDGETS_TOOGLE_BUTTON_HPP_
 
 #include "SDL_widgets/SDL_widgets.h"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 namespace WidgetsExtra
 {

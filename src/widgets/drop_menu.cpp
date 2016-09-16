@@ -7,6 +7,8 @@
 
 #include "drop_menu.hpp"
 
+#include "futil/math/miscellaneous.hpp"
+
 using std::vector;
 
 using WidgetsExtra::LabelWin;
@@ -43,13 +45,13 @@ Rect DropDownMenu::getSize() const
 
 	if(this->isLabelOnTop)
 	{
-		rt.w = Math::max(cmdMenu->src->tw_area.w, this->label->tw_area.w);
+		rt.w = max(cmdMenu->src->tw_area.w, this->label->tw_area.w);
 		rt.h = cmdMenu->src->tw_area.h + this->label->tw_area.h;
 	}
 	else
 	{
 		rt.w = cmdMenu->src->tw_area.w + this->label->tw_area.w;
-		rt.h = Math::max(cmdMenu->src->tw_area.h, this->label->tw_area.h);
+		rt.h = max(cmdMenu->src->tw_area.h, this->label->tw_area.h);
 	}
 
 	return cmdMenu->src->tw_area;

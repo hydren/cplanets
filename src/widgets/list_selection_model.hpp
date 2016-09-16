@@ -7,6 +7,7 @@
 
 #ifndef WIDGETS_LIST_SELECTION_MODEL_HPP_
 #define WIDGETS_LIST_SELECTION_MODEL_HPP_
+#include <ciso646>
 
 #include <vector>
 

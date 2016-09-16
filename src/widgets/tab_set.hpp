@@ -9,7 +9,7 @@
 #define WIDGETS_TAB_SET_HPP_
 
 #include "SDL_widgets/SDL_widgets.h"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 #include "flow_layout.hpp"
 #include "tab_control.hpp"
 

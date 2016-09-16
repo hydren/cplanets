@@ -9,7 +9,7 @@
 #define PHYSICS_SOLVERS_EULER_HPP_
 
 #include "physics/physics2dsolver.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 struct EulerSolver extends AbstractPhysics2DSolver
 {

@@ -7,7 +7,10 @@
 
 #include "abstract_layout.hpp"
 
+#include <stdexcept>
 #include <typeinfo>
+
+#include "futil/collection/actions.hpp"
 
 using std::vector;
 using WidgetsExtra::Layout;
@@ -245,7 +248,7 @@ void Layout::removeComponentAt(unsigned index)
 		throw std::out_of_range("out of range: " + index);
 
 	//if there is a pointer to the element on innerWrappers, then it is a WinBaseWrapper created by this layout
-	for(int w = Collections::indexOf(this->innerWrappers, static_cast<WinBaseWrapper*>(this->components[index])); w != -1; w = -1)
+	for(int w = index_of(this->innerWrappers, static_cast<WinBaseWrapper*>(this->components[index])); w != -1; w = -1)
 	{
 		delete this->innerWrappers[w]; //delete the wrapper
 		this->innerWrappers.erase(this->innerWrappers.begin() + w); //remove the pointer
@@ -280,7 +283,7 @@ void Layout::removeComponent(Element& component)
 
 void Layout::removeComponent(Element* component)
 {
-	int index = Collections::indexOf(this->components, component);
+	int index = index_of(this->components, component);
 	if(index < 0) return;
 	Layout::removeComponentAt(index);
 }

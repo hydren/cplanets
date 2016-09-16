@@ -8,9 +8,10 @@
 #ifndef PLANETARIUM_PANE_HPP_
 #define PLANETARIUM_PANE_HPP_
 
-#include "SDL_widgets/SDL_widgets.h"
 #include "planetarium.hpp"
-#include "futil/futil.hpp"
+
+#include "SDL_widgets/SDL_widgets.h"
+#include "futil/general/language.hpp"
 
 struct PlanetariumPane extends BgrWin, Planetarium::SurfaceUpdateDispatcher
 {

@@ -13,8 +13,6 @@
 using std::vector;
 using std::deque;
 
-using Collections::coalesce2;
-
 #define MAXSTEP 5
 
 const double adams_bashforth_coefficients[MAXSTEP][MAXSTEP] = {

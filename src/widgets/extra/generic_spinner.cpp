@@ -11,7 +11,9 @@
 
 #include <map>
 
+using std::string;
 using WidgetsExtra::GenericSpinner;
+using WidgetsExtra::SpinnerDataModel;
 
 // helpers
 namespace GenericSpinnerAux
@@ -100,6 +102,3 @@ void GenericSpinner::onFieldInputConfirmation(const char* input)
 // ################# static methods to be used when SDL_widgets requests plain functions pointers  #################
 void GenericSpinner::changeValue(Button* btn) { static_cast<GenericSpinner*>(btn->parent)->onButtonPressed(btn); }
 void GenericSpinner::validateField(const char* text, int cmd_id) { GenericSpinnerAux::references[cmd_id]->onFieldInputConfirmation(text); } //kludged reference to the button's spinner
-
-
-

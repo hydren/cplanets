@@ -23,10 +23,11 @@ ValueShower::ValueShower(WinBase* pw, Style style, Point pt, unsigned n_characte
   size(Rect(pt.x, pt.y, 0, TTF_FontHeight(style.st==2? draw_ttf->ttf_font: draw_title_ttf->ttf_font)))
 {
 	RenderText* rt = style.st==2? draw_ttf : draw_title_ttf;
-	char tmp[n_characters];
+	char* tmp = new char[n_characters];
 	for(unsigned i = 0; i < n_characters-1; i++) tmp[i] = '_';
 	tmp[n_characters-1] = '\0';
 	size.w = rt->text_width(tmp);
+	delete tmp;
 }
 
 Point ValueShower::getPosition() const

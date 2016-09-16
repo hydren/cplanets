@@ -9,7 +9,7 @@
 #define PHYSICS_SOLVERS_RK2_HPP_
 
 #include "physics/physics2dsolver.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 struct MidpointSolver extends AbstractPhysics2DSolver
 {

@@ -9,13 +9,15 @@
 
 #include "hotfixes.h" //macros to enable/disable hotfixes for SDL-related issues
 
-#include <iostream>
-#include <fstream>
 #include <cmath>
 #include <cstring>
 #include <climits>
+#include <iostream>
+#include <fstream>
 
-#include "futil/futil.hpp"
+#include "futil/math/more_random.h"
+#include "futil/math/miscellaneous.hpp"
+#include "futil/string/callbacks.hpp"
 #include "SDL_widgets/SDL_widgets.h"
 #include "SDL_util.hpp"
 
@@ -39,8 +41,7 @@
 using std::cout;
 using std::endl;
 using std::vector;
-
-using Math::randomBetween;
+using std::string;
 
 using WidgetsExtra::packLabeledComponent;
 using WidgetsExtra::setComponentPosition;
@@ -249,7 +250,7 @@ void CPlanets::showMainWindow()
 	sclpBodies->setScrollbarHorizontalVisible(false);
 
 	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
-	txtBodies = new ListWin<Body2DClone>(&sclpBodies->content, 0, txtBodiesSize, String::Callbacks::stringfy_by_method<Body2DClone, &Body2DClone::toString>);
+	txtBodies = new ListWin<Body2DClone>(&sclpBodies->content, 0, txtBodiesSize, stringfy_by_method<Body2DClone, &Body2DClone::toString>);
 	txtBodies->selectionAdjustmentFunction = WidgetsExtra::GenericSelectionAdjustment::function<Body2DClone>;
 	txtBodies->selection.listenerAdd(&customListener);
 	txtBodies->selection.onChange = onListSelectionChanged;
@@ -928,7 +929,7 @@ void updateSizeTxtBodies()
 	unsigned height2 = sclpBodies->tw_area.h;
 
 	if(txtBodies->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
-		height2 = Math::max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
+		height2 = max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
 
 	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
 	{

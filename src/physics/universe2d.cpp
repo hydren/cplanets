@@ -7,7 +7,7 @@
 
 #include "universe2d.hpp"
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
 
 using std::vector;
 

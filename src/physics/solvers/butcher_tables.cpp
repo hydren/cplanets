@@ -7,12 +7,13 @@
 
 #include "runge_kutta.hpp"
 
+#include "futil/math/constants.h"
 #include <cmath>
 
 #define X 0
-#define s2 sqrt(2)
-#define s5 sqrt(5)
-#define s21 sqrt(21)
+#define s2 M_SQRT2
+#define s5 M_SQRT5
+#define s21 M_SQRT21
 
 #define CREATE_BUILTIN_TABLE(name, size) const ButcherTable ButcherTable::name(size, copytable<size>(::name))
 

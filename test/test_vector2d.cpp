@@ -6,7 +6,8 @@
 #include <ctime>
 #include <vector>
 
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/math/constants.h"
 
 using std::cout;
 using std::endl;
@@ -166,7 +167,7 @@ unit_test(unary_minus_operator_test)
 unit_test(rotation_operator_test)
 {
 	Vector2D v1(1, 0);
-	test((v1 < Math::PI) == Vector2D(0, 1), "Rotation operator failed with versor rotation");
+	test((v1 < M_PI) == Vector2D(0, 1), "Rotation operator failed with versor rotation");
 }
 
 //============== semantic tests ==============
