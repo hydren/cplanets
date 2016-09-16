@@ -1,6 +1,12 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.1 - 16/09/2016
+* Updated makefile and configure scripts
++ Added a MSVC build configuration
+~ Updated libraries to compile better on MSVC (and be more standards-compliant)
+~ A lot of refactoring
+
 0.9.0 - 31/08/2016
 + Big time refactoring
 * Updated makefile

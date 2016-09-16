@@ -5,15 +5,15 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src_libs/futil/general/chrono.cpp \
-../src_libs/futil/general/snprintf_alternative.cpp 
+../src_libs/futil/general/snprintf.cpp 
 
 OBJS += \
 ./src_libs/futil/general/chrono.o \
-./src_libs/futil/general/snprintf_alternative.o 
+./src_libs/futil/general/snprintf.o 
 
 CPP_DEPS += \
 ./src_libs/futil/general/chrono.d \
-./src_libs/futil/general/snprintf_alternative.d 
+./src_libs/futil/general/snprintf.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
