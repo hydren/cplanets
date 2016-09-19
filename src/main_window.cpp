@@ -553,7 +553,7 @@ void drawAboutDialog(BgrWin* bw)
 void drawPlanetariumWithVersion(BgrWin* bgr)
 {
 	static const string label = "v" + CPLANETS_VERSION;
-	static const Point labelPos(bgr->tw_area.w - draw_light_ttf->text_width(label.c_str()), bgr->tw_area.h - TTF_FontHeight(draw_light_ttf->ttf_font));
+	const Point labelPos(bgr->tw_area.w - draw_light_ttf->text_width(label.c_str()), bgr->tw_area.h - TTF_FontHeight(draw_light_ttf->ttf_font));
 	PlanetariumPane::drawPlanetarium(bgr);
 	draw_light_ttf->draw_string(bgr->win, label.c_str(), labelPos);
 }
