@@ -65,8 +65,8 @@ void RungeKuttaSolver::step()
 	}
 
 	timeElapsed += timestep;
-	delete kvs;
-	delete krs;
+	delete [] kvs;
+	delete [] krs;
 }
 
 // ===========================================================================================================
