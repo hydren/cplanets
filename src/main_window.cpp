@@ -76,6 +76,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 //  ============= FUNCTION PROTOTYPES ================
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
+void drawPlanetariumWithVersion(BgrWin* bgr);
 void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
@@ -126,6 +127,7 @@ SDL_Surface* APP_LOGO;
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
 CustomListener customListener;
+RenderText* draw_light_ttf;
 bool aux_isPressed_SDLK_r = false;
 
 //  ================ COMPONENTS ================
@@ -186,6 +188,8 @@ void CPlanets::showMainWindow()
 	handle_uev = onUserEvent;
 	VERSION_TEXT ="v"+CPLANETS_VERSION;
 	APP_LOGO = SDL_util::loadBitmap("data/icon.bmp", &SDL_util::Color::LIME);
+	SDL_Color colorLight = {192, 192, 192,  0};
+	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
 	LabeledComponentPacker packer(TOOLBAR_SIZE-2*WIDGETS_SPACING);
 
@@ -228,6 +232,7 @@ void CPlanets::showMainWindow()
 		windowSize.h - (2.1*TOOLBAR_SIZE)
 	);
 	planetariumPane = new PlanetariumPane(window, planetariumSize, PLANETARIUM_ID);
+	planetariumPane->display_cmd = drawPlanetariumWithVersion;
 	planetarium = planetariumPane->planetarium;
 	planetarium->listeners.addListener(&customListener);
 	planetarium->physics->universe.gravity = DEFAULT_GRAVITY;
@@ -543,6 +548,14 @@ void drawAboutDialog(BgrWin* bw)
 	{
 		draw_ttf->draw_string(dialog->win, line.c_str(), Point(WIDGETS_SPACING, headerSize + lineHeight * lineNumber++));
 	}
+}
+
+void drawPlanetariumWithVersion(BgrWin* bgr)
+{
+	static const string label = "v" + CPLANETS_VERSION;
+	static const Point labelPos(bgr->tw_area.w - draw_light_ttf->text_width(label.c_str()), bgr->tw_area.h - TTF_FontHeight(draw_light_ttf->ttf_font));
+	PlanetariumPane::drawPlanetarium(bgr);
+	draw_light_ttf->draw_string(bgr->win, label.c_str(), labelPos);
 }
 
 void onWindowResize(int dw, int dh)
