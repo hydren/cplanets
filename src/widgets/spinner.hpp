@@ -7,6 +7,7 @@
 
 #ifndef WIDGETS_SPINNER_HPP_
 #define WIDGETS_SPINNER_HPP_
+#include <ciso646>
 
 #include "SDL_widgets/SDL_widgets.h"
 
@@ -149,10 +150,11 @@ namespace WidgetsExtra
 		/// Increments the spinner value by 'step'.
 		virtual void incrementValue()
 		{
-			if(isValidValue(*(this->value) + this->step) && *(this->value) + this->step >= *(this->value)) //second clausule checks for overflow
-			{
+			if(this->max - *(this->value) > this->step)  //if there is room for 'step'-sized increment, do it
 				*(this->value) += this->step;
-			}
+			else
+				*(this->value) = this->max;  // if there is no room for a 'step'-size increment, just set value as max.
+
 			this->refresh();
 		}
 
@@ -160,10 +162,11 @@ namespace WidgetsExtra
 		/// Decrements the spinner value by 'step'.
 		virtual void decrementValue()
 		{
-			if(isValidValue(*(this->value) - this->step) && *(this->value) - this->step <= *(this->value))
-			{
+			if(*(this->value) - this->min > this->step)  // if there is room for 'step'-sized decrement, do it
 				*(this->value) -= this->step;
-			}
+			else
+				*(this->value) = this->min;  // if there is no room for a 'step'-size decrement, just set value as min.
+
 			this->refresh();
 		}
 
