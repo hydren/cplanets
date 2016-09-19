@@ -1,5 +1,6 @@
 -------------- Bugs
 
+- Random orbiting bodies only create clockwise-orbiting bodies, it should also create counter-clockwise orbits.
 - There are deadlocks ocurring (often seen with a high number of bodies or using the windows-debug build)
 - Shaking bodies when using reference frame with certain parameters
 - When resizing window, reference frame position is not being adjusted 
@@ -38,7 +39,7 @@ Introduce variations to the parameters of newly created bodies - done
 
 - 1.0 (planets-supersedure/usability milestone)
 
-Draw a arrow on the cursor's tip when selecting new body velocity
+Draw a arrow on the cursor's tip when selecting new body velocity - done
 Add option to specify minimum rendered radius
 Undo functionality
 Show paused/resumed state more explicitly

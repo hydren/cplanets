@@ -136,6 +136,7 @@ void Planetarium::draw()
 
 	int (*circle_function) (SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aacircleRGBA : circleRGBA);
 	int (*line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aalineRGBA : lineRGBA);
+	int (*triangle_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (tryAA? aatrigonRGBA : trigonRGBA);
 
 	//make a copy of the current state of bodies.
 	std::vector<Body2DClone> bodies;
@@ -222,6 +223,16 @@ void Planetarium::draw()
 			mouseX -= this->pos.x; mouseY -= this->pos.y;
 			circle_function(this->surf, newBodyPos.x, newBodyPos.y, round(this->viewportZoom*this->bodyCreationDiameter*0.5), 255, 255, 255, 255);
 			line_function(this->surf, newBodyPos.x, newBodyPos.y, mouseX, mouseY, 255, 255, 255, 255);
+
+			const Vector2D diff = !(Vector2D(mouseX, mouseY) - (newBodyPos));
+			Vector2D arrowPointCenter(mouseX, mouseY), arrowPointLeft(mouseX, mouseY), arrowpointRight(mouseX, mouseY);
+			arrowPointCenter -= diff*6.0;
+			(arrowPointLeft  -= diff*8.0) -= (diff.perpendicular() * 3.0);
+			(arrowpointRight -= diff*8.0) += (diff.perpendicular() * 3.0);
+			filledTrigonRGBA(this->surf,  mouseX, mouseY, arrowPointLeft.x, arrowPointLeft.y, arrowPointCenter.x, arrowPointCenter.y, 255, 255, 255, 255);
+			filledTrigonRGBA(this->surf,  mouseX, mouseY, arrowPointCenter.x, arrowPointCenter.y, arrowpointRight.x, arrowpointRight.y, 255, 255, 255, 255);
+			triangle_function(this->surf, mouseX, mouseY, arrowPointLeft.x, arrowPointLeft.y, arrowPointCenter.x, arrowPointCenter.y, 255, 255, 255, 255);
+			triangle_function(this->surf, mouseX, mouseY, arrowPointCenter.x, arrowPointCenter.y, arrowpointRight.x, arrowpointRight.y, 255, 255, 255, 255);
 		}
 	}
 	else if(isMouseLeftButtonDown) // rectangular mouse selection stubs
