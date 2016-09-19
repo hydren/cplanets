@@ -77,7 +77,7 @@ const double Planetarium::DEFAULT_BODY_CREATION_DIAMETER_RATIO = 1.0;
 const double Planetarium::DEFAULT_BODY_CREATION_DENSITY = 1.0;
 const double Planetarium::DEFAULT_BODY_CREATION_SPEED = 20.0;
 const unsigned Planetarium::DEFAULT_STROKE_SIZE_NORMAL = 1, Planetarium::DEFAULT_STROKE_SIZE_FOCUSED = 2;
-const double Planetarium::DEFAULT_MINIMUM_BODY_RENDERING_RADIUS = 3.0;
+const double Planetarium::DEFAULT_MINIMUM_BODY_RENDERING_RADIUS = 2.0;
 const unsigned Planetarium::DEFAULT_SLEEPING_TIME = 25;
 const short Planetarium::DEFAULT_FPS = 60;
 const long Planetarium::DEFAULT_DISPLAY_PERIOD = 30, Planetarium::DEFAULT_ITERATIONS_PER_DISPLAY = 2;
