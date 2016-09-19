@@ -51,6 +51,14 @@ void TabController::setActiveTab(BgrWin* tabContent)
 	// else throw std::invalid_argument; //should we?
 }
 
+void TabController::widenAll(int dx, int dy)
+{
+	foreach(BgrWin*, panel, vector<BgrWin*>, tabsPanels)
+	{
+		panel->widen(dx, dy);
+	}
+}
+
 void TabController::onTabButtonClicked(RExtButton* rbTab, bool is_act)
 {
 	TabController* controller = references[rbTab]; //xxx kludge to maintain references to TabController's

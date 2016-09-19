@@ -554,12 +554,9 @@ void onWindowResize(int dw, int dh)
 
 	planetariumPane->widen(dw, dh);
 
-	//todo make a widenAll() method on TabSet
-	tabBodies->widen(0, dh);
+	tabs->widenAll(0, dh);
 	sclpBodies->widen(0, dh);
 	updateSizeTxtBodies();
-
-	tabOptions->widen(0, dh);
 
 	toolbarRight->position.x += dw;
 	toolbarRight->pack();

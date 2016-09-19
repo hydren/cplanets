@@ -37,6 +37,11 @@ void TabSet::setActiveTab(unsigned index)
 	controller.setActiveTab(index);
 }
 
+void TabSet::widenAll(int dx, int dy)
+{
+	controller.widenAll(dx, dy);
+}
+
 void TabSet::drawTabStyleBgrWin(BgrWin* bgrWin)
 {
 	WidgetsExtra::drawBgrWin(bgrWin);

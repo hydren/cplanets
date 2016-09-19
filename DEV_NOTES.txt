@@ -1,7 +1,6 @@
 -------------- Bugs
 
 - There are deadlocks ocurring (often seen with a high number of bodies or using the windows-debug build)
-- There should be a makefile for win32 build
 - Shaking bodies when using reference frame with certain parameters
 - When resizing window, reference frame position is not being adjusted 
 - When clicking in a blank space of the bodies list, the selection is not being cleared
@@ -18,6 +17,7 @@
 -------------- Backlog
 
 - Refactor the 'widgets' folder as a separate extension to sdl-widgets (or develop a fully separate toolkit with it, i.e. SDL_toolkit)
+- There should be a makefile (nmake) for win32 build
 
 -------------- Milestones
 

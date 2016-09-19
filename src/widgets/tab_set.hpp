@@ -32,6 +32,8 @@ namespace WidgetsExtra
 		void setActiveTab(unsigned index);
 		void setActiveTab(BgrWin* tabContent);
 
+		void widenAll(int dx,int dy);
+
 		static void drawTabStyleBgrWin(BgrWin* bgrWin);
 	};
 }
