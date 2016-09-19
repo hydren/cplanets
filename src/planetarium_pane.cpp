@@ -6,10 +6,12 @@
  */
 
 #include "planetarium_pane.hpp"
+#include "SDL_util.hpp"
 
 PlanetariumPane::PlanetariumPane(WinBase* parentWidget, Rect rect, Id _id)
 : BgrWin(parentWidget, rect, null, PlanetariumPane::drawPlanetarium, PlanetariumPane::onMouseDown, null, PlanetariumPane::onMouseUp, 0, _id),
-  SurfaceUpdateDispatcher(), planetarium(new Planetarium(rect))
+  SurfaceUpdateDispatcher(), planetarium(new Planetarium(rect)), renderTextPaused(new RenderText(draw_title_ttf->ttf_font, SDL_util::Color::ORANGE)),
+  pauseEffectsEnabled(true)
 {
 	planetarium->drawDispatcher = this;
 	SDL_FreeSurface(planetarium->surf);
@@ -34,6 +36,13 @@ void PlanetariumPane::drawPlanetarium(BgrWin* bgr)
 	self->planetarium->surf = self->win; //make planetarium use this->win to increase performance
 	if(self->win == null) return; //if this->win is not ready, skip
 	self->planetarium->draw();
+
+	if(self->planetarium->running == false and self->pauseEffectsEnabled) // draw this when paused
+	{
+		rectangleRGBA(self->win, 0, 0, self->tw_area.w-1, self->tw_area.h-1, self->renderTextPaused->text_col.r, self->renderTextPaused->text_col.g, self->renderTextPaused->text_col.b, 255);
+		rectangleRGBA(self->win, 1, 1, self->tw_area.w-2, self->tw_area.h-2, self->renderTextPaused->text_col.r, self->renderTextPaused->text_col.g, self->renderTextPaused->text_col.b, 255);
+		self->renderTextPaused->draw_string(self->win, "PAUSED", Point(8, 8));
+	}
 }
 
 void PlanetariumPane::onSurfaceUpdate()

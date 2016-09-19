@@ -19,6 +19,10 @@ struct PlanetariumPane extends BgrWin, Planetarium::SurfaceUpdateDispatcher
 	static const int USER_EVENT_ID__REDRAW_REQUESTED = 192;
 
 	Planetarium* planetarium;
+	RenderText* renderTextPaused;
+	Point pointTextPaused;
+
+	bool pauseEffectsEnabled;
 
 	PlanetariumPane(WinBase* parentWidget, Rect rect, Id _id=0);
 	virtual ~PlanetariumPane();
