@@ -1,6 +1,15 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.2 - 19/09/2016
++ Subtle decorative arrow when selecting new body velocity vector (mimicking planets' ones)
+~ Using 2px minimum body radius when rendering.
+~ Made Pause state more prominent with a border and a "PAUSED" caption.
+* Fixed crash when using RK methods after version 0.9.1
+* Fixed crash when exchanging solver in some circunstances.
+* Fixed Spinner bounds logic.
+* Other minor fixes and changes.
+
 0.9.1 - 16/09/2016
 * Updated makefile and configure scripts
 + Added a MSVC build configuration
