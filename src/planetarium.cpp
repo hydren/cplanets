@@ -502,6 +502,14 @@ void Planetarium::setUniverse(const Universe2D& u)
 	}
 }
 
+void Planetarium::setSolver(AbstractPhysics2DSolver* solver)
+{
+	synchronized(physicsAccessMutex)
+	{
+		physics->setSolver(solver);
+	}
+}
+
 long double Planetarium::getTotalKineticEnergy() const
 {
 	long double value;

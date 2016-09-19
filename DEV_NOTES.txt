@@ -4,7 +4,6 @@
 - Shaking bodies when using reference frame with certain parameters
 - When resizing window, reference frame position is not being adjusted 
 - When clicking in a blank space of the bodies list, the selection is not being cleared
-- Sometimes the program crashes when switching solvers (seen on universe with a high number of planets and after a long simulation time; more frequent on win32)
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
 - Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
 - Simulation fails when changing timestep on Backwards Difference Correction solver.

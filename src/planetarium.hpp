@@ -141,6 +141,9 @@ struct Planetarium extends Physics2D::Listener
 	/** Safer way to replace the universe instance. */
 	void setUniverse(const Universe2D& u);
 
+	/** Safer way to replace the solver instance. */
+	void setSolver(AbstractPhysics2DSolver* solver);
+
 	long double getTotalKineticEnergy() const; //synchronized version
 	long double getTotalPotentialEnergy() const; //synchronized version
 	unsigned getBodyCount() const; //synchronized version

@@ -834,10 +834,9 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		}
 		break1:
 
-		// todo synchronize this part
 		if(selectedSolverFactory != null)
 		{
-			planetarium->physics->setSolver(selectedSolverFactory->createSolver(*planetarium->physics));
+			planetarium->setSolver(selectedSolverFactory->createSolver(*planetarium->physics));
 			spnTimeStep->setValue(&planetarium->physics->solver->timestep); //updates the backing value
 			spnGExp->setValue(&(planetarium->physics->universe.gExp)); //updates the backing value
 		}
