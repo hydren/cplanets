@@ -194,11 +194,14 @@ void Planetarium::draw()
 			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//inner blending with stroke when the stroke is thick
-		if(strokeSize > 1)
+		if(strokeSize > 1 and size > 3)
 			circle_function(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//draw body border (if stroke size is more than 1, it is the "border of the border" part)
-		circle_function(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+		if(size > 3)
+			circle_function(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
+		else
+			circleRGBA(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//record position
 		if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
