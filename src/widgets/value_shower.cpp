@@ -27,7 +27,7 @@ ValueShower::ValueShower(WinBase* pw, Style style, Point pt, unsigned n_characte
 	for(unsigned i = 0; i < n_characters-1; i++) tmp[i] = '_';
 	tmp[n_characters-1] = '\0';
 	size.w = rt->text_width(tmp);
-	delete tmp;
+	delete [] tmp;
 }
 
 Point ValueShower::getPosition() const
