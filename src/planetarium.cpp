@@ -32,6 +32,7 @@ using std::endl;
 using std::vector;
 using std::queue;
 using std::map;
+using std::pair;
 using SDL_util::colorToInt;
 using futil::iterable_queue;
 
@@ -307,6 +308,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
+		stackCurrentState();
 		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
 		{
 			remove_element(physics->universe.bodies, body);
@@ -336,6 +338,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
+		stackCurrentState(body);
 		remove_element(physics->universe.bodies, body);
 	}
 
@@ -361,6 +364,7 @@ void Planetarium::removeAllBodies()
 	vector<Body2D*> removedBodiesPointers;
 	synchronized(physicsAccessMutex)
 	{
+		stackCurrentState();
 		// write down all bodies
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 			removedBodiesPointers.push_back(body);
@@ -394,6 +398,7 @@ void Planetarium::addCustomBody(Body2D* body)
 
 	synchronized(physicsAccessMutex)
 	{
+		stackCurrentState(body);
 		physics->universe.bodies.push_back(body);
 
 		//notify listeners about the body created
@@ -482,6 +487,26 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 	//http://physics.stackexchange.com/questions/227502/orbital-mechanics-will-a-satellite-crash?rq=1
 }
 
+/** Undoes last body insertion/removal. */
+void Planetarium::undoLastChange()
+{
+	std::pair<Universe2D*, Body2D*>& state = stackUndo.top();
+
+	synchronized(physicsAccessMutex)
+	{
+		//delete the user objects of the current universe, as setUniverse() will delete the current universe, but not its user objects
+		purgeUserObjects(physics->universe.bodies);
+
+		//copy universe. user objects are the same as the copy.
+		physics->setUniverse(*state.first);
+	}
+
+	delete state.first;
+	delete static_cast<PlanetariumUserObject*>(state.second->userObject);
+	delete state.second;
+	stackUndo.pop();
+}
+
 void Planetarium::recolorAllBodies()
 {
 	synchronized(physicsAccessMutex)
@@ -522,6 +547,8 @@ void Planetarium::setUniverse(const Universe2D& u)
 		//copy universe. user objects are the same as the copy.
 		physics->setUniverse(u);
 	}
+
+	clearStateStack();
 }
 
 void Planetarium::setSolver(AbstractPhysics2DSolver* solver)
@@ -951,6 +978,37 @@ bool Planetarium::isPastRocheLimit(const Body2D& body, const Vector2D& primaryPo
 
 	const double rocheLimit = 0.5*body.diameter*pow(2.0*primaryMass/body.mass, 1.0/3.0);
 	return distance < rocheLimit;
+}
+
+// Saves the current state to the stack. If newBody is not null, the given body will be store as an added body, thus a addition change
+void Planetarium::stackCurrentState(Body2D* newBody)
+{
+	stackUndo.push(std::make_pair(new Universe2D(physics->universe), newBody == null? null : new Body2D(*newBody)));
+	pair<Universe2D*, Body2D*>& state = stackUndo.top();
+	foreach(Body2D*, backupBody, vector<Body2D*>, state.first->bodies)
+	{
+		//backup user object, since this body may "vanish" afterwards, together with its user object
+		backupBody->userObject = new PlanetariumUserObject(*static_cast<PlanetariumUserObject*>(backupBody->userObject));
+	}
+	//same for the newly added body, if it is the case of a addition
+	if(state.second != null)
+		state.second->userObject = new PlanetariumUserObject(*static_cast<PlanetariumUserObject*>(state.second->userObject));
+}
+
+void Planetarium::clearStateStack()
+{
+	while(not stackUndo.empty())
+	{
+		std::pair<Universe2D*, Body2D*>& state = stackUndo.top();
+		purgeUserObjects(state.first->bodies); //delete user objects from backup bodies, since they're copies and their user objects are also backup copies
+		delete state.first; //delete backup universe
+		if(state.second != null) // if it was a addition change, a backup body is also present
+		{
+			delete static_cast<PlanetariumUserObject*>(state.second->userObject); //delete backup user object
+			delete state.second; //delete backup body
+		}
+		stackUndo.pop(); //remove this entry
+	}
 }
 
 //  -----------------------------  thread functions ------------------------------------------------

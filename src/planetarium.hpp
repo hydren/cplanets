@@ -13,6 +13,8 @@
 
 #include <vector>
 #include <map>
+#include <stack>
+#include <utility>
 
 #include "physics/physics2d.hpp"
 #include "futil/general/language.hpp"
@@ -137,6 +139,9 @@ struct Planetarium extends Physics2D::Listener
 	 *  If an area is specified, the resulting body will be positioned randomly within it.*/
 	void addRandomOrbitingBody(const double area[4]=null);
 
+	/** Undoes last body insertion/removal. */
+	void undoLastChange();
+
 	/** Assign a new random color to every body on the current universe (the safe way) */
 	void recolorAllBodies();
 
@@ -239,6 +244,9 @@ struct Planetarium extends Physics2D::Listener
 	bool isMouseLeftButtonDown;
 	Vector2D lastMouseClickPoint;
 
+	// Undo stack
+	std::stack< std::pair<Universe2D*, Body2D*> > stackUndo;
+
 	//auxiliary variables
 	bool auxWasRunningBeforeSelection;
 	bool auxWasRunningBeforeBodyCreationMode;
@@ -250,6 +258,11 @@ struct Planetarium extends Physics2D::Listener
 	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
 	void getCurrentOrbitalReference(Vector2D& position, Vector2D& velocity, double& mass);
 	bool isPastRocheLimit(const Body2D& body, const Vector2D& primaryPosition, const double& primaryMass);
+
+	// Saves the current state to the stack. If newBody is not null, the given body will be store as an added body, thus a addition change
+	void stackCurrentState(Body2D* newBody=null);
+	// Clear all the state stack
+	void clearStateStack();
 
 	static int threadFunctionPhysics(void* arg); //thread function
 	static int threadFunctionPlanetariumUpdate(void* arg); //thread function
