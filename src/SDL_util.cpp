@@ -24,13 +24,25 @@ int SDL_util::colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool f
 	return SDL_MapRGB(surf->format, color.r, color.g, color.b);
 }
 
-SDL_Color* SDL_util::getRandomColor()
+SDL_Color SDL_util::getRandomColor()
 {
-	SDL_Color* somecolor = new SDL_Color();
-	somecolor->r = random_between(0, 255);
-	somecolor->g = random_between(0, 255);
-	somecolor->b = random_between(0, 255);
+	SDL_Color somecolor;
+	somecolor.r = random_between(0, 255);
+	somecolor.g = random_between(0, 255);
+	somecolor.b = random_between(0, 255);
 	return somecolor;
+}
+
+SDL_Color* SDL_util::getRandomColor(SDL_Color* colorPtr)
+{
+	if(colorPtr == null)
+		colorPtr = new SDL_Color();
+
+	colorPtr->r = random_between(0, 255);
+	colorPtr->g = random_between(0, 255);
+	colorPtr->b = random_between(0, 255);
+
+	return colorPtr;
 }
 
 SDL_Surface* SDL_util::loadBitmap(const char* path, const SDL_Color* transparentColor)

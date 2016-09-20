@@ -55,8 +55,12 @@ namespace SDL_util
 	int colorToInt(const SDL_Surface* surf, const SDL_Color& color, bool forceRGBA=false);
 
 	//creates a random color
-	SDL_Color* getRandomColor();
+	SDL_Color getRandomColor();
 
+	//creates a random color. if 'color' pointer is not null, stores the color in it and returns it, otherwise creates and returns a new instance.
+	SDL_Color* getRandomColor(SDL_Color* color);
+
+	//loads a SDL_Surface with transparency. image comes from a file given by 'path'. if specified, 'transparency' should be a color to be transformed into transparency.
 	SDL_Surface* loadBitmap(const char* path, const SDL_Color* transparentColor=NULL);
 
 	//hints SDL_Init to start the window centered

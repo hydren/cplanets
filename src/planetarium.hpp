@@ -10,6 +10,8 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_thread.h>
+
+#include <vector>
 #include <map>
 
 #include "physics/physics2d.hpp"
@@ -117,10 +119,10 @@ struct Planetarium extends Physics2D::Listener
 	void removeAllBodies();
 
 	/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
-	void addCustomBody(Body2D* body, SDL_Color* color=null);
+	void addCustomBody(Body2D* body, const SDL_Color& color);
 
 	/** Adds (safely) a custom body with the given parameters. If no color is specified, a random color will be used. */
-	void addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, SDL_Color* color=null);
+	void addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, const SDL_Color& color);
 
 	/** Adds a random body with resulting characteristics being, on average, the given parameters. If an area is specified, the resulting body will be positioned randomly within it.*/
 	void addRandomBody(double avMass, double avDiameter, double avVelocity, const double area[4]=null);
@@ -197,12 +199,12 @@ struct Planetarium extends Physics2D::Listener
 		protected:
 		Planetarium* planetarium;
 
-		void drawTrace(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);
+		void drawTrace(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
 
-		void drawDotted(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);
-		void drawLinear(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);
+		void drawDotted(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		void drawLinear(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
 
-		void drawQuadricBezier(futil::iterable_queue<Vector2D>& trace, SDL_Color* color); //still not working properly
+		void drawQuadricBezier(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color); //still not working properly
 //		void drawCubicBezier(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);  //not implemented
 
 	} orbitTracer;

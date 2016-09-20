@@ -7,23 +7,23 @@
 
 #include "planetarium.hpp"
 
-#include <SDL/SDL_gfxPrimitives.h>
+#include <iostream>
+#include <stdexcept>
+#include <queue>
 
 #include <cfloat>
 
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-#include <queue>
-#include <map>
+#include <SDL/SDL_gfxPrimitives.h>
 
 #include "SDL_util.hpp"
+
 #include "futil/math/round.h"
 #include "futil/math/more_random.h"
 #include "futil/math/gauss_random.h"
 #include "futil/math/round.h"
 #include "futil/math/miscellaneous.hpp"
 #include "futil/collection/actions.hpp"
+
 #include "physics/physics2d.hpp"
 #include "physics/solvers/one_step.hpp"
 
@@ -38,11 +38,9 @@ using futil::iterable_queue;
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
 {
-	PlanetariumUserObject(SDL_Color* color)
-	: color(color)
-	{}
-	SDL_Color* color;
-	~PlanetariumUserObject() { delete color; }
+	SDL_Color color;
+	PlanetariumUserObject() {}
+	PlanetariumUserObject(const SDL_Color& color) : color(color) {}
 };
 
 //helper struct to deal with collision events
@@ -147,10 +145,8 @@ void Planetarium::draw()
 			bodies.push_back(Body2DClone(body)); //copy the body
 
 			//lets copy the user object for precaution, since its a pointer
-			SDL_Color* bodyColor = static_cast<PlanetariumUserObject*>(body->userObject)->color;
-			SDL_Color* bodyColorCopy = new SDL_Color();
-			*bodyColorCopy = *bodyColor;
-			bodies.back().clone.userObject = new PlanetariumUserObject(bodyColorCopy);
+			SDL_Color& bodyColor = static_cast<PlanetariumUserObject*>(body->userObject)->color;
+			bodies.back().clone.userObject = new PlanetariumUserObject(bodyColor);
 		}
 	}// end synchronized(physicsAccessMutex)
 
@@ -168,7 +164,7 @@ void Planetarium::draw()
 	//draw all bodies
 	foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
 	{
-		SDL_Color* bodyColor = body.clone.userObject != null? ((PlanetariumUserObject*) body.clone.userObject)->color : null;
+		SDL_Color* bodyColor = (body.clone.userObject == null? null : &static_cast<PlanetariumUserObject*>(body.clone.userObject)->color);
 
 		double size = viewportZoom*body.clone.diameter;
 		Vector2D v = this->getTransposed(body.clone.position);
@@ -194,7 +190,7 @@ void Planetarium::draw()
 			filledCircleRGBA(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//inner blending with stroke when the stroke is thick
-		if(strokeSize > 1 and size > 3)
+		if(bodyColor != null and strokeSize > 1 and size > 3)
 			circle_function(this->surf, v.x, v.y, round(size*0.5), bodyColor->r, bodyColor->g, bodyColor->b, 255);
 
 		//draw body border (if stroke size is more than 1, it is the "border of the border" part)
@@ -390,11 +386,8 @@ void Planetarium::removeAllBodies()
 }
 
 /** Adds (safely) a custom body. If no color is specified, a random color will be used. */
-void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
+void Planetarium::addCustomBody(Body2D* body, const SDL_Color& color)
 {
-	if(color == null)
-		color = SDL_util::getRandomColor();
-
 	synchronized(physicsAccessMutex)
 	{
 		physics->universe.bodies.push_back(body);
@@ -407,7 +400,7 @@ void Planetarium::addCustomBody(Body2D* body, SDL_Color* color)
 }
 
 /** Adds (safely) a custom body with the given parameters. If no color is specified, a random color will be used. */
-void Planetarium::addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, SDL_Color* color)
+void Planetarium::addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, const SDL_Color& color)
 {
 	addCustomBody(new Body2D(mass, diameter, position, velocity, Vector2D()), color);
 }
@@ -424,7 +417,8 @@ void Planetarium::addRandomBody(double avMass, double avDiameter, double avSpeed
 		gauss_random_between(avMass*0.9, avMass*1.1),
 		gauss_random_between(avDiameter*0.9, avDiameter*1.1),
 		Vector2D(random_between(minPosX, maxPosX), random_between(minPosY, maxPosY)),
-		Vector2D(gauss_random_between(avSpeed*0.9, avSpeed*1.1))
+		Vector2D(gauss_random_between(avSpeed*0.9, avSpeed*1.1)),
+		SDL_util::getRandomColor()
 	);
 }
 
@@ -467,7 +461,7 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 	Vector2D velocity = distanceToCenter.unit().perpendicular().scale(speed);
 	velocity.add(centerOfMassVelocity);
 
-	addCustomBody(mass, diameter, position, velocity);
+	addCustomBody(mass, diameter, position, velocity, SDL_util::getRandomColor());
 
 	//source info:
 	//http://physics.stackexchange.com/questions/227502/orbital-mechanics-will-a-satellite-crash?rq=1
@@ -480,9 +474,7 @@ void Planetarium::recolorAllBodies()
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
 		{
 			PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
-			SDL_Color* oldColor = custom->color;
 			custom->color = SDL_util::getRandomColor();
-			delete oldColor;
 		}
 	}
 }
@@ -688,7 +680,7 @@ void Planetarium::OrbitTracer::clearTrace(const Body2D* body)
 void Planetarium::OrbitTracer::drawTrace(Body2D* body)
 {
 	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
-	SDL_Color* bodyColor = ((PlanetariumUserObject*) body->userObject)->color;
+	SDL_Color& bodyColor = static_cast<PlanetariumUserObject*>(body->userObject)->color;
 
 	iterable_queue<Vector2D>& trace = this->getTrace(body);
 
@@ -698,14 +690,14 @@ void Planetarium::OrbitTracer::drawTrace(Body2D* body)
 void Planetarium::OrbitTracer::drawTrace(Body2DClone& body)
 {
 	if(body.clone.userObject == null) return; //if there isn't body data, there isn't body color. leave.
-	SDL_Color* bodyColor = ((PlanetariumUserObject*) body.clone.userObject)->color;
+	SDL_Color& bodyColor = static_cast<PlanetariumUserObject*>(body.clone.userObject)->color;
 
 	iterable_queue<Vector2D>& trace = this->getTrace(body.original); //get original body trace
 
 	drawTrace(trace, bodyColor);
 }
 
-void Planetarium::OrbitTracer::drawTrace(iterable_queue<Vector2D>& trace, SDL_Color* color)
+void Planetarium::OrbitTracer::drawTrace(iterable_queue<Vector2D>& trace, const SDL_Color& color)
 {
 	switch(style)
 	{
@@ -715,16 +707,16 @@ void Planetarium::OrbitTracer::drawTrace(iterable_queue<Vector2D>& trace, SDL_Co
 	}
 }
 
-void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, SDL_Color* bodyColor)
+void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, const SDL_Color& bodyColor)
 {
 	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
 	{
 		Vector2D pv = planetarium->getTransposedNoRef(r);
-		pixelRGBA(planetarium->surf, round(pv.x), round(pv.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+		pixelRGBA(planetarium->surf, round(pv.x), round(pv.y), bodyColor.r, bodyColor.g, bodyColor.b, 255);
 	}
 }
 
-void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_Color* bodyColor)
+void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, const SDL_Color& bodyColor)
 {
 	int (*const line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (planetarium->tryAA? aalineRGBA : lineRGBA);
 
@@ -734,7 +726,7 @@ void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_C
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
 			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
-			line_function(planetarium->surf, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			line_function(planetarium->surf, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor.r, bodyColor.g, bodyColor.b, 255);
 		}
 		previousPosition = recordedPosition;
 	}
@@ -742,7 +734,7 @@ void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, SDL_C
 
 // http://stackoverflow.com/questions/9658932/snappy-bezier-curves
 // http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
-void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace, SDL_Color* bodyColor)
+void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace, const SDL_Color& bodyColor)
 {
 	Vector2D previousPosition = trace.front();
 	Vector2D previousSupport;
@@ -757,7 +749,7 @@ void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace
 			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
 			Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
 			Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
-			bezierRGBA(planetarium->surf, pxs, pys, 3, 3, bodyColor->r, bodyColor->g, bodyColor->b, 255);
+			bezierRGBA(planetarium->surf, pxs, pys, 3, 3, bodyColor.r, bodyColor.g, bodyColor.b, 255);
 		}
 		previousPosition = recordedPosition;
 		previousSupport = previousPosition.times(2).subtract(previousSupport);
@@ -855,23 +847,22 @@ void Planetarium::updateView()
 void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
 	//reconstructs custom data
-	resultingMerger.userObject = new PlanetariumUserObject(new SDL_Color());
+	resultingMerger.userObject = new PlanetariumUserObject();
 	PlanetariumUserObject* obj = (PlanetariumUserObject*) resultingMerger.userObject;
 	long double r=0, g=0, b=0, tm=0;
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
-		const SDL_Color* bodyColor = static_cast<PlanetariumUserObject*> (body->userObject)->color;
-		r += bodyColor->r * body->mass;
-		g += bodyColor->g * body->mass;
-		b += bodyColor->b * body->mass;
+		const SDL_Color& bodyColor = static_cast<PlanetariumUserObject*> (body->userObject)->color;
+		r += bodyColor.r * body->mass;
+		g += bodyColor.g * body->mass;
+		b += bodyColor.b * body->mass;
 		tm += body->mass;
 		orbitTracer.clearTrace(body);
 	}
 	if(tm==0)tm=1; //safety
-	obj->color = new SDL_Color();
-	obj->color->r = static_cast<Uint8>(r/tm);
-	obj->color->g = static_cast<Uint8>(g/tm);
-	obj->color->b = static_cast<Uint8>(b/tm);
+	obj->color.r = static_cast<Uint8>(r/tm);
+	obj->color.g = static_cast<Uint8>(g/tm);
+	obj->color.b = static_cast<Uint8>(b/tm);
 
 	CollisionEvent* ev = new CollisionEvent();
 
@@ -880,7 +871,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	{
 		PlanetariumUserObject* uobj = static_cast<PlanetariumUserObject*> (body->userObject);
 		collidingListCopy.push_back(*body);
-		collidingListCopy.back().userObject = new PlanetariumUserObject(new SDL_Color(*(uobj->color))); //implicit copy constructor
+		collidingListCopy.back().userObject = new PlanetariumUserObject(uobj->color); //implicit copy constructor
 		delete uobj; //we need to delete it since it the physics code won't do it (it has no knowledge of this)
 	}
 	ev->resultingMerger = resultingMerger;
