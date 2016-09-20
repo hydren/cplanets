@@ -386,19 +386,33 @@ void Planetarium::removeAllBodies()
 	}
 }
 
-/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
-void Planetarium::addCustomBody(Body2D* body, const SDL_Color& color)
+/** Adds (safely) a custom body. If no user object is specified, a new one will be created with a random color. */
+void Planetarium::addCustomBody(Body2D* body)
 {
+	if(body->userObject == null)
+		body->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
+
 	synchronized(physicsAccessMutex)
 	{
 		physics->universe.bodies.push_back(body);
-		physics->universe.bodies.back()->userObject = new PlanetariumUserObject(color);
 
 		//notify listeners about the body created
 		for(unsigned i = 0; i < listeners.size(); i++)
 			listeners[i]->onBodyCreation(*physics->universe.bodies.back());
 	}
 }
+
+/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
+void Planetarium::addCustomBody(Body2D* body, const SDL_Color& color)
+{
+	if(body->userObject == null)
+		body->userObject = new PlanetariumUserObject(color);
+	else
+		static_cast<PlanetariumUserObject*>(body->userObject)->color = color;
+
+	addCustomBody(body);
+}
+
 
 /** Adds (safely) a custom body with the given parameters. If no color is specified, a random color will be used. */
 void Planetarium::addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, const SDL_Color& color)

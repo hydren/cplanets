@@ -118,6 +118,9 @@ struct Planetarium extends Physics2D::Listener
 	/** Removes (and deletes) all bodies from the universe. */
 	void removeAllBodies();
 
+	/** Adds (safely) a custom body. If no user object is specified, a new one will be created with a random color. */
+	void addCustomBody(Body2D* body);
+
 	/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
 	void addCustomBody(Body2D* body, const SDL_Color& color);
 
