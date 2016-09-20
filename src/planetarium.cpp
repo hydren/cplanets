@@ -35,6 +35,10 @@ using std::map;
 using SDL_util::colorToInt;
 using futil::iterable_queue;
 
+// Deletes inserted planetarium user objects from the given set of bodies.
+static void purgeUserObjects(vector<Body2D*>& bodies);
+static void purgeUserObjects(vector<Body2D>& bodies);
+
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
 {
@@ -51,10 +55,7 @@ struct CollisionEvent
 
 	~CollisionEvent()
 	{
-		foreach(Body2D&, b, vector<Body2D>, collidingBodies)
-		{
-			delete static_cast<PlanetariumUserObject*>(b.userObject);
-		}
+		purgeUserObjects(collidingBodies);
 	}
 };
 
@@ -494,6 +495,7 @@ vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 
 void Planetarium::setUniverse(const Universe2D& u)
 {
+	// Generate user object if not provided
 	const_foreach(Body2D*, i, vector<Body2D*>, u.bodies)
 		if(i->userObject == null)
 			i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
@@ -501,9 +503,9 @@ void Planetarium::setUniverse(const Universe2D& u)
 	synchronized(physicsAccessMutex)
 	{
 		//delete the user objects of the current universe, as setUniverse() will delete the current universe, but not its user objects
-		foreach(Body2D*, oldBody, vector<Body2D*>, physics->universe.bodies)
-			delete static_cast<PlanetariumUserObject*>(oldBody->userObject);
+		purgeUserObjects(physics->universe.bodies);
 
+		//copy universe. user objects are the same as the copy.
 		physics->setUniverse(u);
 	}
 }
@@ -959,4 +961,18 @@ int Planetarium::threadFunctionPlanetariumUpdate(void* arg)
 	}
 	cout << "planetarium view update thread stopped." << endl;
 	return 0;
+}
+
+// ------------------------------- functions -----------------------------
+
+void purgeUserObjects(std::vector<Body2D*>& bodies)
+{
+	foreach(Body2D*, oldBody, vector<Body2D*>, bodies)
+		delete static_cast<PlanetariumUserObject*>(oldBody->userObject);
+}
+
+void purgeUserObjects(std::vector<Body2D>& bodies)
+{
+	foreach(Body2D&, oldBody, vector<Body2D>, bodies)
+		delete static_cast<PlanetariumUserObject*>(oldBody.userObject);
 }
