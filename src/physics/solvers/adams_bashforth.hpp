@@ -13,10 +13,10 @@
 
 #include <deque>
 
-struct State { Vector2D velocity, acceleration; };
-
 struct AdamsBashforthSolver extends AbstractPhysics2DSolver
 {
+	struct State { Vector2D velocity, acceleration; };
+
 	const unsigned steps;
 
 	AdamsBashforthSolver(Physics2D& u, unsigned numberOfSteps, const GenericFactory* factory=null);
