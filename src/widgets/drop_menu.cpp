@@ -7,13 +7,15 @@
 
 #include "drop_menu.hpp"
 
-#include "futil/math/miscellaneous.hpp"
+#include <algorithm>
 
 using std::vector;
 
 using WidgetsExtra::LabelWin;
 using WidgetsExtra::DropDownMenu;
 using WidgetsExtra::DropDownMenuFactory;
+
+#define max std::max
 
 // DropDownMenu ===========================================================================================
 

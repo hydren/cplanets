@@ -12,11 +12,12 @@
 #include <cmath>
 #include <cstring>
 #include <climits>
+
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include "futil/math/more_random.h"
-#include "futil/math/miscellaneous.hpp"
 #include "futil/string/callbacks.hpp"
 #include "SDL_widgets/SDL_widgets.h"
 #include "SDL_util.hpp"
@@ -61,6 +62,8 @@ using WidgetsExtra::ListWin;
 using WidgetsExtra::ValueShower;
 
 typedef Planetarium::Body2DClone Body2DClone;
+
+#define max std::max
 
 //**********************************************************************************
 // workaround to reroute output stream to console

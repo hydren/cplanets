@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 #include <queue>
 
 #include <cfloat>
@@ -21,7 +22,6 @@
 #include "futil/math/more_random.h"
 #include "futil/math/gauss_random.h"
 #include "futil/math/round.h"
-#include "futil/math/miscellaneous.hpp"
 #include "futil/collection/actions.hpp"
 
 #include "physics/physics2d.hpp"
@@ -34,6 +34,9 @@ using std::queue;
 using std::map;
 using SDL_util::colorToInt;
 using futil::iterable_queue;
+
+#define max std::max
+#define min std::min
 
 // Deletes inserted planetarium user objects from the given set of bodies.
 static void purgeUserObjects(vector<Body2D*>& bodies);
