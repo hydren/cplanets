@@ -180,6 +180,7 @@ void FileDialog::fileSelected(const char* path, Id id)
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
 	self->dlgwFilenameField.dialog_def(path, self->dlgwFilenameField.cmd, self->dlgwFilenameField.cmd_id);
 	self->replaceSelectedFilename(getcwd(buffer, 1024), path); //retrieve filename
+	free((void*) path);
 }
 
 //called when changed folder when browsing
@@ -190,6 +191,7 @@ void FileDialog::folderOpened(const char* path, Id id)
 	self->cmdmCurrentDirectoryField.src->label = getcwd(buffer, 1024);
 	self->cmdmCurrentDirectoryField.src->draw_blit_upd();
 	self->replaceSelectedFilename(getcwd(buffer, 1024)); //retrieve folder name
+	free((void*) path);
 }
 
 //called when the user press the "Home" button
