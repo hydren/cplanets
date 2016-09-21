@@ -1031,15 +1031,17 @@ void addRandomBody(bool orbiting)
 		planetarium->addRandomBody(area);
 }
 
-int keepAddingRandomBodyWhilePressed(void* boolCreateOrbiting)
+int keepAddingRandomBodyWhilePressed(void* boolCreateOrbitingAsVoidPtr)
 {
 	SDL_Delay(500); // todo make this delay adjustable
 	long lastUpdateTime;
+	bool* createOrbiting = static_cast<bool*>(boolCreateOrbitingAsVoidPtr);
 	while(aux_isPressed_SDLK_r)
 	{
 		lastUpdateTime = SDL_GetTicks();
-		addRandomBody(*static_cast<bool*>(boolCreateOrbiting));
+		addRandomBody(*createOrbiting);
 		SDL_Delay(5000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
 	}
+	delete createOrbiting;
 	return 0;
 }
