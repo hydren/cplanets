@@ -41,6 +41,7 @@ using futil::iterable_queue;
 // Deletes inserted planetarium user objects from the given set of bodies.
 static void purgeUserObjects(vector<Body2D*>& bodies);
 static void purgeUserObjects(vector<Body2D>& bodies);
+static void purgeUserObjects(vector<Planetarium::Body2DClone>& bodies);
 
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
@@ -244,6 +245,9 @@ void Planetarium::draw()
 		SDL_GetMouseState(&mouseX, &mouseY);
 		rectangleRGBA(this->surf, lastMouseClickPoint.x, lastMouseClickPoint.y, mouseX - pos.x, mouseY - pos.y, 255, 255, 255, 255);
 	}
+
+	// delete temporary user objects
+	purgeUserObjects(bodies);
 }
 
 void Planetarium::widen(int dx, int dy)
@@ -992,4 +996,10 @@ void purgeUserObjects(std::vector<Body2D>& bodies)
 {
 	foreach(Body2D&, oldBody, vector<Body2D>, bodies)
 		delete static_cast<PlanetariumUserObject*>(oldBody.userObject);
+}
+
+void purgeUserObjects(vector<Planetarium::Body2DClone>& bodies)
+{
+	foreach(Planetarium::Body2DClone&, oldBody, vector<Planetarium::Body2DClone>, bodies)
+		delete static_cast<PlanetariumUserObject*>(oldBody.clone.userObject);
 }
