@@ -321,11 +321,11 @@ void CPlanets::showMainWindow()
 
 	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.6*TOOLBAR_SIZE, TOOLBAR_SIZE), "Disp. period (ms):");
 	setComponentPosition(spnDisplayPeriod, chckLegacyParameters->area.x, chckLegacyParameters->area.y + chckLegacyParameters->tw_area.h + WIDGETS_SPACING);
-	spnDisplayPeriod->setValue(&(planetarium->displayPeriod));
+	spnDisplayPeriod->setValue(&(planetarium->displayPeriod), true);
 
 	spnIterPerDisplay = new Spinner<long>(tabOptions, Rect(0,0,2.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "Iter/display:");
 	setComponentPosition(spnIterPerDisplay, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
-	spnIterPerDisplay->setValue(&(planetarium->iterationsPerDisplay));
+	spnIterPerDisplay->setValue(&(planetarium->iterationsPerDisplay), true);
 
 	chckBouncingOnCollision = new CheckBox(tabOptions, 0, genericButtonSize, "Bounce on collision (experimental)", onCheckBoxPressed);
 	setComponentPosition(chckBouncingOnCollision, spnDisplayPeriod->area.x, spnDisplayPeriod->area.y + spnDisplayPeriod->tw_area.h + WIDGETS_SPACING);
