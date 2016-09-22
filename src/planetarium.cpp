@@ -521,13 +521,32 @@ void Planetarium::setUniverse(const Universe2D& u)
 		if(i->userObject == null)
 			i->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
 
+	vector<Body2D*> removedBodiesPointers;
+
 	synchronized(physicsAccessMutex)
 	{
-		//delete the user objects of the current universe, as setUniverse() will delete the current universe, but not its user objects
-		purgeUserObjects(physics->universe.bodies);
+		// write down all bodies
+		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
+			removedBodiesPointers.push_back(body);
 
-		//copy universe. user objects are the same as the copy.
+		//copy universe. user objects are the same as the copy. 'removedBodiesPointers' bodies are detatched after this.
 		physics->setUniverse(u);
+	}
+
+	focusedBodies.clear();
+	physics->referenceFrame.reset();
+
+	foreach(Body2D*, body, vector<Body2D*>, removedBodiesPointers)
+	{
+		//notify listeners about the body deleted
+		for(unsigned i = 0; i < listeners.size(); i++)
+			listeners[i]->onBodyDeletion(body);
+
+		orbitTracer.clearTrace(body);
+
+		//delete the user objects of the old universe, as setUniverse() will delete the old universe, but not its bodies (and user objects)
+		delete static_cast<PlanetariumUserObject*>(body->userObject);
+		delete body; //trash it
 	}
 }
 
