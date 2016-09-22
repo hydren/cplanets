@@ -190,23 +190,33 @@ struct Planetarium extends Physics2D::Listener
 		unsigned traceLength;
 		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
 
+		/// Creates a orbit tracer that uses the given planetarium as reference for the physics properties.
 		OrbitTracer(Planetarium* p);
 
+		/// Record on the queue the given body's current position
 		void record(Body2D* body);
+		/// Get the trace for the given body. If there is no trace of the given body, a new empty will be created and returned.
 		futil::iterable_queue<Vector2D>& getTrace(Body2D* body);
+		/// Erases the given body's tracing data.
 		void clearTrace(const Body2D* body);
 
+		/// Draws the given body trace on this tracer's planetarium.
 		void drawTrace(Body2D* body);
+		/// Draws the given body trace on this tracer's planetarium.
 		void drawTrace(Body2DClone& body);
 
 		protected:
 		Planetarium* planetarium;
 
+		/// Draws the given trace on this tracer's planetarium, with the given color. (usually delegates to other drawXXX method)
 		void drawTrace(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
 
+		/// Draws the given trace on this tracer's planetarium as dots, each one for each position.
 		void drawDotted(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		/// Draws the given trace on this tracer's planetarium as lines, each one for each two positions.
 		void drawLinear(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
 
+		/// Draws the given trace on this tracer's planetarium as curves, each one for each three positions.
 		void drawQuadricBezier(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color); //still not working properly
 //		void drawCubicBezier(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);  //not implemented
 
@@ -216,6 +226,7 @@ struct Planetarium extends Physics2D::Listener
 	/** Informs about visual body creation mode state. default is IDLE */
 	enum BodyCreationState { IDLE, POSITION_SELECTION, VELOCITY_SELECTION } bodyCreationState;
 
+	/// Auxiliary struct used to hold a snapshot of a body's state.
 	struct Body2DClone
 	{
 		Body2D* original, clone;
@@ -243,12 +254,19 @@ struct Planetarium extends Physics2D::Listener
 	bool auxWasRunningBeforeSelection;
 	bool auxWasRunningBeforeBodyCreationMode;
 
+	/// Gets the given position transposed into the planetarium. version not accounting for the physics' reference frame.
 	Vector2D getTransposedNoRef(const Vector2D& position) const;
 
-	void performPhysics(); //updates physics
-	void updateView(); //updates view
-	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger); //overrides Physics2D::CollisionListener
+	/// Main method to update the physics
+	void performPhysics();
+	/// Main method to update the view
+	void updateView();
+	/// Callback to deal with collisions. Overrides Physics2D::CollisionListener
+	void onCollision(std::vector<Body2D*>& collidingList, Body2D& resultingMerger);
+
+	/// Store information about the current orbital reference.
 	void getCurrentOrbitalReference(Vector2D& position, Vector2D& velocity, double& mass);
+	/// Returns true if the given body is within its Roche limit with relation to the given primary ('s position and mass)
 	bool isPastRocheLimit(const Body2D& body, const Vector2D& primaryPosition, const double& primaryMass);
 
 	static int threadFunctionPhysics(void* arg); //thread function
