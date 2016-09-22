@@ -138,22 +138,32 @@ Universe2D* ApplicationIO::load(std::string filename, FileFormat format)
 		do fis.getline(buffer, 512);
 		while(fis.good() && trim(string(buffer)) == "");
 
-		string gExpStr("2.0");
+		double tmpGExp = 2.0;
+		bool isGExpSpecified = false;
 		if(starts_with(trim(string(buffer)), "gexp is ")) //case gExp was specified
-			gExpStr = split(trim(string(buffer)), ' ').back();
-		if(not parseable<double>(gExpStr)) return null; //gExp value should be parseable (or not specified at all)
-		double tmpGExp = parse<double>(gExpStr);
+		{
+			isGExpSpecified = true;
+			string strGExp = split(trim(string(buffer)), ' ').back();
+			if(not parseable<double>(strGExp)) //gExp value should be parseable (or not specified at all)
+				return null;
+			else
+				tmpGExp = parse<double>(strGExp);
+		}
 
 		Universe2D* universe = new Universe2D();
 		universe->gravity = tmpGravity;
 		universe->gExp = tmpGExp;
 
+		bool skipGetline = not isGExpSpecified;
 		string line;
 		while(fis.good())
 		{
-			fis.getline(buffer, 512);
-			line = trim(string(buffer));
+			if(not skipGetline)
+				fis.getline(buffer, 512);
+			else
+				skipGetline = false;
 
+			line = trim(string(buffer));
 			if(line == "") continue; // skip spaces
 
 			if(starts_with(trim(line), "body ") && contains(line, ":"))
