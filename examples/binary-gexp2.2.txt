@@ -1,0 +1,5 @@
+universe definition
+gravity is 9.807
+gexp is 2.2
+body B3800: mass 17157.3, diameter 32, position_x 29.718, position_y 620.074, velocity_x 11.1882, velocity_y 11.7335
+body B2736: mass 17157.3, diameter 32, position_x -24.918, position_y 694.626, velocity_x -21.1882, velocity_y -4.73345
