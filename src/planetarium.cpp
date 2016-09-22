@@ -719,6 +719,11 @@ void Planetarium::OrbitTracer::clearTrace(const Body2D* body)
 	this->traces.erase(const_cast<Body2D*>(body));
 }
 
+void Planetarium::OrbitTracer::reset()
+{
+	this->traces.clear();
+}
+
 void Planetarium::OrbitTracer::drawTrace(Body2D* body)
 {
 	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.

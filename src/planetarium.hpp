@@ -199,6 +199,8 @@ struct Planetarium extends Physics2D::Listener
 		futil::iterable_queue<Vector2D>& getTrace(Body2D* body);
 		/// Erases the given body's tracing data.
 		void clearTrace(const Body2D* body);
+		/// Resets the tracer by erasing all tracing data.
+		void reset();
 
 		/// Draws the given body trace on this tracer's planetarium.
 		void drawTrace(Body2D* body);
