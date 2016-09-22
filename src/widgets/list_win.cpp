@@ -56,8 +56,8 @@ unsigned AbstractListWin::getListHeight()
 
 void AbstractListWin::clickList(const Point& point)
 {
-	 //if out of bounds, don't do anything
-	if(point.x < padding.x or point.y < padding.y) return;
+	 //if out of bounds or empty list, don't do anything
+	if(point.x < padding.x or point.y < padding.y or this->size() == 0) return;
 
 	//infer index by mouse position
 	unsigned index = (point.y - padding.y) / (TTF_FontHeight(textRenderer->ttf_font) + spacing);
