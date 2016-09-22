@@ -169,6 +169,8 @@ void ListSelectionModel::clear()
 				currentChangeStartIndex = -1;
 			}
 		}
+		if(currentChangeStartIndex != -1)
+			notify(currentChangeStartIndex, selection.size()-1);
 	}
 }
 
