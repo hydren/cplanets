@@ -811,7 +811,6 @@ void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace
 
 void Planetarium::performPhysics()
 {
-	AbstractPhysics2DSolver* previousSolver = null;
 	while(true)
 	{
 		if(running and (not legacyControl or currentIterationCount++ < iterationsPerDisplay))
@@ -822,13 +821,6 @@ void Planetarium::performPhysics()
 			}
 		}
 		SDL_Delay(legacyControl? 0 : stepDelay);
-
-		//debug
-		if(previousSolver != this->physics->solver)
-		{
-			cout << "Now using " << physics->solver->factory->solverDisplayName << " solver..." << endl;;
-			previousSolver = this->physics->solver;
-		}
 	}
 }
 
