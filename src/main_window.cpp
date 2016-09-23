@@ -87,8 +87,6 @@ void onCheckBoxPressed(CheckBox* chck);
 void onCheckBoxPressed(CheckBox* chck, bool fake);
 void onDropDownMenuButton(RButWin*,int nr,int fire);
 void onUserEvent(int cmd,int param,int param2);
-void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger);
-void onPlanetariumBodyCreation(Body2D& createdBody);
 
 void onFileChosenOpenUniverse(FileDialog* dialog);
 void onFileChosenSaveUniverse(FileDialog* dialog);
@@ -96,7 +94,8 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 void refreshAllTxtBodies();
 void updateSizeTxtBodies();
 void onListSelectionChanged(unsigned, unsigned);
-void onBodyReFocusing();
+void onBodyReFocus();
+void onBodyDeletion(Body2D* deletedBodyPtr);
 void adjustAboutDialog();
 void closeDialogBgrWin(Button* btn);
 void replaceUniverse(const Universe2D& universeCopy);
@@ -109,10 +108,10 @@ void onSDLInit();
 
 struct CustomListener extends Planetarium::UniverseEventListener, WidgetsExtra::ListSelectionModel::Listener
 {
-	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { onPlanetariumBodyCollision(collidingList, resultingMerger); }
-	void onBodyCreation(Body2D& createdBody) { onPlanetariumBodyCreation(createdBody); }
-	void onBodyDeletion(Body2D* deletedBody) { refreshAllTxtBodies(); }
-	void onBodyReFocus(){ onBodyReFocusing(); }
+	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { refreshAllTxtBodies(); }
+	void onBodyCreation(Body2D& createdBody) { refreshAllTxtBodies(); }
+	void onBodyDeletion(Body2D* deletedBody) { ::onBodyDeletion(deletedBody); }
+	void onBodyReFocus(){ ::onBodyReFocus(); }
 	void onChange(unsigned index, unsigned endIndex) { onListSelectionChanged(index, endIndex); }
 };
 
@@ -888,16 +887,6 @@ void onUserEvent(int cmd,int param,int param2)
 	}
 }
 
-void onPlanetariumBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger)
-{
-	refreshAllTxtBodies();
-}
-
-void onPlanetariumBodyCreation(Body2D& createdBody)
-{
-	refreshAllTxtBodies();
-}
-
 void onFileChosenOpenUniverse(FileDialog* dialog)
 {
 	if(not dialog->selectedFilename.empty())
@@ -965,7 +954,7 @@ void onListSelectionChanged(unsigned ind0, unsigned ind1)
 	planetarium->setFocusedBodies(newSelection);
 }
 
-void onBodyReFocusing()
+void onBodyReFocus()
 {
 	vector<Body2DClone>& data = *txtBodies->getListData();
 
@@ -978,6 +967,17 @@ void onBodyReFocusing()
 	}
 
 	sclpBodies->refresh(); //custom redraw behavior
+}
+
+void onBodyDeletion(Body2D* deletedBodyPtr)
+{
+	vector<Body2DClone>* data = txtBodies->getListData();
+	foreach(Body2DClone&, b, vector<Body2DClone>, *data)
+		if(b.original == deletedBodyPtr)
+		{
+			refreshAllTxtBodies();
+			return;
+		}
 }
 
 void adjustAboutDialog()
