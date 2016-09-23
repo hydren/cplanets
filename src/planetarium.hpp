@@ -194,7 +194,7 @@ struct Planetarium extends Physics2D::Listener
 		OrbitTracer(Planetarium* p);
 
 		/// Record on the queue the given body's current position
-		void record(Body2D* body);
+		void record(Body2DClone& body);
 		/// Get the trace for the given body. If there is no trace of the given body, a new empty will be created and returned.
 		futil::iterable_queue<Vector2D>& getTrace(Body2D* body);
 		/// Erases the given body's tracing data.

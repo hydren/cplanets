@@ -206,7 +206,7 @@ void Planetarium::draw()
 
 		//record position
 		if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
-			orbitTracer.record(body.original);
+			orbitTracer.record(body);
 	}
 
 	//draw body creation helper stubs
@@ -702,11 +702,11 @@ Planetarium::OrbitTracer::OrbitTracer(Planetarium* p)
   planetarium(p)
 {}
 
-void Planetarium::OrbitTracer::record(Body2D* body)
+void Planetarium::OrbitTracer::record(Body2DClone& body)
 {
-	this->traces[body].push(body->position-planetarium->physics->referenceFrame.position());
-	while(this->traces[body].size() > traceLength)
-		this->traces[body].pop();
+	this->traces[body.original].push(body.clone.position-planetarium->physics->referenceFrame.position());
+	while(this->traces[body.original].size() > traceLength)
+		this->traces[body.original].pop();
 }
 
 iterable_queue<Vector2D>& Planetarium::OrbitTracer::getTrace(Body2D* body)
