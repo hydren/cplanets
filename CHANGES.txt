@@ -1,6 +1,18 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.3 - 23/09/2016
++ Added universe file examples.
+~ Random orbiting bodies now also create clockwise-orbiting bodies.
+* Fixed crash when clicking on a empty ListWin.
+* Fixed nasty memory leak within the graphics code.
+* Fixed memory leak when switching universes.
+* Fixed glitch were the version location didn't change after resize.
+* Fixed bug where reading universe from files: first body read was not being created.
+* Fixed deselecting the last body entry, if it was selected, when clicking outside the entries.
+* Fixed some compilation problems with MinGW
+* Fixed many other memory leaks.
+
 0.9.2 - 19/09/2016
 + Subtle decorative arrow when selecting new body velocity vector (mimicking planets' ones)
 ~ Using 2px minimum body radius when rendering.
