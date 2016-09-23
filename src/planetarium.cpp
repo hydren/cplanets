@@ -72,6 +72,38 @@ struct Planetarium::Physics2DEventsManager
 	~Physics2DEventsManager() { SDL_DestroyMutex(mutex); }
 };
 
+struct Planetarium::StateChange
+{
+	Universe2D previous;
+	vector<Body2D*> diff;
+	StateChangeType type;
+
+	StateChange (const Universe2D& u, const vector<Body2D*>& diff, StateChangeType type)
+	: previous(u), diff(diff), type(type)
+	{
+		foreach(Body2D*, backupBody, vector<Body2D*>, previous.bodies)
+			backupBody->userObject = new PlanetariumUserObject(*backupBody->userObject);  //making copies of user objects
+
+		if(type == ADDITION) // if it is a addition change, the added bodies aren't on the 'previous' instance
+			foreach(Body2D*, diffBody, vector<Body2D*>, diff)
+				diffBody->userObject = new PlanetariumUserObject(*diffBody->userObject); //making copies of user objects
+	}
+
+	~StateChange()
+	{
+		purgeUserObjects(previous.bodies);
+		foreach(Body2D*, backupBody, vector<Body2D*>, previous.bodies)
+			delete backupBody;
+
+		if(type == ADDITION)
+		{
+			purgeUserObjects(diff);
+			foreach(Body2D*, diffBody, vector<Body2D*>, diff)
+				delete diffBody;
+		}
+	}
+};
+
 const double Planetarium::BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
 
 const unsigned Planetarium::DEFAULT_VIEWPORT_TRANSLATE_RATE = 8;
@@ -271,6 +303,29 @@ Vector2D Planetarium::getAntiTransposed(const Vector2D& position) const
 }
 
 //protected
+void Planetarium::stackStateChange(const std::vector<Body2D*>& diff, StateChangeType type)
+{
+	stackUndo.push(StateChange(physics->universe, diff, type));
+}
+
+void Planetarium::stackStateChange(Body2D* diff, StateChangeType type)
+{
+	vector<Body2D*> vdiff;
+	vdiff.push_back(diff);
+	stackStateChange(vdiff, type);
+}
+
+void Planetarium::clearUndoStack()
+{
+	while(not stackUndo.empty())
+	{
+		StateChange& change = stackUndo.top();
+		for(unsigned i = 0; i < listeners.size(); i++)
+			listeners[i]->onBodyDeletion(null); //todo see if this null is stable, or notify about this case
+		stackUndo.pop();
+	}
+}
+
 Vector2D Planetarium::getTransposedNoRef(const Vector2D& position) const
 {
 	return (position - viewportPosition)*viewportZoom;
@@ -560,6 +615,12 @@ void Planetarium::setSolver(AbstractPhysics2DSolver* solver)
 	{
 		physics->setSolver(solver);
 	}
+}
+
+
+void Planetarium::undoLastChange()
+{
+
 }
 
 long double Planetarium::getTotalKineticEnergy() const

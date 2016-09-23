@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <map>
+#include <stack>
 
 #include "physics/physics2d.hpp"
 #include "futil/general/language.hpp"
@@ -151,6 +152,8 @@ struct Planetarium extends Physics2D::Listener
 	/** Safer way to replace the solver instance. */
 	void setSolver(AbstractPhysics2DSolver* solver);
 
+	void undoLastChange();
+
 	long double getTotalKineticEnergy() const; //synchronized version
 	long double getTotalPotentialEnergy() const; //synchronized version
 	unsigned getBodyCount() const; //synchronized version
@@ -243,6 +246,12 @@ struct Planetarium extends Physics2D::Listener
 	protected:
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
+
+	struct StateChange; enum StateChangeType { ADDITION, REMOVAL };
+	std::stack<StateChange> stackUndo;
+	void stackStateChange(const std::vector<Body2D*>&, StateChangeType);
+	void stackStateChange(Body2D*, StateChangeType);
+	void clearUndoStack();
 
 	Uint32 pixelDepth;
 	long currentIterationCount;
