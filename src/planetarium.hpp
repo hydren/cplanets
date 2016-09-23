@@ -36,6 +36,8 @@ struct Planetarium extends Physics2D::Listener
 	static const long DEFAULT_DISPLAY_PERIOD; // = 30
 	static const long DEFAULT_ITERATIONS_PER_DISPLAY; // = 2
 
+	static const bool DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION;
+
 	SDL_Surface* surf;
 	SDL_Rect size, pos;
 	bool isRedrawPending; /// advanced flag
@@ -121,10 +123,10 @@ struct Planetarium extends Physics2D::Listener
 	/** Adds (safely) a custom body. If no user object is specified, a new one will be created with a random color. */
 	void addCustomBody(Body2D* body);
 
-	/** Adds (safely) a custom body. If no color is specified, a random color will be used. */
+	/** Adds (safely) a custom body with the given color. This will effectively create a user object. */
 	void addCustomBody(Body2D* body, const SDL_Color& color);
 
-	/** Adds (safely) a custom body with the given parameters. If no color is specified, a random color will be used. */
+	/** Adds (safely) a custom body with the given parameters. */
 	void addCustomBody(double mass, double diameter, const Vector2D& position, const Vector2D& velocity, const SDL_Color& color);
 
 	/** Adds a random body with resulting characteristics being, on average, the given parameters. If an area is specified, the resulting body will be positioned randomly within it.*/
@@ -133,9 +135,9 @@ struct Planetarium extends Physics2D::Listener
 	/** Adds a random body with random traits. If an area is specified, the resulting body will be positioned randomly within it.*/
 	void addRandomBody(const double area[4]=null);
 
-	/** Adds a random body with random traits, orbiting the center of mass.
+	/** Adds a random body with random traits, orbiting the current orbital reference's center of mass.
 	 *  If an area is specified, the resulting body will be positioned randomly within it.*/
-	void addRandomOrbitingBody(const double area[4]=null);
+	void addRandomOrbitingBody(const double area[4]=null, const bool& clockwise=DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION);
 
 	/** Assign a new random color to every body on the current universe (the safe way) */
 	void recolorAllBodies();

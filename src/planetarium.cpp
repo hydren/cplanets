@@ -85,6 +85,8 @@ const unsigned Planetarium::DEFAULT_SLEEPING_TIME = 25;
 const short Planetarium::DEFAULT_FPS = 60;
 const long Planetarium::DEFAULT_DISPLAY_PERIOD = 30, Planetarium::DEFAULT_ITERATIONS_PER_DISPLAY = 2;
 
+const bool Planetarium::DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION = true; // the value doesn't really matter, we just need to identify it was used.
+
 Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
 : surf(SDL_CreateRGBSurface(SDL_SWSURFACE,rect.w,rect.h,pixdepth,0,0,0,0)), size(rect), pos(rect), isRedrawPending(false),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
@@ -456,8 +458,9 @@ void Planetarium::addRandomBody(const double area[4])
 }
 
 /** Adds a random body with random traits. If an area is specified, the resulting body will be positioned randomly within it.*/
-void Planetarium::addRandomOrbitingBody(const double area[4])
+void Planetarium::addRandomOrbitingBody(const double area[4], const bool& clockwiseArg)
 {
+	bool clockwise = (&clockwiseArg == &DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION? (rand()%2==0) : clockwiseArg);
 	double az = 1/viewportZoom;
 	double diameter = (bodyCreationDiameterRatio * az) * BODY_CREATION_DIAMETER_FACTOR;
 	diameter = gauss_random_between(diameter*0.9, diameter*1.1);
@@ -481,6 +484,7 @@ void Planetarium::addRandomOrbitingBody(const double area[4])
 	double speed = sqrt((2*physics->universe.gravity*totalMass)/distanceToCenter.length());
 	speed = gauss_random_between(speed*0.7, speed*0.9);
 	Vector2D velocity = distanceToCenter.unit().perpendicular().scale(speed);
+	if(not clockwise) velocity.reflect();
 	velocity.add(centerOfMassVelocity);
 
 	addCustomBody(mass, diameter, position, velocity, SDL_util::getRandomColor());

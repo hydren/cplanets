@@ -1,10 +1,8 @@
 -------------- Bugs
 
-- Random orbiting bodies only create clockwise-orbiting bodies, it should also create counter-clockwise orbits.
 - Shaking bodies (even misplaced) when using reference frame with certain parameters
 - There are deadlocks ocurring (often seen with a high number of bodies or using the windows-debug build)
 - When resizing window, reference frame position is not being adjusted 
-- When clicking in a blank space of the bodies list, the selection is not being cleared
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
 - Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
 - Simulation fails when changing timestep on Backwards Difference Correction solver.
