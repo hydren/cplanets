@@ -12,12 +12,11 @@
 #include <SDL/SDL_thread.h>
 
 #include <vector>
+#include <deque>
 #include <map>
-#include <stack>
 
 #include "physics/physics2d.hpp"
 #include "futil/general/language.hpp"
-#include "futil/collection/iterable_queue.hpp"
 #include "futil/listener.hpp"
 
 struct Planetarium extends Physics2D::Listener
@@ -194,7 +193,7 @@ struct Planetarium extends Physics2D::Listener
 		enum OrbitTraceStyle { DOTTED, LINEAR, SPLINE } style;
 		bool isActive;
 		unsigned traceLength;
-		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
+		std::map<Body2D*, std::deque<Vector2D> > traces;
 
 		/// Creates a orbit tracer that uses the given planetarium as reference for the physics properties.
 		OrbitTracer(Planetarium* p);
@@ -202,7 +201,7 @@ struct Planetarium extends Physics2D::Listener
 		/// Record on the queue the given body's current position
 		void record(Body2DClone& body);
 		/// Get the trace for the given body. If there is no trace of the given body, a new empty will be created and returned.
-		futil::iterable_queue<Vector2D>& getTrace(Body2D* body);
+		std::deque<Vector2D>& getTrace(Body2D* body);
 		/// Erases the given body's tracing data.
 		void clearTrace(const Body2D* body);
 		/// Resets the tracer by erasing all tracing data.
@@ -217,16 +216,16 @@ struct Planetarium extends Physics2D::Listener
 		Planetarium* planetarium;
 
 		/// Draws the given trace on this tracer's planetarium, with the given color. (usually delegates to other drawXXX method)
-		void drawTrace(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		void drawTrace(std::deque<Vector2D>& trace, const SDL_Color& color);
 
 		/// Draws the given trace on this tracer's planetarium as dots, each one for each position.
-		void drawDotted(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		void drawDotted(std::deque<Vector2D>& trace, const SDL_Color& color);
 		/// Draws the given trace on this tracer's planetarium as lines, each one for each two positions.
-		void drawLinear(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		void drawLinear(std::deque<Vector2D>& trace, const SDL_Color& color);
 
 		/// Draws the given trace on this tracer's planetarium as curves, each one for each three positions.
-		void drawQuadricBezier(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color); //still not working properly
-//		void drawCubicBezier(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);  //not implemented
+		void drawQuadricBezier(std::deque<Vector2D>& trace, const SDL_Color& color); //still not working properly
+//		void drawCubicBezier(std::deque<Vector2D>& trace, SDL_Color* color);  //not implemented
 
 	} orbitTracer;
 
@@ -249,7 +248,7 @@ struct Planetarium extends Physics2D::Listener
 	Physics2DEventsManager* physicsEventsManager;
 
 	struct StateChange; enum StateChangeType { ADDITION, REMOVAL, MERGE};
-	std::stack<StateChange> stackUndo;
+	std::deque<StateChange> stackUndo;
 	void stackStateChange(const std::vector<Body2D*>&, StateChangeType);
 	void stackStateChange(Body2D*, StateChangeType);
 	void clearUndoStack();

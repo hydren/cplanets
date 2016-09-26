@@ -31,9 +31,9 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::queue;
+using std::deque;
 using std::map;
 using SDL_util::colorToInt;
-using futil::iterable_queue;
 
 #define max std::max
 #define min std::min
@@ -615,7 +615,7 @@ void Planetarium::undoLastChange()
 		// todo iterate through the stack to see if there is a non-merge operation. if there isn't, return.
 	}
 
-	StateChange& state = stackUndo.top();
+	StateChange& state = stackUndo.back(); //stack top
 	synchronized(physicsAccessMutex)
 	{
 		if(state.type != MERGE)
@@ -687,7 +687,7 @@ void Planetarium::undoLastChange()
 		// TODO move non-critical code to here
 	}
 
-	stackUndo.pop();
+	stackUndo.pop_back(); //stack pop
 }
 
 long double Planetarium::getTotalKineticEnergy() const
@@ -836,12 +836,12 @@ Planetarium::OrbitTracer::OrbitTracer(Planetarium* p)
 
 void Planetarium::OrbitTracer::record(Body2DClone& body)
 {
-	this->traces[body.original].push(body.clone.position-planetarium->physics->referenceFrame.position());
+	this->traces[body.original].push_back(body.clone.position-planetarium->physics->referenceFrame.position()); //queue push
 	while(this->traces[body.original].size() > traceLength)
-		this->traces[body.original].pop();
+		this->traces[body.original].pop_front(); //queue pop
 }
 
-iterable_queue<Vector2D>& Planetarium::OrbitTracer::getTrace(Body2D* body)
+deque<Vector2D>& Planetarium::OrbitTracer::getTrace(Body2D* body)
 {
 	return this->traces[body];
 }
@@ -861,7 +861,7 @@ void Planetarium::OrbitTracer::drawTrace(Body2D* body)
 	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
 	SDL_Color& bodyColor = static_cast<PlanetariumUserObject*>(body->userObject)->color;
 
-	iterable_queue<Vector2D>& trace = this->getTrace(body);
+	deque<Vector2D>& trace = this->getTrace(body);
 
 	drawTrace(trace, bodyColor);
 }
@@ -871,12 +871,12 @@ void Planetarium::OrbitTracer::drawTrace(Body2DClone& body)
 	if(body.clone.userObject == null) return; //if there isn't body data, there isn't body color. leave.
 	SDL_Color& bodyColor = static_cast<PlanetariumUserObject*>(body.clone.userObject)->color;
 
-	iterable_queue<Vector2D>& trace = this->getTrace(body.original); //get original body trace
+	deque<Vector2D>& trace = this->getTrace(body.original); //get original body trace
 
 	drawTrace(trace, bodyColor);
 }
 
-void Planetarium::OrbitTracer::drawTrace(iterable_queue<Vector2D>& trace, const SDL_Color& color)
+void Planetarium::OrbitTracer::drawTrace(deque<Vector2D>& trace, const SDL_Color& color)
 {
 	switch(style)
 	{
@@ -886,21 +886,21 @@ void Planetarium::OrbitTracer::drawTrace(iterable_queue<Vector2D>& trace, const 
 	}
 }
 
-void Planetarium::OrbitTracer::drawDotted(iterable_queue<Vector2D>& trace, const SDL_Color& bodyColor)
+void Planetarium::OrbitTracer::drawDotted(deque<Vector2D>& trace, const SDL_Color& bodyColor)
 {
-	foreach(Vector2D&, r, iterable_queue<Vector2D>, trace)
+	foreach(Vector2D&, r, deque<Vector2D>, trace)
 	{
 		Vector2D pv = planetarium->getTransposedNoRef(r);
 		pixelRGBA(planetarium->surf, round(pv.x), round(pv.y), bodyColor.r, bodyColor.g, bodyColor.b, 255);
 	}
 }
 
-void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, const SDL_Color& bodyColor)
+void Planetarium::OrbitTracer::drawLinear(deque<Vector2D>& trace, const SDL_Color& bodyColor)
 {
 	int (*const line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (planetarium->tryAA? aalineRGBA : lineRGBA);
 
 	Vector2D previousPosition = trace.front();
-	foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+	foreach(Vector2D&, recordedPosition, deque<Vector2D>, trace)
 	{
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
@@ -913,13 +913,13 @@ void Planetarium::OrbitTracer::drawLinear(iterable_queue<Vector2D>& trace, const
 
 // http://stackoverflow.com/questions/9658932/snappy-bezier-curves
 // http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
-void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace, const SDL_Color& bodyColor)
+void Planetarium::OrbitTracer::drawQuadricBezier(deque<Vector2D>& trace, const SDL_Color& bodyColor)
 {
 	Vector2D previousPosition = trace.front();
 	Vector2D previousSupport;
 //	if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
 	if(trace.size() > 1) previousSupport = trace.front().times(2).subtract(*(trace.begin()+1)); //kickstart aux
-	foreach(Vector2D&, recordedPosition, iterable_queue<Vector2D>, trace)
+	foreach(Vector2D&, recordedPosition, deque<Vector2D>, trace)
 	{
 		if(recordedPosition != previousPosition) //avoid drawing segments of same points
 		{
@@ -939,7 +939,7 @@ void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace
 
 void Planetarium::stackStateChange(const std::vector<Body2D*>& diff, StateChangeType type)
 {
-	stackUndo.push(StateChange(physics->universe, diff, type));
+	stackUndo.push_back(StateChange(physics->universe, diff, type)); //stack push
 }
 
 void Planetarium::stackStateChange(Body2D* diff, StateChangeType type)
@@ -952,7 +952,7 @@ void Planetarium::stackStateChange(Body2D* diff, StateChangeType type)
 void Planetarium::clearUndoStack()
 {
 	while(not stackUndo.empty())
-		stackUndo.pop();
+		stackUndo.pop_back(); //stack pop
 }
 
 void Planetarium::performPhysics()
@@ -1075,7 +1075,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	}
 
 	if(not undoDisabled) //register merge change
-		stackUndo.push(StateChange(collidingList, &resultingMerger));
+		stackUndo.push_back(StateChange(collidingList, &resultingMerger)); //stack push
 }
 
 void Planetarium::getCurrentOrbitalReference(Vector2D& position, Vector2D& velocity, double& mass)
