@@ -74,32 +74,47 @@ struct Planetarium::Physics2DEventsManager
 
 struct Planetarium::StateChange
 {
-	Universe2D previous;
+	vector<Body2DClone> backup;
 	vector<Body2D*> diff;
 	StateChangeType type;
 
 	StateChange (const Universe2D& u, const vector<Body2D*>& diff, StateChangeType type)
-	: previous(u), diff(diff), type(type)
+	: backup(), diff(diff), type(type)
 	{
-		foreach(Body2D*, backupBody, vector<Body2D*>, previous.bodies)
-			backupBody->userObject = new PlanetariumUserObject(*backupBody->userObject);  //making copies of user objects
+		if(type == MERGE) throw_exception("Invalid StateChange type for constructor! MERGE cannot be used with this constructor!");
 
-		if(type == ADDITION) // if it is a addition change, the added bodies aren't on the 'previous' instance
-			foreach(Body2D*, diffBody, vector<Body2D*>, diff)
-				diffBody->userObject = new PlanetariumUserObject(*diffBody->userObject); //making copies of user objects
+		foreach(Body2D*, body, vector<Body2D*>, u.bodies)
+			backup.push_back(Body2DClone(body));
+	}
+
+	StateChange (const vector<Body2D*>& merged, Body2D* merger)
+	: backup(), diff(), type(MERGE)
+	{
+		diff.push_back(merger);
+		const_foreach(Body2D*, body, vector<Body2D*>, merged)
+		{
+			Body2D* mergedBackup = new Body2D(*body);
+
+			//TODO search in the stack for the "body" address and replace it by 'mergedBackup' address
+
+			diff.push_back(mergedBackup);
+		}
 	}
 
 	~StateChange()
 	{
-		purgeUserObjects(previous.bodies);
-		foreach(Body2D*, backupBody, vector<Body2D*>, previous.bodies)
-			delete backupBody;
-
 		if(type == ADDITION)
 		{
+			//deletes previously added bodies' user objects and the bodies' themselves.
 			purgeUserObjects(diff);
 			foreach(Body2D*, diffBody, vector<Body2D*>, diff)
 				delete diffBody;
+		}
+		else if(type == MERGE)
+		{
+			//deletes merger's user object and the merger's itself.
+			delete static_cast<PlanetariumUserObject*>(diff[0]->userObject);
+			delete diff[0];
 		}
 	}
 };
@@ -122,7 +137,8 @@ const bool Planetarium::DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION = true; // the v
 Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
 : surf(SDL_CreateRGBSurface(SDL_SWSURFACE,rect.w,rect.h,pixdepth,0,0,0,0)), size(rect), pos(rect), isRedrawPending(false),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
-  legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY), rocheLimitComputingEnabled(false),
+  legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY),
+  rocheLimitComputingEnabled(false), undoDisabled(false),
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE),
   strokeColorFocused(SDL_util::Color::ORANGE), strokeColorRocheLimit(SDL_util::Color::RED),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
@@ -303,29 +319,6 @@ Vector2D Planetarium::getAntiTransposed(const Vector2D& position) const
 }
 
 //protected
-void Planetarium::stackStateChange(const std::vector<Body2D*>& diff, StateChangeType type)
-{
-	stackUndo.push(StateChange(physics->universe, diff, type));
-}
-
-void Planetarium::stackStateChange(Body2D* diff, StateChangeType type)
-{
-	vector<Body2D*> vdiff;
-	vdiff.push_back(diff);
-	stackStateChange(vdiff, type);
-}
-
-void Planetarium::clearUndoStack()
-{
-	while(not stackUndo.empty())
-	{
-		StateChange& change = stackUndo.top();
-		for(unsigned i = 0; i < listeners.size(); i++)
-			listeners[i]->onBodyDeletion(null); //todo see if this null is stable, or notify about this case
-		stackUndo.pop();
-	}
-}
-
 Vector2D Planetarium::getTransposedNoRef(const Vector2D& position) const
 {
 	return (position - viewportPosition)*viewportZoom;
@@ -553,10 +546,7 @@ void Planetarium::recolorAllBodies()
 	synchronized(physicsAccessMutex)
 	{
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
-		{
-			PlanetariumUserObject* custom = (PlanetariumUserObject*) body->userObject;
-			custom->color = SDL_util::getRandomColor();
-		}
+			static_cast<PlanetariumUserObject*>(body->userObject)->color = SDL_util::getRandomColor();
 	}
 }
 
@@ -617,10 +607,87 @@ void Planetarium::setSolver(AbstractPhysics2DSolver* solver)
 	}
 }
 
-
 void Planetarium::undoLastChange()
 {
+	if(stackUndo.empty()) return;
+	else
+	{
+		// todo iterate through the stack to see if there is a non-merge operation. if there isn't, return.
+	}
 
+	StateChange& state = stackUndo.top();
+	synchronized(physicsAccessMutex)
+	{
+		if(state.type != MERGE)
+		{
+			foreach(Body2DClone&, backupBody, vector<Body2DClone>, state.backup)
+				foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
+					if(body == backupBody.original)
+						*body = backupBody.clone; // copy attributes (position, velocities, etc...)
+
+			if(state.type == ADDITION) // remove previously added body
+				foreach(Body2D*, addedBody, vector<Body2D*>, state.diff)
+					remove_element(this->physics->universe.bodies, addedBody);
+
+			else if(state.type == REMOVAL) //re-add previously removed body
+				foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
+					this->physics->universe.bodies.push_back(removedBody);
+
+		}
+		else // MERGE case, special handling
+		{
+			Body2D* merger = state.diff[0];
+			remove_element(this->physics->universe.bodies, merger);
+			//notify listeners about the body deleted
+			for(unsigned i = 0; i < listeners.size(); i++)
+				listeners[i]->onBodyDeletion(merger);
+
+			delete static_cast<PlanetariumUserObject*>(merger->userObject);
+			delete merger;
+
+			foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
+			{
+				if(removedBody != merger) //merger is in the first index, ignore it
+				{
+					this->physics->universe.bodies.push_back(removedBody);
+					for(unsigned i = 0; i < listeners.size(); i++)
+						listeners[i]->onBodyCreation(*removedBody); //FIXME this WILL give problems as this will try mutex again
+				}
+			}
+
+			if(not stackUndo.empty())
+				undoLastChange(); //proceed to next change
+		}
+	}
+
+	if(state.type == ADDITION) // delete previously added body
+	{
+		foreach(Body2D*, addedBody, vector<Body2D*>, state.diff)
+		{
+			//notify listeners about the body deleted
+			for(unsigned i = 0; i < listeners.size(); i++)
+				listeners[i]->onBodyDeletion(addedBody);
+
+			delete static_cast<PlanetariumUserObject*>(addedBody->userObject);
+			delete addedBody;
+		}
+	}
+
+	else if(state.type == REMOVAL) //notify listeners about the body re-added
+	{
+		foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
+		{
+			for(unsigned i = 0; i < listeners.size(); i++)
+				listeners[i]->onBodyCreation(*removedBody);
+		}
+	}
+
+	else if(state.type == MERGE)
+	{
+		// TODO move non-critical code to here
+	}
+
+	stackUndo.pop();
 }
 
 long double Planetarium::getTotalKineticEnergy() const
@@ -870,6 +937,24 @@ void Planetarium::OrbitTracer::drawQuadricBezier(iterable_queue<Vector2D>& trace
 
 // ===========================  protected stuff =====================================================================================
 
+void Planetarium::stackStateChange(const std::vector<Body2D*>& diff, StateChangeType type)
+{
+	stackUndo.push(StateChange(physics->universe, diff, type));
+}
+
+void Planetarium::stackStateChange(Body2D* diff, StateChangeType type)
+{
+	vector<Body2D*> vdiff;
+	vdiff.push_back(diff);
+	stackStateChange(vdiff, type);
+}
+
+void Planetarium::clearUndoStack()
+{
+	while(not stackUndo.empty())
+		stackUndo.pop();
+}
+
 void Planetarium::performPhysics()
 {
 	while(true)
@@ -976,7 +1061,9 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		PlanetariumUserObject* uobj = static_cast<PlanetariumUserObject*> (body->userObject);
 		collidingListCopy.push_back(*body);
 		collidingListCopy.back().userObject = new PlanetariumUserObject(uobj->color); //implicit copy constructor
-		delete uobj; //we need to delete it since it the physics code won't do it (it has no knowledge of this)
+
+		if(undoDisabled)
+			delete uobj; //we need to delete it since it the physics code won't do it (it has no knowledge of this)
 	}
 	ev->resultingMerger = resultingMerger;
 
@@ -986,6 +1073,9 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		//add collision event to be consumed
 		physicsEventsManager->collisionEvents.push(ev); //provided list and merger must be copies
 	}
+
+	if(not undoDisabled) //register merge change
+		stackUndo.push(StateChange(collidingList, &resultingMerger));
 }
 
 void Planetarium::getCurrentOrbitalReference(Vector2D& position, Vector2D& velocity, double& mass)

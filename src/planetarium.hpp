@@ -56,6 +56,7 @@ struct Planetarium extends Physics2D::Listener
 	bool legacyControl;
 	long displayPeriod, iterationsPerDisplay;
 	bool rocheLimitComputingEnabled;
+	bool undoDisabled;
 
 	//widget parameters
 	SDL_Color bgColor, strokeColorNormal, strokeColorFocused, strokeColorRocheLimit;
@@ -247,7 +248,7 @@ struct Planetarium extends Physics2D::Listener
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
 
-	struct StateChange; enum StateChangeType { ADDITION, REMOVAL };
+	struct StateChange; enum StateChangeType { ADDITION, REMOVAL, MERGE};
 	std::stack<StateChange> stackUndo;
 	void stackStateChange(const std::vector<Body2D*>&, StateChangeType);
 	void stackStateChange(Body2D*, StateChangeType);
