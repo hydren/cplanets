@@ -55,7 +55,6 @@ struct Planetarium extends Physics2D::Listener
 	bool legacyControl;
 	long displayPeriod, iterationsPerDisplay;
 	bool rocheLimitComputingEnabled;
-	bool undoDisabled;
 
 	//widget parameters
 	SDL_Color bgColor, strokeColorNormal, strokeColorFocused, strokeColorRocheLimit;
@@ -152,7 +151,11 @@ struct Planetarium extends Physics2D::Listener
 	/** Safer way to replace the solver instance. */
 	void setSolver(AbstractPhysics2DSolver* solver);
 
+	/** Undoes last body insertion/removal. */
 	void undoLastChange();
+
+	void disableUndo();
+	void enableUndo();
 
 	long double getTotalKineticEnergy() const; //synchronized version
 	long double getTotalPotentialEnergy() const; //synchronized version
@@ -247,11 +250,8 @@ struct Planetarium extends Physics2D::Listener
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
 
-	struct StateChange; enum StateChangeType { ADDITION, REMOVAL, MERGE};
-	std::deque<StateChange> stackUndo;
-	void stackStateChange(const std::vector<Body2D*>&, StateChangeType);
-	void stackStateChange(Body2D*, StateChangeType);
-	void clearUndoStack();
+	struct StateManager;
+	StateManager* stateManager;
 
 	Uint32 pixelDepth;
 	long currentIterationCount;
@@ -262,6 +262,7 @@ struct Planetarium extends Physics2D::Listener
 	Uint32 lastMouseLeftButtonDown;
 	bool isMouseLeftButtonDown;
 	Vector2D lastMouseClickPoint;
+	bool undoDisabled;
 
 	//auxiliary variables
 	bool auxWasRunningBeforeSelection;
