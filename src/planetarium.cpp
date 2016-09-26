@@ -100,11 +100,7 @@ struct Planetarium::StateManager
 			const_foreach(Body2D*, body, vector<Body2D*>, u.bodies)
 				backup.push_back(Body2DClone(body));
 
-			cout << diff->id << endl;
-
 			this->diff.push_back(diff);
-
-			cout << diff->id << endl;
 		}
 
 		Change (const vector<Body2D*>& merged, Body2D* merger)
@@ -135,6 +131,8 @@ struct Planetarium::StateManager
 
 	Planetarium* planetarium;
 	deque<Change> changes;
+
+	StateManager(Planetarium* planetarium) : planetarium(planetarium), changes() {}
 
 	void commitAddition(const Universe2D& u, const vector<Body2D*>& diff)
 	{
@@ -316,7 +314,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   drawDispatcher(null), listeners(), orbitTracer(this), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
-  stateManager(new StateManager()),
+  stateManager(new StateManager(this)),
   pixelDepth(pixdepth),
   currentIterationCount(0),
   threadPhysics(null),
@@ -628,15 +626,11 @@ void Planetarium::addCustomBody(Body2D* body)
 	if(body->userObject == null)
 		body->userObject = new PlanetariumUserObject(SDL_util::getRandomColor());
 
-	cout << body->id << endl;
-
 	synchronized(physicsAccessMutex)
 	{
 		stateManager->commitAddition(this->physics->universe, body);
 		physics->universe.bodies.push_back(body);
 	}
-
-	cout << body->id << endl;
 
 	//notify listeners about the body created
 	for(unsigned i = 0; i < listeners.size(); i++)
@@ -741,7 +735,6 @@ vector<Planetarium::Body2DClone> Planetarium::getBodies() const
 	{
 		const_foreach(Body2D*, i, vector<Body2D*>, physics->universe.bodies)
 		{
-			cout << i->id << endl;
 			bodies.push_back(Body2DClone(i)); //must do deep copy on userObject
 		}
 	}
