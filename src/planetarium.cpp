@@ -209,9 +209,9 @@ struct Planetarium::StateManager
 			cout << endl;
 
 			cout << "-->diff: ";
-			foreach(Body2D*, backupBody, vector<Body2D*>, change.diff)
-				cout << backupBody << ", ";
-			 cout << endl;
+			for(unsigned i = 0; i < change.diff.size(); i++)
+				cout << change.diff[i] << (i==0 and change.type==MERGE? "(merger)":"") << ", ";
+			cout << endl;
 		}
 	}
 
@@ -327,11 +327,9 @@ struct Planetarium::StateManager
 				if(backupBody.original == oldAddress)
 					backupBody.original = newAddress;
 
-			if(contains_element(change.diff, oldAddress))
-			{
-				remove_element(change.diff, oldAddress);
-				change.diff.push_back(newAddress);
-			}
+			for(unsigned i = 0; i < change.diff.size(); i++)
+				if(change.diff[i] == oldAddress)
+					change.diff[i] = newAddress;
 		}
 	}
 };
@@ -1229,22 +1227,23 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		//cout << "previously" << endl;
 //		stateManager->debug();
 
-		vector<Body2D*> backupCollidingList;
-		foreach(Body2D*, body, vector<Body2D*>, collidingList)
+		vector<Body2D*> collidingListBackup;
+		foreach(Body2D*, mergedBody, vector<Body2D*>, collidingList)
 		{
-			Body2D* backupMerged = new Body2D(*body);
-			backupCollidingList.push_back(backupMerged);
-			stateManager->fixReferences(body, backupMerged);
+			//backup merged bodies as they will be deleted by the physics thread
+			Body2D* mergedBodyBackup = new Body2D(*mergedBody);
+			collidingListBackup.push_back(mergedBodyBackup);
+			stateManager->fixReferences(mergedBody, mergedBodyBackup); //swap pointers to the merged bodies with pointers to their backups
 
-			//cout << "will replace " << body << " with " << backupMerged << endl;
+			//cout << "will replace " << mergedBody << " with " << mergedBodyBackup << endl;
 		}
 
 		//cout << endl << "afterwards" << endl;
 //		stateManager->debug();
 
-		stateManager->commitMerge(backupCollidingList, &resultingMerger);
+		stateManager->commitMerge(collidingListBackup, &resultingMerger);
 
-		//cout << endl << "afterwards 2" << endl;
+		//cout << endl << "afterwards commit" << endl;
 //		stateManager->debug();
 	}
 }
