@@ -154,7 +154,13 @@ struct Planetarium extends Physics2D::Listener
 	/** Undoes last body insertion/removal. */
 	void undoLastChange();
 
+	/** Goes back to last body addition/removal. Works like a undo-then-redo call pair. */
+	void rewindLastChange();
+
+	/** Disables undo functionality. This helps reducing memory consumption. */
 	void disableUndo();
+
+	/** Enables undo functionality. May cause high memory usage. */
 	void enableUndo();
 
 	long double getTotalKineticEnergy() const; //synchronized version

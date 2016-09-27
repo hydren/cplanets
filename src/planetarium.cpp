@@ -42,7 +42,7 @@ using SDL_util::colorToInt;
 // Deletes inserted planetarium user objects from the given set of bodies.
 static void purgeUserObjects(vector<Body2D*>& bodies);
 static void purgeUserObjects(vector<Body2D>& bodies);
-static void purgeUserObjects(vector<Planetarium::Body2DClone>& bodies);
+static void purgeUserObjects(vector<Planetarium::Body2DClone>& bodies, bool onOriginal=false);
 
 //custom data to be carried by each Body2D
 struct PlanetariumUserObject
@@ -80,16 +80,19 @@ struct Planetarium::StateManager
 	struct Change
 	{
 		vector<Body2DClone> backup;
-		vector<Body2D*> diff;
+		vector<Body2DClone> diff;
 		ChangeType type;
 
 		Change (const Universe2D& u, const vector<Body2D*>& diff, ChangeType type)
-		: backup(), diff(diff), type(type)
+		: backup(), diff(), type(type)
 		{
 			if(type == MERGE) throw_exception("Invalid StateChange type for constructor! MERGE cannot be used with this constructor!");
 
 			const_foreach(Body2D*, body, vector<Body2D*>, u.bodies)
 				backup.push_back(Body2DClone(body));
+
+			const_foreach(Body2D*, body, vector<Body2D*>, diff)
+				this->diff.push_back(Body2DClone(body));
 		}
 
 		Change (const Universe2D& u, Body2D* diff, ChangeType type)
@@ -100,15 +103,15 @@ struct Planetarium::StateManager
 			const_foreach(Body2D*, body, vector<Body2D*>, u.bodies)
 				backup.push_back(Body2DClone(body));
 
-			this->diff.push_back(diff);
+			this->diff.push_back(Body2DClone(diff));
 		}
 
 		Change (const vector<Body2D*>& merged, Body2D* merger)
 		: backup(), diff(), type(MERGE)
 		{
-			diff.push_back(merger);
+			diff.push_back(Body2DClone(merger));
 			const_foreach(Body2D*, body, vector<Body2D*>, merged)
-				diff.push_back(body);
+				diff.push_back(Body2DClone(body));
 		}
 
 		void purge()
@@ -116,15 +119,15 @@ struct Planetarium::StateManager
 			if(type == ADDITION)
 			{
 				//deletes previously added bodies' user objects and the bodies' themselves.
-				purgeUserObjects(diff);
-				foreach(Body2D*, diffBody, vector<Body2D*>, diff)
-					delete diffBody;
+				purgeUserObjects(diff, true);
+				foreach(Body2DClone&, diffBody, vector<Body2DClone>, diff)
+					delete diffBody.original;
 			}
 			else if(type == MERGE)
 			{
 				//deletes merger's user object and the merger's itself.
-				delete static_cast<PlanetariumUserObject*>(diff[0]->userObject);
-				delete diff[0];
+				delete static_cast<PlanetariumUserObject*>(diff[0].original->userObject);
+				delete diff[0].original;
 			}
 		}
 	};
@@ -173,9 +176,9 @@ struct Planetarium::StateManager
 				if(backupBody.original == oldAddress)
 					backupBody.original = newAddress;
 
-			for(unsigned i = 0; i < change.diff.size(); i++)
-				if(change.diff[i] == oldAddress)
-					change.diff[i] = newAddress;
+			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
+				if(diffBody.original == oldAddress)
+					diffBody.original = newAddress;
 		}
 	}
 
@@ -187,32 +190,37 @@ struct Planetarium::StateManager
 					*body = backupBody.clone; // copy attributes (position, velocities, etc...)
 	}
 
-	private:void rollbackAddition(Change& state)
+	private:void rollbackAddition(Change& state, bool rewind=false)
 	{
 		rollbackPositions(state);
-		foreach(Body2D*, addedBody, vector<Body2D*>, state.diff)
-			remove_element(planetarium->physics->universe.bodies, addedBody);
+
+		foreach(Body2DClone&, addedBody, vector<Body2DClone>, state.diff)
+			if (not rewind)
+				remove_element(planetarium->physics->universe.bodies, addedBody.original);
+			else
+				*(addedBody.original) = addedBody.clone; // copy attributes (position, velocities, etc...)
 	}
 
-	private:void rollbackRemoval(Change& state)
+	private:void rollbackRemoval(Change& state, bool rewind=false)
 	{
 		rollbackPositions(state);
-		foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
-			planetarium->physics->universe.bodies.push_back(removedBody);
+		if(not rewind)
+			foreach(Body2DClone&, removedBody, vector<Body2DClone>, state.diff)
+				planetarium->physics->universe.bodies.push_back(removedBody.original);
 	}
 
 	private:void rollbackMerge(Change& state)
 	{
-		Body2D* merger = state.diff[0];
+		Body2D* merger = state.diff[0].original;
 		remove_element(planetarium->physics->universe.bodies, merger);
 
-		foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
-			if(removedBody != merger) //merger is in the first index, ignore it
-				planetarium->physics->universe.bodies.push_back(removedBody);
+		foreach(Body2DClone&, removedBody, vector<Body2DClone>, state.diff)
+			if(removedBody.original != merger) //merger is in the first index, ignore it
+				planetarium->physics->universe.bodies.push_back(removedBody.original);
 	}
 
 	public:
-	void rollback()
+	void rollback(bool rewind=false)
 	{
 		if(changes.empty()) return;
 		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
@@ -224,14 +232,14 @@ struct Planetarium::StateManager
 			{
 				synchronized(physicsAccessMutex)
 				{
-					rollbackAddition(change);
+					rollbackAddition(change, rewind);
 				}
 
-				foreach(Body2D*, addedBody, vector<Body2D*>, change.diff)
+				if(not rewind) foreach(Body2DClone&, addedBody, vector<Body2DClone>, change.diff)
 				{
 					//notify listeners about the body deleted
 					for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-						planetarium->listeners[i]->onBodyDeletion(addedBody);
+						planetarium->listeners[i]->onBodyDeletion(addedBody.original);
 				}
 			}
 
@@ -239,23 +247,26 @@ struct Planetarium::StateManager
 			{
 				synchronized(physicsAccessMutex)
 				{
-					rollbackRemoval(change);
+					rollbackRemoval(change, rewind);
 				}
 
-				foreach(Body2D*, removedBody, vector<Body2D*>, change.diff)
+				if(not rewind) foreach(Body2DClone&, removedBody, vector<Body2DClone>, change.diff)
 				{
 					for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-						planetarium->listeners[i]->onBodyCreation(*removedBody);
+						planetarium->listeners[i]->onBodyCreation(*removedBody.original);
 				}
 			}
 
-			change.purge();
-			changes.pop_back(); //stuack pop
+			if(not rewind)
+			{
+				change.purge();
+				changes.pop_back(); //stuack pop
+			}
 		}
 
 		else //merges happened after last body addition/removal, needs to rollback more than one state
 		{
-			vector<Body2D*> removedAddedBodies, addedRemovedBodies; //write down to notify or delete later
+			vector<Body2DClone> removedAddedBodies, addedRemovedBodies; //write down to notify or delete later
 			bool needsRollback = true; //when rollbacking merge changes, keep rollbacking futher
 
 			synchronized(physicsAccessMutex)
@@ -266,15 +277,15 @@ struct Planetarium::StateManager
 
 					if(change.type == ADDITION)
 					{
-						rollbackAddition(change);
-						removedAddedBodies.insert(removedAddedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify or delete later
+						rollbackAddition(change, rewind);
+						if(not rewind) removedAddedBodies.insert(removedAddedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify or delete later
 						needsRollback = false;
 					}
 
 					else if (change.type == REMOVAL)
 					{
-						rollbackRemoval(change);
-						addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify later
+						rollbackRemoval(change, rewind);
+						if(not rewind) addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify later
 						needsRollback = false;
 					}
 
@@ -286,24 +297,25 @@ struct Planetarium::StateManager
 						needsRollback = true;
 					}
 
-					changes.pop_back(); //stack pop
+					if(change.type == MERGE or not rewind)
+						changes.pop_back(); //stack pop
 				}
 			}
 
 			//notify listeners about the body removed
-			foreach(Body2D*, removedBody, vector<Body2D*>, removedAddedBodies)
+			foreach(Body2DClone&, removedBody, vector<Body2DClone>, removedAddedBodies)
 				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-					planetarium->listeners[i]->onBodyDeletion(removedBody);
+					planetarium->listeners[i]->onBodyDeletion(removedBody.original);
 
 			//notify listeners about the body removed
-			foreach(Body2D*, addedBody, vector<Body2D*>, addedRemovedBodies)
+			foreach(Body2DClone&, addedBody, vector<Body2DClone>, addedRemovedBodies)
 				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-					planetarium->listeners[i]->onBodyCreation(*addedBody);
+					planetarium->listeners[i]->onBodyCreation(*addedBody.original);
 
 			//delete unused manually
-			purgeUserObjects(removedAddedBodies);
-			foreach(Body2D*, diffBody, vector<Body2D*>, removedAddedBodies)
-				delete diffBody;
+			purgeUserObjects(removedAddedBodies, true);
+			foreach(Body2DClone, diffBody, vector<Body2DClone>, removedAddedBodies)
+				delete diffBody.original;
 		}
 	}
 
@@ -331,7 +343,7 @@ struct Planetarium::StateManager
 
 			cout << "-->diff: ";
 			for(unsigned i = 0; i < change.diff.size(); i++)
-				cout << change.diff[i] << (i==0 and change.type==MERGE? "(merger)":"") << ", ";
+				cout << change.diff[i].original << (i==0 and change.type==MERGE? "(merger)":"") << ", ";
 			cout << endl;
 		}
 	}
@@ -848,6 +860,11 @@ void Planetarium::undoLastChange()
 	stateManager->rollback();
 }
 
+void Planetarium::rewindLastChange()
+{
+	stateManager->rollback(true);
+}
+
 void Planetarium::disableUndo()
 {
 	stateManager->reset();
@@ -1344,8 +1361,11 @@ void purgeUserObjects(std::vector<Body2D>& bodies)
 		delete static_cast<PlanetariumUserObject*>(oldBody.userObject);
 }
 
-void purgeUserObjects(vector<Planetarium::Body2DClone>& bodies)
+void purgeUserObjects(vector<Planetarium::Body2DClone>& bodies, bool onOriginal)
 {
 	foreach(Planetarium::Body2DClone&, oldBody, vector<Planetarium::Body2DClone>, bodies)
-		delete static_cast<PlanetariumUserObject*>(oldBody.clone.userObject);
+		if(not onOriginal)
+			delete static_cast<PlanetariumUserObject*>(oldBody.clone.userObject);
+		else
+			delete static_cast<PlanetariumUserObject*>(oldBody.original->userObject);
 }

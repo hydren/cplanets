@@ -628,8 +628,10 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(btnRecolorAll);
 			break;
 		case SDLK_u:
-			if(down)
-				planetarium->undoLastChange();
+			if(down) planetarium->undoLastChange();
+			break;
+		case SDLK_g:
+			if(down) planetarium->rewindLastChange();
 			break;
 		case SDLK_p:
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
