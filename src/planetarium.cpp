@@ -164,7 +164,22 @@ struct Planetarium::StateManager
 		//cout << "commit merge" << endl;
 	}
 
-	void rollbackPositions(Change& state)
+	/// Swaps 'oldAdress' pointers in the changes stack (history) for 'newAddress' pointers
+	void fixReferences(const Body2D* oldAddress, Body2D* newAddress)
+	{
+		foreach(Change&, change, deque<Change>, changes)
+		{
+			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
+				if(backupBody.original == oldAddress)
+					backupBody.original = newAddress;
+
+			for(unsigned i = 0; i < change.diff.size(); i++)
+				if(change.diff[i] == oldAddress)
+					change.diff[i] = newAddress;
+		}
+	}
+
+	private:void rollbackPositions(Change& state)
 	{
 		foreach(Body2DClone&, backupBody, vector<Body2DClone>, state.backup)
 			foreach(Body2D*, body, vector<Body2D*>, planetarium->physics->universe.bodies)
@@ -172,21 +187,21 @@ struct Planetarium::StateManager
 					*body = backupBody.clone; // copy attributes (position, velocities, etc...)
 	}
 
-	void rollbackAddition(Change& state)
+	private:void rollbackAddition(Change& state)
 	{
 		rollbackPositions(state);
 		foreach(Body2D*, addedBody, vector<Body2D*>, state.diff)
 			remove_element(planetarium->physics->universe.bodies, addedBody);
 	}
 
-	void rollbackRemoval(Change& state)
+	private:void rollbackRemoval(Change& state)
 	{
 		rollbackPositions(state);
 		foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
 			planetarium->physics->universe.bodies.push_back(removedBody);
 	}
 
-	void rollbackMerge(Change& state)
+	private:void rollbackMerge(Change& state)
 	{
 		Body2D* merger = state.diff[0];
 		remove_element(planetarium->physics->universe.bodies, merger);
@@ -196,25 +211,7 @@ struct Planetarium::StateManager
 				planetarium->physics->universe.bodies.push_back(removedBody);
 	}
 
-	void debug()
-	{
-		cout << "# debug-stack #" << endl;
-		foreach(Change&, change, deque<Change>, changes)
-		{
-			cout << "@change " << &change << endl;
-
-			cout << "-->backup: ";
-			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
-				cout << backupBody.original << ", ";
-			cout << endl;
-
-			cout << "-->diff: ";
-			for(unsigned i = 0; i < change.diff.size(); i++)
-				cout << change.diff[i] << (i==0 and change.type==MERGE? "(merger)":"") << ", ";
-			cout << endl;
-		}
-	}
-
+	public:
 	void rollback()
 	{
 		if(changes.empty()) return;
@@ -319,17 +316,23 @@ struct Planetarium::StateManager
 		}
 	}
 
-	void fixReferences(const Body2D* oldAddress, Body2D* newAddress)
+	/// Prints current change stack
+	void debug()
 	{
+		cout << "# debug-stack #" << endl;
 		foreach(Change&, change, deque<Change>, changes)
 		{
-			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
-				if(backupBody.original == oldAddress)
-					backupBody.original = newAddress;
+			cout << "@change " << &change << endl;
 
+			cout << "-->backup: ";
+			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
+				cout << backupBody.original << ", ";
+			cout << endl;
+
+			cout << "-->diff: ";
 			for(unsigned i = 0; i < change.diff.size(); i++)
-				if(change.diff[i] == oldAddress)
-					change.diff[i] = newAddress;
+				cout << change.diff[i] << (i==0 and change.type==MERGE? "(merger)":"") << ", ";
+			cout << endl;
 		}
 	}
 };
@@ -1233,7 +1236,9 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 			//backup merged bodies as they will be deleted by the physics thread
 			Body2D* mergedBodyBackup = new Body2D(*mergedBody);
 			collidingListBackup.push_back(mergedBodyBackup);
-			stateManager->fixReferences(mergedBody, mergedBodyBackup); //swap pointers to the merged bodies with pointers to their backups
+
+			//swap pointers to the merged bodies with pointers to their backups
+			stateManager->fixReferences(mergedBody, mergedBodyBackup);
 
 			//cout << "will replace " << mergedBody << " with " << mergedBodyBackup << endl;
 		}
