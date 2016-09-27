@@ -108,7 +108,7 @@ struct Planetarium::StateManager
 		{
 			diff.push_back(merger);
 			const_foreach(Body2D*, body, vector<Body2D*>, merged)
-				diff.push_back(new Body2D(*body));
+				diff.push_back(body);
 		}
 
 		void purge()
@@ -137,31 +137,31 @@ struct Planetarium::StateManager
 	void commitAddition(const Universe2D& u, const vector<Body2D*>& diff)
 	{
 		changes.push_back(Change(u, diff, ADDITION));
-		cout << "commit add" << endl;
+		//cout << "commit add" << endl;
 	}
 
 	void commitAddition(const Universe2D& u, Body2D* diff)
 	{
 		changes.push_back(Change(u, diff, ADDITION));
-		cout << "commit add" << endl;
+		//cout << "commit add" << endl;
 	}
 
 	void commitRemoval(const Universe2D& u, const vector<Body2D*>& diff)
 	{
 		changes.push_back(Change(u, diff, REMOVAL));
-		cout << "commit rem" << endl;
+		//cout << "commit rem" << endl;
 	}
 
 	void commitRemoval(const Universe2D& u, Body2D* diff)
 	{
 		changes.push_back(Change(u, diff, REMOVAL));
-		cout << "commit rem" << endl;
+		//cout << "commit rem" << endl;
 	}
 
 	void commitMerge(const vector<Body2D*>& merged, Body2D* merger)
 	{
 		changes.push_back(Change(merged, merger));
-		cout << "commit merge" << endl;
+		//cout << "commit merge" << endl;
 	}
 
 	void rollbackPositions(Change& state)
@@ -174,92 +174,140 @@ struct Planetarium::StateManager
 
 	void rollbackAddition(Change& state)
 	{
-		if(state.type != ADDITION) throw_exception("Invalid rollback! Expected ADDITION-type change, found %d!", state.type);
-
-		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
-
-		synchronized(physicsAccessMutex)
-		{
-			rollbackPositions(state);
-			foreach(Body2D*, addedBody, vector<Body2D*>, state.diff)
-				remove_element(planetarium->physics->universe.bodies, addedBody);
-		}
-
+		rollbackPositions(state);
 		foreach(Body2D*, addedBody, vector<Body2D*>, state.diff)
-		{
-			//notify listeners about the body deleted
-			for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-				planetarium->listeners[i]->onBodyDeletion(addedBody);
-		}
+			remove_element(planetarium->physics->universe.bodies, addedBody);
 	}
 
 	void rollbackRemoval(Change& state)
 	{
-		if(state.type != REMOVAL) throw_exception("Invalid rollback! Expected REMOVAL-type change, found %d!", state.type);
-
-		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
-
-		synchronized(physicsAccessMutex)
-		{
-			rollbackPositions(state);
-			foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
-				planetarium->physics->universe.bodies.push_back(removedBody);
-		}
-
+		rollbackPositions(state);
 		foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
-		{
-			for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-				planetarium->listeners[i]->onBodyCreation(*removedBody);
-		}
+			planetarium->physics->universe.bodies.push_back(removedBody);
 	}
 
 	void rollbackMerge(Change& state)
 	{
-		if(state.type != MERGE) throw_exception("Invalid rollback! Expected MERGE-type change, found %d!", state.type);
-
 		Body2D* merger = state.diff[0];
+		remove_element(planetarium->physics->universe.bodies, merger);
 
-		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
-
-		synchronized(physicsAccessMutex)
-		{
-			remove_element(planetarium->physics->universe.bodies, merger);
-
-			foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
-				if(removedBody != merger) //merger is in the first index, ignore it
-					planetarium->physics->universe.bodies.push_back(removedBody);
-		}
-
-		//notify listeners about the body deleted (merger)
-		for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-			planetarium->listeners[i]->onBodyDeletion(merger);
-
-		//notify listeners about the bodies re-added (merged bodies)
 		foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
 			if(removedBody != merger) //merger is in the first index, ignore it
-				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-					planetarium->listeners[i]->onBodyCreation(*removedBody);
+				planetarium->physics->universe.bodies.push_back(removedBody);
+	}
+
+	void debug()
+	{
+		cout << "# debug-stack #" << endl;
+		foreach(Change&, change, deque<Change>, changes)
+		{
+			cout << "@change " << &change << endl;
+
+			cout << "-->backup: ";
+			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
+				cout << backupBody.original << ", ";
+			cout << endl;
+
+			cout << "-->diff: ";
+			foreach(Body2D*, backupBody, vector<Body2D*>, change.diff)
+				cout << backupBody << ", ";
+			 cout << endl;
+		}
 	}
 
 	void rollback()
 	{
 		if(changes.empty()) return;
-		Change& change = changes.back();
+		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
 
-		if(change.type == ADDITION)
-			rollbackAddition(change);
+		if(changes.back().type != MERGE) // no merge involved, simpler case
+		{
+			Change& change = changes.back();
+			if(change.type == ADDITION)
+			{
+				synchronized(physicsAccessMutex)
+				{
+					rollbackAddition(change);
+				}
 
-		else if (change.type == REMOVAL)
-			rollbackRemoval(change);
+				foreach(Body2D*, addedBody, vector<Body2D*>, change.diff)
+				{
+					//notify listeners about the body deleted
+					for(unsigned i = 0; i < planetarium->listeners.size(); i++)
+						planetarium->listeners[i]->onBodyDeletion(addedBody);
+				}
+			}
 
-		else if (change.type == MERGE)
-			rollbackMerge(change);
+			else if (change.type == REMOVAL)
+			{
+				synchronized(physicsAccessMutex)
+				{
+					rollbackRemoval(change);
+				}
 
-		change.purge();
-		changes.pop_back(); //stack pop
+				foreach(Body2D*, removedBody, vector<Body2D*>, change.diff)
+				{
+					for(unsigned i = 0; i < planetarium->listeners.size(); i++)
+						planetarium->listeners[i]->onBodyCreation(*removedBody);
+				}
+			}
 
-		if(change.type == MERGE and not changes.empty())
-			rollback();
+			change.purge();
+			changes.pop_back(); //stuack pop
+		}
+
+		else //merges happened after last body addition/removal, needs to rollback more than one state
+		{
+			vector<Body2D*> removedAddedBodies, addedRemovedBodies; //write down to notify or delete later
+			bool needsRollback = true; //when rollbacking merge changes, keep rollbacking futher
+
+			synchronized(physicsAccessMutex)
+			{
+				while(not changes.empty() and needsRollback)
+				{
+					Change& change = changes.back();
+
+					if(change.type == ADDITION)
+					{
+						rollbackAddition(change);
+						removedAddedBodies.insert(removedAddedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify or delete later
+						needsRollback = false;
+					}
+
+					else if (change.type == REMOVAL)
+					{
+						rollbackRemoval(change);
+						addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify later
+						needsRollback = false;
+					}
+
+					else if (change.type == MERGE)
+					{
+						rollbackMerge(change);
+						removedAddedBodies.push_back(change.diff[0]); //merger ("diff[0]") was removed
+						addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin()+1, change.diff.end()); //merged were re-added
+						needsRollback = true;
+					}
+
+					changes.pop_back(); //stack pop
+				}
+			}
+
+			//notify listeners about the body removed
+			foreach(Body2D*, removedBody, vector<Body2D*>, removedAddedBodies)
+				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
+					planetarium->listeners[i]->onBodyDeletion(removedBody);
+
+			//notify listeners about the body removed
+			foreach(Body2D*, addedBody, vector<Body2D*>, addedRemovedBodies)
+				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
+					planetarium->listeners[i]->onBodyCreation(*addedBody);
+
+			//delete unused manually
+			purgeUserObjects(removedAddedBodies);
+			foreach(Body2D*, diffBody, vector<Body2D*>, removedAddedBodies)
+				delete diffBody;
+		}
 	}
 
 	void reset()
@@ -279,8 +327,11 @@ struct Planetarium::StateManager
 				if(backupBody.original == oldAddress)
 					backupBody.original = newAddress;
 
-			remove_element(change.diff, oldAddress);
-			change.diff.push_back(newAddress);
+			if(contains_element(change.diff, oldAddress))
+			{
+				remove_element(change.diff, oldAddress);
+				change.diff.push_back(newAddress);
+			}
 		}
 	}
 };
@@ -1175,15 +1226,26 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 
 	if(not undoDisabled) //register merge change
 	{
+		//cout << "previously" << endl;
+//		stateManager->debug();
+
 		vector<Body2D*> backupCollidingList;
 		foreach(Body2D*, body, vector<Body2D*>, collidingList)
 		{
 			Body2D* backupMerged = new Body2D(*body);
 			backupCollidingList.push_back(backupMerged);
 			stateManager->fixReferences(body, backupMerged);
+
+			//cout << "will replace " << body << " with " << backupMerged << endl;
 		}
 
+		//cout << endl << "afterwards" << endl;
+//		stateManager->debug();
+
 		stateManager->commitMerge(backupCollidingList, &resultingMerger);
+
+		//cout << endl << "afterwards 2" << endl;
+//		stateManager->debug();
 	}
 }
 
