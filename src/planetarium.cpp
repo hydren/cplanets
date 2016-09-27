@@ -134,30 +134,35 @@ struct Planetarium::StateManager
 
 	Planetarium* planetarium;
 	deque<Change> changes;
+	unsigned nonMergeChangesCount;
 
-	StateManager(Planetarium* planetarium) : planetarium(planetarium), changes() {}
+	StateManager(Planetarium* planetarium) : planetarium(planetarium), changes(), nonMergeChangesCount(0) {}
 
 	void commitAddition(const Universe2D& u, const vector<Body2D*>& diff)
 	{
 		changes.push_back(Change(u, diff, ADDITION));
+		nonMergeChangesCount++;
 		//cout << "commit add" << endl;
 	}
 
 	void commitAddition(const Universe2D& u, Body2D* diff)
 	{
 		changes.push_back(Change(u, diff, ADDITION));
+		nonMergeChangesCount++;
 		//cout << "commit add" << endl;
 	}
 
 	void commitRemoval(const Universe2D& u, const vector<Body2D*>& diff)
 	{
 		changes.push_back(Change(u, diff, REMOVAL));
+		nonMergeChangesCount++;
 		//cout << "commit rem" << endl;
 	}
 
 	void commitRemoval(const Universe2D& u, Body2D* diff)
 	{
 		changes.push_back(Change(u, diff, REMOVAL));
+		nonMergeChangesCount++;
 		//cout << "commit rem" << endl;
 	}
 
@@ -222,7 +227,7 @@ struct Planetarium::StateManager
 	public:
 	void rollback(bool rewind=false)
 	{
-		if(changes.empty()) return;
+		if(nonMergeChangesCount == 0) return;
 		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
 
 		if(changes.back().type != MERGE) // no merge involved, simpler case
@@ -261,6 +266,7 @@ struct Planetarium::StateManager
 			{
 				change.purge();
 				changes.pop_back(); //stuack pop
+				if(change.type != MERGE) nonMergeChangesCount--;
 			}
 		}
 
@@ -298,7 +304,10 @@ struct Planetarium::StateManager
 					}
 
 					if(change.type == MERGE or not rewind)
+					{
 						changes.pop_back(); //stack pop
+						if(change.type != MERGE) nonMergeChangesCount--;
+					}
 				}
 			}
 
@@ -326,6 +335,7 @@ struct Planetarium::StateManager
 			changes.back().purge();
 			changes.pop_back(); //stack pop
 		}
+		nonMergeChangesCount = 0;
 	}
 
 	/// Prints current change stack
@@ -346,6 +356,7 @@ struct Planetarium::StateManager
 				cout << change.diff[i].original << (i==0 and change.type==MERGE? "(merger)":"") << ", ";
 			cout << endl;
 		}
+		cout << "# " << nonMergeChangesCount << " non-merge changes #" << endl;
 	}
 };
 
