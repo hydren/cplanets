@@ -137,26 +137,31 @@ struct Planetarium::StateManager
 	void commitAddition(const Universe2D& u, const vector<Body2D*>& diff)
 	{
 		changes.push_back(Change(u, diff, ADDITION));
+		cout << "commit add" << endl;
 	}
 
 	void commitAddition(const Universe2D& u, Body2D* diff)
 	{
 		changes.push_back(Change(u, diff, ADDITION));
+		cout << "commit add" << endl;
 	}
 
 	void commitRemoval(const Universe2D& u, const vector<Body2D*>& diff)
 	{
 		changes.push_back(Change(u, diff, REMOVAL));
+		cout << "commit rem" << endl;
 	}
 
 	void commitRemoval(const Universe2D& u, Body2D* diff)
 	{
 		changes.push_back(Change(u, diff, REMOVAL));
+		cout << "commit rem" << endl;
 	}
 
 	void commitMerge(const vector<Body2D*>& merged, Body2D* merger)
 	{
 		changes.push_back(Change(merged, merger));
+		cout << "commit merge" << endl;
 	}
 
 	void rollbackPositions(Change& state)
@@ -185,9 +190,6 @@ struct Planetarium::StateManager
 			//notify listeners about the body deleted
 			for(unsigned i = 0; i < planetarium->listeners.size(); i++)
 				planetarium->listeners[i]->onBodyDeletion(addedBody);
-
-			delete static_cast<PlanetariumUserObject*>(addedBody->userObject);
-			delete addedBody;
 		}
 	}
 
@@ -232,9 +234,6 @@ struct Planetarium::StateManager
 		for(unsigned i = 0; i < planetarium->listeners.size(); i++)
 			planetarium->listeners[i]->onBodyDeletion(merger);
 
-		delete static_cast<PlanetariumUserObject*>(merger->userObject);
-		delete merger;
-
 		//notify listeners about the bodies re-added (merged bodies)
 		foreach(Body2D*, removedBody, vector<Body2D*>, state.diff)
 			if(removedBody != merger) //merger is in the first index, ignore it
@@ -275,9 +274,14 @@ struct Planetarium::StateManager
 	void fixReferences(const Body2D* oldAddress, Body2D* newAddress)
 	{
 		foreach(Change&, change, deque<Change>, changes)
-			foreach(Body2DClone, backupBody, vector<Body2DClone>, change.backup)
+		{
+			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
 				if(backupBody.original == oldAddress)
 					backupBody.original = newAddress;
+
+			remove_element(change.diff, oldAddress);
+			change.diff.push_back(newAddress);
+		}
 	}
 };
 
@@ -1174,8 +1178,9 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		vector<Body2D*> backupCollidingList;
 		foreach(Body2D*, body, vector<Body2D*>, collidingList)
 		{
-			backupCollidingList.push_back(new Body2D(*body));
-			stateManager->fixReferences(body, backupCollidingList.back());
+			Body2D* backupMerged = new Body2D(*body);
+			backupCollidingList.push_back(backupMerged);
+			stateManager->fixReferences(body, backupMerged);
 		}
 
 		stateManager->commitMerge(backupCollidingList, &resultingMerger);
