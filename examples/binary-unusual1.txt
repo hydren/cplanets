@@ -1,0 +1,8 @@
+universe definition
+gravity is 9.807
+body B194: mass 0.234829, diameter 0.764834, position_x -129018, position_y 160823, velocity_x 2.69008, velocity_y 11.8956
+body B6011: mass 17157.4, diameter 32.0087, position_x -128722, position_y 161346, velocity_x 11.1439, velocity_y 11.1965
+body B5051: mass 0.0410755, diameter 0.427439, position_x -128920, position_y 160736, velocity_x 2.39203, velocity_y 19.8091
+body B9020: mass 0.00288898, diameter 0.175131, position_x 292062, position_y -1.29683e+06, velocity_x 42.6898, velocity_y -187.793
+body B4845: mass 0.00749753, diameter 0.246266, position_x -128866, position_y 161496, velocity_x -45.264, velocity_y 1.18783
+body B1897: mass 17157.3, diameter 32.001, position_x -128751, position_y 161264, velocity_x -47.1439, velocity_y 33.804

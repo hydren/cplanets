@@ -1,0 +1,4 @@
+universe definition
+gravity is 9.807
+body B1875: mass 17157.3, diameter 32, position_x 35.0322, position_y 38.1816, velocity_x 3.42472, velocity_y 3.75186
+body B7606: mass 17157.3, diameter 32, position_x 345.968, position_y 378.818, velocity_x -3.42472, velocity_y -3.75186
