@@ -35,6 +35,7 @@ struct Planetarium extends Physics2D::Listener
 	static const short DEFAULT_FPS; // = 60
 	static const long DEFAULT_DISPLAY_PERIOD; // = 30
 	static const long DEFAULT_ITERATIONS_PER_DISPLAY; // = 2
+	static const unsigned DEFAULT_UNDO_STACK_SIZE; // = 256
 
 	static const bool DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION;
 
@@ -55,6 +56,7 @@ struct Planetarium extends Physics2D::Listener
 	bool legacyControl;
 	long displayPeriod, iterationsPerDisplay;
 	bool rocheLimitComputingEnabled;
+	unsigned undoStackMaxSize;
 
 	//widget parameters
 	SDL_Color bgColor, strokeColorNormal, strokeColorFocused, strokeColorRocheLimit;

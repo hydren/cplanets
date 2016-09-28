@@ -114,7 +114,7 @@ struct Planetarium::StateManager
 				diff.push_back(Body2DClone(body));
 		}
 
-		void purge()
+		void purgeAsUndone()
 		{
 			if(type == ADDITION)
 			{
@@ -130,6 +130,26 @@ struct Planetarium::StateManager
 				delete diff[0].original;
 			}
 		}
+
+		void purgeAsForgotten()
+		{
+			if(type == REMOVAL)
+			{
+				//deletes previously removed bodies' user objects and the bodies' themselves.
+				purgeUserObjects(diff, true);
+				foreach(Body2DClone&, diffBody, vector<Body2DClone>, diff)
+					delete diffBody.original;
+			}
+			else if(type == MERGE)
+			{
+				diff.erase(diff.begin()); //remove merger from the diff list
+
+				//deletes merged bodies' user objects and themselves.
+				purgeUserObjects(diff, true);
+				foreach(Body2DClone&, diffBody, vector<Body2DClone>, diff)
+					delete diffBody.original;
+			}
+		}
 	};
 
 	Planetarium* planetarium;
@@ -140,6 +160,7 @@ struct Planetarium::StateManager
 
 	void commitAddition(const Universe2D& u, const vector<Body2D*>& diff)
 	{
+		shrinkToFit();
 		changes.push_back(Change(u, diff, ADDITION));
 		nonMergeChangesCount++;
 		//cout << "commit add" << endl;
@@ -147,6 +168,7 @@ struct Planetarium::StateManager
 
 	void commitAddition(const Universe2D& u, Body2D* diff)
 	{
+		shrinkToFit();
 		changes.push_back(Change(u, diff, ADDITION));
 		nonMergeChangesCount++;
 		//cout << "commit add" << endl;
@@ -154,6 +176,7 @@ struct Planetarium::StateManager
 
 	void commitRemoval(const Universe2D& u, const vector<Body2D*>& diff)
 	{
+		shrinkToFit();
 		changes.push_back(Change(u, diff, REMOVAL));
 		nonMergeChangesCount++;
 		//cout << "commit rem" << endl;
@@ -161,6 +184,7 @@ struct Planetarium::StateManager
 
 	void commitRemoval(const Universe2D& u, Body2D* diff)
 	{
+		shrinkToFit();
 		changes.push_back(Change(u, diff, REMOVAL));
 		nonMergeChangesCount++;
 		//cout << "commit rem" << endl;
@@ -168,6 +192,7 @@ struct Planetarium::StateManager
 
 	void commitMerge(const vector<Body2D*>& merged, Body2D* merger)
 	{
+		shrinkToFit();
 		changes.push_back(Change(merged, merger));
 		//cout << "commit merge" << endl;
 	}
@@ -264,7 +289,7 @@ struct Planetarium::StateManager
 
 			if(not rewind)
 			{
-				change.purge();
+				change.purgeAsUndone();
 				changes.pop_back(); //stuack pop
 				if(change.type != MERGE) nonMergeChangesCount--;
 			}
@@ -332,10 +357,20 @@ struct Planetarium::StateManager
 	{
 		while(not changes.empty())
 		{
-			changes.back().purge();
+			changes.back().purgeAsUndone();
 			changes.pop_back(); //stack pop
 		}
 		nonMergeChangesCount = 0;
+	}
+
+	void shrinkToFit()
+	{
+		while(changes.size() > planetarium->undoStackMaxSize-1)
+		{
+			changes.front().purgeAsForgotten();
+			if(changes.front().type != MERGE) nonMergeChangesCount--;
+			changes.pop_front();
+		}
 	}
 
 	/// Prints current change stack
@@ -372,6 +407,7 @@ const double Planetarium::DEFAULT_MINIMUM_BODY_RENDERING_RADIUS = 2.0;
 const unsigned Planetarium::DEFAULT_SLEEPING_TIME = 25;
 const short Planetarium::DEFAULT_FPS = 60;
 const long Planetarium::DEFAULT_DISPLAY_PERIOD = 30, Planetarium::DEFAULT_ITERATIONS_PER_DISPLAY = 2;
+const unsigned Planetarium::DEFAULT_UNDO_STACK_SIZE = 256;
 
 const bool Planetarium::DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION = true; // the value doesn't really matter, we just need to identify it was used.
 
@@ -379,7 +415,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
 : surf(SDL_CreateRGBSurface(SDL_SWSURFACE,rect.w,rect.h,pixdepth,0,0,0,0)), size(rect), pos(rect), isRedrawPending(false),
   physics(new Physics2D()), running(false), stepDelay(DEFAULT_SLEEPING_TIME), fps(DEFAULT_FPS),
   legacyControl(false), displayPeriod(DEFAULT_DISPLAY_PERIOD), iterationsPerDisplay(DEFAULT_ITERATIONS_PER_DISPLAY),
-  rocheLimitComputingEnabled(false),
+  rocheLimitComputingEnabled(false), undoStackMaxSize(DEFAULT_UNDO_STACK_SIZE),
   bgColor(SDL_util::Color::BLACK), strokeColorNormal(SDL_util::Color::WHITE),
   strokeColorFocused(SDL_util::Color::ORANGE), strokeColorRocheLimit(SDL_util::Color::RED),
   strokeSizeNormal(DEFAULT_STROKE_SIZE_NORMAL), strokeSizeFocused(DEFAULT_STROKE_SIZE_FOCUSED),
