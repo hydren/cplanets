@@ -119,6 +119,9 @@ namespace WidgetsExtra
 		/** Remove the specified component (but does not free or hides it from the window) */
 		void removeComponent(Element* component);
 
+		/** Returns the number of components on this layout. */
+		unsigned getComponentCount() const;
+
 		/** Organizes the position of the components on this layout */
 		virtual void pack() abstract;
 

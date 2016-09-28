@@ -288,3 +288,10 @@ void Layout::removeComponent(Element* component)
 	Layout::removeComponentAt(index);
 }
 
+
+/** Returns the number of components on this layout. */
+unsigned Layout::getComponentCount() const
+{
+	return this->components.size();
+}
+
