@@ -136,7 +136,7 @@ bool aux_isPressed_SDLK_r = false;
 TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
-Button* btnNew, *btnLoad, *btnSave, *btnRun, *btnPause, *btnAbout;
+Button* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRun, *btnPause, *btnAbout;
 FileDialog* dialogLoad, *dialogSave;
 
 TabSet* tabs;
@@ -209,6 +209,16 @@ void CPlanets::showMainWindow()
 	btnSave = new Button(window, 0, genericButtonSize, "Save", onButtonPressed);
 	packer.pack(btnSave);
 	toolbarNorthLayout->addComponent(btnSave);
+
+	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
+
+	btnUndo = new Button(window, 0, genericButtonSize, "Undo", onButtonPressed);
+	packer.pack(btnUndo);
+	toolbarNorthLayout->addComponent(btnUndo);
+
+	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
 
 	btnAbout = new Button(window, 0, genericButtonSize, "About", onButtonPressed);
 	packer.pack(btnAbout);
@@ -628,7 +638,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(btnRecolorAll);
 			break;
 		case SDLK_u:
-			if(down) planetarium->undoLastChange();
+			if(down) onButtonPressed(btnUndo);
 			break;
 		case SDLK_g:
 			if(down) planetarium->rewindLastChange();
@@ -736,6 +746,11 @@ void onButtonPressed(Button* btn)
 	{
 		planetarium->orbitTracer.traceLength *= 0.5;
 		spnTraceLength->refresh();
+	}
+
+	if(btn == btnUndo)
+	{
+		planetarium->undoLastChange();
 	}
 
 	if(btn == btnNew)
