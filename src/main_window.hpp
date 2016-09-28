@@ -8,10 +8,6 @@
 #ifndef MAIN_WINDOW_HPP_
 #define MAIN_WINDOW_HPP_
 
-#include <string>
-
-#include <SDL_widgets/SDL_widgets.h>
-
 #include "util.hpp"
 
 extern const unsigned WIDGETS_SPACING;

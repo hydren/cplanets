@@ -13,20 +13,22 @@
 #include <cstring>
 #include <climits>
 
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
 
 #include "futil/math/more_random.h"
 #include "futil/string/callbacks.hpp"
+
 #include "SDL_widgets/SDL_widgets.h"
 #include "SDL_util.hpp"
 
-#include "planetarium_pane.hpp"
+#include "planetarium/planetarium_pane.hpp"
 #include "program_io.hpp"
+
 #include "widgets/widgets_util.hpp"
 #include "widgets/widgets_debug.hpp"
-
 #include "widgets/flow_layout.hpp"
 #include "widgets/spinner.hpp"
 #include "widgets/drop_menu.hpp"

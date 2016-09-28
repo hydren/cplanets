@@ -8,11 +8,10 @@
 #ifndef UTIL_HPP_
 #define UTIL_HPP_
 
-#include <futil/general/language.hpp>
+#include <string>
 
 //needed to display the version
 extern const std::string CPLANETS_VERSION;
 extern const std::string CPLANETS_LICENSE;
-
 
 #endif /* UTIL_HPP_ */
