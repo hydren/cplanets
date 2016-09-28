@@ -113,43 +113,6 @@ struct Planetarium::StateManager
 			const_foreach(Body2D*, body, vector<Body2D*>, merged)
 				diff.push_back(Body2DClone(body));
 		}
-
-		void purgeAsUndone()
-		{
-			if(type == ADDITION)
-			{
-				//deletes previously added bodies' user objects and the bodies' themselves.
-				purgeUserObjects(diff, true);
-				foreach(Body2DClone&, diffBody, vector<Body2DClone>, diff)
-					delete diffBody.original;
-			}
-			else if(type == MERGE)
-			{
-				//deletes merger's user object and the merger's itself.
-				delete static_cast<PlanetariumUserObject*>(diff[0].original->userObject);
-				delete diff[0].original;
-			}
-		}
-
-		void purgeAsForgotten()
-		{
-			if(type == REMOVAL)
-			{
-				//deletes previously removed bodies' user objects and the bodies' themselves.
-				purgeUserObjects(diff, true);
-				foreach(Body2DClone&, diffBody, vector<Body2DClone>, diff)
-					delete diffBody.original;
-			}
-			else if(type == MERGE)
-			{
-				diff.erase(diff.begin()); //remove merger from the diff list
-
-				//deletes merged bodies' user objects and themselves.
-				purgeUserObjects(diff, true);
-				foreach(Body2DClone&, diffBody, vector<Body2DClone>, diff)
-					delete diffBody.original;
-			}
-		}
 	};
 
 	Planetarium* planetarium;
@@ -209,6 +172,53 @@ struct Planetarium::StateManager
 			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
 				if(diffBody.original == oldAddress)
 					diffBody.original = newAddress;
+		}
+	}
+
+	private:void purgeAsUndone(Change& change)
+	{
+		if(change.type == ADDITION)
+		{
+			//deletes previously added bodies' user objects and the bodies' themselves.
+			purgeUserObjects(change.diff, true);
+			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
+			{
+				planetarium->orbitTracer.clearTrace(diffBody.original);
+				delete diffBody.original;
+			}
+		}
+		else if(change.type == MERGE)
+		{
+			//deletes merger's user object and the merger's itself.
+			planetarium->orbitTracer.clearTrace(change.diff[0].original);
+			delete static_cast<PlanetariumUserObject*>(change.diff[0].original->userObject);
+			delete change.diff[0].original;
+		}
+	}
+
+	private:void purgeAsForgotten(Change& change)
+	{
+		if(change.type == REMOVAL)
+		{
+			//deletes previously removed bodies' user objects and the bodies' themselves.
+			purgeUserObjects(change.diff, true);
+			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
+			{
+				planetarium->orbitTracer.clearTrace(diffBody.original);
+				delete diffBody.original;
+			}
+		}
+		else if(change.type == MERGE)
+		{
+			change.diff.erase(change.diff.begin()); //remove merger from the diff list
+
+			//deletes merged bodies' user objects and themselves.
+			purgeUserObjects(change.diff, true);
+			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
+			{
+				planetarium->orbitTracer.clearTrace(diffBody.original);
+				delete diffBody.original;
+			}
 		}
 	}
 
@@ -289,7 +299,7 @@ struct Planetarium::StateManager
 
 			if(not rewind)
 			{
-				change.purgeAsUndone();
+				purgeAsUndone(change);
 				changes.pop_back(); //stuack pop
 				if(change.type != MERGE) nonMergeChangesCount--;
 			}
@@ -338,18 +348,20 @@ struct Planetarium::StateManager
 
 			//notify listeners about the body removed
 			foreach(Body2DClone&, removedBody, vector<Body2DClone>, removedAddedBodies)
+			{
 				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
 					planetarium->listeners[i]->onBodyDeletion(removedBody.original);
 
-			//notify listeners about the body removed
+				//delete unused manually
+				planetarium->orbitTracer.clearTrace(removedBody.original);
+				delete static_cast<PlanetariumUserObject*>(removedBody.original->userObject);
+				delete removedBody.original;
+			}
+
+			//notify listeners about the body re-added
 			foreach(Body2DClone&, addedBody, vector<Body2DClone>, addedRemovedBodies)
 				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
 					planetarium->listeners[i]->onBodyCreation(*addedBody.original);
-
-			//delete unused manually
-			purgeUserObjects(removedAddedBodies, true);
-			foreach(Body2DClone, diffBody, vector<Body2DClone>, removedAddedBodies)
-				delete diffBody.original;
 		}
 	}
 
@@ -357,7 +369,7 @@ struct Planetarium::StateManager
 	{
 		while(not changes.empty())
 		{
-			changes.back().purgeAsUndone();
+			purgeAsUndone(changes.back());
 			changes.pop_back(); //stack pop
 		}
 		nonMergeChangesCount = 0;
@@ -367,7 +379,7 @@ struct Planetarium::StateManager
 	{
 		while(changes.size() > planetarium->undoStackMaxSize-1)
 		{
-			changes.front().purgeAsForgotten();
+			purgeAsForgotten(changes.front());
 			if(changes.front().type != MERGE) nonMergeChangesCount--;
 			changes.pop_front();
 		}
