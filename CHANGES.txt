@@ -1,6 +1,10 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.4 - 28/09/2016
++ Implemented undo functionality. A "rewind" mode is also available.
++ Added more examples.
+
 0.9.3 - 23/09/2016
 + Added universe file examples.
 ~ Random orbiting bodies now also create clockwise-orbiting bodies.

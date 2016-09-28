@@ -39,7 +39,7 @@ Introduce variations to the parameters of newly created bodies - done
 
 Draw a arrow on the cursor's tip when selecting new body velocity - done
 Add option to specify minimum rendered radius
-Undo functionality
+Undo functionality - done
 Show paused/resumed state more explicitly - done
 Save preferences (window positions, paths, etc)
 Implement button with icon and offer icons-only buttons (pixmaps can be used, taking advantage of the create_pixmap() function; examples in sw-pixmaps.h)
