@@ -195,48 +195,22 @@ struct Planetarium extends Physics2D::Listener
 	/// The listener manager. Add and remove listener with it.
 	futil::ListenerManager<UniverseEventListener> listeners;
 
-	/** A struct to record orbits. */
-	struct OrbitTracer
-	{
-		enum OrbitTraceStyle { DOTTED, LINEAR, SPLINE } style;
-		bool isActive;
-		unsigned traceLength;
-		std::map<Body2D*, std::deque<Vector2D> > traces;
+	struct OrbitTracer;
+	OrbitTracer* orbitTracer;
 
-		/// Creates a orbit tracer that uses the given planetarium as reference for the physics properties.
-		OrbitTracer(Planetarium* p);
+	enum OrbitTraceStyle { DOTTED, LINEAR, SPLINE };
+	OrbitTraceStyle getOrbitTraceStyle() const;
+	void setOrbitTraceStyle(OrbitTraceStyle style);
 
-		/// Record on the queue the given body's current position
-		void record(Body2DClone& body);
-		/// Get the trace for the given body. If there is no trace of the given body, a new empty will be created and returned.
-		std::deque<Vector2D>& getTrace(Body2D* body);
-		/// Erases the given body's tracing data.
-		void clearTrace(const Body2D* body);
-		/// Resets the tracer by erasing all tracing data.
-		void reset();
+	unsigned getOrbitTraceLength() const;
+	void setOrbitTraceLength(unsigned length);
 
-		/// Draws the given body trace on this tracer's planetarium.
-		void drawTrace(Body2D* body);
-		/// Draws the given body trace on this tracer's planetarium.
-		void drawTrace(Body2DClone& body);
+	bool isOrbitTracingEnabled() const;
+	void setOrbitTracingEnabled(bool choice=true);
 
-		protected:
-		Planetarium* planetarium;
-
-		/// Draws the given trace on this tracer's planetarium, with the given color. (usually delegates to other drawXXX method)
-		void drawTrace(std::deque<Vector2D>& trace, const SDL_Color& color);
-
-		/// Draws the given trace on this tracer's planetarium as dots, each one for each position.
-		void drawDotted(std::deque<Vector2D>& trace, const SDL_Color& color);
-		/// Draws the given trace on this tracer's planetarium as lines, each one for each two positions.
-		void drawLinear(std::deque<Vector2D>& trace, const SDL_Color& color);
-
-		/// Draws the given trace on this tracer's planetarium as curves, each one for each three positions.
-		void drawQuadricBezier(std::deque<Vector2D>& trace, const SDL_Color& color); //still not working properly
-//		void drawCubicBezier(std::deque<Vector2D>& trace, SDL_Color* color);  //not implemented
-
-	} orbitTracer;
-
+	//special functions that returns references
+	unsigned& getOrbitTracerLengthReference() const;
+	bool& getOrbitTracerSwitchReference() const;
 
 	/** Informs about visual body creation mode state. default is IDLE */
 	enum BodyCreationState { IDLE, POSITION_SELECTION, VELOCITY_SELECTION } bodyCreationState;

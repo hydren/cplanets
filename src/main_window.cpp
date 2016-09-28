@@ -375,13 +375,13 @@ void CPlanets::showMainWindow()
 	setComponentPosition(&lblOrbitTracing, spnBodyVelocity->area.x, spnBodyVelocity->area.y + spnBodyVelocity->tw_area.h + 1.6*WIDGETS_SPACING);
 
 	chckTraceOrbit = new CheckBox(tabOptions, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
-	chckTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
+	chckTraceOrbit->d = &(planetarium->getOrbitTracerSwitchReference());  // binds the checkbox to the variable
 	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + 1.5*WIDGETS_SPACING);
 	packLabeledComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
 	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + 0.5*WIDGETS_SPACING + 3);
-	spnTraceLength->setValue(&(planetarium->orbitTracer.traceLength), true);
+	spnTraceLength->setValue(&(planetarium->getOrbitTracerLengthReference()), true);
 
 	factory.removeAllItems();
 	factory.setLabel("Trace style: ", true);
@@ -435,7 +435,7 @@ void CPlanets::showMainWindow()
 	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
 
 	tgbTraceOrbit = new ToogleButton(window, 0, genericButtonSize, "Trace orbit", onCheckBoxPressed);
-	tgbTraceOrbit->d = &(planetarium->orbitTracer.isActive);  // binds the checkbox to the variable
+	tgbTraceOrbit->d = &(planetarium->getOrbitTracerSwitchReference());  // binds the checkbox to the variable
 	packer.pack(tgbTraceOrbit, tgbTraceOrbit->label);
 	toolbarSouthLayout->addComponent(tgbTraceOrbit);
 
@@ -745,12 +745,12 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnDoubleTraceLength)
 	{
-		planetarium->orbitTracer.traceLength *= 2;
+		planetarium->setOrbitTraceLength(planetarium->getOrbitTraceLength()*2.0);
 		spnTraceLength->refresh();
 	}
 	if(btn == btnHalveTraceLentgh)
 	{
-		planetarium->orbitTracer.traceLength *= 0.5;
+		planetarium->setOrbitTraceLength(planetarium->getOrbitTraceLength()*0.5);
 		spnTraceLength->refresh();
 	}
 
@@ -851,13 +851,13 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 		RButton* rbtn = btn->act_button();
 		if(string(rbtn->label.str) == "Linear")
 		{
-			planetarium->orbitTracer.style = Planetarium::OrbitTracer::LINEAR;
+			planetarium->setOrbitTraceStyle(Planetarium::LINEAR);
 			ddmTraceStyle->cmdMenu->src->label = "Linear";
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
 		}
 		if(string(rbtn->label.str) == "Dotted")
 		{
-			planetarium->orbitTracer.style = Planetarium::OrbitTracer::DOTTED;
+			planetarium->setOrbitTraceStyle(Planetarium::DOTTED);
 			ddmTraceStyle->cmdMenu->src->label = "Dotted";
 			ddmTraceStyle->cmdMenu->src->draw_blit_upd();
 		}

@@ -15,6 +15,7 @@ RM := rm -rf
 -include src_libs/SDL_widgets/subdir.mk
 -include src/widgets/extra/subdir.mk
 -include src/widgets/subdir.mk
+-include src/planetarium/subdir.mk
 -include src/physics/solvers/subdir.mk
 -include src/physics/subdir.mk
 -include src/geometry/subdir.mk

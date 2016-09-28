@@ -27,6 +27,7 @@ src \
 src/geometry \
 src/physics \
 src/physics/solvers \
+src/planetarium \
 src/widgets \
 src/widgets/extra \
 src_libs/SDL_widgets \

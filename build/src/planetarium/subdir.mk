@@ -4,26 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/SDL_util.cpp \
-../src/main.cpp \
-../src/main_window.cpp \
-../src/program_io.cpp 
+../src/planetarium/planetarium.cpp \
+../src/planetarium/planetarium_pane.cpp 
 
 OBJS += \
-./src/SDL_util.o \
-./src/main.o \
-./src/main_window.o \
-./src/program_io.o 
+./src/planetarium/planetarium.o \
+./src/planetarium/planetarium_pane.o 
 
 CPP_DEPS += \
-./src/SDL_util.d \
-./src/main.d \
-./src/main_window.d \
-./src/program_io.d 
+./src/planetarium/planetarium.d \
+./src/planetarium/planetarium_pane.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/%.o: ../src/%.cpp
+src/planetarium/%.o: ../src/planetarium/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
 	LC_ALL=C g++ -std=c++98 -I"BUILD_PATH/src_libs" -I"BUILD_PATH/src" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"

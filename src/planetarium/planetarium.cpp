@@ -45,370 +45,19 @@ static void purgeUserObjects(vector<Body2D>& bodies);
 static void purgeUserObjects(vector<Planetarium::Body2DClone>& bodies, bool onOriginal=false);
 
 //custom data to be carried by each Body2D
-struct PlanetariumUserObject
-{
-	SDL_Color color;
-	PlanetariumUserObject() {}
-	PlanetariumUserObject(const SDL_Color& color) : color(color) {}
-};
+#include "planetarium_user_object.hxx"
 
 //helper struct to deal with collision events
-struct CollisionEvent
-{
-	vector<Body2D> collidingBodies;
-	Body2D resultingMerger;
-
-	~CollisionEvent()
-	{
-		purgeUserObjects(collidingBodies);
-	}
-};
+#include "collision_event.hxx"
 
 // helper struct to buffer collision events
-struct Planetarium::Physics2DEventsManager
-{
-	queue<CollisionEvent*> collisionEvents;
-	SDL_mutex* mutex;
-	Physics2DEventsManager() : collisionEvents(), mutex(SDL_CreateMutex()) {}
-	~Physics2DEventsManager() { SDL_DestroyMutex(mutex); }
-};
+#include "physics2d_events_manager.hxx"
 
-struct Planetarium::StateManager
-{
-	enum ChangeType { ADDITION, REMOVAL, MERGE };
+// manages orbits tracing
+#include "orbit_tracer.hxx"
 
-	struct Change
-	{
-		vector<Body2DClone> backup;
-		vector<Body2DClone> diff;
-		ChangeType type;
-
-		Change (const Universe2D& u, const vector<Body2D*>& diff, ChangeType type)
-		: backup(), diff(), type(type)
-		{
-			if(type == MERGE) throw_exception("Invalid StateChange type for constructor! MERGE cannot be used with this constructor!");
-
-			const_foreach(Body2D*, body, vector<Body2D*>, u.bodies)
-				backup.push_back(Body2DClone(body));
-
-			const_foreach(Body2D*, body, vector<Body2D*>, diff)
-				this->diff.push_back(Body2DClone(body));
-		}
-
-		Change (const Universe2D& u, Body2D* diff, ChangeType type)
-		: backup(), diff(), type(type)
-		{
-			if(type == MERGE) throw_exception("Invalid StateChange type for constructor! MERGE cannot be used with this constructor!");
-
-			const_foreach(Body2D*, body, vector<Body2D*>, u.bodies)
-				backup.push_back(Body2DClone(body));
-
-			this->diff.push_back(Body2DClone(diff));
-		}
-
-		Change (const vector<Body2D*>& merged, Body2D* merger)
-		: backup(), diff(), type(MERGE)
-		{
-			diff.push_back(Body2DClone(merger));
-			const_foreach(Body2D*, body, vector<Body2D*>, merged)
-				diff.push_back(Body2DClone(body));
-		}
-	};
-
-	Planetarium* planetarium;
-	deque<Change> changes;
-	unsigned nonMergeChangesCount;
-
-	StateManager(Planetarium* planetarium) : planetarium(planetarium), changes(), nonMergeChangesCount(0) {}
-
-	void commitAddition(const Universe2D& u, const vector<Body2D*>& diff)
-	{
-		shrinkToFit();
-		changes.push_back(Change(u, diff, ADDITION));
-		nonMergeChangesCount++;
-		//cout << "commit add" << endl;
-	}
-
-	void commitAddition(const Universe2D& u, Body2D* diff)
-	{
-		shrinkToFit();
-		changes.push_back(Change(u, diff, ADDITION));
-		nonMergeChangesCount++;
-		//cout << "commit add" << endl;
-	}
-
-	void commitRemoval(const Universe2D& u, const vector<Body2D*>& diff)
-	{
-		shrinkToFit();
-		changes.push_back(Change(u, diff, REMOVAL));
-		nonMergeChangesCount++;
-		//cout << "commit rem" << endl;
-	}
-
-	void commitRemoval(const Universe2D& u, Body2D* diff)
-	{
-		shrinkToFit();
-		changes.push_back(Change(u, diff, REMOVAL));
-		nonMergeChangesCount++;
-		//cout << "commit rem" << endl;
-	}
-
-	void commitMerge(const vector<Body2D*>& merged, Body2D* merger)
-	{
-		shrinkToFit();
-		changes.push_back(Change(merged, merger));
-		//cout << "commit merge" << endl;
-	}
-
-	/// Swaps 'oldAdress' pointers in the changes stack (history) for 'newAddress' pointers
-	void fixReferences(const Body2D* oldAddress, Body2D* newAddress)
-	{
-		foreach(Change&, change, deque<Change>, changes)
-		{
-			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
-				if(backupBody.original == oldAddress)
-					backupBody.original = newAddress;
-
-			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
-				if(diffBody.original == oldAddress)
-					diffBody.original = newAddress;
-		}
-	}
-
-	private:void purgeAsUndone(Change& change)
-	{
-		//cout << "purging " << (change.type==MERGE? "merge":"non-merge") << " as undone" << endl;
-		if(change.type == ADDITION)
-		{
-			//deletes previously added bodies' user objects and the bodies' themselves.
-			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
-			{
-				planetarium->orbitTracer.clearTrace(diffBody.original);
-				delete static_cast<PlanetariumUserObject*>(diffBody.original->userObject);
-				delete diffBody.original;
-			}
-		}
-		else if(change.type == MERGE)
-		{
-			//deletes merger's user object and the merger's itself.
-			planetarium->orbitTracer.clearTrace(change.diff[0].original);
-			delete static_cast<PlanetariumUserObject*>(change.diff[0].original->userObject);
-			delete change.diff[0].original;
-		}
-	}
-
-	private:void purgeAsForgotten(Change& change)
-	{
-		//cout << "purging " << (change.type==MERGE? "merge":"non-merge") << " as forgotten" << endl;
-		if(change.type == REMOVAL)
-		{
-			//deletes previously removed bodies' user objects and the bodies' themselves.
-			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
-			{
-				planetarium->orbitTracer.clearTrace(diffBody.original);
-				delete static_cast<PlanetariumUserObject*>(diffBody.original->userObject);
-				delete diffBody.original;
-			}
-		}
-		else if(change.type == MERGE)
-		{
-			change.diff.erase(change.diff.begin()); //remove merger from the diff list
-
-			//deletes merged bodies' user objects and themselves.
-			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
-			{
-				planetarium->orbitTracer.clearTrace(diffBody.original);
-				delete static_cast<PlanetariumUserObject*>(diffBody.original->userObject);
-				delete diffBody.original;
-			}
-		}
-	}
-
-	private:void rollbackPositions(Change& state)
-	{
-		foreach(Body2DClone&, backupBody, vector<Body2DClone>, state.backup)
-			foreach(Body2D*, body, vector<Body2D*>, planetarium->physics->universe.bodies)
-				if(body == backupBody.original)
-					*body = backupBody.clone; // copy attributes (position, velocities, etc...)
-	}
-
-	private:void rollbackAddition(Change& state, bool rewind=false)
-	{
-		rollbackPositions(state);
-
-		foreach(Body2DClone&, addedBody, vector<Body2DClone>, state.diff)
-			if (not rewind)
-				remove_element(planetarium->physics->universe.bodies, addedBody.original);
-			else
-				*(addedBody.original) = addedBody.clone; // copy attributes (position, velocities, etc...)
-	}
-
-	private:void rollbackRemoval(Change& state, bool rewind=false)
-	{
-		rollbackPositions(state);
-		if(not rewind)
-			foreach(Body2DClone&, removedBody, vector<Body2DClone>, state.diff)
-				planetarium->physics->universe.bodies.push_back(removedBody.original);
-	}
-
-	private:void rollbackMerge(Change& state)
-	{
-		Body2D* merger = state.diff[0].original;
-		remove_element(planetarium->physics->universe.bodies, merger);
-
-		foreach(Body2DClone&, removedBody, vector<Body2DClone>, state.diff)
-			if(removedBody.original != merger) //merger is in the first index, ignore it
-				planetarium->physics->universe.bodies.push_back(removedBody.original);
-	}
-
-	public:
-	void rollback(bool rewind=false)
-	{
-		if(nonMergeChangesCount == 0) return;
-		//cout << (rewind? "rewind":"rollback") << endl;
-		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
-
-		if(changes.back().type != MERGE) // no merge involved, simpler case
-		{
-			Change& change = changes.back();
-			if(change.type == ADDITION)
-			{
-				synchronized(physicsAccessMutex)
-				{
-					rollbackAddition(change, rewind);
-				}
-
-				if(not rewind) foreach(Body2DClone&, addedBody, vector<Body2DClone>, change.diff)
-				{
-					//notify listeners about the body deleted
-					for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-						planetarium->listeners[i]->onBodyDeletion(addedBody.original);
-				}
-			}
-
-			else if (change.type == REMOVAL)
-			{
-				synchronized(physicsAccessMutex)
-				{
-					rollbackRemoval(change, rewind);
-				}
-
-				if(not rewind) foreach(Body2DClone&, removedBody, vector<Body2DClone>, change.diff)
-				{
-					for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-						planetarium->listeners[i]->onBodyCreation(*removedBody.original);
-				}
-			}
-
-			if(not rewind)
-			{
-				purgeAsUndone(change);
-				changes.pop_back(); //stuack pop
-				if(change.type != MERGE) nonMergeChangesCount--;
-			}
-		}
-
-		else //merges happened after last body addition/removal, needs to rollback more than one state
-		{
-			vector<Body2DClone> removedAddedBodies, addedRemovedBodies; //write down to notify or delete later
-			bool needsRollback = true; //when rollbacking merge changes, keep rollbacking futher
-
-			synchronized(physicsAccessMutex)
-			{
-				while(not changes.empty() and needsRollback)
-				{
-					Change& change = changes.back();
-
-					if(change.type == ADDITION)
-					{
-						rollbackAddition(change, rewind);
-						if(not rewind) removedAddedBodies.insert(removedAddedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify or delete later
-						needsRollback = false;
-					}
-
-					else if (change.type == REMOVAL)
-					{
-						rollbackRemoval(change, rewind);
-						if(not rewind) addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin(), change.diff.end()); //write down to notify later
-						needsRollback = false;
-					}
-
-					else if (change.type == MERGE)
-					{
-						rollbackMerge(change);
-						removedAddedBodies.push_back(change.diff[0]); //merger ("diff[0]") was removed
-						addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin()+1, change.diff.end()); //mergeds were re-added
-						needsRollback = true;
-					}
-
-					if(change.type == MERGE or not rewind)
-					{
-						changes.pop_back(); //stack pop
-						if(change.type != MERGE) nonMergeChangesCount--;
-					}
-				}
-			}
-
-			//notify listeners about the body removed
-			foreach(Body2DClone&, removedBody, vector<Body2DClone>, removedAddedBodies)
-			{
-				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-					planetarium->listeners[i]->onBodyDeletion(removedBody.original);
-
-				//delete unused manually
-				planetarium->orbitTracer.clearTrace(removedBody.original);
-				delete static_cast<PlanetariumUserObject*>(removedBody.original->userObject);
-				delete removedBody.original;
-			}
-
-			//notify listeners about the body re-added
-			foreach(Body2DClone&, addedBody, vector<Body2DClone>, addedRemovedBodies)
-				for(unsigned i = 0; i < planetarium->listeners.size(); i++)
-					planetarium->listeners[i]->onBodyCreation(*addedBody.original);
-		}
-	}
-
-	void reset()
-	{
-		while(not changes.empty())
-		{
-			purgeAsUndone(changes.back());
-			changes.pop_back(); //stack pop
-		}
-		nonMergeChangesCount = 0;
-	}
-
-	void shrinkToFit()
-	{
-		while(changes.size() > planetarium->undoStackMaxSize-1)
-		{
-			purgeAsForgotten(changes.front());
-			if(changes.front().type != MERGE) nonMergeChangesCount--;
-			changes.pop_front();
-		}
-	}
-
-	/// Prints current change stack
-	void debug()
-	{
-		cout << "# debug-stack #" << endl;
-		foreach(Change&, change, deque<Change>, changes)
-		{
-			cout << "@change " << &change << endl;
-
-			cout << "-->backup: ";
-			foreach(Body2DClone&, backupBody, vector<Body2DClone>, change.backup)
-				cout << backupBody.original << ", ";
-			cout << endl;
-
-			cout << "-->diff: ";
-			for(unsigned i = 0; i < change.diff.size(); i++)
-				cout << change.diff[i].original << (i==0 and change.type==MERGE? "(merger)":"") << ", ";
-			cout << endl;
-		}
-		cout << "# " << nonMergeChangesCount << " non-merge changes #" << endl;
-	}
-};
+// manages undo/rewind
+#include "state_manager.hxx"
 
 const double Planetarium::BODY_CREATION_DIAMETER_FACTOR = 32.0; //refinement factor
 
@@ -441,7 +90,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   bodyCreationDiameterRatio(DEFAULT_BODY_CREATION_DIAMETER_RATIO),
   bodyCreationDensity(DEFAULT_BODY_CREATION_DENSITY),
   bodyCreationSpeed(DEFAULT_BODY_CREATION_SPEED),
-  drawDispatcher(null), listeners(), orbitTracer(this), bodyCreationState(IDLE),
+  drawDispatcher(null), listeners(), orbitTracer(new OrbitTracer(this)), bodyCreationState(IDLE),
   //protected stuff
   physicsEventsManager(new Physics2DEventsManager()),
   stateManager(new StateManager(this)),
@@ -500,9 +149,9 @@ void Planetarium::draw()
 	}// end synchronized(physicsAccessMutex)
 
 	//draw all traced orbits (only if tracer is active)
-	if(this->orbitTracer.isActive) foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
+	if(this->orbitTracer->isActive) foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
 	{
-		orbitTracer.drawTrace(body);
+		orbitTracer->drawTrace(body);
 	}
 
 	Vector2D primaryPosition, dummy;
@@ -549,8 +198,8 @@ void Planetarium::draw()
 			circleRGBA(this->surf, v.x, v.y, round(size*0.5) + strokeSize-1, borderColor.r, borderColor.g, borderColor.b, 255);
 
 		//record position
-		if(running) //ToDo should this also be avoided when orbitTracer.isActive==false?
-			orbitTracer.record(body);
+		if(running) //ToDo should this also be avoided when orbitTracer->isActive==false?
+			orbitTracer->record(body);
 	}
 
 	//draw body creation helper stubs
@@ -675,7 +324,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 
 		if(not undoEnabled)
 		{
-			orbitTracer.clearTrace(body);
+			orbitTracer->clearTrace(body);
 
 			if(alsoDelete)
 			{
@@ -704,7 +353,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 
 	if(not undoEnabled)
 	{
-		orbitTracer.clearTrace(body);
+		orbitTracer->clearTrace(body);
 		if(alsoDelete)
 		{
 			delete static_cast<PlanetariumUserObject*>(body->userObject);
@@ -741,7 +390,7 @@ void Planetarium::removeAllBodies()
 
 		if(not undoEnabled)
 		{
-			orbitTracer.clearTrace(body);
+			orbitTracer->clearTrace(body);
 
 			//trash it
 			delete static_cast<PlanetariumUserObject*>(body->userObject);
@@ -899,7 +548,7 @@ void Planetarium::setUniverse(const Universe2D& u)
 		for(unsigned i = 0; i < listeners.size(); i++)
 			listeners[i]->onBodyDeletion(body);
 
-		orbitTracer.clearTrace(body);
+		orbitTracer->clearTrace(body);
 
 		//delete the user objects of the old universe, as setUniverse() will delete the old universe, but not its bodies (and user objects)
 		delete static_cast<PlanetariumUserObject*>(body->userObject);
@@ -1072,110 +721,44 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 	}
 }
 
-Planetarium::OrbitTracer::OrbitTracer(Planetarium* p)
-: style(LINEAR), isActive(false), traceLength(20), traces(),
-  planetarium(p)
-{}
-
-void Planetarium::OrbitTracer::record(Body2DClone& body)
+Planetarium::OrbitTraceStyle Planetarium::getOrbitTraceStyle() const
 {
-	this->traces[body.original].push_back(body.clone.position-planetarium->physics->referenceFrame.position()); //queue push
-	while(this->traces[body.original].size() > traceLength)
-		this->traces[body.original].pop_front(); //queue pop
+	return orbitTracer->style;
 }
 
-deque<Vector2D>& Planetarium::OrbitTracer::getTrace(Body2D* body)
+void Planetarium::setOrbitTraceStyle(OrbitTraceStyle style)
 {
-	return this->traces[body];
+	orbitTracer->style = style;
 }
 
-void Planetarium::OrbitTracer::clearTrace(const Body2D* body)
+unsigned Planetarium::getOrbitTraceLength() const
 {
-	this->traces.erase(const_cast<Body2D*>(body));
+	return orbitTracer->traceLength;
 }
 
-void Planetarium::OrbitTracer::reset()
+void Planetarium::setOrbitTraceLength(unsigned length)
 {
-	this->traces.clear();
+	orbitTracer->traceLength = length;
 }
 
-void Planetarium::OrbitTracer::drawTrace(Body2D* body)
+unsigned& Planetarium::getOrbitTracerLengthReference() const
 {
-	if(body->userObject == null) return; //if there isn't body data, there isn't body color. leave.
-	SDL_Color& bodyColor = static_cast<PlanetariumUserObject*>(body->userObject)->color;
-
-	deque<Vector2D>& trace = this->getTrace(body);
-
-	drawTrace(trace, bodyColor);
+	return orbitTracer->traceLength;
 }
 
-void Planetarium::OrbitTracer::drawTrace(Body2DClone& body)
+bool Planetarium::isOrbitTracingEnabled() const
 {
-	if(body.clone.userObject == null) return; //if there isn't body data, there isn't body color. leave.
-	SDL_Color& bodyColor = static_cast<PlanetariumUserObject*>(body.clone.userObject)->color;
-
-	deque<Vector2D>& trace = this->getTrace(body.original); //get original body trace
-
-	drawTrace(trace, bodyColor);
+	return orbitTracer->isActive;
 }
 
-void Planetarium::OrbitTracer::drawTrace(deque<Vector2D>& trace, const SDL_Color& color)
+void Planetarium::setOrbitTracingEnabled(bool choice)
 {
-	switch(style)
-	{
-		case DOTTED:			drawDotted(trace, color); break;
-		default:case LINEAR:	drawLinear(trace, color); break;
-		case SPLINE:			drawQuadricBezier(trace, color); break;
-	}
+	orbitTracer->isActive = choice;
 }
 
-void Planetarium::OrbitTracer::drawDotted(deque<Vector2D>& trace, const SDL_Color& bodyColor)
+bool& Planetarium::getOrbitTracerSwitchReference() const
 {
-	foreach(Vector2D&, r, deque<Vector2D>, trace)
-	{
-		Vector2D pv = planetarium->getTransposedNoRef(r);
-		pixelRGBA(planetarium->surf, round(pv.x), round(pv.y), bodyColor.r, bodyColor.g, bodyColor.b, 255);
-	}
-}
-
-void Planetarium::OrbitTracer::drawLinear(deque<Vector2D>& trace, const SDL_Color& bodyColor)
-{
-	int (*const line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (planetarium->tryAA? aalineRGBA : lineRGBA);
-
-	Vector2D previousPosition = trace.front();
-	foreach(Vector2D&, recordedPosition, deque<Vector2D>, trace)
-	{
-		if(recordedPosition != previousPosition) //avoid drawing segments of same points
-		{
-			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
-			line_function(planetarium->surf, round(prevPosTrans.x), round(prevPosTrans.y), round(recPosTrans.x), round(recPosTrans.y), bodyColor.r, bodyColor.g, bodyColor.b, 255);
-		}
-		previousPosition = recordedPosition;
-	}
-}
-
-// http://stackoverflow.com/questions/9658932/snappy-bezier-curves
-// http://www.ferzkopp.net/Software/SDL_gfx-2.0/Docs/html/_s_d_l__gfx_primitives_8h.html#a7203e3a463da499b5b0cadf211d19ff3
-void Planetarium::OrbitTracer::drawQuadricBezier(deque<Vector2D>& trace, const SDL_Color& bodyColor)
-{
-	Vector2D previousPosition = trace.front();
-	Vector2D previousSupport;
-//	if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux
-	if(trace.size() > 1) previousSupport = trace.front().times(2).subtract(*(trace.begin()+1)); //kickstart aux
-	foreach(Vector2D&, recordedPosition, deque<Vector2D>, trace)
-	{
-		if(recordedPosition != previousPosition) //avoid drawing segments of same points
-		{
-			//fixme Fix quadratic bezier spline implementation
-			Vector2D supportPoint = planetarium->getTransposedNoRef(previousSupport);
-			Vector2D recPosTrans = planetarium->getTransposedNoRef(recordedPosition), prevPosTrans = planetarium->getTransposedNoRef(previousPosition);
-			Sint16 pxs[] = {static_cast<Sint16>(prevPosTrans.x), static_cast<Sint16>(supportPoint.x), static_cast<Sint16>(recPosTrans.x)};
-			Sint16 pys[] = {static_cast<Sint16>(prevPosTrans.y), static_cast<Sint16>(supportPoint.y), static_cast<Sint16>(recPosTrans.y)};
-			bezierRGBA(planetarium->surf, pxs, pys, 3, 3, bodyColor.r, bodyColor.g, bodyColor.b, 255);
-		}
-		previousPosition = recordedPosition;
-		previousSupport = previousPosition.times(2).subtract(previousSupport);
-	}
+	return orbitTracer->isActive;
 }
 
 // ===========================  protected stuff =====================================================================================
@@ -1269,7 +852,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		g_sum += bodyColor.g * body->mass;
 		b_sum += bodyColor.b * body->mass;
 		mass_sum += body->mass;
-		orbitTracer.clearTrace(body);
+		orbitTracer->clearTrace(body);
 	}
 	if(mass_sum==0) mass_sum=1; //avoid division by zero if erroneous zero-mass or zero-sum-mass bodies were passed
 
@@ -1312,7 +895,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	synchronized(collisionEventsMutex)
 	{
 		//add collision event to be consumed
-		physicsEventsManager->collisionEvents.push(ev); //provided list and merger must be copies
+		physicsEventsManager->collisionEvents.push(ev); // @suppress("Invalid arguments")
 	}
 }
 
