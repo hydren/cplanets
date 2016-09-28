@@ -12,11 +12,11 @@
 #include <SDL/SDL_thread.h>
 
 #include <vector>
+#include <deque>
 #include <map>
 
 #include "physics/physics2d.hpp"
 #include "futil/general/language.hpp"
-#include "futil/collection/iterable_queue.hpp"
 #include "futil/listener.hpp"
 
 struct Planetarium extends Physics2D::Listener
@@ -35,6 +35,7 @@ struct Planetarium extends Physics2D::Listener
 	static const short DEFAULT_FPS; // = 60
 	static const long DEFAULT_DISPLAY_PERIOD; // = 30
 	static const long DEFAULT_ITERATIONS_PER_DISPLAY; // = 2
+	static const unsigned DEFAULT_UNDO_STACK_SIZE; // = 256
 
 	static const bool DEFAULT_ADD_RANDOM_ORBITING_ORIENTATION;
 
@@ -55,6 +56,7 @@ struct Planetarium extends Physics2D::Listener
 	bool legacyControl;
 	long displayPeriod, iterationsPerDisplay;
 	bool rocheLimitComputingEnabled;
+	unsigned undoStackMaxSize;
 
 	//widget parameters
 	SDL_Color bgColor, strokeColorNormal, strokeColorFocused, strokeColorRocheLimit;
@@ -151,6 +153,15 @@ struct Planetarium extends Physics2D::Listener
 	/** Safer way to replace the solver instance. */
 	void setSolver(AbstractPhysics2DSolver* solver);
 
+	/** Undoes last body insertion/removal. */
+	void undoLastChange();
+
+	/** Goes back to last body addition/removal. Works like a undo-then-redo call pair. */
+	void rewindLastChange();
+
+	/** Enable/disable undo functionality. Disabling helps reducing memory consumption. */
+	void setUndoEnabled(bool value=true);
+
 	long double getTotalKineticEnergy() const; //synchronized version
 	long double getTotalPotentialEnergy() const; //synchronized version
 	unsigned getBodyCount() const; //synchronized version
@@ -175,7 +186,7 @@ struct Planetarium extends Physics2D::Listener
 	struct UniverseEventListener
 	{
 		virtual ~UniverseEventListener() {}
-		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) {}
+		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) {} //caution: user objects of the colliding list's bodies are null
 		virtual void onBodyCreation(Body2D& createdBody) {}
 		virtual void onBodyDeletion(Body2D* deletedBody) {} //not exactly safe to use the pointer after the call ends
 		virtual void onBodyReFocus() {}
@@ -190,7 +201,7 @@ struct Planetarium extends Physics2D::Listener
 		enum OrbitTraceStyle { DOTTED, LINEAR, SPLINE } style;
 		bool isActive;
 		unsigned traceLength;
-		std::map<Body2D*, futil::iterable_queue<Vector2D> > traces;
+		std::map<Body2D*, std::deque<Vector2D> > traces;
 
 		/// Creates a orbit tracer that uses the given planetarium as reference for the physics properties.
 		OrbitTracer(Planetarium* p);
@@ -198,7 +209,7 @@ struct Planetarium extends Physics2D::Listener
 		/// Record on the queue the given body's current position
 		void record(Body2DClone& body);
 		/// Get the trace for the given body. If there is no trace of the given body, a new empty will be created and returned.
-		futil::iterable_queue<Vector2D>& getTrace(Body2D* body);
+		std::deque<Vector2D>& getTrace(Body2D* body);
 		/// Erases the given body's tracing data.
 		void clearTrace(const Body2D* body);
 		/// Resets the tracer by erasing all tracing data.
@@ -213,16 +224,16 @@ struct Planetarium extends Physics2D::Listener
 		Planetarium* planetarium;
 
 		/// Draws the given trace on this tracer's planetarium, with the given color. (usually delegates to other drawXXX method)
-		void drawTrace(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		void drawTrace(std::deque<Vector2D>& trace, const SDL_Color& color);
 
 		/// Draws the given trace on this tracer's planetarium as dots, each one for each position.
-		void drawDotted(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		void drawDotted(std::deque<Vector2D>& trace, const SDL_Color& color);
 		/// Draws the given trace on this tracer's planetarium as lines, each one for each two positions.
-		void drawLinear(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color);
+		void drawLinear(std::deque<Vector2D>& trace, const SDL_Color& color);
 
 		/// Draws the given trace on this tracer's planetarium as curves, each one for each three positions.
-		void drawQuadricBezier(futil::iterable_queue<Vector2D>& trace, const SDL_Color& color); //still not working properly
-//		void drawCubicBezier(futil::iterable_queue<Vector2D>& trace, SDL_Color* color);  //not implemented
+		void drawQuadricBezier(std::deque<Vector2D>& trace, const SDL_Color& color); //still not working properly
+//		void drawCubicBezier(std::deque<Vector2D>& trace, SDL_Color* color);  //not implemented
 
 	} orbitTracer;
 
@@ -244,6 +255,9 @@ struct Planetarium extends Physics2D::Listener
 	struct Physics2DEventsManager; // helper struct to buffer collision events
 	Physics2DEventsManager* physicsEventsManager;
 
+	struct StateManager;
+	StateManager* stateManager;
+
 	Uint32 pixelDepth;
 	long currentIterationCount;
 	SDL_Thread* threadPhysics, *threadViewUpdate;
@@ -253,6 +267,7 @@ struct Planetarium extends Physics2D::Listener
 	Uint32 lastMouseLeftButtonDown;
 	bool isMouseLeftButtonDown;
 	Vector2D lastMouseClickPoint;
+	bool undoEnabled;
 
 	//auxiliary variables
 	bool auxWasRunningBeforeSelection;
