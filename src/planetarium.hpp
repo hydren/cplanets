@@ -189,7 +189,7 @@ struct Planetarium extends Physics2D::Listener
 	struct UniverseEventListener
 	{
 		virtual ~UniverseEventListener() {}
-		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) {}
+		virtual void onBodyCollision(std::vector<Body2D>& collidingList, Body2D& resultingMerger) {} //caution: user objects of the colliding list's bodies are null
 		virtual void onBodyCreation(Body2D& createdBody) {}
 		virtual void onBodyDeletion(Body2D* deletedBody) {} //not exactly safe to use the pointer after the call ends
 		virtual void onBodyReFocus() {}

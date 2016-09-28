@@ -1270,15 +1270,14 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 
 	CollisionEvent* ev = new CollisionEvent();
 
-	vector<Body2D>& collidingListCopy = ev->collidingBodies;
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
-		PlanetariumUserObject* uobj = static_cast<PlanetariumUserObject*> (body->userObject);
-		collidingListCopy.push_back(*body);
-		collidingListCopy.back().userObject = new PlanetariumUserObject(uobj->color); //implicit copy constructor
-
 		if(undoDisabled)
-			delete uobj; //we need to delete it since it the physics code won't do it (it has no knowledge of this)
+			//we need to delete it since it the physics code won't do it (it has no knowledge of this)
+			delete static_cast<PlanetariumUserObject*> (body->userObject);
+
+		body->userObject = null; //nullify since it was deleted
+		ev->collidingBodies.push_back(*body);
 	}
 	ev->resultingMerger = resultingMerger;
 
