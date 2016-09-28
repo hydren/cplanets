@@ -177,13 +177,14 @@ struct Planetarium::StateManager
 
 	private:void purgeAsUndone(Change& change)
 	{
+		//cout << "purging " << (change.type==MERGE? "merge":"non-merge") << " as undone" << endl;
 		if(change.type == ADDITION)
 		{
 			//deletes previously added bodies' user objects and the bodies' themselves.
-			purgeUserObjects(change.diff, true);
 			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
 			{
 				planetarium->orbitTracer.clearTrace(diffBody.original);
+				delete static_cast<PlanetariumUserObject*>(diffBody.original->userObject);
 				delete diffBody.original;
 			}
 		}
@@ -198,13 +199,14 @@ struct Planetarium::StateManager
 
 	private:void purgeAsForgotten(Change& change)
 	{
+		//cout << "purging " << (change.type==MERGE? "merge":"non-merge") << " as forgotten" << endl;
 		if(change.type == REMOVAL)
 		{
 			//deletes previously removed bodies' user objects and the bodies' themselves.
-			purgeUserObjects(change.diff, true);
 			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
 			{
 				planetarium->orbitTracer.clearTrace(diffBody.original);
+				delete static_cast<PlanetariumUserObject*>(diffBody.original->userObject);
 				delete diffBody.original;
 			}
 		}
@@ -213,10 +215,10 @@ struct Planetarium::StateManager
 			change.diff.erase(change.diff.begin()); //remove merger from the diff list
 
 			//deletes merged bodies' user objects and themselves.
-			purgeUserObjects(change.diff, true);
 			foreach(Body2DClone&, diffBody, vector<Body2DClone>, change.diff)
 			{
 				planetarium->orbitTracer.clearTrace(diffBody.original);
+				delete static_cast<PlanetariumUserObject*>(diffBody.original->userObject);
 				delete diffBody.original;
 			}
 		}
@@ -263,6 +265,7 @@ struct Planetarium::StateManager
 	void rollback(bool rewind=false)
 	{
 		if(nonMergeChangesCount == 0) return;
+		//cout << (rewind? "rewind":"rollback") << endl;
 		SDL_mutex* physicsAccessMutex = planetarium->physicsAccessMutex;
 
 		if(changes.back().type != MERGE) // no merge involved, simpler case
@@ -334,7 +337,7 @@ struct Planetarium::StateManager
 					{
 						rollbackMerge(change);
 						removedAddedBodies.push_back(change.diff[0]); //merger ("diff[0]") was removed
-						addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin()+1, change.diff.end()); //merged were re-added
+						addedRemovedBodies.insert(addedRemovedBodies.end(), change.diff.begin()+1, change.diff.end()); //mergeds were re-added
 						needsRollback = true;
 					}
 
@@ -655,7 +658,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
-		stateManager->commitRemoval(this->physics->universe, focusedBodies);
+		if(not undoDisabled) stateManager->commitRemoval(this->physics->universe, focusedBodies);
 		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
 		{
 			remove_element(physics->universe.bodies, body);
@@ -688,7 +691,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
-		stateManager->commitRemoval(this->physics->universe, body);
+		if(not undoDisabled) stateManager->commitRemoval(this->physics->universe, body);
 		remove_element(physics->universe.bodies, body);
 	}
 
@@ -717,7 +720,7 @@ void Planetarium::removeAllBodies()
 	vector<Body2D*> removedBodiesPointers;
 	synchronized(physicsAccessMutex)
 	{
-		stateManager->commitRemoval(this->physics->universe, this->physics->universe.bodies);
+		if(not undoDisabled) stateManager->commitRemoval(this->physics->universe, this->physics->universe.bodies);
 
 		// write down all bodies
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
@@ -755,7 +758,7 @@ void Planetarium::addCustomBody(Body2D* body)
 
 	synchronized(physicsAccessMutex)
 	{
-		stateManager->commitAddition(this->physics->universe, body);
+		if(not undoDisabled) stateManager->commitAddition(this->physics->universe, body);
 		physics->universe.bodies.push_back(body);
 	}
 
@@ -1262,49 +1265,32 @@ void Planetarium::updateView()
 // callback called by physics thread
 void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingMerger)
 {
-	//reconstructs custom data
-	resultingMerger.userObject = new PlanetariumUserObject();
-	PlanetariumUserObject* obj = (PlanetariumUserObject*) resultingMerger.userObject;
-	long double r=0, g=0, b=0, tm=0;
+	//constructs a PlanetariumUserObject for the merger body
+	long double r_sum=0, g_sum=0, b_sum=0, mass_sum=0;
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
 	{
 		const SDL_Color& bodyColor = static_cast<PlanetariumUserObject*> (body->userObject)->color;
-		r += bodyColor.r * body->mass;
-		g += bodyColor.g * body->mass;
-		b += bodyColor.b * body->mass;
-		tm += body->mass;
+		r_sum += bodyColor.r * body->mass;
+		g_sum += bodyColor.g * body->mass;
+		b_sum += bodyColor.b * body->mass;
+		mass_sum += body->mass;
 		orbitTracer.clearTrace(body);
 	}
-	if(tm==0)tm=1; //safety
-	obj->color.r = static_cast<Uint8>(r/tm);
-	obj->color.g = static_cast<Uint8>(g/tm);
-	obj->color.b = static_cast<Uint8>(b/tm);
+	if(mass_sum==0) mass_sum=1; //avoid division by zero if erroneous zero-mass or zero-sum-mass bodies were passed
 
-	CollisionEvent* ev = new CollisionEvent();
+	SDL_Color meanColor;
+	meanColor.r = static_cast<Uint8>(r_sum/mass_sum);
+	meanColor.g = static_cast<Uint8>(g_sum/mass_sum);
+	meanColor.b = static_cast<Uint8>(b_sum/mass_sum);
 
-	foreach(Body2D*, body, vector<Body2D*>, collidingList)
+	resultingMerger.userObject = new PlanetariumUserObject(meanColor);
+
+	//delete user objects of collided bodies (the physics code won't do it as it has no knowledge of this)
+	if(undoDisabled)
+		purgeUserObjects(collidingList);
+
+	else //if undo is enabled, commit merge change instead of deleting user objects
 	{
-		if(undoDisabled)
-			//we need to delete it since it the physics code won't do it (it has no knowledge of this)
-			delete static_cast<PlanetariumUserObject*> (body->userObject);
-
-		body->userObject = null; //nullify since it was deleted
-		ev->collidingBodies.push_back(*body);
-	}
-	ev->resultingMerger = resultingMerger;
-
-	SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
-	synchronized(collisionEventsMutex)
-	{
-		//add collision event to be consumed
-		physicsEventsManager->collisionEvents.push(ev); //provided list and merger must be copies
-	}
-
-	if(not undoDisabled) //register merge change
-	{
-		//cout << "previously" << endl;
-//		stateManager->debug();
-
 		vector<Body2D*> collidingListBackup;
 		foreach(Body2D*, mergedBody, vector<Body2D*>, collidingList)
 		{
@@ -1314,17 +1300,26 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 
 			//swap pointers to the merged bodies with pointers to their backups
 			stateManager->fixReferences(mergedBody, mergedBodyBackup);
-
-			//cout << "will replace " << mergedBody << " with " << mergedBodyBackup << endl;
 		}
 
-		//cout << endl << "afterwards" << endl;
-//		stateManager->debug();
-
 		stateManager->commitMerge(collidingListBackup, &resultingMerger);
+	}
 
-		//cout << endl << "afterwards commit" << endl;
-//		stateManager->debug();
+	//creates a collision event for listeners
+	CollisionEvent* ev = new CollisionEvent();
+	foreach(Body2D*, body, vector<Body2D*>, collidingList)
+	{
+		ev->collidingBodies.push_back(*body);
+		ev->collidingBodies.back().userObject = null; //users cannot rely on user object availability
+	}
+	ev->resultingMerger = resultingMerger;
+
+	//push user event to the event queue
+	SDL_mutex* collisionEventsMutex = physicsEventsManager->mutex;
+	synchronized(collisionEventsMutex)
+	{
+		//add collision event to be consumed
+		physicsEventsManager->collisionEvents.push(ev); //provided list and merger must be copies
 	}
 }
 
