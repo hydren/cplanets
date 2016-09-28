@@ -452,7 +452,7 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   physicsAccessMutex(SDL_CreateMutex()),
   bodyCreationPosition(), bodyCreationVelocity(), bodyCreationDiameter(),
   lastMouseLeftButtonDown(0), isMouseLeftButtonDown(false), lastMouseClickPoint(),
-  undoDisabled(false),
+  undoEnabled(true),
   //aux
   auxWasRunningBeforeSelection(false),
   auxWasRunningBeforeBodyCreationMode(false)
@@ -658,7 +658,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
-		if(not undoDisabled) stateManager->commitRemoval(this->physics->universe, focusedBodies);
+		if(undoEnabled) stateManager->commitRemoval(this->physics->universe, focusedBodies);
 		foreach(Body2D*, body, vector<Body2D*>, focusedBodies)
 		{
 			remove_element(physics->universe.bodies, body);
@@ -673,7 +673,7 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 
 		physics->referenceFrame.dissociate(body);
 
-		if(undoDisabled)
+		if(not undoEnabled)
 		{
 			orbitTracer.clearTrace(body);
 
@@ -691,7 +691,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 {
 	synchronized(physicsAccessMutex)
 	{
-		if(not undoDisabled) stateManager->commitRemoval(this->physics->universe, body);
+		if(undoEnabled) stateManager->commitRemoval(this->physics->universe, body);
 		remove_element(physics->universe.bodies, body);
 	}
 
@@ -702,7 +702,7 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 	physics->referenceFrame.dissociate(body);
 	remove_element(focusedBodies, body);
 
-	if(undoDisabled)
+	if(not undoEnabled)
 	{
 		orbitTracer.clearTrace(body);
 		if(alsoDelete)
@@ -720,7 +720,7 @@ void Planetarium::removeAllBodies()
 	vector<Body2D*> removedBodiesPointers;
 	synchronized(physicsAccessMutex)
 	{
-		if(not undoDisabled) stateManager->commitRemoval(this->physics->universe, this->physics->universe.bodies);
+		if(undoEnabled) stateManager->commitRemoval(this->physics->universe, this->physics->universe.bodies);
 
 		// write down all bodies
 		foreach(Body2D*, body, vector<Body2D*>, this->physics->universe.bodies)
@@ -739,7 +739,7 @@ void Planetarium::removeAllBodies()
 		for(unsigned i = 0; i < listeners.size(); i++)
 			listeners[i]->onBodyDeletion(body);
 
-		if(undoDisabled)
+		if(not undoEnabled)
 		{
 			orbitTracer.clearTrace(body);
 
@@ -758,7 +758,7 @@ void Planetarium::addCustomBody(Body2D* body)
 
 	synchronized(physicsAccessMutex)
 	{
-		if(not undoDisabled) stateManager->commitAddition(this->physics->universe, body);
+		if(undoEnabled) stateManager->commitAddition(this->physics->universe, body);
 		physics->universe.bodies.push_back(body);
 	}
 
@@ -927,15 +927,10 @@ void Planetarium::rewindLastChange()
 	stateManager->rollback(true);
 }
 
-void Planetarium::disableUndo()
+void Planetarium::setUndoEnabled(bool choice)
 {
-	stateManager->reset();
-	undoDisabled = true;
-}
-
-void Planetarium::enableUndo()
-{
-	undoDisabled = false;
+	undoEnabled = choice;
+	if(choice == false) stateManager->reset();
 }
 
 long double Planetarium::getTotalKineticEnergy() const
@@ -1285,11 +1280,7 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 
 	resultingMerger.userObject = new PlanetariumUserObject(meanColor);
 
-	//delete user objects of collided bodies (the physics code won't do it as it has no knowledge of this)
-	if(undoDisabled)
-		purgeUserObjects(collidingList);
-
-	else //if undo is enabled, commit merge change instead of deleting user objects
+	if(undoEnabled) //if undo is enabled, commit merge change instead of deleting user objects
 	{
 		vector<Body2D*> collidingListBackup;
 		foreach(Body2D*, mergedBody, vector<Body2D*>, collidingList)
@@ -1304,6 +1295,8 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 
 		stateManager->commitMerge(collidingListBackup, &resultingMerger);
 	}
+	else //delete user objects of collided bodies (the physics code won't do it as it has no knowledge of this)
+		purgeUserObjects(collidingList);
 
 	//creates a collision event for listeners
 	CollisionEvent* ev = new CollisionEvent();
