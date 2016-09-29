@@ -16,7 +16,7 @@ namespace WidgetsExtra
 	struct ToogleButton extends CheckBox
 	{
 		ToogleButton(WinBase *pw,Style st,Rect rect,Label lab,void (*_cmd)(CheckBox*),Id id=0);
-		void draw(); //draw() from base is not virtual, be careful
+		virtual void draw(); //draw() from base is not virtual, be careful
 		virtual ~ToogleButton() {};
 	};
 }
