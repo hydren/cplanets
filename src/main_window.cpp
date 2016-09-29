@@ -19,6 +19,7 @@
 #include <algorithm>
 
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_rotozoom.h>
 
 #include "futil/math/more_random.h"
 #include "futil/string/callbacks.hpp"
@@ -118,6 +119,13 @@ SDL_Surface* loadImage(const char* path, const SDL_Color* transparentColor=null)
 		SDL_SetColorKey(bmp, SDL_SRCCOLORKEY, SDL_MapRGB(bmp->format, transparentColor->r, transparentColor->g, transparentColor->b));
 
 	return bmp;
+}
+
+SDL_Surface* resizeImage(SDL_Surface* surf, unsigned width, bool alsoFreeArg=false)
+{
+	SDL_Surface* resized = rotozoomSurface(surf, 0, width/ (double) surf->w, true);
+	if(alsoFreeArg) SDL_FreeSurface(surf);
+	return resized;
 }
 
 //  =========== PLANETARIUM LISTENER ===========================
