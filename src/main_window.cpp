@@ -214,7 +214,7 @@ void CPlanets::showMainWindow()
 	handle_kev = onKeyEvent; //set callback for keyboard events
 	handle_uev = onUserEvent;
 	VERSION_TEXT ="v"+CPLANETS_VERSION;
-	APP_LOGO = SDL_util::loadBitmap("data/icon.bmp", &SDL_util::Color::LIME);
+	APP_LOGO = resizeImage(loadImage("data/icon.png"), 40, true);
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
@@ -572,10 +572,10 @@ void drawAboutDialog(BgrWin* bw)
 
 	const int lineHeight = TTF_FontHeight(draw_ttf->ttf_font);
 
-	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(logoOffset + 3*WIDGETS_SPACING, 0.8*WIDGETS_SPACING));
-	draw_title_ttf->draw_string(dialog->win, ("Version " + CPLANETS_VERSION).c_str(), Point(logoOffset + 3*WIDGETS_SPACING, WIDGETS_SPACING + lineHeight));
+	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING));
+	draw_title_ttf->draw_string(dialog->win, ("Version " + CPLANETS_VERSION).c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + lineHeight));
 
-	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2;
+	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2.25;
 
 	int lineNumber = 0;
 	foreach(string&, line, vector<string>, (*dialogAboutTextLines))
