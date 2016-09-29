@@ -35,55 +35,20 @@ void IconButton::pack(int height)
 
 void IconButton::draw()
 {
+	init_gui();
 	Button::draw();
-	SDL_Rect* dstrect = null;
-	switch(style.param2)
-	{
-		case ICON_CENTER:
-		{
-			dstrect = rp((tw_area.w - icon->w)/2, (tw_area.h - icon->h)/2 + (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_LEFT:
-		{
-			dstrect = rp(0, (tw_area.h - icon->h)/2 + (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_RIGHT:
-		{
-			dstrect = rp((tw_area.w - icon->w), (tw_area.h - icon->h)/2 + (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_CENTER_UP:
-		{
-			dstrect = rp((tw_area.w - icon->w)/2, (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_LEFT_UP:
-		{
-			dstrect = rp(0, (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_RIGHT_UP:
-		{
-			dstrect = rp((tw_area.w - icon->w), (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_CENTER_DOWN:
-		{
-			dstrect = rp((tw_area.w - icon->w)/2, (tw_area.h - icon->h) + (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_LEFT_DOWN:
-		{
-			dstrect = rp(0, (tw_area.h - icon->h) + (is_down? 1 : 0),0,0);
-			break;
-		}
-		case ICON_RIGHT_DOWN:
-		{
-			dstrect = rp((tw_area.w - icon->w), (tw_area.h - icon->h) + (is_down? 1 : 0),0,0);
-			break;
-		}
-	}
-	SDL_BlitSurface(icon, null, win, dstrect);
+	if(icon == null) return;
+
+	SDL_Rect dstrect;
+	if(style.param2 == ICON_CENTER || style.param2 == ICON_CENTER_DOWN || style.param2 == ICON_CENTER_UP)
+		dstrect.x = (tw_area.w - icon->w)/2;
+	else if(style.param2 == ICON_RIGHT || style.param2 == ICON_RIGHT_DOWN || style.param2 == ICON_RIGHT_UP)
+		dstrect.x = tw_area.w - icon->w;
+
+	if(style.param2 == ICON_CENTER || style.param2 == ICON_LEFT || style.param2 == ICON_RIGHT)
+		dstrect.y = (tw_area.h - icon->h)/2;
+	else if(style.param2 == ICON_CENTER_DOWN || style.param2 == ICON_LEFT_DOWN || style.param2 == ICON_RIGHT_DOWN)
+		dstrect.y = tw_area.h - icon->h;
+
+	SDL_BlitSurface(icon, null, win, &dstrect);
 }
