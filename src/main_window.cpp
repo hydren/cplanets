@@ -18,6 +18,8 @@
 #include <fstream>
 #include <algorithm>
 
+#include <SDL/SDL_image.h>
+
 #include "futil/math/more_random.h"
 #include "futil/string/callbacks.hpp"
 
@@ -40,6 +42,7 @@
 #include "widgets/list_win.hpp"
 #include "widgets/list_selection_model_extra.hpp"
 #include "widgets/value_shower.hpp"
+#include "widgets/icon_button.hpp"
 
 using std::cout;
 using std::endl;
@@ -62,6 +65,8 @@ using WidgetsExtra::ScrollablePane;
 using WidgetsExtra::DialogBgrWin;
 using WidgetsExtra::ListWin;
 using WidgetsExtra::ValueShower;
+using WidgetsExtra::IconButton;
+using WidgetsExtra::IconToogleButton;
 
 typedef Planetarium::Body2DClone Body2DClone;
 
@@ -106,6 +111,15 @@ int keepAddingRandomBodyWhilePressed(void* unused);
 
 void onSDLInit();
 
+SDL_Surface* loadImage(const char* path, const SDL_Color* transparentColor=null)
+{
+	SDL_Surface* bmp = IMG_Load(path);
+	if(bmp != null && transparentColor != null)
+		SDL_SetColorKey(bmp, SDL_SRCCOLORKEY, SDL_MapRGB(bmp->format, transparentColor->r, transparentColor->g, transparentColor->b));
+
+	return bmp;
+}
+
 //  =========== PLANETARIUM LISTENER ===========================
 
 struct CustomListener extends Planetarium::UniverseEventListener, WidgetsExtra::ListSelectionModel::Listener
@@ -130,6 +144,7 @@ SDL_Surface* APP_LOGO;
 
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
+Rect genericButtonSize2(0, 0, TOOLBAR_SIZE-2*WIDGETS_SPACING, TOOLBAR_SIZE-2*WIDGETS_SPACING);
 CustomListener customListener;
 RenderText* draw_light_ttf;
 bool aux_isPressed_SDLK_r = false;
@@ -138,7 +153,7 @@ bool aux_isPressed_SDLK_r = false;
 TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
-Button* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnRun, *btnPause, *btnAbout;
+IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnRun, *btnPause, *btnAbout;
 FileDialog* dialogLoad, *dialogSave;
 
 TabSet* tabs;
@@ -165,13 +180,13 @@ PlanetariumPane* planetariumPane;
 Planetarium* planetarium; ///helper pointer
 
 FlowLayout* toolbarRight;
-Button* btnAddBody, *btnAddRandom, *btnAddRandomOrbiting, *btnRemove, *btnClear,
+IconButton* btnAddBody, *btnAddRandom, *btnAddRandomOrbiting, *btnRemove, *btnClear,
 	*btnRecolorAll, *btnFollowSelection, *btnResetReferenceFrame;
 
 FlowLayout* toolbarSouthLayout;
-ToogleButton* tgbTraceOrbit;
-Button* btnDoubleTraceLength, *btnHalveTraceLentgh;
-ToogleButton* tgbAA;
+IconToogleButton* tgbTraceOrbit;
+IconButton* btnDoubleTraceLength, *btnHalveTraceLentgh;
+IconToogleButton* tgbAA;
 CheckBox* chckComputeEnergy;
 ValueShower* msgLogK, *msgLogP, *msgLogE, *msgBodyCount;
 
@@ -200,44 +215,36 @@ void CPlanets::showMainWindow()
 	//+++++++++++++++ North toolbar
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
 
-	btnNew = new Button(window, 0, genericButtonSize, "New", onButtonPressed);
-	packer.pack(btnNew);
+	btnNew = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/new.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnNew);
 
-	btnLoad = new Button(window, 0, genericButtonSize, "Load", onButtonPressed);
-	packer.pack(btnLoad);
+	btnLoad = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/load.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnLoad);
 
-	btnSave = new Button(window, 0, genericButtonSize, "Save", onButtonPressed);
-	packer.pack(btnSave);
+	btnSave = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/save.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnSave);
 
 	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
 
-	btnUndo = new Button(window, 0, genericButtonSize, "Undo", onButtonPressed);
-	packer.pack(btnUndo);
+	btnUndo = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/undo.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnUndo);
 
-	btnRewind = new Button(window, 0, genericButtonSize, "Rewind", onButtonPressed);
-	packer.pack(btnRewind);
+	btnRewind = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/rewind.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnRewind);
 
 	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
 
-	btnAbout = new Button(window, 0, genericButtonSize, "About", onButtonPressed);
-	packer.pack(btnAbout);
+	btnAbout = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/about.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnAbout);
 
 	toolbarNorthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
 
-	btnRun = new Button(window, 0, genericButtonSize, "Run", onButtonPressed);
-	packer.pack(btnRun);
+	btnRun = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/run.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnRun);
 
-	btnPause = new Button(window, 0, genericButtonSize, "Pause", onButtonPressed);
-	packer.pack(btnPause);
+	btnPause = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/pause.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnPause);
 
 	toolbarNorthLayout->pack();
@@ -393,39 +400,40 @@ void CPlanets::showMainWindow()
 	ddmTraceStyle->offset.y = -10;
 
 	//+++++++++++++++ East (right) toolbar
-	toolbarRight = new FlowLayout(planetariumSize.x + planetariumSize.w + WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING);
+	toolbarRight = new FlowLayout(planetariumSize.x + planetariumSize.w + WIDGETS_SPACING*1.5, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING);
 	toolbarRight->orientation = Layout::VERTICAL;
 
-	Rect sideButtonSize(0, 0, TOOLBAR_SIZE - WIDGETS_SPACING, TOOLBAR_SIZE - 2*WIDGETS_SPACING);
-
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
+	toolbarRight->getComponentAt(toolbarRight->getComponentCount()-1)->offset.x = -5;
 
-	btnAddBody = new Button(window, 0, sideButtonSize, "Add", onButtonPressed);
+	btnAddBody = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/add.png"), onButtonPressed);
 	toolbarRight->addComponent(btnAddBody);
 
-	btnAddRandom = new Button(window, 0, sideButtonSize, "AdR", onButtonPressed);
+	btnAddRandom = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/add-random.png"), onButtonPressed);
 	toolbarRight->addComponent(btnAddRandom);
 
-	btnAddRandomOrbiting = new Button(window, 0, sideButtonSize, "AdO", onButtonPressed);
+	btnAddRandomOrbiting = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/add-orbiting.png"), onButtonPressed);
 	toolbarRight->addComponent(btnAddRandomOrbiting);
 
-	btnRemove = new Button(window, 0, sideButtonSize, "Rem", onButtonPressed);
+	btnRemove = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/remove.png"), onButtonPressed);
 	toolbarRight->addComponent(btnRemove);
 
-	btnClear = new Button(window, 0, sideButtonSize, "Clr", onButtonPressed);
+	btnClear = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/clear.png"), onButtonPressed);
 	toolbarRight->addComponent(btnClear);
 
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
+	toolbarRight->getComponentAt(toolbarRight->getComponentCount()-1)->offset.x = -5;
 
-	btnRecolorAll = new Button(window, 0, sideButtonSize, "Rcl", onButtonPressed);
+	btnRecolorAll = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/recolor.png"), onButtonPressed);
 	toolbarRight->addComponent(btnRecolorAll);
 
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
+	toolbarRight->getComponentAt(toolbarRight->getComponentCount()-1)->offset.x = -5;
 
-	btnFollowSelection = new Button(window, 0, sideButtonSize, "Flw", onButtonPressed);
+	btnFollowSelection = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/follow.png"), onButtonPressed);
 	toolbarRight->addComponent(btnFollowSelection);
 
-	btnResetReferenceFrame = new Button(window, 0, sideButtonSize, "RRF", onButtonPressed);
+	btnResetReferenceFrame = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/reset-frame.png"), onButtonPressed);
 	toolbarRight->addComponent(btnResetReferenceFrame);
 
 	toolbarRight->pack();
@@ -434,24 +442,20 @@ void CPlanets::showMainWindow()
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
 
-	tgbTraceOrbit = new ToogleButton(window, 0, genericButtonSize, "Trace orbit", onCheckBoxPressed);
+	tgbTraceOrbit = new IconToogleButton(window, 0, genericButtonSize2, Label(""), loadImage("data/trace-orbit.png"), onCheckBoxPressed);
 	tgbTraceOrbit->d = &(planetarium->getOrbitTracerSwitchReference());  // binds the checkbox to the variable
-	packer.pack(tgbTraceOrbit, tgbTraceOrbit->label);
 	toolbarSouthLayout->addComponent(tgbTraceOrbit);
 
-	btnDoubleTraceLength = new Button(window, 0, genericButtonSize, "Db.T", onButtonPressed);
-	packer.pack(btnDoubleTraceLength);
+	btnDoubleTraceLength = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/trace-double.png"), onButtonPressed);
 	toolbarSouthLayout->addComponent(btnDoubleTraceLength);
 
-	btnHalveTraceLentgh = new Button(window, 0, genericButtonSize, "Hv.T", onButtonPressed);
-	packer.pack(btnHalveTraceLentgh);
+	btnHalveTraceLentgh = new IconButton(window, 0, genericButtonSize2, Label(""), loadImage("data/trace-half.png"), onButtonPressed);
 	toolbarSouthLayout->addComponent(btnHalveTraceLentgh);
 
 	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 
-	tgbAA = new ToogleButton(window, 0, genericButtonSize, "Smooth", onCheckBoxPressed);
+	tgbAA = new IconToogleButton(window, 0, genericButtonSize2, Label(""), loadImage("data/smooth.png"), onCheckBoxPressed);
 	tgbAA->d = &(planetarium->tryAA);
-	packer.pack(tgbAA, tgbAA->label);
 	toolbarSouthLayout->addComponent(tgbAA);
 
 	toolbarSouthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
