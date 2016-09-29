@@ -23,6 +23,7 @@ namespace WidgetsExtra
 		IconButton(WinBase *parent, Style style, Rect bounds, Label label, SDL_Surface* icon, void (*cmd)(Button*), Id id=0);
 		virtual ~IconButton();
 		virtual void draw();
+		virtual void pack(int height=0);
 	};
 }
 

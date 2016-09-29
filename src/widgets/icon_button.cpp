@@ -7,6 +7,8 @@
 
 #include "icon_button.hpp"
 
+#include "widgets_util.hpp"
+
 using WidgetsExtra::IconButton;
 
 IconButton::IconButton(WinBase *parent, Style style, Rect bounds, Label label, SDL_Surface* icon, void (*cmd)(Button*), Id id)
@@ -17,6 +19,18 @@ IconButton::IconButton(WinBase *parent, Style style, Rect bounds, Label label, S
 IconButton::~IconButton()
 {
 	SDL_FreeSurface(this->icon);
+}
+
+void IconButton::pack(int height)
+{
+	if(label.render_t->text_width(label.str) < icon->w)
+	{
+		int properWidth = icon->w + 4;
+		int properHeight = height != 0? height : TTF_FontHeight(label.render_t->ttf_font) + 4;
+		widen(properWidth - tw_area.w, properHeight - tw_area.h);
+	}
+	else
+		packLabeledComponent(this, height);
 }
 
 void IconButton::draw()
