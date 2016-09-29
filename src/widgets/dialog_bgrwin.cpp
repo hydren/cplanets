@@ -12,6 +12,19 @@
 using WidgetsExtra::DialogBgrWin;
 using std::string;
 
+static const char *close_btn_xpm[] = {
+"8 7 3 1",
+"  c None",
+"x c #101010",
+"- c #e0e0e0",
+"xx    xx",
+" xx  xx ",
+"  xxxx  ",
+"   xx   ",
+"  xxxx  ",
+" xx  xx ",
+"xx    xx"};
+
 DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWin*))
 : BgrWin(null, bounds, null, DialogBgrWin::draw, DialogBgrWin::custom_mwin_down, mwin::move, mwin::up, 0),
   WinBaseWrapper(this),
@@ -19,7 +32,7 @@ DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWi
   titleStr(txt),
   titleBarArea(Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
   titleStrOffset(0),
-  btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), "X", DialogBgrWin::close)
+  btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), Label(""), create_pixmap(close_btn_xpm), DialogBgrWin::close)
 {
 	this->validate();
 }

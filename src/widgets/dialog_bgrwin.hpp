@@ -11,9 +11,10 @@
 #include <string>
 
 #include "SDL_widgets/SDL_widgets.h"
+#include "futil/general/language.hpp"
 
 #include "abstract_layout.hpp"
-#include "futil/general/language.hpp"
+#include "icon_button.hpp"
 
 namespace WidgetsExtra
 {
@@ -32,7 +33,7 @@ namespace WidgetsExtra
 
 		protected:
 		int titleStrOffset;
-		Button btnClose;
+		IconButton btnClose;
 
 		virtual void bind();
 		virtual void validate();
