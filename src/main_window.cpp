@@ -530,7 +530,11 @@ void onSDLInit()
 	#endif
 
 	SDL_Surface* appIcon = SDL_util::loadBitmap("data/icon.bmp", &SDL_util::Color::LIME);
-	if(appIcon != null) SDL_WM_SetIcon(appIcon, null);
+	if(appIcon != null)
+	{
+		SDL_WM_SetIcon(appIcon, null);
+		SDL_FreeSurface(appIcon); //appIcon was copied, we don't need it anymore
+	}
 }
 
 //  ================ CALLBACK DEFINITIONS ================
