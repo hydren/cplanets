@@ -25,13 +25,14 @@ static const char *close_btn_xpm[] = {
 " xx  xx ",
 "xx    xx"};
 
-DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWin*))
+DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWin*), Style st)
 : BgrWin(null, bounds, null, DialogBgrWin::draw, DialogBgrWin::custom_mwin_down, mwin::move, mwin::up, 0),
   WinBaseWrapper(this),
   onClosedCallback(onClosed),
   titleStr(txt),
   titleBarArea(Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
   titleStrOffset(0),
+  style(st),
   btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), Label(""), create_pixmap(close_btn_xpm), DialogBgrWin::close)
 {
 	this->validate();
@@ -89,7 +90,20 @@ void DialogBgrWin::draw(BgrWin* bwSelf)
 	self->init_gui();
 	self->draw_raised(0, self->bgcol, true);
 
-	Color5::GradientBlue.draw_gradient(self, self->titleBarArea);
+	if(self->style.st == 0)	switch(self->style.param)
+	{
+			case 0: Color5::GradientBlue.draw_gradient(self, self->titleBarArea); break;
+			case 1: Color5::GradientGrey.draw_gradient(self, self->titleBarArea); break;
+			case 2: Color5::GradientGreen.draw_gradient(self, self->titleBarArea); break;
+			case 3: Color5::GradientWheat.draw_gradient(self, self->titleBarArea); break;
+			case 4: Color5::GradientRose.draw_gradient(self, self->titleBarArea); break;
+			case 5: Color5::GradientDarkBlue.draw_gradient(self, self->titleBarArea); break;
+			case 6: Color5::GradientDarkGrey.draw_gradient(self, self->titleBarArea); break;
+	}
+	else
+	{
+		SDL_FillRect(self->win, &self->titleBarArea, self->style.param);
+	}
 
 	draw_title_ttf->draw_string(self->win, self->titleStr.c_str(), Point(4, self->titleStrOffset));
 }

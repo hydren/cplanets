@@ -41,7 +41,7 @@ Draw a arrow on the cursor's tip when selecting new body velocity - done
 Undo functionality - done
 Show paused/resumed state more explicitly - done
 Save preferences (window positions, paths, etc)
-Implement button with icon and offer icons-only buttons (pixmaps can be used, taking advantage of the create_pixmap() function; examples in sw-pixmaps.h)
+Implement button with icon and offer icons-only buttons - done
 Theming functionality (mainly to match many OSes' ones)
 Try to load the universe setting a fitting zoom for its size.
 Use TCLAP for command line usage.

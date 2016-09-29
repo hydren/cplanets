@@ -23,8 +23,9 @@ namespace WidgetsExtra
 		void (*onClosedCallback)(DialogBgrWin*);
 		std::string titleStr;
 		Rect titleBarArea; //automatically set
+		Style style;
 
-		DialogBgrWin(Rect bounds, std::string title="", void (*onClosed)(DialogBgrWin*)=null);
+		DialogBgrWin(Rect bounds, std::string title="", void (*onClosed)(DialogBgrWin*)=null, Style st=0);
 		virtual ~DialogBgrWin();
 
 		virtual void setVisible(bool visible=true);
