@@ -38,7 +38,6 @@ Introduce variations to the parameters of newly created bodies - done
 - 1.0 (planets-supersedure/usability milestone)
 
 Draw a arrow on the cursor's tip when selecting new body velocity - done
-Add option to specify minimum rendered radius
 Undo functionality - done
 Show paused/resumed state more explicitly - done
 Save preferences (window positions, paths, etc)
@@ -51,6 +50,7 @@ Basic "help" dialog
 - 1.x
 
 Make a spinner to specify new body creation parameters' deviation.
+Add spinner to specify minimum rendered radius
 Make it possible to optionally disable orbit tracing inner computation, as the current checkbox only hides it (to improve performance)
 Highlight red the log P/E energy info when not using G.Exp=2 (as logP computation is incorrect for G.Exp != 2)
 Rotate functionality
