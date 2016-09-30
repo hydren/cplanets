@@ -64,18 +64,18 @@ namespace FileDialog_static
 	}
 }
 
-FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), const vector<string>& fileTypes)
-: DialogBgrWin(Rect(0, 0, 400, mode==SELECT_FOLDER? 96 : 160), FileDialog_static::modeTitle(mode)),
+FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), const vector<string>& fileTypes, Style dialogStyle, Style bntStyle)
+: DialogBgrWin(Rect(0, 0, 400, mode==SELECT_FOLDER? 96 : 160), FileDialog_static::modeTitle(mode), null, dialogStyle),
   onFinishedCallback(onFinished), selectedFilename(), mode(mode),
   lblCurrentDirectory(this, Rect(), FileDialog_static::modeCurrentDirectory(mode)),
   cmdmCurrentDirectoryField(new Button(this, Style(4,0), Rect(0, 0, titleBarArea.w * 0.75, 1.5 * TTF_FontHeight(draw_ttf->ttf_font)), getcwd(buffer, 1024), FileDialog::triggerNavigation)),
-  btnGoHome(this, 0, Rect(), " H ", FileDialog::navigateToHome),
+  btnGoHome(this, bntStyle, Rect(), " H ", FileDialog::navigateToHome),
   lblFilename(this, Rect(), FileDialog_static::modeFilename(mode)),
   dlgwFilenameField(this, Rect(0, 0, titleBarArea.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font))),
   ddmFileType(null),
   layoutSouthButtons(0, 0, 400),
-  btnOk(this, 0, Rect(), "  Ok  ", FileDialog::confirmation),
-  btnCancel(this, 0, Rect(), "Cancel", FileDialog::cancellation)
+  btnOk(this, bntStyle, Rect(), "  Ok  ", FileDialog::confirmation),
+  btnCancel(this, bntStyle, Rect(), "Cancel", FileDialog::cancellation)
 {
 	this->id = FileDialog_static::lastId++; //getting new (presumedly unique) id
 	FileDialog_static::references[id.id1] = this; //binding this id to this address

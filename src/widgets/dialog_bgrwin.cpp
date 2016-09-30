@@ -31,8 +31,8 @@ DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWi
   onClosedCallback(onClosed),
   titleStr(txt),
   titleBarArea(Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
-  titleStrOffset(0),
   style(st),
+  titleStrOffset(0),
   btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), Label(""), create_pixmap(close_btn_xpm), DialogBgrWin::close)
 {
 	this->validate();

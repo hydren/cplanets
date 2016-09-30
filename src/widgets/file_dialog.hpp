@@ -26,7 +26,9 @@ namespace WidgetsExtra
 		std::string selectedFilename, selectedType;
 
 		enum FileDialogMode { SELECT_FILE, SAVE_FILE, SELECT_FOLDER };
-		FileDialog(FileDialogMode mode=SELECT_FILE, void (*onFinished)(FileDialog* dialog)=null, const std::vector<std::string>& fileTypes=std::vector<std::string>());
+		FileDialog(FileDialogMode mode=SELECT_FILE, void (*onFinished)(FileDialog* dialog)=null,
+				const std::vector<std::string>& fileTypes=std::vector<std::string>(),
+				Style dialogStyle=0, Style bntStyle=0);
 		virtual ~FileDialog();
 
 		protected:
