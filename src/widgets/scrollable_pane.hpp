@@ -15,7 +15,7 @@ namespace WidgetsExtra
 {
 	struct ScrollablePane extends WinBase
 	{
-		static const unsigned DEFAULT_SCROLLBAR_THICKNESS = 16;
+		static const unsigned DEFAULT_SCROLLBAR_THICKNESS = 12;
 
 		/// read-only attribute. use setOffset() to make a recursive offsetting.
 		Point offset;
@@ -28,6 +28,9 @@ namespace WidgetsExtra
 
 		HScrollbar scrollbarHorizontal;
 		VScrollbar scrollbarVertical;
+
+		/// references the scrolling speed (in pixels) of each scrollbar
+		int &scrollingSpeedHorizontal, &scrollingSpeedVertical;
 
 		ScrollablePane(WinBase* parent, Style style, Rect bounds, Uint32 bgColor=0, Id id=0);
 		virtual ~ScrollablePane();
@@ -42,6 +45,7 @@ namespace WidgetsExtra
 		/// updates the offset displacing all childs of the 'content' BgrWin.
 		virtual void setOffset(int x, int y);
 
+		/// overrides WinBase::widen()
 		virtual void widen(int dx, int dy);
 
 		/// preferred way to call the widen() method for the 'content' BgrWin.

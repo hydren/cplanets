@@ -16,8 +16,10 @@ ScrollablePane::ScrollablePane(WinBase* parent, Style style, Rect bounds, Uint32
   offset(0, 0),
   scrollbarThickness(style.param != 0 ? style.param : ScrollablePane::DEFAULT_SCROLLBAR_THICKNESS),
   content(this, Rect(0, 0, bounds.w - scrollbarThickness, bounds.h - scrollbarThickness), null, WidgetsExtra::drawBgrWin, scrollContentOnMouseWheel, null, null, bgColor, id),
-  scrollbarHorizontal(this, Style(1,0,5), Rect(0, bounds.h - scrollbarThickness, bounds.w - scrollbarThickness, scrollbarThickness), content.tw_area.w, ScrollablePane::hscrollbarCallback, id),
-  scrollbarVertical(this, Style(1,0,5), Rect(bounds.w - scrollbarThickness, 0, scrollbarThickness, bounds.h - scrollbarThickness), content.tw_area.h, ScrollablePane::vscrollbarCallback, id)
+  scrollbarHorizontal(this, Style(1,style.st,5), Rect(0, bounds.h - scrollbarThickness, bounds.w - scrollbarThickness, scrollbarThickness), content.tw_area.w, ScrollablePane::hscrollbarCallback, id),
+  scrollbarVertical(this, Style(1,style.st,5), Rect(bounds.w - scrollbarThickness, 0, scrollbarThickness, bounds.h - scrollbarThickness), content.tw_area.h, ScrollablePane::vscrollbarCallback, id),
+  scrollingSpeedHorizontal(scrollbarHorizontal.style.param2),
+  scrollingSpeedVertical(scrollbarVertical.style.param2)
 {}
 
 ScrollablePane::~ScrollablePane()
