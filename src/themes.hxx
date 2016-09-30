@@ -44,7 +44,7 @@ const Theme
 
 	THEME_CLASSIC, //uses default SDL_widgets colors
 
-	THEME_DEFAULT;
+	THEME_DEFAULT	(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0x39698A, 4),	0xDAE7E8);
 
 const Theme& Theme::init() const
 {
