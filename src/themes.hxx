@@ -42,6 +42,14 @@ const Theme
 	THEME_WHEAT		(Style(0, 1), Style(0, 3), Style(0, 3), Style(1, 0), Style(0, 0xD8D8C0, 2),	0xD8D8C0),
 	THEME_ROSE		(Style(0, 1), Style(0, 4), Style(0, 4), Style(1, 0), Style(0, 0xF5C9D0, 2),	0xF5C9D0),
 
+	THEME_CLEARLOOKS(Style(0, 1), Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0x86ABD9, 4),	0xF2F1F0),
+	THEME_GTK(THEME_CLEARLOOKS),
+
+	THEME_REDMOND	(Style(0, 1), Style(0, 1), Style(0, 1), Style(1, 0), Style(0, 0x000080, 4),	0xBDBDBD),
+	THEME_WIN_5_1	(Style(0, 1), Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0x326BC5, 4),	0xECE9D8),
+	THEME_WIN_6_1	(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0xB2CCEC, 4),	0xEDEDED),
+	THEME_WIN_10_0	(Style(0, 1), Style(0, 1), Style(1, 0x52B5FF), Style(1, 0), Style(0, 0x52B5FF, 4),	0xFAFAFA),
+
 	THEME_CLASSIC, //uses default SDL_widgets colors
 
 	THEME_DEFAULT	(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0x39698A, 4),	0xDAE7E8);
