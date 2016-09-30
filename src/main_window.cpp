@@ -221,7 +221,7 @@ void CPlanets::showMainWindow()
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
-	const Theme& theme = THEME_GREEN.init(); //todo choose according to cmd parameters
+	const Theme& theme = THEME_DEFAULT.init(); //todo choose according to cmd parameters
 
 	window->bgcol = theme.bgcol;
 
@@ -230,36 +230,36 @@ void CPlanets::showMainWindow()
 	//+++++++++++++++ North toolbar
 	toolbarNorthLayout = new FlowLayout(WIDGETS_SPACING, WIDGETS_SPACING);
 
-	btnNew = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/new.png"), onButtonPressed);
+	btnNew = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/new.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnNew);
 
-	btnLoad = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/load.png"), onButtonPressed);
+	btnLoad = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/load.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnLoad);
 
-	btnSave = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/save.png"), onButtonPressed);
+	btnSave = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/save.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnSave);
 
 	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
 
-	btnUndo = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/undo.png"), onButtonPressed);
+	btnUndo = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/undo.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnUndo);
 
-	btnRewind = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/rewind.png"), onButtonPressed);
+	btnRewind = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/rewind.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnRewind);
 
 	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
 
-	btnAbout = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/about.png"), onButtonPressed);
+	btnAbout = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/about.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnAbout);
 
 	toolbarNorthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
 
-	btnRun = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/run.png"), onButtonPressed);
+	btnRun = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/run.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnRun);
 
-	btnPause = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/pause.png"), onButtonPressed);
+	btnPause = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/pause.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnPause);
 
 	toolbarNorthLayout->pack();
@@ -328,26 +328,26 @@ void CPlanets::showMainWindow()
 	ddmIntegrationMethod->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
-	spnGravity = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
+	spnGravity = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
 	setComponentPosition(spnGravity, ddmIntegrationMethod->getPosition().x, ddmIntegrationMethod->getPosition().y + ddmIntegrationMethod->getSize().h + WIDGETS_SPACING);
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
-	spnGExp = new Spinner<double>(tabOptions, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
+	spnGExp = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
 	setComponentPosition(spnGExp, spnGravity->area.x + spnGravity->tw_area.w + WIDGETS_SPACING, spnGravity->area.y);
 	spnGExp->setValue(&(planetarium->physics->universe.gExp), true);
 	spnGExp->setStepValue(0.1);
 
-	spnFPS = new Spinner<short>(tabOptions, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
+	spnFPS = new Spinner<short>(tabOptions, theme.buttonStyle, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "FPS:");
 	setComponentPosition(spnFPS, spnGExp->area.x + spnGExp->tw_area.w + WIDGETS_SPACING, spnGExp->area.y);
 	spnFPS->setValue(&(planetarium->fps), true);
 
-	spnTimeStep = new Spinner<double>(tabOptions, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
+	spnTimeStep = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Time step:");
 	setComponentPosition(spnTimeStep, spnGravity->area.x, spnGravity->area.y + spnGravity->tw_area.h + WIDGETS_SPACING);
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep), true);
 	spnTimeStep->setStepValue(0.1);
 
-	spnStepDelay = new Spinner<long>(tabOptions, Rect(0,0,2.5*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay:");
+	spnStepDelay = new Spinner<long>(tabOptions, theme.buttonStyle, Rect(0,0,2.5*TOOLBAR_SIZE, TOOLBAR_SIZE), "Step delay:");
 	setComponentPosition(spnStepDelay, spnTimeStep->area.x + spnTimeStep->tw_area.w + WIDGETS_SPACING, spnTimeStep->area.y);
 	spnStepDelay->setValue(&(planetarium->stepDelay), true);
 
@@ -356,11 +356,11 @@ void CPlanets::showMainWindow()
 	setComponentPosition(chckLegacyParameters, spnTimeStep->area.x, spnTimeStep->area.y + spnTimeStep->tw_area.h + WIDGETS_SPACING);
 	packLabeledComponent(chckLegacyParameters);
 
-	spnDisplayPeriod = new Spinner<long>(tabOptions, Rect(0,0,3.6*TOOLBAR_SIZE, TOOLBAR_SIZE), "Disp. period (ms):");
+	spnDisplayPeriod = new Spinner<long>(tabOptions, theme.buttonStyle, Rect(0,0,3.6*TOOLBAR_SIZE, TOOLBAR_SIZE), "Disp. period (ms):");
 	setComponentPosition(spnDisplayPeriod, chckLegacyParameters->area.x, chckLegacyParameters->area.y + chckLegacyParameters->tw_area.h + WIDGETS_SPACING);
 	spnDisplayPeriod->setValue(&(planetarium->displayPeriod), true);
 
-	spnIterPerDisplay = new Spinner<long>(tabOptions, Rect(0,0,2.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "Iter/display:");
+	spnIterPerDisplay = new Spinner<long>(tabOptions, theme.buttonStyle, Rect(0,0,2.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "Iter/display:");
 	setComponentPosition(spnIterPerDisplay, spnDisplayPeriod->area.x + spnDisplayPeriod->tw_area.w + WIDGETS_SPACING, spnDisplayPeriod->area.y);
 	spnIterPerDisplay->setValue(&(planetarium->iterationsPerDisplay), true);
 
@@ -377,17 +377,17 @@ void CPlanets::showMainWindow()
 	lblBodyCreation.setTextRenderer(draw_title_ttf);
 	setComponentPosition(&lblBodyCreation, chckComputeRocheLimit->area.x, chckComputeRocheLimit->area.y + chckComputeRocheLimit->tw_area.h + 1.8*WIDGETS_SPACING);
 
-	spnBodyDiameter = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
+	spnBodyDiameter = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
 	setComponentPosition(spnBodyDiameter, lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING);
 	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio), true);
 	spnBodyDiameter->setStepValue(0.1);
 
-	spnBodyDensity = new Spinner<double>(tabOptions, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
+	spnBodyDensity = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Density:");
 	setComponentPosition(spnBodyDensity, spnBodyDiameter->area.x + spnBodyDiameter->tw_area.w + WIDGETS_SPACING, spnBodyDiameter->area.y);
 	spnBodyDensity->setValue(&(planetarium->bodyCreationDensity), true);
 	spnBodyDensity->setStepValue(0.1);
 
-	spnBodyVelocity = new Spinner<double>(tabOptions, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
+	spnBodyVelocity = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
 	setComponentPosition(spnBodyVelocity, spnBodyDiameter->area.x, spnBodyDiameter->area.y + spnBodyDiameter->tw_area.h + WIDGETS_SPACING);
 	spnBodyVelocity->setValue(&(planetarium->bodyCreationSpeed), true);
 	spnBodyVelocity->setStepValue(0.1);
@@ -401,7 +401,7 @@ void CPlanets::showMainWindow()
 	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + 1.5*WIDGETS_SPACING);
 	packLabeledComponent(chckTraceOrbit);
 
-	spnTraceLength = new Spinner<unsigned>(tabOptions, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
+	spnTraceLength = new Spinner<unsigned>(tabOptions, theme.buttonStyle, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
 	setComponentPosition(spnTraceLength, chckTraceOrbit->area.x, chckTraceOrbit->area.y + chckTraceOrbit->tw_area.h + 0.5*WIDGETS_SPACING + 3);
 	spnTraceLength->setValue(&(planetarium->getOrbitTracerLengthReference()), true);
 
@@ -421,34 +421,34 @@ void CPlanets::showMainWindow()
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
 	toolbarRight->getComponentAt(toolbarRight->getComponentCount()-1)->offset.x = -5;
 
-	btnAddBody = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/add.png"), onButtonPressed);
+	btnAddBody = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/add.png"), onButtonPressed);
 	toolbarRight->addComponent(btnAddBody);
 
-	btnAddRandom = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/add-random.png"), onButtonPressed);
+	btnAddRandom = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/add-random.png"), onButtonPressed);
 	toolbarRight->addComponent(btnAddRandom);
 
-	btnAddRandomOrbiting = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/add-orbiting.png"), onButtonPressed);
+	btnAddRandomOrbiting = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/add-orbiting.png"), onButtonPressed);
 	toolbarRight->addComponent(btnAddRandomOrbiting);
 
-	btnRemove = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/remove.png"), onButtonPressed);
+	btnRemove = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/remove.png"), onButtonPressed);
 	toolbarRight->addComponent(btnRemove);
 
-	btnClear = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/clear.png"), onButtonPressed);
+	btnClear = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/clear.png"), onButtonPressed);
 	toolbarRight->addComponent(btnClear);
 
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
 	toolbarRight->getComponentAt(toolbarRight->getComponentCount()-1)->offset.x = -5;
 
-	btnRecolorAll = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/recolor.png"), onButtonPressed);
+	btnRecolorAll = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/recolor.png"), onButtonPressed);
 	toolbarRight->addComponent(btnRecolorAll);
 
 	toolbarRight->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::VERTICAL, TOOLBAR_SIZE)));
 	toolbarRight->getComponentAt(toolbarRight->getComponentCount()-1)->offset.x = -5;
 
-	btnFollowSelection = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/follow.png"), onButtonPressed);
+	btnFollowSelection = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/follow.png"), onButtonPressed);
 	toolbarRight->addComponent(btnFollowSelection);
 
-	btnResetReferenceFrame = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/reset-frame.png"), onButtonPressed);
+	btnResetReferenceFrame = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/reset-frame.png"), onButtonPressed);
 	toolbarRight->addComponent(btnResetReferenceFrame);
 
 	toolbarRight->pack();
@@ -457,19 +457,19 @@ void CPlanets::showMainWindow()
 	toolbarSouthLayout = new FlowLayout(WIDGETS_SPACING, windowSize.h - (1.25*TOOLBAR_SIZE - 2*WIDGETS_SPACING));
 	toolbarSouthLayout->alignment = FlowLayout::MIDDLE;
 
-	tgbTraceOrbit = new IconToogleButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/trace-orbit.png"), onCheckBoxPressed);
+	tgbTraceOrbit = new IconToogleButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/trace-orbit.png"), onCheckBoxPressed);
 	tgbTraceOrbit->d = &(planetarium->getOrbitTracerSwitchReference());  // binds the checkbox to the variable
 	toolbarSouthLayout->addComponent(tgbTraceOrbit);
 
-	btnDoubleTraceLength = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/trace-double.png"), onButtonPressed);
+	btnDoubleTraceLength = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/trace-double.png"), onButtonPressed);
 	toolbarSouthLayout->addComponent(btnDoubleTraceLength);
 
-	btnHalveTraceLentgh = new IconButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/trace-half.png"), onButtonPressed);
+	btnHalveTraceLentgh = new IconButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/trace-half.png"), onButtonPressed);
 	toolbarSouthLayout->addComponent(btnHalveTraceLentgh);
 
 	toolbarSouthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 
-	tgbAA = new IconToogleButton(window, theme.buttonStyle, genericButtonSize2, Label(""), loadImage("data/smooth.png"), onCheckBoxPressed);
+	tgbAA = new IconToogleButton(window, theme.toolbarButtonStyle, genericButtonSize2, Label(""), loadImage("data/smooth.png"), onCheckBoxPressed);
 	tgbAA->d = &(planetarium->tryAA);
 	toolbarSouthLayout->addComponent(tgbAA);
 

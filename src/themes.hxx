@@ -12,16 +12,16 @@
 struct Theme
 {
 	Theme()
-	: buttonStyle(0), dialogStyle(0), scrollStyle(0),
+	: buttonStyle(0), toolbarButtonStyle(0), dialogStyle(0), scrollStyle(0),
 	  bgcol(0xD8D8C0), ready(false)
 	{}
 
-	Theme(Style btnSt, Style dlgSt, Style scrlSt, int bgCol)
-	: buttonStyle(btnSt), dialogStyle(dlgSt), scrollStyle(scrlSt),
+	Theme(Style buttonStyle, Style toolbarButtonStyle, Style dialogStyle, Style scrollStyle, int bgCol)
+	: buttonStyle(buttonStyle), toolbarButtonStyle(toolbarButtonStyle), dialogStyle(dialogStyle), scrollStyle(scrollStyle),
 	  bgcol(bgCol), ready(false)
 	{}
 
-	Style buttonStyle, dialogStyle, scrollStyle;
+	Style buttonStyle, toolbarButtonStyle, dialogStyle, scrollStyle;
 	int bgcol;
 
 	const Theme& init() const;
@@ -30,12 +30,16 @@ struct Theme
 	private:bool ready;
 };
 
-const Theme THEME_CLASSIC, THEME_DEFAULT,
-	THEME_BLUE		(Style(0, 0), Style(0, 0), Style(0, 0), 0xBEDEEE),
-	THEME_GREY		(Style(0, 1), Style(0, 1), Style(0, 0), 0xE0E0E0),
-	THEME_GREEN		(Style(0, 2), Style(0, 2), Style(1, 0), 0xA8DCA8),
-	THEME_WHEAT		(Style(0, 3), Style(0, 3), Style(1, 0), 0xD8D8C0),
-	THEME_ROSE		(Style(0, 4), Style(0, 4), Style(1, 0), 0xF5C9D0);
+const Theme THEME_CLASSIC,
+					// button, toolbar-button, dialog-title-bar, scrollbar, background-color
+	THEME_DEFAULT,
+
+	// default colors-focused themes
+	THEME_BLUE		(Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0), 0xBEDEEE),
+	THEME_GREY		(Style(0, 1), Style(0, 1), Style(0, 1), Style(1, 0), 0xE0E0E0),
+	THEME_GREEN		(Style(0, 1), Style(0, 2), Style(0, 2), Style(1, 0), 0xA8DCA8),
+	THEME_WHEAT		(Style(0, 1), Style(0, 3), Style(0, 3), Style(1, 0), 0xD8D8C0),
+	THEME_ROSE		(Style(0, 1), Style(0, 4), Style(0, 4), Style(1, 0), 0xF5C9D0);
 
 const Theme& Theme::init() const
 {
