@@ -221,7 +221,7 @@ void CPlanets::showMainWindow()
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
-	const Theme& theme = THEME_DEFAULT.init(); //todo choose according to cmd parameters
+	const Theme& theme = THEME_GREEN.init(); //todo choose according to cmd parameters
 
 	window->bgcol = theme.bgcol;
 
@@ -291,7 +291,7 @@ void CPlanets::showMainWindow()
 	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
 	tabs->addTab("Bodies", tabBodies);
 
-	sclpBodies = new ScrollablePane(tabBodies, Style(0, 3*WIDGETS_SPACING), Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), window->bgcol);
+	sclpBodies = new ScrollablePane(tabBodies, theme.scrollStyle, Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), window->bgcol);
 	sclpBodies->setScrollbarHorizontalVisible(false);
 
 	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
@@ -518,7 +518,7 @@ void CPlanets::showMainWindow()
 			400-2*WIDGETS_SPACING,
 			300-3*WIDGETS_SPACING-dialogAbout->titleBarArea.h-btnAboutOk->tw_area.h);
 
-	sclpAboutLicense = new ScrollablePane(dialogAbout, Style(0, 14), rectSclpAboutLicense, window->bgcol);
+	sclpAboutLicense = new ScrollablePane(dialogAbout, theme.scrollStyle, rectSclpAboutLicense, window->bgcol);
 	sclpAboutLicense->content.display_cmd = drawAboutDialog;
 	sclpAboutLicense->setScrollbarHorizontalVisible(false);
 

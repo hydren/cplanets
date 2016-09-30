@@ -12,14 +12,16 @@
 struct Theme
 {
 	Theme()
-	: buttonStyle(0), dialogStyle(0), bgcol(0xD8D8C0), ready(false)
+	: buttonStyle(0), dialogStyle(0), scrollStyle(0),
+	  bgcol(0xD8D8C0), ready(false)
 	{}
 
-	Theme(Style btnSt, Style dlgSt, int bgCol)
-	: buttonStyle(btnSt), dialogStyle(dlgSt), bgcol(bgCol), ready(false)
+	Theme(Style btnSt, Style dlgSt, Style scrlSt, int bgCol)
+	: buttonStyle(btnSt), dialogStyle(dlgSt), scrollStyle(scrlSt),
+	  bgcol(bgCol), ready(false)
 	{}
 
-	Style buttonStyle, dialogStyle;
+	Style buttonStyle, dialogStyle, scrollStyle;
 	int bgcol;
 
 	const Theme& init() const;
@@ -29,11 +31,11 @@ struct Theme
 };
 
 const Theme THEME_CLASSIC, THEME_DEFAULT,
-	THEME_BLUE		(Style(0, 0), Style(0, 0), 0xBEDEEE),
-	THEME_GREY		(Style(0, 1), Style(0, 1), 0xE0E0E0),
-	THEME_GREEN		(Style(0, 2), Style(0, 2), 0xA8DCA8),
-	THEME_WHEAT		(Style(0, 3), Style(0, 3), 0xD8D8C0),
-	THEME_ROSE		(Style(0, 4), Style(0, 4), 0xF5C9D0);
+	THEME_BLUE		(Style(0, 0), Style(0, 0), Style(0, 0), 0xBEDEEE),
+	THEME_GREY		(Style(0, 1), Style(0, 1), Style(0, 0), 0xE0E0E0),
+	THEME_GREEN		(Style(0, 2), Style(0, 2), Style(1, 0), 0xA8DCA8),
+	THEME_WHEAT		(Style(0, 3), Style(0, 3), Style(1, 0), 0xD8D8C0),
+	THEME_ROSE		(Style(0, 4), Style(0, 4), Style(1, 0), 0xF5C9D0);
 
 const Theme& Theme::init() const
 {
