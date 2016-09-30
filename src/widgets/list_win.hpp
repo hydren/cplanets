@@ -52,6 +52,7 @@ namespace WidgetsExtra
 		virtual void onMouseUp(Point point, int buttonNumber); // by default does nothing
 		inline RenderText* getResolvedTextRenderer();
 		inline RenderText* getResolvedTextRendererCaseSelected();
+		static RenderText* draw_white_ttf;
 
 		private:
 		//compatibility function (with BgrWin pointers)

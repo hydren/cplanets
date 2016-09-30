@@ -8,6 +8,8 @@
 #include "list_win.hpp"
 #include "scrollable_pane.hpp"
 
+#include "SDL_util.hpp"
+
 using std::string;
 using WidgetsExtra::AbstractListWin;
 
@@ -19,6 +21,8 @@ AbstractListWin::AbstractListWin(WinBase* parent, Style style, Rect rect, Id id)
 {
 	if(this->style.param == 0)
 		this->style.param = 0xffA0D0E0;
+
+	if(draw_white_ttf == null) draw_white_ttf = new RenderText(draw_title_ttf->ttf_font, SDL_util::Color::WHITE);
 }
 
 AbstractListWin::~AbstractListWin() {}
@@ -127,6 +131,7 @@ RenderText* AbstractListWin::getResolvedTextRenderer()
 		case 1: return draw_mono_ttf;
 		case 2: return draw_blue_ttf;
 		case 3: return draw_title_ttf;
+		case 4: return draw_white_ttf;
 	}
 }
 
@@ -140,8 +145,11 @@ RenderText* AbstractListWin::getResolvedTextRendererCaseSelected()
 		case 1: return draw_mono_ttf;
 		case 2: return draw_ttf;
 		case 3: return draw_title_ttf;
+		case 4: return draw_white_ttf;
 	}
 }
+
+RenderText* AbstractListWin::draw_white_ttf = null;
 
 // ################# static functions to be used when referencing AbstractListWin's as a BgrWin's.  #################
 void AbstractListWin::drawBgrWinAsListWin(BgrWin* listWinAsBgrWin) 				{ static_cast<AbstractListWin*>(listWinAsBgrWin)->draw(); }
