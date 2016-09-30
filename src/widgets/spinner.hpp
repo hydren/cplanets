@@ -29,7 +29,7 @@ namespace WidgetsExtra
 		DialogWin dlwTextField;
 		Button btnInc, btnDec;
 
-		AbstractSpinner(WinBase *pw, Rect area, const char* label=null);
+		AbstractSpinner(WinBase *pw, Style style, Rect area, const char* label=null);
 		virtual ~AbstractSpinner();
 
 		//overrides WinBase's
@@ -79,8 +79,8 @@ namespace WidgetsExtra
 		Type* value, step, min, max;
 		bool needsRefresh;
 
-		Spinner(WinBase *pw, Rect area, const char* label=null, Type* value=null)
-		: AbstractSpinner(pw, area, label),
+		Spinner(WinBase *pw, Style style, Rect area, const char* label=null, Type* value=null)
+		: AbstractSpinner(pw, style, area, label),
 		  value(value==null? new Type(1) : value), step(1), min(0), max(9999),
 		  needsRefresh(false)
 		{}

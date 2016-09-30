@@ -21,13 +21,14 @@ namespace AbstractSpinnerAux
 	std::map<int, AbstractSpinner*> references; //xxx kludge to map references to Spinner's addresses by id
 }
 
-AbstractSpinner::AbstractSpinner(WinBase *pw, Rect area, const char* label)
+AbstractSpinner::AbstractSpinner(WinBase *pw, Style style, Rect area, const char* label)
 : WinBase(pw, null, area.x, area.y, area.w, area.h, pw->bgcol, ++AbstractSpinnerAux::nextId),
   dlwTextField(this, Rect(0, 0, area.w - BUTTON_SIZE, area.h)),
-  btnInc (this, 0, Rect(area.w - BUTTON_SIZE, TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "+", handleAbstractSpinnerButtonPress),
-  btnDec (this, 0, Rect(area.w - BUTTON_SIZE, BUTTON_SIZE/2 + TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "-", handleAbstractSpinnerButtonPress)
+  btnInc (this, style, Rect(area.w - BUTTON_SIZE, TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "+", handleAbstractSpinnerButtonPress),
+  btnDec (this, style, Rect(area.w - BUTTON_SIZE, BUTTON_SIZE/2 + TDIST, BUTTON_SIZE, BUTTON_SIZE/2), "-", handleAbstractSpinnerButtonPress)
 {
 	if(label != null) this->dlwTextField.dialog_label(label);
+	if(style.param2 != 0) dlwTextField.bgcol = style.param2;
 	this->dlwTextField.cmd = handleAbstractSpinnerEnterKeyPress;
 	this->dlwTextField.cmd_id = this->id.id1;
 	AbstractSpinnerAux::references[this->id.id1] = this; //register kludge-type reference to this spinner
