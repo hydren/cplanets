@@ -17,6 +17,7 @@
 #include "label_win.hpp"
 #include "flow_layout.hpp"
 #include "drop_menu.hpp"
+#include "icon_button.hpp"
 
 namespace WidgetsExtra
 {
@@ -36,7 +37,7 @@ namespace WidgetsExtra
 
 		LabelWin lblCurrentDirectory;
 		CmdMenu cmdmCurrentDirectoryField;
-		Button btnGoHome;
+		IconButton btnGoHome;
 
 		LabelWin lblFilename;
 		DialogWin dlgwFilenameField;
