@@ -102,7 +102,7 @@ void DialogBgrWin::draw(BgrWin* bwSelf)
 	}
 	else
 	{
-		SDL_FillRect(self->win, &self->titleBarArea, self->style.param);
+		SDL_FillRect(self->win, &self->titleBarArea, calc_color(self->style.param));
 	}
 
 	draw_title_ttf->draw_string(self->win, self->titleStr.c_str(), Point(4, self->titleStrOffset));
