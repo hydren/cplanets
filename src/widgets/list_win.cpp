@@ -13,11 +13,13 @@ using WidgetsExtra::AbstractListWin;
 
 AbstractListWin::AbstractListWin(WinBase* parent, Style style, Rect rect, Id id)
 : BgrWin(parent, rect, null, drawBgrWinAsListWin, onMouseDown, onMouseMove, onMouseUp, calc_color(0xffffffff), id),
-  padding(1,1), spacing(1),
-  textRenderer(draw_ttf), textRendererCaseSelected(draw_blue_ttf),
-  bgcolCaseSelected(calc_color(0xffA0D0E0)),
+  style(style), padding(1,1), spacing(1),
+  textRenderer(null), textRendererCaseSelected(null),
   selection(), preventRedrawOnClick(false), enableScrollingIfScrollablePaneParent(true), lastClickedIndex(0)
-{}
+{
+	if(this->style.param == 0)
+		this->style.param = 0xffA0D0E0;
+}
 
 AbstractListWin::~AbstractListWin() {}
 
@@ -26,7 +28,8 @@ void AbstractListWin::draw()
 	this->init_gui();
 	SDL_FillRect(this->win, null, this->bgcol);
 
-	const unsigned lineHeight = TTF_FontHeight(this->textRenderer->ttf_font);
+	RenderText* textRenderer = getResolvedTextRenderer(), *textRendererCaseSelected = getResolvedTextRendererCaseSelected();
+	const unsigned lineHeight = TTF_FontHeight(textRenderer->ttf_font);
 
 	SDL_Rect selectedLineRect = SDL_Rect(); //area to draw selected item background
 	selectedLineRect.w = this->tw_area.w; selectedLineRect.h = lineHeight;
@@ -39,11 +42,11 @@ void AbstractListWin::draw()
 		if(selection.isSelected(index))
 		{
 			selectedLineRect.y = itemLocation.y;
-			SDL_FillRect(this->win, &selectedLineRect, bgcolCaseSelected);
-			this->textRendererCaseSelected->draw_string(this->win, itemStr.c_str(), itemLocation);
+			SDL_FillRect(this->win, &selectedLineRect, calc_color(style.param));
+			textRendererCaseSelected->draw_string(this->win, itemStr.c_str(), itemLocation);
 		}
 		else
-			this->textRenderer->draw_string(this->win, itemStr.c_str(), itemLocation);
+			textRenderer->draw_string(this->win, itemStr.c_str(), itemLocation);
 
 		itemLocation.y += lineHeight + this->spacing;
 	}
@@ -51,7 +54,8 @@ void AbstractListWin::draw()
 
 unsigned AbstractListWin::getListHeight()
 {
-	return this->padding.y + this->size() * (TTF_FontHeight(this->textRenderer->ttf_font) + this->spacing);
+	RenderText* textRenderer = getResolvedTextRenderer();
+	return this->padding.y + this->size() * (TTF_FontHeight(textRenderer->ttf_font) + this->spacing);
 }
 
 void AbstractListWin::clickList(const Point& point)
@@ -60,6 +64,7 @@ void AbstractListWin::clickList(const Point& point)
 	if(point.x < padding.x or point.y < padding.y or this->size() == 0) return;
 
 	//infer index by mouse position
+	RenderText* textRenderer = getResolvedTextRenderer();
 	unsigned index = (point.y - padding.y) / (TTF_FontHeight(textRenderer->ttf_font) + spacing);
 
 	//set selected item if inside range. if not, clear and leave
@@ -111,6 +116,32 @@ void AbstractListWin::onMouseDown(Point point, int buttonNumber)
 void AbstractListWin::onMouseMove(Point point, int buttonNumber) {}  // by default does nothing
 
 void AbstractListWin::onMouseUp(Point point, int buttonNumber) {}  // by default does nothing
+
+RenderText* AbstractListWin::getResolvedTextRenderer()
+{
+	if(this->textRenderer != null) return textRenderer;
+	else switch(this->style.st)
+	{
+		default:
+		case 0: return draw_ttf;
+		case 1: return draw_mono_ttf;
+		case 2: return draw_blue_ttf;
+		case 3: return draw_title_ttf;
+	}
+}
+
+RenderText* AbstractListWin::getResolvedTextRendererCaseSelected()
+{
+	if(this->textRendererCaseSelected != null) return textRendererCaseSelected;
+	else switch(this->style.param2)
+	{
+		default:
+		case 0: return draw_blue_ttf;
+		case 1: return draw_mono_ttf;
+		case 2: return draw_ttf;
+		case 3: return draw_title_ttf;
+	}
+}
 
 // ################# static functions to be used when referencing AbstractListWin's as a BgrWin's.  #################
 void AbstractListWin::drawBgrWinAsListWin(BgrWin* listWinAsBgrWin) 				{ static_cast<AbstractListWin*>(listWinAsBgrWin)->draw(); }

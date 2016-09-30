@@ -17,10 +17,10 @@ namespace WidgetsExtra
 {
 	struct AbstractListWin extends BgrWin
 	{
+		Style style;
 		Point padding;
 		unsigned spacing;
 		RenderText* textRenderer, *textRendererCaseSelected;
-		Uint32 bgcolCaseSelected;
 
 		ListSelectionModel selection;
 
@@ -50,6 +50,8 @@ namespace WidgetsExtra
 		virtual void onMouseDown(Point point, int buttonNumber);
 		virtual void onMouseMove(Point point, int buttonNumber); // by default does nothing
 		virtual void onMouseUp(Point point, int buttonNumber); // by default does nothing
+		inline RenderText* getResolvedTextRenderer();
+		inline RenderText* getResolvedTextRendererCaseSelected();
 
 		private:
 		//compatibility function (with BgrWin pointers)
