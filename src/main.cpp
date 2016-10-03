@@ -16,6 +16,7 @@
 
 #include "physics/solvers/built_in.hpp"
 #include "main_window.hpp"
+#include "SDL/SDL.h"
 
 #include "util.hpp"
 
