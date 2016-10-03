@@ -166,8 +166,7 @@ string colorThemeName;
 TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
-IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnRun, *btnPause, *btnAbout;
-FileDialog* dialogLoad, *dialogSave;
+IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnAbout, *btnRun, *btnPause;
 
 TabSet* tabs;
 
@@ -185,12 +184,12 @@ Spinner<long>* spnStepDelay;
 CheckBox* chckLegacyParameters;
 Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 CheckBox* chckBouncingOnCollision, *chckComputeRocheLimit;
-CheckBox* chckTraceOrbit;
-Spinner<unsigned>* spnTraceLength;
-DropDownMenu* ddmTraceStyle;
 LabelWin* lblBodyCreation;
 Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
 LabelWin* lblOrbitTracing;
+CheckBox* chckTraceOrbit;
+Spinner<unsigned>* spnTraceLength;
+DropDownMenu* ddmTraceStyle;
 
 PlanetariumPane* planetariumPane;
 Planetarium* planetarium; ///helper pointer
@@ -203,13 +202,15 @@ FlowLayout* toolbarSouthLayout;
 IconToogleButton* tgbTraceOrbit;
 IconButton* btnDoubleTraceLength, *btnHalveTraceLentgh;
 IconToogleButton* tgbAA;
+ValueShower* msgBodyCount;
 CheckBox* chckComputeEnergy;
-ValueShower* msgLogK, *msgLogP, *msgLogE, *msgBodyCount;
+ValueShower* msgLogK, *msgLogP, *msgLogE;
 
+FileDialog* dialogLoad, *dialogSave;
 
 DialogBgrWin* dialogAbout;
-ScrollablePane* sclpAboutLicense;
 Button* btnAboutOk;
+ScrollablePane* sclpAboutLicense;
 vector<string>* dialogAboutTextLines = null;
 
 
