@@ -9,6 +9,7 @@ CPP_SRCS += \
 ../src/widgets/drop_menu.cpp \
 ../src/widgets/file_dialog.cpp \
 ../src/widgets/flow_layout.cpp \
+../src/widgets/icon_button.cpp \
 ../src/widgets/label_win.cpp \
 ../src/widgets/list_selection_model.cpp \
 ../src/widgets/list_win.cpp \
@@ -27,6 +28,7 @@ OBJS += \
 ./src/widgets/drop_menu.o \
 ./src/widgets/file_dialog.o \
 ./src/widgets/flow_layout.o \
+./src/widgets/icon_button.o \
 ./src/widgets/label_win.o \
 ./src/widgets/list_selection_model.o \
 ./src/widgets/list_win.o \
@@ -45,6 +47,7 @@ CPP_DEPS += \
 ./src/widgets/drop_menu.d \
 ./src/widgets/file_dialog.d \
 ./src/widgets/flow_layout.d \
+./src/widgets/icon_button.d \
 ./src/widgets/label_win.d \
 ./src/widgets/list_selection_model.d \
 ./src/widgets/list_win.d \
