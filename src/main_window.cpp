@@ -123,6 +123,7 @@ SDL_Surface* loadImage(const char* path, const SDL_Color* transparentColor=null)
 
 SDL_Surface* resizeImage(SDL_Surface* surf, unsigned width, bool alsoFreeArg=false)
 {
+	if(surf == null) return null;
 	SDL_Surface* resized = rotozoomSurface(surf, 0, width/ (double) surf->w, true);
 	if(alsoFreeArg) SDL_FreeSurface(surf);
 	return resized;
