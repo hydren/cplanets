@@ -169,8 +169,7 @@ string colorThemeName;
 TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
-IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnRun, *btnPause, *btnAbout;
-FileDialog* dialogLoad, *dialogSave;
+IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnAbout, *btnRun, *btnPause;
 
 TabSet* tabs;
 
@@ -179,6 +178,7 @@ ListWin<Body2DClone>* txtBodies;
 ScrollablePane* sclpBodies;
 
 BgrWin* tabOptions;
+LabelWin* lblSimulationParameters;
 DropDownMenu* ddmIntegrationMethod;
 Spinner<double>* spnGravity, *spnGExp;
 Spinner<short>* spnFPS;
@@ -187,10 +187,12 @@ Spinner<long>* spnStepDelay;
 CheckBox* chckLegacyParameters;
 Spinner<long>* spnDisplayPeriod, *spnIterPerDisplay;
 CheckBox* chckBouncingOnCollision, *chckComputeRocheLimit;
+LabelWin* lblBodyCreation;
+Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
+LabelWin* lblOrbitTracing;
 CheckBox* chckTraceOrbit;
 Spinner<unsigned>* spnTraceLength;
 DropDownMenu* ddmTraceStyle;
-Spinner<double>* spnBodyDiameter, *spnBodyDensity, *spnBodyVelocity;
 
 PlanetariumPane* planetariumPane;
 Planetarium* planetarium; ///helper pointer
@@ -203,13 +205,15 @@ FlowLayout* toolbarSouthLayout;
 IconToogleButton* tgbTraceOrbit;
 IconButton* btnDoubleTraceLength, *btnHalveTraceLentgh;
 IconToogleButton* tgbAA;
+ValueShower* msgBodyCount;
 CheckBox* chckComputeEnergy;
-ValueShower* msgLogK, *msgLogP, *msgLogE, *msgBodyCount;
+ValueShower* msgLogK, *msgLogP, *msgLogE;
 
+FileDialog* dialogLoad, *dialogSave;
 
 DialogBgrWin* dialogAbout;
-ScrollablePane* sclpAboutLicense;
 Button* btnAboutOk;
+ScrollablePane* sclpAboutLicense;
 vector<string>* dialogAboutTextLines = null;
 
 
@@ -312,9 +316,9 @@ void CPlanets::init()
 	tabs->layout.pack();
 	tabs->setActiveTab(tabBodies);
 
-	LabelWin lblSimulationParameters(tabOptions, Rect(), "Simulation parameters");
-	lblSimulationParameters.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblSimulationParameters, WIDGETS_SPACING, WIDGETS_SPACING);
+	lblSimulationParameters = new LabelWin(tabOptions, Rect(), "Simulation parameters");
+	lblSimulationParameters->setTextRenderer(draw_title_ttf);
+	setComponentPosition(lblSimulationParameters, WIDGETS_SPACING, WIDGETS_SPACING);
 
 	DropDownMenuFactory factory;
 	factory.setAppearance(DropDownMenuFactory::COMBOBOX);
@@ -329,7 +333,7 @@ void CPlanets::init()
 	}
 	ddmIntegrationMethod = factory.createAt(tabOptions);
 	ddmIntegrationMethod->cmdMenu->src->label = Label(planetarium->physics->solver->factory->solverDisplayName.c_str());
-	ddmIntegrationMethod->setPosition(Point(lblSimulationParameters.area.x, lblSimulationParameters.area.y + lblSimulationParameters.tw_area.h + WIDGETS_SPACING));
+	ddmIntegrationMethod->setPosition(Point(lblSimulationParameters->area.x, lblSimulationParameters->area.y + lblSimulationParameters->tw_area.h + WIDGETS_SPACING));
 	ddmIntegrationMethod->offset.y = -10;
 
 	spnGravity = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,2.4*TOOLBAR_SIZE, TOOLBAR_SIZE), "Gravity:");
@@ -377,12 +381,12 @@ void CPlanets::init()
 	setComponentPosition(chckComputeRocheLimit, chckBouncingOnCollision->area.x, chckBouncingOnCollision->area.y + chckBouncingOnCollision->tw_area.h + WIDGETS_SPACING);
 	packLabeledComponent(chckComputeRocheLimit);
 
-	LabelWin lblBodyCreation(tabOptions, Rect(), "Body creation parameters");
-	lblBodyCreation.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblBodyCreation, chckComputeRocheLimit->area.x, chckComputeRocheLimit->area.y + chckComputeRocheLimit->tw_area.h + 1.8*WIDGETS_SPACING);
+	lblBodyCreation = new LabelWin(tabOptions, Rect(), "Body creation parameters");
+	lblBodyCreation->setTextRenderer(draw_title_ttf);
+	setComponentPosition(lblBodyCreation, chckComputeRocheLimit->area.x, chckComputeRocheLimit->area.y + chckComputeRocheLimit->tw_area.h + 1.8*WIDGETS_SPACING);
 
 	spnBodyDiameter = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,2.3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Diameter:");
-	setComponentPosition(spnBodyDiameter, lblBodyCreation.area.x, lblBodyCreation.area.y + lblBodyCreation.tw_area.h + WIDGETS_SPACING);
+	setComponentPosition(spnBodyDiameter, lblBodyCreation->area.x, lblBodyCreation->area.y + lblBodyCreation->tw_area.h + WIDGETS_SPACING);
 	spnBodyDiameter->setValue(&(planetarium->bodyCreationDiameterRatio), true);
 	spnBodyDiameter->setStepValue(0.1);
 
@@ -396,13 +400,13 @@ void CPlanets::init()
 	spnBodyVelocity->setValue(&(planetarium->bodyCreationSpeed), true);
 	spnBodyVelocity->setStepValue(0.1);
 
-	LabelWin lblOrbitTracing(tabOptions, Rect(), "Orbit tracing");
-	lblOrbitTracing.setTextRenderer(draw_title_ttf);
-	setComponentPosition(&lblOrbitTracing, spnBodyVelocity->area.x, spnBodyVelocity->area.y + spnBodyVelocity->tw_area.h + 1.6*WIDGETS_SPACING);
+	lblOrbitTracing = new LabelWin(tabOptions, Rect(), "Orbit tracing");
+	lblOrbitTracing->setTextRenderer(draw_title_ttf);
+	setComponentPosition(lblOrbitTracing, spnBodyVelocity->area.x, spnBodyVelocity->area.y + spnBodyVelocity->tw_area.h + 1.6*WIDGETS_SPACING);
 
 	chckTraceOrbit = new CheckBox(tabOptions, 0, genericButtonSize, "Show orbit trace", onCheckBoxPressed);
 	chckTraceOrbit->d = &(planetarium->getOrbitTracerSwitchReference());  // binds the checkbox to the variable
-	setComponentPosition(chckTraceOrbit, lblOrbitTracing.area.x, lblOrbitTracing.area.y + lblOrbitTracing.tw_area.h + 1.5*WIDGETS_SPACING);
+	setComponentPosition(chckTraceOrbit, lblOrbitTracing->area.x, lblOrbitTracing->area.y + lblOrbitTracing->tw_area.h + 1.5*WIDGETS_SPACING);
 	packLabeledComponent(chckTraceOrbit);
 
 	spnTraceLength = new Spinner<unsigned>(tabOptions, theme.buttonStyle, Rect(0, 0, 3*TOOLBAR_SIZE, TOOLBAR_SIZE), "Trace length:");
