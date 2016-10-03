@@ -85,6 +85,7 @@ void workaround_sdl_stream_file_close() // part of workaround
 //**********************************************************************************
 
 //  ============= FUNCTION PROTOTYPES ================
+void onSDLInit();
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
 void drawPlanetariumWithVersion(BgrWin* bgr);
@@ -110,7 +111,6 @@ void replaceUniverse(const Universe2D& universeCopy);
 void addRandomBody(bool orbiting=false);
 int keepAddingRandomBodyWhilePressed(void* unused);
 
-void onSDLInit();
 
 SDL_Surface* loadImage(const char* path, const SDL_Color* transparentColor=null)
 {
@@ -159,6 +159,7 @@ bool aux_isPressed_SDLK_r = false;
 
 //  ================ THEMES =================
 #include "themes.hxx"
+string colorThemeName;
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
@@ -209,7 +210,7 @@ vector<string>* dialogAboutTextLines = null;
 
 
 // ================ CPlanetsGUI::MainWindow namespace ================
-void CPlanets::showMainWindow()
+void CPlanets::init(const string& colorThemeName)
 {
 	Rect windowSize(0, 0, 640, 480);
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, onSDLInit);
@@ -221,7 +222,7 @@ void CPlanets::showMainWindow()
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
-	const Theme& theme = THEME_DEFAULT.init(); //todo choose according to cmd parameters
+	const Theme& theme = Theme::parseString(colorThemeName).init(); //todo choose according to cmd parameters
 
 	window->bgcol = theme.bgcol;
 
@@ -513,10 +514,10 @@ void CPlanets::showMainWindow()
 	setComponentPosition(btnAboutOk, 0.5*(400-btnAboutOk->tw_area.w), 300-btnAboutOk->tw_area.h-WIDGETS_SPACING);
 
 	Rect rectSclpAboutLicense(
-			WIDGETS_SPACING,
-			dialogAbout->titleBarArea.h + WIDGETS_SPACING,
-			400-2*WIDGETS_SPACING,
-			300-3*WIDGETS_SPACING-dialogAbout->titleBarArea.h-btnAboutOk->tw_area.h);
+		WIDGETS_SPACING,
+		dialogAbout->titleBarArea.h + WIDGETS_SPACING,
+		400-2*WIDGETS_SPACING,
+		300-3*WIDGETS_SPACING-dialogAbout->titleBarArea.h-btnAboutOk->tw_area.h);
 
 	sclpAboutLicense = new ScrollablePane(dialogAbout, theme.scrollStyle, rectSclpAboutLicense, window->bgcol);
 	sclpAboutLicense->content.display_cmd = drawAboutDialog;
@@ -525,13 +526,22 @@ void CPlanets::showMainWindow()
 //	print_h(); //DEBUG
 //	cout << "\n" << "Deep analysis:" << endl;
 //	WidgetsExtra::print_hierarchy(window);
+}
 
+void CPlanets::load(const string& filePath)
+{
+	//fixme implement this file load
+}
+
+void CPlanets::start()
+{
 	//start
 	planetarium->start();
 	get_events();
 	workaround_sdl_stream_file_close(); // part of workaround
 }
 
+//  ================ CALLBACK DEFINITIONS ================
 void onSDLInit()
 {
 	// workaround to reroute output stream to console
@@ -552,7 +562,6 @@ void onSDLInit()
 	}
 }
 
-//  ================ CALLBACK DEFINITIONS ================
 void draw()
 {
 	window->clear();

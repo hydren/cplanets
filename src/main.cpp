@@ -69,7 +69,8 @@ int main(int argc, char* argv[])
 	try
 	{
 		BuiltInSolvers::init();
-		CPlanets::showMainWindow();
+		CPlanets::init("default");
+		CPlanets::start();
 		return EXIT_SUCCESS;
 	}
 	catch (exception& e)

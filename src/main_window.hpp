@@ -15,8 +15,14 @@ extern const unsigned WIDGETS_SPACING;
 //contains all cplanets gui related stuff
 namespace CPlanets
 {
-	//show the main window and starts all its events treatments
-	void showMainWindow();
+	// loads all assets and constructs the program window.
+	void init(const std::string& colorThemeName="default");
+
+	// loads current file data to start the program with.
+	void load(const std::string& filePath);
+
+	// show window and starts all its events treatments.
+	void start();
 }
 
 #endif /* MAIN_WINDOW_HPP_ */
