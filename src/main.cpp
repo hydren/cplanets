@@ -5,6 +5,7 @@
  *      Author: Carlos Faruolo <5carlosfelipe5@gmail.com>
  */
 
+#include <ciso646>
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
@@ -15,7 +16,6 @@
 
 #include "physics/solvers/built_in.hpp"
 #include "main_window.hpp"
-#include "SDL_util.hpp"
 
 #include "util.hpp"
 
@@ -51,32 +51,14 @@ int main(int argc, char* argv[])
 		cout << CPLANETS_VERSION << endl;
 		return EXIT_SUCCESS;
 	}
-	else if(strncmp(argv[i], "--help", 7) == 0 or strncmp(argv[i], "-h", 3) == 0)
-	{
-		cout << "Use --version or -v to display version." << '\n';
-		cout << "Use --centered or -c to start cplanets centered." << '\n';
-		cout << "Use --help or -h to show this help." << '\n';
-		cout << endl;
-		return EXIT_SUCCESS;
-	}
-
-	// load program arguments
-	for(int i = 1; i < argc; i++)
-	{
-		string argstr = string(argv[i]);
-
-		if(argstr == "--centered" or argstr == "-c")
-			SDL_util::preloadCentered();
-
-		else cout << "Unrecognized argument: " << argstr << endl;
-	}
 
 	srand(time(null));
 
 	try
 	{
 		BuiltInSolvers::init();
-		CPlanets::init("default");
+		CPlanets::parseCmdArgs(argc, argv);
+		CPlanets::init();
 		CPlanets::start();
 		return EXIT_SUCCESS;
 	}

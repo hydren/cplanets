@@ -15,8 +15,10 @@ extern const unsigned WIDGETS_SPACING;
 //contains all cplanets gui related stuff
 namespace CPlanets
 {
+	void parseCmdArgs(int argc, char* argv[]);
+
 	// loads all assets and constructs the program window.
-	void init(const std::string& colorThemeName="default");
+	void init();
 
 	// loads current file data to start the program with.
 	void load(const std::string& filePath);

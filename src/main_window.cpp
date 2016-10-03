@@ -158,11 +158,14 @@ CustomListener customListener;
 RenderText* draw_light_ttf;
 bool aux_isPressed_SDLK_r = false;
 
-//  ================ THEMES =================
+//  ================ THEMES ==================
 #include "themes.hxx"
 string colorThemeName;
 
-//  ================ COMPONENTS ================
+//  ======= COMMAND-LINE ARGS PARSER =========
+#include "cli.hxx"
+
+//  ============== COMPONENTS ================
 TopWin* window; // The program window
 
 FlowLayout* toolbarNorthLayout;
@@ -211,7 +214,7 @@ vector<string>* dialogAboutTextLines = null;
 
 
 // ================ CPlanetsGUI::MainWindow namespace ================
-void CPlanets::init(const string& colorThemeName)
+void CPlanets::init()
 {
 	Rect windowSize(0, 0, 640, 480);
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, onSDLInit);
@@ -223,8 +226,7 @@ void CPlanets::init(const string& colorThemeName)
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
-	const Theme& theme = Theme::parseString(colorThemeName).init(); //todo choose according to cmd parameters
-
+	const Theme& theme = Theme::parseString(colorThemeName)->init();
 	window->bgcol = theme.bgcol;
 
 	LabeledComponentPacker packer(TOOLBAR_SIZE-2*WIDGETS_SPACING);
