@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <ctime>
+#include <cstring>
 
 #include <string>
 #include <iostream>
@@ -44,27 +45,33 @@ const string CPLANETS_LICENSE =
 
 int main(int argc, char* argv[])
 {
-	srand(time(null));
+	for(int i = 1; i < argc; i++)
+	if(strncmp(argv[i], "--version", 10) == 0 or strncmp(argv[i], "-v", 3) == 0)
+	{
+		cout << CPLANETS_VERSION << endl;
+		return EXIT_SUCCESS;
+	}
+	else if(strncmp(argv[i], "--help", 7) == 0 or strncmp(argv[i], "-h", 3) == 0)
+	{
+		cout << "Use --version or -v to display version." << '\n';
+		cout << "Use --centered or -c to start cplanets centered." << '\n';
+		cout << "Use --help or -h to show this help." << '\n';
+		cout << endl;
+		return EXIT_SUCCESS;
+	}
 
+	// load program arguments
 	for(int i = 1; i < argc; i++)
 	{
-		if(string(argv[i]) == "--version" or string(argv[i]) == "-v")
-		{
-			cout << CPLANETS_VERSION << endl;
-			return EXIT_SUCCESS;
-		}
+		string argstr = string(argv[i]);
 
-		if(string(argv[i]) == "--help" or string(argv[i]) == "-h")
-		{
-			cout << "Use --version or -v to display version. \nUse --centered or -c to start cplanets centered. \nUse --help or -h to show this help." << endl;
-			return EXIT_SUCCESS;
-		}
-
-		else if(string(argv[i]) == "--centered" or string(argv[i]) == "-c")
+		if(argstr == "--centered" or argstr == "-c")
 			SDL_util::preloadCentered();
 
-		else cout << "Unrecognized argument: " << argv[i] << endl;
+		else cout << "Unrecognized argument: " << argstr << endl;
 	}
+
+	srand(time(null));
 
 	try
 	{
