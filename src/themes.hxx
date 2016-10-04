@@ -86,7 +86,16 @@ struct Theme
 		create_theme("win-6.2", available["win-10.0"]);
 		create_theme("win-6.3", available["win-10.0"]);
 
-		create_theme("default", available["asteria"]);
+		// decide the default theme based on executable target
+		#if defined(_WIN32)
+			create_theme("default", available["win-6.1"]);
+		#elif defined(__APPLE__)
+			create_theme("default", available["osx-10.5"])
+		#elif defined(__linux)
+			create_theme("default", available["clearlooks"]);
+		#else
+			create_theme("default", available["classic"]);
+		#endif
 	}
 
 	public:
