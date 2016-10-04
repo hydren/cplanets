@@ -975,6 +975,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog)
 		ApplicationIO::save(planetarium->physics->universe, dialog->selectedFilename);
 	}
 	onButtonPressed(btnRun);
+	SDL_WM_SetCaption("cplanets", "cplanets"); //todo maybe put filename on title
 }
 
 void onUserEvent(int cmd,int param,int param2)
