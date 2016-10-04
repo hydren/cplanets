@@ -45,6 +45,7 @@ const string CPLANETS_LICENSE =
 
 int main(int argc, char* argv[])
 {
+	// quick execution modes
 	for(int i = 1; i < argc; i++)
 	if(strncmp(argv[i], "--version", 10) == 0 or strncmp(argv[i], "-v", 3) == 0)
 	{
@@ -60,6 +61,8 @@ int main(int argc, char* argv[])
 		return EXIT_SUCCESS;
 	}
 
+	string colorTheme = "default";
+
 	// load program arguments
 	for(int i = 1; i < argc; i++)
 	{
@@ -67,6 +70,19 @@ int main(int argc, char* argv[])
 
 		if(argstr == "--centered" or argstr == "-c")
 			SDL_util::preloadCentered();
+
+		if(argstr == "--color-theme" or argstr == "-t")
+		{
+			if(i + 1 < argc)
+			{
+				colorTheme = string(argv[i+1]);
+				i++;
+			}
+			else
+			{
+				cout << "Missing argument for " << argstr << endl;
+			}
+		}
 
 		else cout << "Unrecognized argument: " << argstr << endl;
 	}
@@ -76,7 +92,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		BuiltInSolvers::init();
-		CPlanets::init("default");
+		CPlanets::init(colorTheme);
 		CPlanets::start();
 		return EXIT_SUCCESS;
 	}
