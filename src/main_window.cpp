@@ -552,11 +552,6 @@ void CPlanets::init()
 //	WidgetsExtra::print_hierarchy(window);
 }
 
-void CPlanets::load(const string& filePath)
-{
-	//fixme implement this file load
-}
-
 void CPlanets::start()
 {
 	//start

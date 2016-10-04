@@ -10,8 +10,6 @@
 
 #include "version.h"
 
-#include <string>
-
 extern const unsigned WIDGETS_SPACING;
 
 //contains all cplanets gui related stuff
@@ -22,9 +20,6 @@ namespace CPlanets
 
 	// loads all assets and constructs the program window.
 	void init();
-
-	// loads current file data to start the program with.
-	void load(const std::string& filePath);
 
 	// show window and starts all its events treatments.
 	void start();
