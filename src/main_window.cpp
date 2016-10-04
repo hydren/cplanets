@@ -18,6 +18,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <stdexcept>
 
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_rotozoom.h>
@@ -116,6 +117,7 @@ void txtBodiesUpdateSize();
 
 void dialogAboutAdjust();
 void dialogAboutCloseBtnCallback(Button* btn);
+void loadUniverseFromFile(const string& path);
 void replaceUniverse(const Universe2D& universeCopy);
 void addRandomBody(bool orbiting=false);
 
@@ -295,6 +297,8 @@ void CPlanets::init()
 	planetariumPane = new PlanetariumPane(window, planetariumSize, PLANETARIUM_ID);
 	planetariumPane->display_cmd = drawPlanetariumWithVersion;
 	planetarium = planetariumPane->planetarium;
+	if(not filePathToLoad.empty()) try { loadUniverseFromFile(filePathToLoad); }
+	catch (std::exception& e) { cout << "A problem occurred when loading file. " << e.what() << endl; }
 	planetarium->listeners.addListener(&customListener);
 	planetarium->physics->universe.gravity = DEFAULT_GRAVITY;
 
@@ -950,20 +954,16 @@ void onFileChosenOpenUniverse(FileDialog* dialog)
 {
 	if(not dialog->selectedFilename.empty())
 	{
-		if(FileInputStream(dialog->selectedFilename.c_str()).good())
+		try
 		{
-			Universe2D* u = ApplicationIO::load(string(dialog->selectedFilename.c_str()), ApplicationIO::FORMAT_DEFAULT);
-
-			if(u != null)
-			{
-				replaceUniverse(*u);
-				delete u; //after copied, we don't need it
-			}
-
-			else alert("Invalid file!");
+			loadUniverseFromFile(dialog->selectedFilename);
 		}
-		else alert("File doesn't exist or isn't readable.");
+		catch (std::exception& e)
+		{
+			alert(e.what());
+		}
 	}
+	onButtonPressed(btnRun); // todo make this optional
 	SDL_WM_SetCaption("cplanets", "cplanets"); //todo maybe put filename on title
 }
 
@@ -1089,24 +1089,48 @@ void dialogAboutCloseBtnCallback(Button* btn)
 		self->onClosedCallback(self);
 }
 
+void loadUniverseFromFile(const string& path)  // throws std::runtime_error
+{
+	if(FileInputStream(path.c_str()).good())
+	{
+		Universe2D* u = ApplicationIO::load(path, ApplicationIO::FORMAT_DEFAULT);
+
+		if(u != null)
+		{
+			replaceUniverse(*u);
+			delete u; //after copied, we don't need it
+		}
+
+		else throw std::runtime_error("Invalid file: " + path);
+	}
+	else throw std::runtime_error("File doesn't exist or isn't readable: " + path);
+}
+
 void replaceUniverse(const Universe2D& universeCopy)
 {
-	if(sdl_running) onButtonPressed(btnPause);
+	if(not sdl_running)
+	{
+		planetarium->setUniverse(universeCopy);
+		return;
+	}
+
+	onButtonPressed(btnPause);
 
 	planetarium->setUniverse(universeCopy);
-	spnGravity->setValue(&(planetarium->physics->universe.gravity)); // updating reference
-	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
-	spnGExp->setValue(&(planetarium->physics->universe.gExp));
 
-	if(sdl_running)
-	{
-		spnGravity->refresh();
-		spnTimeStep->refresh();
-		spnGExp->refresh();
-		txtBodiesRefreshAll();
-		tabOptions->draw_blit_recur();
-		onButtonPressed(btnRun);
-	}
+	spnGravity->setValue(&(planetarium->physics->universe.gravity)); // updating reference
+	spnGravity->refresh();
+
+	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
+	spnTimeStep->refresh();
+
+	spnGExp->setValue(&(planetarium->physics->universe.gExp));
+	spnGExp->refresh();
+
+	txtBodiesRefreshAll();
+	tabOptions->draw_blit_recur();
+
+	onButtonPressed(btnRun);
 }
 
 void addRandomBody(bool orbiting)
