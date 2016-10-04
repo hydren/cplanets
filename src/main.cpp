@@ -68,10 +68,12 @@ int main(int argc, char* argv[])
 	{
 		string argstr = string(argv[i]);
 
-		if(argstr == "--centered" or argstr == "-c")
+		if(argstr.empty()) continue;
+
+		else if(argstr == "--centered" or argstr == "-c")
 			SDL_util::preloadCentered();
 
-		if(argstr == "--color-theme" or argstr == "-t")
+		else if(argstr == "--color-theme" or argstr == "-t")
 		{
 			if(i + 1 < argc)
 			{
