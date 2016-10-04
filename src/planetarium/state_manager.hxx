@@ -304,7 +304,7 @@ struct Planetarium::StateManager
 	{
 		while(not changes.empty())
 		{
-			purgeAsUndone(changes.back());
+			purgeAsForgotten(changes.back());
 			changes.pop_back(); //stack pop
 		}
 		nonMergeChangesCount = 0;
