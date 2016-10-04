@@ -239,7 +239,7 @@ void CPlanets::init()
 	handle_rsev = onWindowResize; //set callback for window resize
 	handle_kev = onKeyEvent; //set callback for keyboard events
 	handle_uev = onUserEvent;
-	VERSION_TEXT ="v"+CPLANETS_VERSION;
+	VERSION_TEXT = string("v").append(CPLANETS_VERSION);
 	APP_LOGO = resizeImage(loadImage("data/icon.png"), 40, true);
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
@@ -530,7 +530,7 @@ void CPlanets::init()
 	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes, theme.dialogStyle, theme.buttonStyle);
 	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes, theme.dialogStyle, theme.buttonStyle);
 
-	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE;
+	FULL_ABOUT_TEXT = string("This program is inspired by Yaron Minsky's \"planets\" program.\n\n").append(CPLANETS_LICENSE);
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", null, theme.dialogStyle);
 
 	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", dialogAboutCloseBtnCallback);
@@ -612,8 +612,9 @@ void drawAboutDialog(BgrWin* bw)
 
 	const int lineHeight = TTF_FontHeight(draw_ttf->ttf_font);
 
+	static const string versionStr = string("Version ").append(CPLANETS_VERSION);
 	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING));
-	draw_title_ttf->draw_string(dialog->win, ("Version " + CPLANETS_VERSION).c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + lineHeight));
+	draw_title_ttf->draw_string(dialog->win, versionStr.c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + lineHeight));
 
 	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2.25;
 
@@ -626,7 +627,7 @@ void drawAboutDialog(BgrWin* bw)
 
 void drawPlanetariumWithVersion(BgrWin* bgr)
 {
-	static const string label = "v" + CPLANETS_VERSION;
+	static const string label = string("v") + CPLANETS_VERSION;
 	const Point labelPos(bgr->tw_area.w - draw_light_ttf->text_width(label.c_str()), bgr->tw_area.h - TTF_FontHeight(draw_light_ttf->ttf_font));
 	PlanetariumPane::drawPlanetarium(bgr);
 	draw_light_ttf->draw_string(bgr->win, label.c_str(), labelPos);

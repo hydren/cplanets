@@ -17,16 +17,16 @@
 #include "main_window.hpp"
 #include "SDL/SDL.h"  // this include is needed here for win32 compatibility
 
-#include "util.hpp"
+#include "version.h"
 
 using std::string;
 using std::exception;
 using std::cout;
 using std::endl;
 
-const string CPLANETS_VERSION = "0.9.5-beta";
+const char* CPLANETS_VERSION = "0.9.5-beta";
 
-const string CPLANETS_LICENSE =
+const char* CPLANETS_LICENSE =
 		"Copyright (C) 2016 Carlos F. M. Faruolo\n"
 		"E-mail: 5carlosfelipe5@gmail.com\n\n"
 

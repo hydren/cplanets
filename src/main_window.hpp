@@ -8,7 +8,7 @@
 #ifndef MAIN_WINDOW_HPP_
 #define MAIN_WINDOW_HPP_
 
-#include "util.hpp"
+#include "version.h"
 
 extern const unsigned WIDGETS_SPACING;
 
