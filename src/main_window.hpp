@@ -10,8 +10,6 @@
 
 #include "version.h"
 
-extern const unsigned WIDGETS_SPACING;
-
 //contains all cplanets gui related stuff
 namespace CPlanets
 {
