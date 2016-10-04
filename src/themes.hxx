@@ -8,6 +8,9 @@
 //  ================ THEMES =================
 
 #include "futil/string/actions.hpp"
+#include "futil/collection/map_actions.hpp"
+#include <map>
+using std::map;
 
 struct Theme
 {
@@ -28,80 +31,48 @@ struct Theme
 	  bgcol(bgCol), ready(false)
 	{}
 
-	const Theme& init() const;
-	static const Theme& parseString(string str);
+	const Theme& init() const
+	{
+		if(not ready)
+		{
+			Theme& self = const_cast<Theme&>(*this);
+			self.bgcol = calc_color(bgcol);
+			self.ready = true;
+		}
+		return *this;
+	}
+
+	static map<string, const Theme*> available;
+	static void loadAvailableThemes()
+	{
+		//uses default SDL_widgets colors
+		available["classic"] = new Theme();
+
+		available["default"] = new Theme(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0x39698A, 4),	0xDAE7E8);
+
+		// default colors-focused themes
+		available["blue"] = new Theme(Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), 			0xBEDEEE);
+		available["grey"] = new Theme(Style(0, 1), Style(0, 1), Style(0, 1), Style(1, 0), Style(0, 0xE0E0E0, 2),	0xE0E0E0);
+		available["gray"] = available["grey"];
+		available["green"] = new Theme(Style(0, 1), Style(0, 2), Style(0, 2), Style(1, 0), Style(0, 0xA8DCA8, 2),	0xA8DCA8);
+		available["wheat"] = new Theme(Style(0, 1), Style(0, 3), Style(0, 3), Style(1, 0), Style(0, 0xD8D8C0, 2),	0xD8D8C0);
+		available["rose"] = new Theme(Style(0, 1), Style(0, 4), Style(0, 4), Style(1, 0), Style(0, 0xF5C9D0, 2),	0xF5C9D0);
+
+		available["clearlooks"] = new Theme(Style(0, 1), Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0x86ABD9, 4),	0xF2F1F0);
+		available["gtk"] = available["clearlooks"];
+
+		available["redmond"] = new Theme(Style(0, 1), Style(0, 1), Style(0, 1), Style(1, 0), Style(0, 0x000080, 4),	0xBDBDBD);
+		available["win-5.1"] = new Theme(Style(0, 1), Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0x326BC5, 4),	0xECE9D8);
+		available["win-6.1"] = new Theme(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0xB2CCEC, 4),	0xEDEDED);
+		available["win-6.0"] = available["win-6.1"];
+		available["win-10.0"] = new Theme(Style(0, 1), Style(0, 1), Style(1, 0x52B5FF), Style(1, 0), Style(0, 0x52B5FF, 4),	0xFAFAFA);
+	}
+
+	static const Theme* parseString(const string& str)
+	{
+		if(available.empty()) loadAvailableThemes();
+		return coalesce(available, to_lower(trim(str)), available["default"]);
+	}
 };
 
-const Theme
-// 					button, toolbar-button, dialog-title-bar, scrollbar, list win, background-color
-
-	// default colors-focused themes
-	THEME_BLUE		(Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), 			0xBEDEEE),
-	THEME_GREY		(Style(0, 1), Style(0, 1), Style(0, 1), Style(1, 0), Style(0, 0xE0E0E0, 2),	0xE0E0E0),
-	THEME_GREEN		(Style(0, 1), Style(0, 2), Style(0, 2), Style(1, 0), Style(0, 0xA8DCA8, 2),	0xA8DCA8),
-	THEME_WHEAT		(Style(0, 1), Style(0, 3), Style(0, 3), Style(1, 0), Style(0, 0xD8D8C0, 2),	0xD8D8C0),
-	THEME_ROSE		(Style(0, 1), Style(0, 4), Style(0, 4), Style(1, 0), Style(0, 0xF5C9D0, 2),	0xF5C9D0),
-
-	THEME_CLEARLOOKS(Style(0, 1), Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0x86ABD9, 4),	0xF2F1F0),
-	THEME_GTK(THEME_CLEARLOOKS),
-
-	THEME_REDMOND	(Style(0, 1), Style(0, 1), Style(0, 1), Style(1, 0), Style(0, 0x000080, 4),	0xBDBDBD),
-	THEME_WIN_5_1	(Style(0, 1), Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0x326BC5, 4),	0xECE9D8),
-	THEME_WIN_6_1	(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0xB2CCEC, 4),	0xEDEDED),
-	THEME_WIN_10_0	(Style(0, 1), Style(0, 1), Style(1, 0x52B5FF), Style(1, 0), Style(0, 0x52B5FF, 4),	0xFAFAFA),
-
-	THEME_CLASSIC, //uses default SDL_widgets colors
-
-	THEME_DEFAULT	(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0x39698A, 4),	0xDAE7E8);
-
-const Theme& Theme::init() const
-{
-	if(not ready)
-	{
-		Theme& self = const_cast<Theme&>(*this);
-		self.bgcol = calc_color(bgcol);
-		self.ready = true;
-	}
-	return *this;
-}
-
-const Theme& Theme::parseString(string str)
-{
-	str = to_lower(trim(str));
-	if(str.empty()) return THEME_DEFAULT;
-
-	else if(str == "classic") return THEME_CLASSIC;
-	else if(str == "blue") return THEME_BLUE;
-	else if(str == "grey" or str == "gray") return THEME_GREY;
-	else if(str == "green") return THEME_GREEN;
-
-	else return THEME_DEFAULT;
-}
-
-//old code
-//void initThemes()
-//{
-//	theme
-//	theme["default"] = Theme();
-//	theme["classic"] = Style();
-//
-//	theme["blue"] = Style(0, 0);
-//	theme["grey"] = Style(0, 1);
-//	theme["green"] = Style(0, 2);
-//	theme["wheat"] = Style(0, 3);
-//	theme["rose"] = Style(0, 4);
-//
-//	theme["clearlooks"] = theme["gtk"] = theme["gtk+"] = Style(0, 1);
-//
-//	theme["clearlooks"] = Style(0, 1);
-//
-//	theme["win-4.10"] = theme["win-4.0"] = Style(0, 3);
-//	theme["win-4.90"] = Style(0, 1);
-//
-//	theme["win-5.1"] = Style(0, 1);
-//	theme["win-6.0"] = Style(0, 1);
-//	theme["win-6.1"] = Style(0, 1);
-//
-//	theme["win-6.2"] = theme["win-6.3"] = Style(0, 1);
-//	theme["win-10.0"] = Style(0, 1);
-//}
+map<string, const Theme*> Theme::available;

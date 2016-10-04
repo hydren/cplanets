@@ -227,7 +227,7 @@ void CPlanets::init(const string& colorThemeName)
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
-	const Theme& theme = Theme::parseString(colorThemeName).init(); //todo choose according to cmd parameters
+	const Theme& theme = Theme::parseString(colorThemeName)->init(); //todo choose according to cmd parameters
 
 	window->bgcol = theme.bgcol;
 
