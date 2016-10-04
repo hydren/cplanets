@@ -48,8 +48,6 @@ struct Theme
 		//uses default SDL_widgets colors
 		available["classic"] = new Theme();
 
-		available["default"] = new Theme(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0x39698A, 4),	0xDAE7E8);
-
 		// default colors-focused themes
 		available["blue"] = new Theme(Style(0, 1), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), 			0xBEDEEE);
 		available["grey"] = new Theme(Style(0, 1), Style(0, 1), Style(0, 1), Style(1, 0), Style(0, 0xE0E0E0, 2),	0xE0E0E0);
@@ -66,6 +64,10 @@ struct Theme
 		available["win-6.1"] = new Theme(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0xB2CCEC, 4),	0xEDEDED);
 		available["win-6.0"] = available["win-6.1"];
 		available["win-10.0"] = new Theme(Style(0, 1), Style(0, 1), Style(1, 0x52B5FF), Style(1, 0), Style(0, 0x52B5FF, 4),	0xFAFAFA);
+
+		available["asteria"] = new Theme(Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0), Style(0, 0x39698A, 4),	0xDAE7E8);
+
+		available["default"] = available["asteria"];
 	}
 
 	static const Theme* parseString(const string& str)
