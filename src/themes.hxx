@@ -81,9 +81,14 @@ struct Theme
 	static const Theme& getThemeByName(const string& str)
 	{
 		if(available.empty()) loadAvailableThemes();
-		map<string, const Theme>::iterator result = available.lower_bound(str);
-		if(result != available.end()) return result->second;
-		else return available["default"];
+		if(not str.empty())
+		{
+			map<string, const Theme>::iterator result = available.lower_bound(str);
+			if(result != available.end())
+				return result->second;
+		}
+
+		return available["default"];
 	}
 };
 
