@@ -87,31 +87,42 @@ void workaround_sdl_stream_file_close() // part of workaround
 
 //  ============= FUNCTION PROTOTYPES ================
 void onSDLInit();
+
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
 void drawPlanetariumWithVersion(BgrWin* bgr);
+
+// widgets calbacks
 void onWindowResize(int dw, int dh); // callback for window resizing events
 void onKeyEvent(SDL_keysym *key,bool down);
 void onButtonPressed(Button* btn);
 void onCheckBoxPressed(CheckBox* chck);
 void onCheckBoxPressed(CheckBox* chck, bool fake);
 void onDropDownMenuButton(RButWin*,int nr,int fire);
-void onUserEvent(int cmd,int param,int param2);
 
 void onFileChosenOpenUniverse(FileDialog* dialog);
 void onFileChosenSaveUniverse(FileDialog* dialog);
 
-void refreshAllTxtBodies();
-void updateSizeTxtBodies();
+void onUserEvent(int cmd,int param,int param2);
+
+// planetarium callbacks
 void onListSelectionChanged(unsigned, unsigned);
 void onBodyReFocus();
 void onBodyDeletion(Body2D* deletedBodyPtr);
-void adjustAboutDialog();
-void closeDialogBgrWin(Button* btn);
+
+// actions
+void txtBodiesRefreshAll();
+void txtBodiesUpdateSize();
+
+void dialogAboutAdjust();
+void dialogAboutCloseBtnCallback(Button* btn);
 void replaceUniverse(const Universe2D& universeCopy);
 void addRandomBody(bool orbiting=false);
+
+// thread functions
 int keepAddingRandomBodyWhilePressed(void* unused);
 
+// ============= AUX. FUNCTION ================
 
 SDL_Surface* loadImage(const char* path, const SDL_Color* transparentColor=null)
 {
@@ -134,8 +145,8 @@ SDL_Surface* resizeImage(SDL_Surface* surf, unsigned width, bool alsoFreeArg=fal
 
 struct CustomListener extends Planetarium::UniverseEventListener, WidgetsExtra::ListSelectionModel::Listener
 {
-	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { refreshAllTxtBodies(); }
-	void onBodyCreation(Body2D& createdBody) { refreshAllTxtBodies(); }
+	void onBodyCollision(vector<Body2D>& collidingList, Body2D& resultingMerger) { txtBodiesRefreshAll(); }
+	void onBodyCreation(Body2D& createdBody) { txtBodiesRefreshAll(); }
 	void onBodyDeletion(Body2D* deletedBody) { ::onBodyDeletion(deletedBody); }
 	void onBodyReFocus(){ ::onBodyReFocus(); }
 	void onChange(unsigned index, unsigned endIndex) { onListSelectionChanged(index, endIndex); }
@@ -518,7 +529,7 @@ void CPlanets::init()
 	FULL_ABOUT_TEXT = "This program is inspired by Yaron Minsky's \"planets\" program.\n\n" + CPLANETS_LICENSE;
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", null, theme.dialogStyle);
 
-	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", closeDialogBgrWin);
+	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", dialogAboutCloseBtnCallback);
 	packLabeledComponent(btnAboutOk);
 	setComponentPosition(btnAboutOk, 0.5*(400-btnAboutOk->tw_area.w), 300-btnAboutOk->tw_area.h-WIDGETS_SPACING);
 
@@ -628,7 +639,7 @@ void onWindowResize(int dw, int dh)
 
 	tabs->widenAll(0, dh);
 	sclpBodies->widen(0, dh);
-	updateSizeTxtBodies();
+	txtBodiesUpdateSize();
 
 	toolbarRight->position.x += dw;
 	toolbarRight->pack();
@@ -720,7 +731,7 @@ void onButtonPressed(Button* btn)
 {
 	if(btn == btnAbout)
 	{
-		adjustAboutDialog();
+		dialogAboutAdjust();
 		setComponentPosition(dialogAbout, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogAbout->setVisible(dialogAbout->parent==null || dialogAbout->hidden);
 	}
@@ -810,7 +821,6 @@ void onButtonPressed(Button* btn)
 		Universe2D emptyUniverse;
 		emptyUniverse.gravity = DEFAULT_GRAVITY;
 		replaceUniverse(emptyUniverse);
-		onButtonPressed(btnRun);
 	}
 
 	//fixme there's got to be a better way to avoid file_chooser behind FileDialog bug
@@ -936,30 +946,6 @@ void onDropDownMenuButton(RButWin* btn, int nr, int fire)
 	}
 }
 
-void onUserEvent(int cmd,int param,int param2)
-{
-	if(cmd == PlanetariumPane::USER_EVENT_ID__REDRAW_REQUESTED)
-	{
-		if(param == planetariumPane->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
-		{
-			planetariumPane->doRefresh();
-			if(planetarium->physics->systemEnergyComputingEnabled)
-			{
-				msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
-				msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
-				msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
-			}
-			msgBodyCount->draw_mes("%u", planetarium->physics->bodyCount);
-		}
-	}
-
-	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
-	{
-		updateSizeTxtBodies();
-		sclpBodies->refresh();
-	}
-}
-
 void onFileChosenOpenUniverse(FileDialog* dialog)
 {
 	if(not dialog->selectedFilename.empty())
@@ -979,7 +965,6 @@ void onFileChosenOpenUniverse(FileDialog* dialog)
 		else alert("File doesn't exist or isn't readable.");
 	}
 	SDL_WM_SetCaption("cplanets", "cplanets"); //todo maybe put filename on title
-	onButtonPressed(btnRun);
 }
 
 void onFileChosenSaveUniverse(FileDialog* dialog)
@@ -992,23 +977,27 @@ void onFileChosenSaveUniverse(FileDialog* dialog)
 	onButtonPressed(btnRun);
 }
 
-void refreshAllTxtBodies()
+void onUserEvent(int cmd,int param,int param2)
 {
-	txtBodies->setListData(new vector<Body2DClone>(planetarium->getBodies()), true);
-	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
-}
-
-void updateSizeTxtBodies()
-{
-	unsigned height2 = sclpBodies->tw_area.h;
-
-	if(txtBodies->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
-		height2 = max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
-
-	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
+	if(cmd == PlanetariumPane::USER_EVENT_ID__REDRAW_REQUESTED)
 	{
-		txtBodies->widen(0, height2 - txtBodies->tw_area.h);
-		sclpBodies->widenContent(0, height2 - sclpBodies->content.tw_area.h);
+		if(param == planetariumPane->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
+		{
+			planetariumPane->doRefresh();
+			if(planetarium->physics->systemEnergyComputingEnabled)
+			{
+				msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
+				msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
+				msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
+			}
+			msgBodyCount->draw_mes("%u", planetarium->physics->bodyCount);
+		}
+	}
+
+	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
+	{
+		txtBodiesUpdateSize();
+		sclpBodies->refresh();
 	}
 }
 
@@ -1048,12 +1037,32 @@ void onBodyDeletion(Body2D* deletedBodyPtr)
 	foreach(Body2DClone&, b, vector<Body2DClone>, *data)
 		if(b.original == deletedBodyPtr)
 		{
-			refreshAllTxtBodies();
+			txtBodiesRefreshAll();
 			return;
 		}
 }
 
-void adjustAboutDialog()
+void txtBodiesRefreshAll()
+{
+	txtBodies->setListData(new vector<Body2DClone>(planetarium->getBodies()), true);
+	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
+}
+
+void txtBodiesUpdateSize()
+{
+	unsigned height2 = sclpBodies->tw_area.h;
+
+	if(txtBodies->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
+		height2 = max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
+
+	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
+	{
+		txtBodies->widen(0, height2 - txtBodies->tw_area.h);
+		sclpBodies->widenContent(0, height2 - sclpBodies->content.tw_area.h);
+	}
+}
+
+void dialogAboutAdjust()
 {
 	if(dialogAboutTextLines == null)
 		dialogAboutTextLines = WidgetsExtra::getLineWrappedText(FULL_ABOUT_TEXT, draw_ttf, sclpAboutLicense->content.tw_area.w - 3*WIDGETS_SPACING);
@@ -1071,7 +1080,7 @@ void adjustAboutDialog()
 	}
 }
 
-void closeDialogBgrWin(Button* btn)
+void dialogAboutCloseBtnCallback(Button* btn)
 {
 	DialogBgrWin* self = static_cast<DialogBgrWin*>(btn->parent);
 	self->setVisible(false);
@@ -1081,16 +1090,22 @@ void closeDialogBgrWin(Button* btn)
 
 void replaceUniverse(const Universe2D& universeCopy)
 {
-	onButtonPressed(btnPause);
+	if(sdl_running) onButtonPressed(btnPause);
+
 	planetarium->setUniverse(universeCopy);
 	spnGravity->setValue(&(planetarium->physics->universe.gravity)); // updating reference
-	spnGravity->refresh();
 	spnTimeStep->setValue(&(planetarium->physics->solver->timestep)); // updating reference as solver have changed
-	spnTimeStep->refresh();
 	spnGExp->setValue(&(planetarium->physics->universe.gExp));
-	spnGExp->refresh();
-	refreshAllTxtBodies();
-	tabOptions->draw_blit_recur();
+
+	if(sdl_running)
+	{
+		spnGravity->refresh();
+		spnTimeStep->refresh();
+		spnGExp->refresh();
+		txtBodiesRefreshAll();
+		tabOptions->draw_blit_recur();
+		onButtonPressed(btnRun);
+	}
 }
 
 void addRandomBody(bool orbiting)
