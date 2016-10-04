@@ -4,6 +4,7 @@
  *  Created on: 8 de jan de 2016
  *      Author: professor
  */
+#include <ciso646>
 
 #include "main_window.hpp"
 
@@ -215,7 +216,10 @@ vector<string>* dialogAboutTextLines = null;
 
 
 // ================ CPlanetsGUI::MainWindow namespace ================
-void CPlanets::init(const string& colorThemeName)
+string filePathToLoad;
+#include "cli.hxx"
+
+void CPlanets::init()
 {
 	Rect windowSize(0, 0, 640, 480);
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, onSDLInit);
@@ -227,7 +231,7 @@ void CPlanets::init(const string& colorThemeName)
 	SDL_Color colorLight = {192, 192, 192,  0};
 	draw_light_ttf = new RenderText(draw_title_ttf->ttf_font, colorLight);
 
-	const Theme& theme = Theme::parseString(colorThemeName)->init(); //todo choose according to cmd parameters
+	const Theme& theme = Theme::parseString(colorThemeName)->init();
 
 	window->bgcol = theme.bgcol;
 

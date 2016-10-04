@@ -15,7 +15,7 @@
 
 #include "physics/solvers/built_in.hpp"
 #include "main_window.hpp"
-#include "SDL_util.hpp"
+#include "SDL/SDL.h"  // this include is needed here for win32 compatibility
 
 #include "util.hpp"
 
@@ -54,39 +54,14 @@ int main(int argc, char* argv[])
 	}
 	else if(strncmp(argv[i], "--help", 7) == 0 or strncmp(argv[i], "-h", 3) == 0)
 	{
+		cout << "Usage: cplanets [--version] [--help] [--centered] [--color-theme <name>] [--load-file <path>]" << "\n\n";
 		cout << "Use --version or -v to display version." << '\n';
 		cout << "Use --centered or -c to start cplanets centered." << '\n';
+		cout << "Use --color-theme or -t to specify a color theme." << '\n';
+//		cout << "Use --load-file or -l to specify a file to open the program with." << '\n';
 		cout << "Use --help or -h to show this help." << '\n';
 		cout << endl;
 		return EXIT_SUCCESS;
-	}
-
-	string colorTheme = "default";
-
-	// load program arguments
-	for(int i = 1; i < argc; i++)
-	{
-		string argstr = string(argv[i]);
-
-		if(argstr.empty()) continue;
-
-		else if(argstr == "--centered" or argstr == "-c")
-			SDL_util::preloadCentered();
-
-		else if(argstr == "--color-theme" or argstr == "-t")
-		{
-			if(i + 1 < argc)
-			{
-				colorTheme = string(argv[i+1]);
-				i++;
-			}
-			else
-			{
-				cout << "Missing argument for " << argstr << endl;
-			}
-		}
-
-		else cout << "Unrecognized argument: " << argstr << endl;
 	}
 
 	srand(time(null));
@@ -94,7 +69,8 @@ int main(int argc, char* argv[])
 	try
 	{
 		BuiltInSolvers::init();
-		CPlanets::init(colorTheme);
+		CPlanets::parse(argc, argv);
+		CPlanets::init();
 		CPlanets::start();
 		return EXIT_SUCCESS;
 	}
