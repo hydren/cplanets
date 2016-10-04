@@ -668,6 +668,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			break;
 		//zoom
 		case SDLK_PLUS:
+		case SDLK_EQUALS:
 		case SDLK_KP_PLUS:
 		case SDLK_PAGEUP:
 			planetarium->currentViewportZoomChangeRate = down? 1.0 + planetarium->viewportZoomChangeRateValue : 1.0;
