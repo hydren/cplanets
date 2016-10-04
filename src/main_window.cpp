@@ -321,6 +321,7 @@ void CPlanets::init()
 
 	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
 	txtBodies = new ListWin<Body2DClone>(&sclpBodies->content, theme.listWinStyle, txtBodiesSize, stringfy_by_method<Body2DClone, &Body2DClone::toString>);
+	txtBodies->setListData(new vector<Body2DClone>(planetarium->getBodies()), true);
 	txtBodies->selectionAdjustmentFunction = WidgetsExtra::GenericSelectionAdjustment::function<Body2DClone>;
 	txtBodies->selection.listenerAdd(&customListener);
 	txtBodies->selection.onChange = onListSelectionChanged;
