@@ -1,0 +1,29 @@
+universe definition
+gravity is 9.807
+body B697: mass 0.0169566, diameter 0.312782, position_x -20246.3, position_y -9802.39, velocity_x -65.3092, velocity_y 89.1837
+body B2927: mass 0.018191, diameter 0.323145, position_x -20253.3, position_y -9863.07, velocity_x -45.6599, velocity_y 77.4675
+body B9278: mass 0.0136408, diameter 0.291842, position_x -20680, position_y -10322, velocity_x -67.6365, velocity_y 14.4367
+body B5033: mass 0.0141319, diameter 0.300915, position_x -20142.3, position_y -10088.8, velocity_x 34.6968, velocity_y 72.0485
+body B9135: mass 0.0142308, diameter 0.305241, position_x -20210.7, position_y -9642.87, velocity_x -61.5209, velocity_y 67.3632
+body B7403: mass 0.0138275, diameter 0.293759, position_x -20546.9, position_y -9844.23, velocity_x -65.0143, velocity_y -117.161
+body B6907: mass 0.0170976, diameter 0.316732, position_x -20153.4, position_y -10087.8, velocity_x -46.8923, velocity_y -79.1759
+body B9524: mass 0.0145674, diameter 0.299822, position_x -20761.4, position_y -9710, velocity_x 33.4186, velocity_y 55.6278
+body B6953: mass 0.0205169, diameter 0.34024, position_x -20615.1, position_y -10166.4, velocity_x -65.8494, velocity_y 43.8421
+body B8357: mass 0.0174143, diameter 0.320682, position_x -20825.3, position_y -10292, velocity_x 52.6514, velocity_y -23.9273
+body B7518: mass 0.0193226, diameter 0.32925, position_x -20271, position_y -9842.4, velocity_x 39.3893, velocity_y -119.518
+body B8890: mass 0.0162337, diameter 0.306649, position_x -20332.3, position_y -9670.75, velocity_x -90.3228, velocity_y 42.8335
+body B4663: mass 0.0176751, diameter 0.327547, position_x -20750.7, position_y -10338.4, velocity_x -69.6438, velocity_y 7.26148
+body B5178: mass 0.0196584, diameter 0.333246, position_x -20401.9, position_y -10279.3, velocity_x 64.3269, velocity_y 25.0856
+body B6892: mass 0.0131244, diameter 0.29042, position_x -20798.3, position_y -9900.15, velocity_x -18.3889, velocity_y 62.7437
+body B826: mass 0.0185274, diameter 0.323634, position_x -20062.9, position_y -9753.82, velocity_x 24.5571, velocity_y -83.4698
+body B8216: mass 0.0193475, diameter 0.336735, position_x -20187.5, position_y -9748.36, velocity_x -50.1473, velocity_y 81.7152
+body B105: mass 0.0180997, diameter 0.329576, position_x -20943.1, position_y -10358.2, velocity_x -55.4256, velocity_y 13.7473
+body B84: mass 0.0193951, diameter 0.336512, position_x -20324.4, position_y -10118.3, velocity_x 63.0727, velocity_y 60.6103
+body B598: mass 0.0166363, diameter 0.321022, position_x -20095.6, position_y -9886.46, velocity_x -26.1712, velocity_y 78.6305
+body B4768: mass 0.0167058, diameter 0.317262, position_x -20146.4, position_y -9935.31, velocity_x -13.5924, velocity_y -90.212
+body B9975: mass 0.0165706, diameter 0.3159, position_x -20747.1, position_y -9900.48, velocity_x -0.630678, velocity_y -77.3359
+body B9990: mass 0.0171037, diameter 0.318556, position_x -20801, position_y -9342.77, velocity_x 43.4078, velocity_y 11.6543
+body B7329: mass 0.02022, diameter 0.328472, position_x -20276.1, position_y -9789.64, velocity_x 61.2855, velocity_y -104.704
+body B8018: mass 0.0178841, diameter 0.327509, position_x -20286.5, position_y -9797.38, velocity_x -40.9017, velocity_y 90.6897
+body B33: mass 219556, diameter 115.525, position_x -20449.8, position_y -9896, velocity_x -6.66231, velocity_y -3.26471
+body B3540: mass 0.0359881, diameter 0.455761, position_x -20769.6, position_y -9608.4, velocity_x 62.1943, velocity_y 29.5714

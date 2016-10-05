@@ -1,0 +1,6 @@
+universe definition
+gravity is 9
+gexp is 1.95
+body B5723: mass 17157.3, diameter 32, position_x -10497.1, position_y 105757, velocity_x -10.8569, velocity_y 14.9101
+body B9922: mass 34314.6, diameter 45.2548, position_x -10169, position_y 106035, velocity_x 4.42844, velocity_y 2.54494
+body B8371: mass 17.1818, diameter 4.03366, position_x -9625.41, position_y 105509, velocity_x -13.8657, velocity_y -13.8657
