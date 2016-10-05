@@ -40,12 +40,11 @@ Introduce variations to the parameters of newly created bodies - done
 Draw a arrow on the cursor's tip when selecting new body velocity - done
 Undo functionality - done
 Show paused/resumed state more explicitly - done
-Save preferences (window positions, paths, etc)
 Implement button with icon and offer icons-only buttons - done
-Theming functionality (mainly to match many OSes' ones)
-Try to load the universe setting a fitting zoom for its size.
-Use TCLAP for command line usage.
+Theming functionality (mainly to match many OSes' ones) - done
+Command line arguments - done
 Basic "help" dialog
+Hide left bar, hide all mode.
 
 - 1.x
 
@@ -57,6 +56,7 @@ Rotate functionality
 Redo functionality
 Capability to change background color
 Add option to disable orbit trace (which would stop recording position, for performance's sake)
+Save preferences (window positions, paths, etc)
 Edit bodies id's
 Show bodies id's on planetarium
 Show per body info (velocity, acceleration, mass, etc) - a body panel below bodies list
@@ -67,7 +67,7 @@ Implement Embedded/Adaptive RK (make a GUI for specifying max. error with adapti
 Attempt to implement Numerov's method-based solver.
 Attempt to implement Gauss-Legendre's implicit RK with other RK as predictor.
 Implement optional Barnes-Hut tree to optimize calculations
-Hide left bar, hide all mode.
+Try to load the universe setting a fitting zoom for its size.
 Add optional single-threaded mode
 Implement load/save on other formats (ods, prop, yaml)
 Improve bodies list (use headed table instead of list, sort by)
