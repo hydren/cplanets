@@ -7,6 +7,7 @@ History:
 ~ Mapped key "equal" to zoom-in as well.
 * Fixed crash when pressing icon toogle buttons (trace orbit and AA buttons)
 * Fixed crash when creating a new universe or loading one.
+* Fixed error on file extensions shown in FileDialog.
 * Fixed glitch when changing directory in the save dialog.
 ~ A lot of refactoring 
 

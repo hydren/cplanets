@@ -43,6 +43,7 @@ namespace WidgetsExtra
 		DialogWin dlgwFilenameField;
 
 		DropDownMenu* ddmFileType;
+		const std::vector<std::string> availableFileTypes;
 
 		FlowLayout layoutSouthButtons;
 		Button btnOk, btnCancel;

@@ -85,7 +85,7 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), con
   btnGoHome(this, bntStyle, Rect(0, 0, cmdmCurrentDirectoryField.src->tw_area.h, cmdmCurrentDirectoryField.src->tw_area.h+1), Label(""), create_pixmap(home_btn_xpm), FileDialog::navigateToHome),
   lblFilename(this, Rect(), FileDialog_static::modeFilename(mode)),
   dlgwFilenameField(this, Rect(0, 0, titleBarArea.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font))),
-  ddmFileType(null),
+  ddmFileType(null), availableFileTypes(fileTypes),
   layoutSouthButtons(0, 0, 400),
   btnOk(this, bntStyle, Rect(), "  Ok  ", FileDialog::confirmation),
   btnCancel(this, bntStyle, Rect(), "Cancel", FileDialog::cancellation)
@@ -115,7 +115,7 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), con
 		ddmf.setCallback(FileDialog::selectFileType);
 
 		ddmf.addItem("All files"); selectedType = "All files";
-		const_foreach(const string&, str, vector<string>, fileTypes)
+		const_foreach(const string&, str, vector<string>, availableFileTypes)
 		{
 			ddmf.addItem(Label(str.c_str()));
 		}
