@@ -21,6 +21,9 @@ namespace CPlanets
 
 	// show window and starts all its events treatments.
 	void start();
+
+	// returns a string containing help text
+	const char* help();
 }
 
 #endif /* MAIN_WINDOW_HPP_ */

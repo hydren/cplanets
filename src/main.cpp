@@ -54,13 +54,7 @@ int main(int argc, char* argv[])
 	}
 	else if(strncmp(argv[i], "--help", 7) == 0 or strncmp(argv[i], "-h", 3) == 0)
 	{
-		cout << "Usage: cplanets [--version] [--help] [--centered] [--color-theme <name>] [--load-file <path>]" << "\n\n";
-		cout << "Use --version or -v to display version." << '\n';
-		cout << "Use --help or -h to show this help." << '\n';
-		cout << "Use --centered or -c to start cplanets centered." << '\n';
-		cout << "Use --color-theme or -t to specify a color theme." << '\n';
-		cout << "Use --load-file or -l to specify a file to open the program with." << '\n';
-		cout << endl;
+		cout << CPlanets::help() << endl;
 		return EXIT_SUCCESS;
 	}
 

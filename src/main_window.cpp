@@ -178,6 +178,7 @@ string colorThemeName;
 
 //  ================ COMPONENTS ================
 TopWin* window; // The program window
+Rect windowSize(0, 0, 640, 480);
 
 FlowLayout* toolbarNorthLayout;
 IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnAbout, *btnRun, *btnPause;
@@ -234,7 +235,6 @@ string filePathToLoad;
 
 void CPlanets::init()
 {
-	Rect windowSize(0, 0, 640, 480);
 	window = new TopWin("cplanets", windowSize, SDL_INIT_VIDEO, SDL_RESIZABLE, draw, null, onSDLInit);
 	handle_rsev = onWindowResize; //set callback for window resize
 	handle_kev = onKeyEvent; //set callback for keyboard events

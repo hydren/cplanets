@@ -5,6 +5,23 @@
  *      Author: carlosfaruolo
  */
 
+#include "futil/math/parse_number.hpp"
+
+const char* commandLineHelpTxt = "\n" \
+	"Usage: cplanets [--version] [--help] [--centered] [--window-size <width> <height>] [--color-theme <name>] [--load-file <path>] \n" \
+	"\n" \
+	"Use --version or -v to display version. \n" \
+	"Use --help or -h to show this help. \n" \
+	"Use --centered or -c to start cplanets centered. \n" \
+	"Use --window-size <width> <height> (or -w) to specify window size. \n" \
+	"Use --color-theme <theme> (or -t) to specify a color theme. \n" \
+	"Use --load-file <filePath> (or -l) to specify a file to open the program with. \n";
+
+const char* CPlanets::help()
+{
+	return commandLineHelpTxt;
+}
+
 void CPlanets::parse(int argc, char* argv[])
 {
 	// load program arguments
@@ -16,6 +33,18 @@ void CPlanets::parse(int argc, char* argv[])
 
 		else if(argstr == "--centered" or argstr == "-c")
 			SDL_util::preloadCentered();
+
+		else if(argstr == "--window-size" or argstr == "-w")
+		{
+			if(i + 2 < argc)
+				if(parseable<unsigned>(argv[i+1]) and parseable<unsigned>(argv[i+2]))
+				{
+					windowSize.w = ::parse<unsigned>(string(argv[++i]));
+					windowSize.h = ::parse<unsigned>(string(argv[++i]));
+				}
+				else cout << "Passed invalid arguments for " << argstr << ": \"" << argv[i+1] << "\" \"" << argv[i+2] << "\" (must be positive integers <width> <height>)" << endl;
+			else cout << "Missing arguments for " << argstr << endl;
+		}
 
 		else if(argstr == "--color-theme" or argstr == "-t")
 		{
