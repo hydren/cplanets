@@ -25,7 +25,7 @@ void IconButton::draw()
 	icon.drawOn(this, static_cast<IconLabel::IconMode>(style.param2));
 }
 
-IconToogleButton::IconToogleButton(WinBase *parent, Style style, Rect bounds, Label label, SDL_Surface* icon, void (*_cmd)(CheckBox*), Id id)
+IconToogleButton::IconToogleButton(WinBase *parent, Style style, Rect bounds, Label label, SDL_Surface* icon, void (*cmd)(CheckBox*), Id id)
 : ToogleButton(parent, style, bounds, label, cmd, id),
   icon(icon)
 {}
