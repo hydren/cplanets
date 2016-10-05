@@ -1,6 +1,27 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.7 - 05/10/2016
++ Added parameter to load files from command-line
++ Added new themes. Default theme is chosen to try to match OS's.
+~ Mapped key "equal" to zoom-in as well.
+* Fixed crash when pressing icon toogle buttons (trace orbit and AA buttons)
+* Fixed crash when creating a new universe or loading one.
+* Fixed glitch when changing directory in the save dialog.
+~ A lot of refactoring 
+
+0.9.6 - 03/10/2016
++ Implemented simple theme system, with a few built-in themes. It changes colors, basically.
+~ Updated some icons.
+* Fix crash when icons are absent.
+* Fixed makefile.
+~ Refactoring.
+
+0.9.5 - 03/10/2016
++ New icons for all toolbar buttons.
+* Fixed a minor memory leak.
+~ Refactoring
+
 0.9.4 - 28/09/2016
 + Implemented undo functionality. A "rewind" mode is also available.
 + Added more examples.

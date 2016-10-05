@@ -43,8 +43,9 @@ Show paused/resumed state more explicitly - done
 Implement button with icon and offer icons-only buttons - done
 Theming functionality (mainly to match many OSes' ones) - done
 Command line arguments - done
+Tooltip for icon buttons
 Basic "help" dialog
-Hide left bar, hide all mode.
+Hide left bar, hide all mode
 
 - 1.x
 
