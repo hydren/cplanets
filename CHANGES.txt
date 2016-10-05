@@ -2,7 +2,8 @@
 
 History:
 0.9.7 - 05/10/2016
-+ Added parameter to load files from command-line
++ Added parameter to load files from command line
++ Added parameter to specify window size from command line
 + Added new themes. Default theme is chosen to try to match OS's.
 ~ Mapped key "equal" to zoom-in as well.
 * Fixed crash when pressing icon toogle buttons (trace orbit and AA buttons)
