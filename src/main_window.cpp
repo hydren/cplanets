@@ -46,6 +46,7 @@
 #include "widgets/list_selection_model_extra.hpp"
 #include "widgets/value_shower.hpp"
 #include "widgets/icon_button.hpp"
+#include "widgets/multi_line_text_renderer.hpp"
 
 using std::cout;
 using std::endl;
@@ -70,6 +71,7 @@ using WidgetsExtra::ListWin;
 using WidgetsExtra::ValueShower;
 using WidgetsExtra::IconButton;
 using WidgetsExtra::IconToogleButton;
+using WidgetsExtra::MultiLineTextRenderer;
 
 typedef Planetarium::Body2DClone Body2DClone;
 
@@ -116,7 +118,6 @@ void txtBodiesRefreshAll();
 void txtBodiesUpdateSize();
 
 void dialogAboutAdjust();
-void dialogAboutCloseBtnCallback(Button* btn);
 void loadUniverseFromFile(const string& path);
 void replaceUniverse(const Universe2D& universeCopy);
 void addRandomBody(bool orbiting=false);
@@ -226,8 +227,7 @@ FileDialog* dialogLoad, *dialogSave;
 DialogBgrWin* dialogAbout;
 Button* btnAboutOk;
 ScrollablePane* sclpAboutLicense;
-vector<string>* dialogAboutTextLines = null;
-
+MultiLineTextRenderer* mltAboutText;
 
 // ================ CPlanetsGUI::MainWindow namespace ================
 string filePathToLoad;
@@ -532,7 +532,7 @@ void CPlanets::init()
 	FULL_ABOUT_TEXT = string("This program is inspired by Yaron Minsky's \"planets\" program.\n\n").append(CPLANETS_LICENSE);
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", null, theme.dialogStyle);
 
-	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", dialogAboutCloseBtnCallback);
+	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", DialogBgrWin::buttonCallbackCloseParentDialogBgrWin);
 	packLabeledComponent(btnAboutOk);
 	setComponentPosition(btnAboutOk, 0.5*(400-btnAboutOk->tw_area.w), 300-btnAboutOk->tw_area.h-WIDGETS_SPACING);
 
@@ -545,6 +545,10 @@ void CPlanets::init()
 	sclpAboutLicense = new ScrollablePane(dialogAbout, theme.scrollStyle, rectSclpAboutLicense, window->bgcol);
 	sclpAboutLicense->content.display_cmd = drawAboutDialog;
 	sclpAboutLicense->setScrollbarHorizontalVisible(false);
+
+	Point posMltAboutText(WIDGETS_SPACING, dialogAbout->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2);
+	mltAboutText = new MultiLineTextRenderer(draw_ttf, null, posMltAboutText, 3*WIDGETS_SPACING);
+	mltAboutText->setText(FULL_ABOUT_TEXT, sclpAboutLicense->content.tw_area.w);
 
 //	print_h(); //DEBUG
 //	cout << "\n" << "Deep analysis:" << endl;
@@ -604,19 +608,11 @@ void drawAboutDialog(BgrWin* bw)
 		logoOffset = APP_LOGO->w;
 	}
 
-	const int lineHeight = TTF_FontHeight(draw_ttf->ttf_font);
+	static const string versionStr = string("Version ").append(CPLANETS_VERSION), titleStr("cplanets, a interactive program to play with gravitation");
+	draw_title_ttf->draw_string(dialog->win, titleStr.c_str()  , Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING));
+	draw_title_ttf->draw_string(dialog->win, versionStr.c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font)));
 
-	static const string versionStr = string("Version ").append(CPLANETS_VERSION);
-	draw_title_ttf->draw_string(dialog->win, "cplanets, a interactive program to play with gravitation", Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING));
-	draw_title_ttf->draw_string(dialog->win, versionStr.c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + lineHeight));
-
-	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2.25;
-
-	int lineNumber = 0;
-	foreach(string&, line, vector<string>, (*dialogAboutTextLines))
-	{
-		draw_ttf->draw_string(dialog->win, line.c_str(), Point(WIDGETS_SPACING, headerSize + lineHeight * lineNumber++));
-	}
+	mltAboutText->draw(sclpAboutLicense->content.win);
 }
 
 void drawPlanetariumWithVersion(BgrWin* bgr)
@@ -1061,13 +1057,8 @@ void txtBodiesUpdateSize()
 
 void dialogAboutAdjust()
 {
-	if(dialogAboutTextLines == null)
-		dialogAboutTextLines = WidgetsExtra::getLineWrappedText(FULL_ABOUT_TEXT, draw_ttf, sclpAboutLicense->content.tw_area.w - 3*WIDGETS_SPACING);
-
-	const int lineHeight = TTF_FontHeight(draw_ttf->ttf_font);
-
-	const int headerSize = dialogAbout->titleBarArea.h + lineHeight*2;
-	const int totalSize = headerSize + lineHeight * dialogAboutTextLines->size();
+	const int headerSize = dialogAbout->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
+	const int totalSize = headerSize + mltAboutText->getTextHeight();
 
 	//expand BgrWin to fit the text
 	if(totalSize > sclpAboutLicense->content.tw_area.h)
@@ -1075,14 +1066,6 @@ void dialogAboutAdjust()
 		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
 		sclpAboutLicense->refresh();
 	}
-}
-
-void dialogAboutCloseBtnCallback(Button* btn)
-{
-	DialogBgrWin* self = static_cast<DialogBgrWin*>(btn->parent);
-	self->setVisible(false);
-	if(self->onClosedCallback != null)
-		self->onClosedCallback(self);
 }
 
 void loadUniverseFromFile(const string& path)  // throws std::runtime_error
