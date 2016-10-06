@@ -93,6 +93,7 @@ void onSDLInit();
 
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
+void drawHelpDialog(BgrWin* dialog);
 void drawPlanetariumWithVersion(BgrWin* bgr);
 
 // widgets calbacks
@@ -166,6 +167,8 @@ string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
 
 SDL_Surface* APP_LOGO;
 
+#include "help.h"
+
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
 Rect genericToolbarButtonSize(0, 0, TOOLBAR_SIZE-2*WIDGETS_SPACING, TOOLBAR_SIZE-2*WIDGETS_SPACING);
@@ -182,7 +185,7 @@ TopWin* window; // The program window
 Rect windowSize(0, 0, 640, 480);
 
 FlowLayout* toolbarNorthLayout;
-IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnAbout, *btnRun, *btnPause;
+IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnHelp, *btnAbout, *btnRun, *btnPause;
 
 TabSet* tabs;
 
@@ -229,6 +232,10 @@ Button* btnAboutOk;
 ScrollablePane* sclpAboutLicense;
 MultiLineTextRenderer* mltAboutText;
 
+DialogBgrWin* dialogHelp;
+ScrollablePane* sclpHelpText;
+MultiLineTextRenderer* mltHelpText;
+
 // ================ CPlanetsGUI::MainWindow namespace ================
 string filePathToLoad;
 #include "cli.hxx"
@@ -271,6 +278,9 @@ void CPlanets::init()
 
 	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
+
+	btnHelp = new IconButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/help.png"), onButtonPressed);
+	toolbarNorthLayout->addComponent(btnHelp);
 
 	btnAbout = new IconButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/about.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnAbout);
@@ -550,6 +560,20 @@ void CPlanets::init()
 	mltAboutText = new MultiLineTextRenderer(draw_ttf, null, posMltAboutText, 3*WIDGETS_SPACING);
 	mltAboutText->setText(FULL_ABOUT_TEXT, sclpAboutLicense->content.tw_area.w);
 
+	dialogHelp = new DialogBgrWin(Rect(0,0,400,300), "Help", null, theme.dialogStyle);
+
+	Rect rectSclpHelpText(
+		WIDGETS_SPACING,
+		WIDGETS_SPACING + dialogHelp->titleBarArea.h,
+		dialogHelp->tw_area.w - 2*WIDGETS_SPACING,
+		dialogHelp->tw_area.h - 3*WIDGETS_SPACING - dialogHelp->titleBarArea.h);
+	sclpHelpText = new ScrollablePane(dialogHelp, theme.scrollStyle, rectSclpHelpText, window->bgcol);
+	sclpHelpText->content.display_cmd = drawHelpDialog;
+	sclpHelpText->setScrollbarHorizontalVisible(false);
+
+	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
+	mltHelpText->setText(HELP_TEXT, sclpHelpText->tw_area.w);
+
 //	print_h(); //DEBUG
 //	cout << "\n" << "Deep analysis:" << endl;
 //	WidgetsExtra::print_hierarchy(window);
@@ -612,7 +636,14 @@ void drawAboutDialog(BgrWin* bw)
 	draw_title_ttf->draw_string(dialog->win, titleStr.c_str()  , Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING));
 	draw_title_ttf->draw_string(dialog->win, versionStr.c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font)));
 
-	mltAboutText->draw(sclpAboutLicense->content.win);
+	mltAboutText->draw(dialog->win);
+}
+
+void drawHelpDialog(BgrWin* bw)
+{
+	BgrWin* dialog = &sclpHelpText->content;
+	WidgetsExtra::drawBgrWin(bw);
+	mltHelpText->draw(dialog->win);
 }
 
 void drawPlanetariumWithVersion(BgrWin* bgr)
@@ -729,7 +760,13 @@ void onButtonPressed(Button* btn)
 	{
 		dialogAboutAdjust();
 		setComponentPosition(dialogAbout, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
-		dialogAbout->setVisible(dialogAbout->parent==null || dialogAbout->hidden);
+		dialogAbout->setVisible(dialogAbout->parent==null or dialogAbout->hidden);
+	}
+
+	if(btn == btnHelp)
+	{
+		setComponentPosition(dialogHelp, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
+		dialogHelp->setVisible(dialogHelp->parent==null or dialogHelp->hidden);
 	}
 
 	if(btn == btnAddBody)
