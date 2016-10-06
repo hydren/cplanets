@@ -26,7 +26,7 @@ static const char *close_btn_xpm[] = {
 "xx    xx"};
 
 DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWin*), Style st)
-: BgrWin(null, bounds, null, DialogBgrWin::draw, DialogBgrWin::custom_mwin_down, mwin::move, mwin::up, 0),
+: BgrWin(null, bounds, null, DialogBgrWin::draw, DialogBgrWin::dialog_mwin_down, mwin::move, mwin::up, 0),
   WinBaseWrapper(this),
   onClosedCallback(onClosed),
   titleStr(txt),
@@ -116,7 +116,10 @@ void DialogBgrWin::close(Button* btn)
 		self->onClosedCallback(self);
 }
 
-void DialogBgrWin::custom_mwin_down(BgrWin* bgr,int x,int y,int but)
+void DialogBgrWin::buttonCallbackCloseParentDialogBgrWin(Button* btn)
+{ DialogBgrWin::close(btn); }
+
+void DialogBgrWin::dialog_mwin_down(BgrWin* bgr,int x,int y,int but)
 {
 	Rect& titleBarArea = static_cast<DialogBgrWin*>(bgr)->titleBarArea;
 	if(x > titleBarArea.x && x < titleBarArea.x + titleBarArea.w

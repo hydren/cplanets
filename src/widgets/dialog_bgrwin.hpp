@@ -32,6 +32,8 @@ namespace WidgetsExtra
 		virtual void setPosition(Point position);
 		void setPositionOnCenter();
 
+		static void buttonCallbackCloseParentDialogBgrWin(Button* btn);
+
 		protected:
 		int titleStrOffset;
 		IconButton btnClose;
@@ -41,7 +43,7 @@ namespace WidgetsExtra
 
 		static void draw(BgrWin*);
 		static void close(Button* btn);
-		static void custom_mwin_down(BgrWin* bgr,int x,int y,int but);
+		static void dialog_mwin_down(BgrWin* bgr,int x,int y,int but);
 	};
 }
 
