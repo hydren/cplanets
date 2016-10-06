@@ -63,7 +63,7 @@ namespace WidgetsExtra
 		void setup();
 	};
 
-	std::vector<std::string>* getLineWrappedText(std::string fullText, RenderText* drawer, Uint16 maxWidth);
+	std::vector<std::string>* getLineWrappedText(std::string fullText, RenderText* drawer, Uint16 maxWidth, std::vector<std::string>* vstr=NULL);
 }
 
 #endif /* WIDGETS_WIDGETS_UTIL_HPP_ */

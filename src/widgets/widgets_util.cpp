@@ -10,6 +10,9 @@
 #include "futil/general/language.hpp"
 #include "futil/string/actions.hpp"
 
+using std::vector;
+using std::string;
+
 // xxx This function is experimental, but proved to work in many cases. Still, it should be avoided when possible.
 void setComponentRawPosition(WinBase* wb, int x, int y)
 {
@@ -110,11 +113,10 @@ const WidgetsExtra::Color5
 	WidgetsExtra::Color5::GradientRose(0xffd0d0ff, 0xd07070ff);
 
 
-std::vector<std::string>* WidgetsExtra::getLineWrappedText(std::string fullText, RenderText* drawer, Uint16 maxWidth)
+vector<string>* WidgetsExtra::getLineWrappedText(std::string fullText, RenderText* drawer, Uint16 maxWidth, vector<string>* lines)
 {
-	using std::vector; using std::string;
-
-	vector<string>* lines = new vector<string>();
+	if(lines == null)
+		lines = new vector<string>();
 
 	unsigned lf = 0, cr = 0, ln = 0;
 
