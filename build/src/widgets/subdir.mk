@@ -13,6 +13,7 @@ CPP_SRCS += \
 ../src/widgets/label_win.cpp \
 ../src/widgets/list_selection_model.cpp \
 ../src/widgets/list_win.cpp \
+../src/widgets/multi_line_text_renderer.cpp \
 ../src/widgets/scrollable_pane.cpp \
 ../src/widgets/spinner.cpp \
 ../src/widgets/tab_control.cpp \
@@ -32,6 +33,7 @@ OBJS += \
 ./src/widgets/label_win.o \
 ./src/widgets/list_selection_model.o \
 ./src/widgets/list_win.o \
+./src/widgets/multi_line_text_renderer.o \
 ./src/widgets/scrollable_pane.o \
 ./src/widgets/spinner.o \
 ./src/widgets/tab_control.o \
@@ -51,6 +53,7 @@ CPP_DEPS += \
 ./src/widgets/label_win.d \
 ./src/widgets/list_selection_model.d \
 ./src/widgets/list_win.d \
+./src/widgets/multi_line_text_renderer.d \
 ./src/widgets/scrollable_pane.d \
 ./src/widgets/spinner.d \
 ./src/widgets/tab_control.d \
