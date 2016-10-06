@@ -9,8 +9,10 @@
 #define WIDGETS_LABEL_WIN_HPP_
 
 #include <string>
+#include <vector>
 
 #include "SDL_widgets/SDL_widgets.h"
+#include "multi_line_text_renderer.hpp"
 
 #include "futil/general/language.hpp"
 
@@ -29,8 +31,22 @@ namespace WidgetsExtra
 		/** Safer than changing textRenderer directly, as this automatically adjusts size. */
 		virtual void setTextRenderer(RenderText* txtrnd);
 	};
+
+	struct MultiLineLabelWin extends LabelWin
+	{
+		MultiLineTextRenderer multiRender;
+
+		MultiLineLabelWin(WinBase *pw, Rect bounds, std::string str, unsigned padding=0, Id id=0);
+
+		virtual ~MultiLineLabelWin();
+		virtual void draw();
+
+		// pseudo-overrides WinBase::widen()
+		virtual void widen(int dx,int dy);
+
+		/** Safer than changing textRenderer directly, as this automatically adjusts size. */
+		virtual void setTextRenderer(RenderText* txtrnd);
+	};
 }
-
-
 
 #endif /* WIDGETS_LABEL_WIN_HPP_ */
