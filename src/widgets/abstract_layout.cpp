@@ -295,3 +295,31 @@ unsigned Layout::getComponentCount() const
 	return this->components.size();
 }
 
+
+/** Hides all components on this layout by calling their hide() method. */
+void Layout::hideAll()
+{
+	for(unsigned i = 0; i < this->components.size(); i++)
+	{
+		WinBaseWrapper* wrapper = dynamic_cast<WinBaseWrapper*>(this->components.at(i));
+		if(wrapper != null)
+		{
+			wrapper->base->hide();
+		}
+	}
+}
+
+/** Show all components on this layout by calling their show() method. This should be called after a hideAll() call to make its components visible again. */
+void Layout::showAll()
+{
+	for(unsigned i = 0; i < this->components.size(); i++)
+	{
+		WinBaseWrapper* wrapper = dynamic_cast<WinBaseWrapper*>(this->components.at(i));
+		if(wrapper != null)
+		{
+			wrapper->base->show();
+		}
+	}
+}
+
+

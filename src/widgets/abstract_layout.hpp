@@ -125,6 +125,12 @@ namespace WidgetsExtra
 		/** Organizes the position of the components on this layout */
 		virtual void pack() abstract;
 
+		/** Hides all WinBase components on this layout by calling their hide() method. */
+		virtual void hideAll();
+
+		/** Show all WinBase components on this layout by calling their show() method. This should be called after a hideAll() call to make its components visible again. */
+		virtual void showAll();
+
 		protected:
 		std::vector<Element*> components; //all components on this layout
 		std::vector<WinBaseWrapper*> innerWrappers; //a vector containing all WinBaseWrappers created by this layout.

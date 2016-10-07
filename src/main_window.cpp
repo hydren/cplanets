@@ -120,6 +120,7 @@ void txtBodiesUpdateSize();
 
 void dialogAboutAdjust();
 void collapseTabs(bool choice);
+void toogleFullscreen(bool choice);
 
 void loadUniverseFromFile(const string& path);
 void replaceUniverse(const Universe2D& universeCopy);
@@ -188,7 +189,7 @@ Rect windowSize(0, 0, 640, 480);
 
 FlowLayout* toolbarNorthLayout;
 IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnHelp, *btnAbout;
-ToogleButton* tglCollapseLeftPanel;
+ToogleButton* tglFullScreen, *tglCollapseLeftPanel;
 IconButton* btnRun, *btnPause;
 
 TabbedPane* tabs;
@@ -298,6 +299,9 @@ void CPlanets::init()
 	toolbarNorthLayout->addComponent(btnAbout);
 
 	toolbarNorthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
+
+	tglFullScreen = new IconToogleButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/fullscreen.png"), onCheckBoxPressed);
+	toolbarNorthLayout->addComponent(tglFullScreen);
 
 	tglCollapseLeftPanel = new IconToogleButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/collapse-tabs.png"), onCheckBoxPressed);
 	toolbarNorthLayout->addComponent(tglCollapseLeftPanel);
@@ -633,10 +637,11 @@ void draw()
 	window->clear();
 	//Point versionStringPos(window->tw_area.w - WIDGETS_SPACING - draw_title_ttf->text_width(VERSION_TEXT.c_str()), window->tw_area.h - WIDGETS_SPACING - TTF_FontHeight(draw_title_ttf->ttf_font));
 	//draw_title_ttf->draw_string(window->win, VERSION_TEXT.c_str(), versionStringPos);
+
+	msgBodyCount->draw_label();
 	msgLogK->draw_label();
 	msgLogP->draw_label();
 	msgLogE->draw_label();
-	msgBodyCount->draw_label();
 }
 
 void drawAboutDialog(BgrWin* bw)
@@ -772,6 +777,12 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			{
 				planetarium->setFocusedBodies(planetarium->physics->universe.bodies);
 				onButtonPressed(btnFollowSelection);
+			}
+			break;
+		case SDLK_ESCAPE:
+			if(down and *tglFullScreen->d == true)
+			{
+				onCheckBoxPressed(tglFullScreen, true);
 			}
 			break;
 		default:break;
@@ -937,13 +948,7 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 
 	if(chck == chckComputeEnergy)
 	{
-		if(planetarium->physics->systemEnergyComputingEnabled)
-		{
-			msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
-			msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
-			msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
-		}
-		else
+		if(not planetarium->physics->systemEnergyComputingEnabled)
 		{
 			msgLogK->draw_mes("--");
 			msgLogP->draw_mes("--");
@@ -954,6 +959,11 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 	if(chck == tglCollapseLeftPanel)
 	{
 		collapseTabs(*tglCollapseLeftPanel->d);
+	}
+
+	if(chck == tglFullScreen)
+	{
+		toogleFullscreen(*tglFullScreen->d);
 	}
 }
 
@@ -1043,13 +1053,17 @@ void onUserEvent(int cmd,int param,int param2)
 		if(param == planetariumPane->id.id1) //kind of unnecessary, we currently have only one instance of planetarium
 		{
 			planetariumPane->doRefresh();
-			if(planetarium->physics->systemEnergyComputingEnabled)
+
+			if(*tglFullScreen->d == false) // dont draw this if fullscreen
 			{
-				msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
-				msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
-				msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
+				if(planetarium->physics->systemEnergyComputingEnabled)
+				{
+					msgLogK->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy));
+					msgLogP->draw_mes("%.4g", log10(planetarium->physics->totalPotentialEnergy));
+					msgLogE->draw_mes("%.4g", log10(planetarium->physics->totalKineticEnergy+planetarium->physics->totalPotentialEnergy));
+				}
+				msgBodyCount->draw_mes("%u", planetarium->physics->bodyCount);
 			}
-			msgBodyCount->draw_mes("%u", planetarium->physics->bodyCount);
 		}
 	}
 
@@ -1148,6 +1162,31 @@ void collapseTabs(bool choice)
 		planetariumPane->move(tabs->tw_area.w, 0);
 		tabs->show();
 		aux_tabsCollapseFiller->draw_blit_upd();
+	}
+}
+
+void toogleFullscreen(bool choice)
+{
+	if(choice == true)
+	{
+		planetariumPane->move(-tabs->tw_area.w-2*WIDGETS_SPACING, -TOOLBAR_SIZE-WIDGETS_SPACING);
+		planetariumPane->widen(tabs->tw_area.w+TOOLBAR_SIZE+3*WIDGETS_SPACING, 2*TOOLBAR_SIZE+2*WIDGETS_SPACING);
+		tabs->hide();
+		toolbarNorthLayout->hideAll();
+		toolbarRight->hideAll();
+		toolbarSouthLayout->hideAll();
+	}
+	else
+	{
+		if(planetarium->physics->systemEnergyComputingEnabled)
+			onCheckBoxPressed(chckComputeEnergy, false);
+
+		planetariumPane->widen(-tabs->tw_area.w-TOOLBAR_SIZE-3*WIDGETS_SPACING, -2*TOOLBAR_SIZE-2*WIDGETS_SPACING);
+		planetariumPane->move(tabs->tw_area.w+2*WIDGETS_SPACING, TOOLBAR_SIZE+WIDGETS_SPACING);
+		tabs->show();
+		toolbarNorthLayout->showAll();
+		toolbarRight->showAll();
+		toolbarSouthLayout->showAll();
 	}
 }
 
