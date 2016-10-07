@@ -20,7 +20,7 @@ namespace WidgetsExtra
 	{
 		WinBase* const commonParent;
 		TabController controller;
-		FlowLayout layout;
+		FlowLayout tabBtnLayout;
 
 		/// Creates a TabSet on the specified position. See FlowLayout for more info on its behavior.
 		TabSet(WinBase* parent, int x, int y, unsigned maxWidth=0, unsigned maxHeight=0);
@@ -32,9 +32,18 @@ namespace WidgetsExtra
 		void setActiveTab(unsigned index);
 		void setActiveTab(BgrWin* tabContent);
 
-		void widenAll(int dx,int dy);
+		void widenAll(int dx, int dy);
 
 		static void drawTabStyleBgrWin(BgrWin* bgrWin);
+	};
+
+	struct TabbedPane extends WinBase, TabSet
+	{
+		TabbedPane(WinBase* parent, Rect bounds, Id id=0);
+		virtual ~TabbedPane();
+
+		virtual void draw();
+		virtual void widen(int dx, int dy);
 	};
 }
 
