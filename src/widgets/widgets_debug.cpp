@@ -20,6 +20,8 @@
 #include "file_dialog.hpp"
 #include "scrollable_pane.hpp"
 #include "list_win.hpp"
+#include "icon_button.hpp"
+#include "tabs.hpp"
 
 namespace WidgetsExtra
 {
@@ -34,6 +36,18 @@ namespace WidgetsExtra
 
 		//extra widgets
 		if (!typ) {
+			TabbedPane *wb=dynamic_cast<TabbedPane*>(child);
+			if (wb) typ="(TabbedPane)";
+		}
+		if (!typ) {
+			IconButton *wb=dynamic_cast<IconButton*>(child);
+			if (wb) typ="(IconButton)";
+		}
+		if (!typ) {
+			IconToogleButton *wb=dynamic_cast<IconToogleButton*>(child);
+			if (wb) typ="(IconToogleButton)";
+		}
+		if (!typ) {
 			ToogleButton *wb=dynamic_cast<ToogleButton*>(child);
 			if (wb) typ="(ToogleButton)";
 		}
@@ -46,16 +60,20 @@ namespace WidgetsExtra
 			if (wb) typ="(AbstractSpinner)";
 		}
 		if (!typ) {
+			MultiLineLabelWin *wb=dynamic_cast<MultiLineLabelWin*>(child);
+			if (wb) typ="(MultiLineLabelWin)";
+		}
+		if (!typ) {
 			LabelWin *wb=dynamic_cast<LabelWin*>(child);
 			if (wb) typ="(LabelWin)";
 		}
 		if (!typ) {
-			DialogBgrWin *wb=dynamic_cast<DialogBgrWin*>(child);
-			if (wb) typ="(DialogBgrWin)";
-		}
-		if (!typ) {
 			FileDialog *wb=dynamic_cast<FileDialog*>(child);
 			if (wb) typ="(FileDialog)";
+		}
+		if (!typ) {
+			DialogBgrWin *wb=dynamic_cast<DialogBgrWin*>(child);
+			if (wb) typ="(DialogBgrWin)";
 		}
 		if (!typ) {
 			ScrollablePane *wb=dynamic_cast<ScrollablePane*>(child);
@@ -123,8 +141,9 @@ namespace WidgetsExtra
 			DialogWin *wb=dynamic_cast<DialogWin*>(child);
 			if (wb) typ="(DialogWin)";
 		}
+
 		if (!typ)
-			typ="?";
+			typ="WinBase or unknown subclass";
 		static char ret[100];
 		snprintf(ret,100,"%s %s",typ,name);
 		return ret;
