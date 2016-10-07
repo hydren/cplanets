@@ -119,6 +119,8 @@ void txtBodiesRefreshAll();
 void txtBodiesUpdateSize();
 
 void dialogAboutAdjust();
+void collapseTabs(bool choice);
+
 void loadUniverseFromFile(const string& path);
 void replaceUniverse(const Universe2D& universeCopy);
 void addRandomBody(bool orbiting=false);
@@ -185,7 +187,9 @@ TopWin* window; // The program window
 Rect windowSize(0, 0, 640, 480);
 
 FlowLayout* toolbarNorthLayout;
-IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnHelp, *btnAbout, *btnRun, *btnPause;
+IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnHelp, *btnAbout;
+ToogleButton* tglCollapseLeftPanel;
+IconButton* btnRun, *btnPause;
 
 TabbedPane* tabs;
 
@@ -286,6 +290,12 @@ void CPlanets::init()
 	toolbarNorthLayout->addComponent(btnAbout);
 
 	toolbarNorthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
+
+	tglCollapseLeftPanel = new IconToogleButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/collapse-tabs.png"), onCheckBoxPressed);
+	toolbarNorthLayout->addComponent(tglCollapseLeftPanel);
+
+	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
+	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
 
 	btnRun = new IconButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/run.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnRun);
@@ -659,6 +669,7 @@ void onWindowResize(int dw, int dh)
 {
 //	cout << "resize event" << endl;
 	if(dialogAbout->parent != null) dialogAbout->hide();
+	if(*tglCollapseLeftPanel->d == true) collapseTabs(false);
 
 	toolbarNorthLayout->pack();
 
@@ -675,6 +686,7 @@ void onWindowResize(int dw, int dh)
 	toolbarSouthLayout->pack();
 
 	window->draw_blit_recur();
+	if(*tglCollapseLeftPanel->d == true) collapseTabs(true);
 }
 
 void onKeyEvent(SDL_keysym *key, bool down)
@@ -927,6 +939,11 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 			msgLogE->draw_mes("--");
 		}
 	}
+
+	if(chck == tglCollapseLeftPanel)
+	{
+		collapseTabs(*tglCollapseLeftPanel->d);
+	}
 }
 
 void onDropDownMenuButton(RButWin* btn, int nr, int fire)
@@ -1103,6 +1120,22 @@ void dialogAboutAdjust()
 	{
 		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
 		sclpAboutLicense->refresh();
+	}
+}
+
+void collapseTabs(bool choice)
+{
+	if(choice == true)
+	{
+		planetariumPane->move(-tabs->tw_area.w, 0);
+		planetariumPane->widen(tabs->tw_area.w, 0);
+		tabs->hide();
+	}
+	else
+	{
+		planetariumPane->widen(-tabs->tw_area.w, 0);
+		planetariumPane->move(tabs->tw_area.w, 0);
+		tabs->show();
 	}
 }
 
