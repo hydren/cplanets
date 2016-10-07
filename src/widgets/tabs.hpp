@@ -1,12 +1,12 @@
 /*
- * tab_set.hpp
+ * tabs.hpp
  *
  *  Created on: 28 de abr de 2016
  *      Author: carlosfaruolo
  */
 
-#ifndef WIDGETS_TAB_SET_HPP_
-#define WIDGETS_TAB_SET_HPP_
+#ifndef WIDGETS_TABS_HPP_
+#define WIDGETS_TABS_HPP_
 
 #include "SDL_widgets/SDL_widgets.h"
 #include "futil/general/language.hpp"
@@ -37,6 +37,7 @@ namespace WidgetsExtra
 		static void drawTabStyleBgrWin(BgrWin* bgrWin);
 	};
 
+	/// A widget on its own, containing a set of tabs and tab buttons. Extends TabSet with WinBase capabilites.
 	struct TabbedPane extends WinBase, TabSet
 	{
 		TabbedPane(WinBase* parent, Rect bounds, Id id=0);
@@ -47,6 +48,4 @@ namespace WidgetsExtra
 	};
 }
 
-
-
-#endif /* WIDGETS_TAB_SET_HPP_ */
+#endif /* WIDGETS_TABS_HPP_ */

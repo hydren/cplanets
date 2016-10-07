@@ -37,7 +37,7 @@
 #include "widgets/flow_layout.hpp"
 #include "widgets/spinner.hpp"
 #include "widgets/drop_menu.hpp"
-#include "widgets/tab_set.hpp"
+#include "widgets/tabs.hpp"
 #include "widgets/label_win.hpp"
 #include "widgets/toogle_button.hpp"
 #include "widgets/file_dialog.hpp"
@@ -61,7 +61,6 @@ using WidgetsExtra::FlowLayout;
 using WidgetsExtra::Spinner;
 using WidgetsExtra::DropDownMenu;
 using WidgetsExtra::DropDownMenuFactory;
-using WidgetsExtra::TabSet;
 using WidgetsExtra::LabelWin;
 using WidgetsExtra::ToogleButton;
 using WidgetsExtra::FileDialog;
@@ -72,6 +71,7 @@ using WidgetsExtra::ValueShower;
 using WidgetsExtra::IconButton;
 using WidgetsExtra::IconToogleButton;
 using WidgetsExtra::MultiLineTextRenderer;
+using WidgetsExtra::TabbedPane;
 
 typedef Planetarium::Body2DClone Body2DClone;
 
@@ -187,7 +187,7 @@ Rect windowSize(0, 0, 640, 480);
 FlowLayout* toolbarNorthLayout;
 IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnHelp, *btnAbout, *btnRun, *btnPause;
 
-TabSet* tabs;
+TabbedPane* tabs;
 
 BgrWin* tabBodies;
 ListWin<Body2DClone>* txtBodies;
@@ -312,19 +312,19 @@ void CPlanets::init()
 
 
 	//+++++++++++++++ Tabs
-	tabs = new TabSet(window, WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING, 0, 22);
+	tabs = new TabbedPane(window, Rect(WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING, BODIES_PANEL_WIDTH - WIDGETS_SPACING, planetariumSize.h));
 	Rect sizeTab(
-		tabs->layout.position.x,
-		tabs->layout.position.y + tabs->layout.maxHeight,
-		BODIES_PANEL_WIDTH - WIDGETS_SPACING,
-		planetariumSize.h - tabs->layout.maxHeight
+		0,
+		tabs->tabBtnLayout.maxHeight,
+		tabs->tw_area.w,
+		tabs->tw_area.h - tabs->tabBtnLayout.maxHeight
 	);
 
 	// Tab bodies
-	tabBodies = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
+	tabBodies = new BgrWin(tabs, sizeTab, null, TabbedPane::drawTabStyleBgrWin, null, null, null, tabs->bgcol);
 	tabs->addTab("Bodies", tabBodies);
 
-	sclpBodies = new ScrollablePane(tabBodies, theme.scrollStyle, Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), window->bgcol);
+	sclpBodies = new ScrollablePane(tabBodies, theme.scrollStyle, Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), tabs->bgcol);
 	sclpBodies->setScrollbarHorizontalVisible(false);
 
 	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
@@ -336,10 +336,10 @@ void CPlanets::init()
 	txtBodies->preventRedrawOnClick = true;
 
 	// Tab options
-	tabOptions = new BgrWin(window, sizeTab, null, TabSet::drawTabStyleBgrWin, null, null, null, window->bgcol);
+	tabOptions = new BgrWin(tabs, sizeTab, null, TabbedPane::drawTabStyleBgrWin, null, null, null, tabs->bgcol);
 	tabs->addTab("Options", tabOptions);
 
-	tabs->layout.pack();
+	tabs->tabBtnLayout.pack();
 	tabs->setActiveTab(tabBodies);
 
 	lblSimulationParameters = new LabelWin(tabOptions, Rect(), "Simulation parameters");
@@ -574,9 +574,10 @@ void CPlanets::init()
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
 	mltHelpText->setText(HELP_TEXT, sclpHelpText->tw_area.w);
 
-//	print_h(); //DEBUG
+//	cout << "\n" << "Basic analysis:" << endl;
+//	print_h();  // DEBUG
 //	cout << "\n" << "Deep analysis:" << endl;
-//	WidgetsExtra::print_hierarchy(window);
+//	WidgetsExtra::print_hierarchy(window);  // DEBUG
 }
 
 void CPlanets::start()
@@ -663,7 +664,7 @@ void onWindowResize(int dw, int dh)
 
 	planetariumPane->widen(dw, dh);
 
-	tabs->widenAll(0, dh);
+	tabs->widen(0, dh);
 	sclpBodies->widen(0, dh);
 	txtBodiesUpdateSize();
 

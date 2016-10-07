@@ -1,11 +1,11 @@
 /*
- * tab_set.cpp
+ * tabs.cpp
  *
  *  Created on: 28 de abr de 2016
  *      Author: carlosfaruolo
  */
 
-#include "tab_set.hpp"
+#include "tabs.hpp"
 
 #include "widgets_util.hpp"
 
