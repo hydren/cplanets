@@ -249,6 +249,12 @@ struct Filler extends WinBase {
 	void draw() { init_gui(); SDL_FillRect(win, null, bgcol); }
 } *aux_tabsCollapseFiller;
 
+void forceFullWindowRefresh()
+{
+	window->draw_blit_recur();
+	SDL_Flip(window->win);
+}
+
 // ================ CPlanetsGUI::MainWindow namespace ================
 string filePathToLoad;
 #include "cli.hxx"
