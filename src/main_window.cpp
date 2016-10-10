@@ -243,12 +243,6 @@ MultiLineTextRenderer* mltHelpText;
 
 // kludges
 
-struct Filler extends WinBase {
-	Filler(WinBase* parent, Rect rect) : WinBase(parent, null, rect.x, rect.y, rect.w, rect.h, window->bgcol, 0) {}
-	virtual ~Filler(){}
-	void draw() { init_gui(); SDL_FillRect(win, null, bgcol); }
-} *aux_tabsCollapseFiller;
-
 void forceFullWindowRefresh()
 {
 	window->draw_blit_recur();
@@ -337,8 +331,6 @@ void CPlanets::init()
 	catch (std::exception& e) { cout << "A problem occurred when loading file. " << e.what() << endl; }
 	planetarium->listeners.addListener(&customListener);
 	planetarium->physics->universe.gravity = DEFAULT_GRAVITY;
-
-	aux_tabsCollapseFiller = new Filler(window, Rect(planetariumSize.x - WIDGETS_SPACING, planetariumSize.y - WIDGETS_SPACING, WIDGETS_SPACING, planetariumSize.h + WIDGETS_SPACING));
 
 	//+++++++++++++++ Tabs
 	tabs = new TabbedPane(window, Rect(WIDGETS_SPACING, TOOLBAR_SIZE + 0.5*WIDGETS_SPACING, BODIES_PANEL_WIDTH - WIDGETS_SPACING, planetariumSize.h));
@@ -704,8 +696,6 @@ void onWindowResize(int dw, int dh)
 
 	toolbarSouthLayout->position.y += dh;
 	toolbarSouthLayout->pack();
-
-	aux_tabsCollapseFiller->widen(0, dh);
 
 	window->draw_blit_recur();
 	if(*tglCollapseLeftPanel->d == true) collapseTabs(true);
@@ -1167,7 +1157,7 @@ void collapseTabs(bool choice)
 		planetariumPane->widen(-tabs->tw_area.w, 0);
 		planetariumPane->move(tabs->tw_area.w, 0);
 		tabs->show();
-		aux_tabsCollapseFiller->draw_blit_upd();
+		forceFullWindowRefresh();
 	}
 }
 
@@ -1193,6 +1183,7 @@ void toogleFullscreen(bool choice)
 		toolbarNorthLayout->showAll();
 		toolbarRight->showAll();
 		toolbarSouthLayout->showAll();
+		forceFullWindowRefresh();
 	}
 }
 
