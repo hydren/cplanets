@@ -23,10 +23,29 @@ PlanetariumPane::~PlanetariumPane()
 	delete planetarium;
 }
 
+void PlanetariumPane::widen(int dx, int dy)
+{
+	BgrWin::widen(dx, dy);
+	planetarium->size.w += dx;
+	planetarium->size.h += dy;
+}
+
+void PlanetariumPane::move(int delta_x, int delta_y)
+{
+	BgrWin::move(delta_x, delta_y);
+	planetarium->pos.x += delta_x;
+	planetarium->pos.y += delta_y;
+}
+
 void PlanetariumPane::doRefresh()
 {
 	draw_blit_upd();
 	planetarium->isRedrawPending = false;
+}
+
+void PlanetariumPane::onSurfaceUpdate()
+{
+	send_uev(USER_EVENT_ID__REDRAW_REQUESTED, this->id.id1);
 }
 
 void PlanetariumPane::drawPlanetarium(BgrWin* bgr)
@@ -43,18 +62,6 @@ void PlanetariumPane::drawPlanetarium(BgrWin* bgr)
 		rectangleRGBA(self->win, 1, 1, self->tw_area.w-2, self->tw_area.h-2, self->renderTextPaused->text_col.r, self->renderTextPaused->text_col.g, self->renderTextPaused->text_col.b, 255);
 		self->renderTextPaused->draw_string(self->win, "PAUSED", Point(8, 8));
 	}
-}
-
-void PlanetariumPane::onSurfaceUpdate()
-{
-	send_uev(USER_EVENT_ID__REDRAW_REQUESTED, this->id.id1);
-}
-
-void PlanetariumPane::widen(int dx, int dy)
-{
-	BgrWin::widen(dx, dy);
-	planetarium->size.w += dx;
-	planetarium->size.h += dy;
 }
 
 void PlanetariumPane::onMouseDown(BgrWin* bgr, int x, int y, int but)
