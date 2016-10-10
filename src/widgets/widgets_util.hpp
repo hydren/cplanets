@@ -63,6 +63,15 @@ namespace WidgetsExtra
 		void setup();
 	};
 
+	/// Returns a vector of strings containing, each string corresponding to a line of a line-wrapped version of the given text.
+	/// The line-wrapping is computed as if the text was to be drawn with the given RenderText and a maximum width.
+	/// If 'vstr' is not null, it is used to store the result and returned. Otherwise, a new vector is instantiated and returned for that purpose.
+	///
+	/// @param fullText The text to be split in a vector of lines
+	/// @param drawer The RenderText intened to be used when drawing the lines
+	/// @param maxWidth The maximum intended width of the lines
+	/// @param vstr A pointer to a vector of strings to be used as the container for the result.
+	/// @return A vector of std::string's containing the computed lines.
 	std::vector<std::string>* getLineWrappedText(std::string fullText, RenderText* drawer, Uint16 maxWidth, std::vector<std::string>* vstr=NULL);
 }
 
