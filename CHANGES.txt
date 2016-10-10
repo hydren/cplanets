@@ -1,6 +1,11 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.8 - 10/10/2016
++ Added fullscreen mode (enable through button, disable pressing escape)
++ Added button to collapse tabs.
+* A bit of refactoring.
+
 0.9.7 - 05/10/2016
 + Added parameter to load files from command line
 + Added parameter to specify window size from command line
