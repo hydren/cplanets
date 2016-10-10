@@ -44,9 +44,8 @@ Show paused/resumed state more explicitly - done
 Implement button with icon and offer icons-only buttons - done
 Theming functionality (mainly to match many OSes' ones) - done
 Command line arguments - done
-Tooltip for icon buttons
 Basic "help" dialog
-Hide left bar, hide all mode
+Hide left bar, hide all mode - done
 
 - 1.x
 
@@ -71,6 +70,7 @@ Attempt to implement Gauss-Legendre's implicit RK with other RK as predictor.
 Implement optional Barnes-Hut tree to optimize calculations
 Try to load the universe setting a fitting zoom for its size.
 Add optional single-threaded mode
+Tooltip for icon buttons
 Implement load/save on other formats (ods, prop, yaml)
 Improve bodies list (use headed table instead of list, sort by)
 Implement load/save on the Java Serialized Object File (.ser) ('japla's old format)
