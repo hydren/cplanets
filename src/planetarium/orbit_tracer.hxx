@@ -36,16 +36,23 @@ struct Planetarium::OrbitTracer
 		return this->traces[body];
 	}
 
-	/// Erases the given body's tracing data.
-	void clearTrace(const Body2D* body)
+	/// Erases the given body's tracing data. If erase is false, then the entry will be cleared but not erased.
+	void clearTrace(const Body2D* body, bool erase=true)
 	{
+		if(erase)
 			this->traces.erase(body);
+		else
+			this->traces[body].clear();
 	}
 
-	/// Resets the tracer by erasing all tracing data.
-	void reset()
+	/// Resets the tracer by erasing all tracing data. If erase is false, then entries will be cleared but not erased.
+	void reset(bool erase=true)
 	{
-		this->traces.clear();
+		if(erase == true)
+			this->traces.clear();
+		else
+			for(map<const Body2D*, deque<Vector2D> >::iterator it = this->traces.begin(); it != this->traces.end(); ++it)
+				it->second.clear();
 	}
 
 	/// Draws the given body trace on this tracer's planetarium.
