@@ -96,6 +96,7 @@ struct Planetarium::OrbitTracer
 	{
 		int (*const line_function) (SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = (planetarium->tryAA? aalineRGBA : lineRGBA);
 
+		if(trace.empty()) return;
 		Vector2D previousPosition = trace.front();
 		foreach(Vector2D&, recordedPosition, deque<Vector2D>, trace)
 		{
@@ -114,6 +115,7 @@ struct Planetarium::OrbitTracer
 	/// Draws the given trace on this tracer's planetarium as curves, each one for each three positions.
 	void drawQuadricBezier(deque<Vector2D>& trace, const SDL_Color& bodyColor)  //still not working properly
 	{
+		if(trace.empty()) return;
 		Vector2D previousPosition = trace.front();
 		Vector2D previousSupport;
 	//	if(trace.size() > 1) previousSupport = trace.front().times(3).subtract(*(trace.begin()+1)).scale(0.5); //kickstart aux

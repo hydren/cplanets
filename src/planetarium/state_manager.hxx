@@ -312,7 +312,7 @@ struct Planetarium::StateManager
 
 	void shrinkToFit()
 	{
-		while(changes.size() > planetarium->undoStackMaxSize-1)
+		while(changes.size() >= planetarium->undoStackMaxSize and not changes.empty())
 		{
 			purgeAsForgotten(changes.front());
 			if(changes.front().type != MERGE) nonMergeChangesCount--;
