@@ -1,5 +1,6 @@
 -------------- Bugs
 
+- Shift button doesnt work when selecting last index
 - There are deadlocks ocurring (often seen with a high number of bodies or using the windows-debug build)
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
 - Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
@@ -9,6 +10,8 @@
 -------------- To Do
 
 - Milestones
+- Clear trace when changing reference frame
+- Try to create a MSVC project.
 - After completing 1.0 milestone, do a complete feature re-check on planets and cplanets.
 
 -------------- Backlog

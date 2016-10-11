@@ -5,13 +5,16 @@
  *      Author: carlosfaruolo
  */
 
+#include <map>
+using std::map;
+
 /** A struct to record orbits. */
 struct Planetarium::OrbitTracer
 {
 	OrbitTraceStyle style;
 	bool isActive;
 	unsigned traceLength;
-	std::map<Body2D*, std::deque<Vector2D> > traces;
+	map<const Body2D*, deque<Vector2D> > traces;
 
 	/// Creates a orbit tracer that uses the given planetarium as reference for the physics properties.
 	OrbitTracer(Planetarium* p)
@@ -28,7 +31,7 @@ struct Planetarium::OrbitTracer
 	}
 
 	/// Get the trace for the given body. If there is no trace of the given body, a new empty will be created and returned.
-	std::deque<Vector2D>& getTrace(Body2D* body)
+	deque<Vector2D>& getTrace(const Body2D* body)
 	{
 		return this->traces[body];
 	}
@@ -36,7 +39,7 @@ struct Planetarium::OrbitTracer
 	/// Erases the given body's tracing data.
 	void clearTrace(const Body2D* body)
 	{
-		this->traces.erase(const_cast<Body2D*>(body));
+			this->traces.erase(body);
 	}
 
 	/// Resets the tracer by erasing all tracing data.
@@ -136,6 +139,6 @@ struct Planetarium::OrbitTracer
 		}
 	}
 
-//	void drawCubicBezier(std::deque<Vector2D>& trace, SDL_Color* color);  //not implemented
+//	void drawCubicBezier(deque<Vector2D>& trace, SDL_Color* color);  //not implemented
 
 };

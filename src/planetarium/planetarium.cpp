@@ -10,7 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
-#include <queue>
+#include <deque>
 
 #include <cfloat>
 
@@ -31,9 +31,8 @@
 using std::cout;
 using std::endl;
 using std::vector;
-using std::queue;
 using std::deque;
-using std::map;
+
 using SDL_util::colorToInt;
 
 #define max std::max

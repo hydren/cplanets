@@ -12,8 +12,6 @@
 #include <SDL/SDL_thread.h>
 
 #include <vector>
-#include <deque>
-#include <map>
 
 #include "physics/physics2d.hpp"
 #include "futil/general/language.hpp"

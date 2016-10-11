@@ -5,6 +5,9 @@
  *      Author: carlosfaruolo
  */
 
+#include <queue>
+using std::queue;
+
 // helper struct to buffer collision events
 struct Planetarium::Physics2DEventsManager
 {
