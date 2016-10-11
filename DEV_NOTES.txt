@@ -1,6 +1,5 @@
 -------------- Bugs
 
-- Shaking bodies (even misplaced) when using reference frame with certain parameters
 - There are deadlocks ocurring (often seen with a high number of bodies or using the windows-debug build)
 - When resizing window, reference frame position is not being adjusted 
 - Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.

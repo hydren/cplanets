@@ -147,6 +147,7 @@ void Planetarium::draw()
 			bodies.back().clone.userObject = new PlanetariumUserObject(bodyColor);
 		}
 	}// end synchronized(physicsAccessMutex)
+	const Vector2D referenceFrame = this->physics->referenceFrame.position();
 
 	//draw all traced orbits (only if tracer is active)
 	if(this->orbitTracer->isActive) foreach(Body2DClone&, body, vector<Body2DClone>, bodies)
@@ -165,7 +166,7 @@ void Planetarium::draw()
 		SDL_Color* bodyColor = (body.clone.userObject == null? null : &static_cast<PlanetariumUserObject*>(body.clone.userObject)->color);
 
 		double size = viewportZoom*body.clone.diameter;
-		Vector2D v = this->getTransposed(body.clone.position);
+		Vector2D v = this->getTransposed(body.clone.position, referenceFrame);
 
 		if(size < this->minimumBodyRenderingRadius)
 			size = this->minimumBodyRenderingRadius;
@@ -199,7 +200,7 @@ void Planetarium::draw()
 
 		//record position
 		if(running) //ToDo should this also be avoided when orbitTracer->isActive==false?
-			orbitTracer->record(body);
+			orbitTracer->record(body, referenceFrame);
 	}
 
 	//draw body creation helper stubs
@@ -214,7 +215,7 @@ void Planetarium::draw()
 		}
 		else if(bodyCreationState == VELOCITY_SELECTION)
 		{
-			Vector2D newBodyPos = this->getTransposed(bodyCreationPosition);
+			Vector2D newBodyPos = this->getTransposed(bodyCreationPosition, referenceFrame);
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
 			mouseX -= this->pos.x; mouseY -= this->pos.y;
@@ -254,6 +255,12 @@ Vector2D Planetarium::getTransposed(const Vector2D& position) const
 {
 //	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
 	return (position - physics->referenceFrame.position() - viewportPosition)*viewportZoom;
+}
+
+Vector2D Planetarium::getTransposed(const Vector2D& position, const Vector2D& referenceFrame) const
+{
+//	cout << "DEBUG: viewport: " << (*(this->viewportPosition)).x << ", " << (*(this->viewportPosition)).y << endl;
+	return (position - referenceFrame - viewportPosition)*viewportZoom;
 }
 
 Vector2D Planetarium::getAntiTransposed(const Vector2D& position) const

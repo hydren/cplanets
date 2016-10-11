@@ -92,8 +92,11 @@ struct Planetarium extends Physics2D::Listener
 	/** Resizes the planetarium surface by the given amount. */
 	void widen(int dx, int dy);
 
-	/** Gets the given physics position in screen position. */
+	/** Gets the given physics position in screen position. Uses current orbital reference as reference frame.*/
 	Vector2D getTransposed(const Vector2D& position) const;
+
+	/** Gets the given physics position in screen position and given reference frame position. */
+	Vector2D getTransposed(const Vector2D& position, const Vector2D& referenceFramePosition) const;
 
 	/** Gets the given screen position in physics position. */
 	Vector2D getAntiTransposed(const Vector2D& position) const;

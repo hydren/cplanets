@@ -20,9 +20,9 @@ struct Planetarium::OrbitTracer
 	{}
 
 	/// Record on the queue the given body's current position
-	void record(Body2DClone& body)
+	void record(Body2DClone& body, const Vector2D& referenceFramePosition)
 	{
-		this->traces[body.original].push_back(body.clone.position-planetarium->physics->referenceFrame.position()); //queue push
+		this->traces[body.original].push_back(body.clone.position-referenceFramePosition); //queue push
 		while(this->traces[body.original].size() > traceLength)
 			this->traces[body.original].pop_front(); //queue pop
 	}
