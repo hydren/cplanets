@@ -1151,12 +1151,14 @@ void collapseTabs(bool choice)
 		planetariumPane->move(-tabs->tw_area.w, 0);
 		planetariumPane->widen(tabs->tw_area.w, 0);
 		tabs->hide();
+		planetarium->viewportPosition.x -= tabs->tw_area.w; // maintains viewport position in relation to the screen
 	}
 	else
 	{
 		planetariumPane->widen(-tabs->tw_area.w, 0);
 		planetariumPane->move(tabs->tw_area.w, 0);
 		tabs->show();
+		planetarium->viewportPosition.x += tabs->tw_area.w; // maintains viewport position in relation to the screen
 		forceFullWindowRefresh();
 	}
 }
@@ -1171,6 +1173,8 @@ void toogleFullscreen(bool choice)
 		toolbarNorthLayout->hideAll();
 		toolbarRight->hideAll();
 		toolbarSouthLayout->hideAll();
+		planetarium->viewportPosition.x -= tabs->tw_area.w + 2*WIDGETS_SPACING; // maintains viewport position in relation to the screen
+		planetarium->viewportPosition.y -= TOOLBAR_SIZE + WIDGETS_SPACING; // maintains viewport position in relation to the screen
 	}
 	else
 	{
@@ -1183,6 +1187,8 @@ void toogleFullscreen(bool choice)
 		toolbarNorthLayout->showAll();
 		toolbarRight->showAll();
 		toolbarSouthLayout->showAll();
+		planetarium->viewportPosition.x += tabs->tw_area.w + 2*WIDGETS_SPACING; // maintains viewport position in relation to the screen
+		planetarium->viewportPosition.y += TOOLBAR_SIZE + WIDGETS_SPACING; // maintains viewport position in relation to the screen
 		forceFullWindowRefresh();
 	}
 }
