@@ -307,6 +307,33 @@ void Planetarium::setFocusedBodies(const vector<Body2D*>& bodies)
 	}
 }
 
+void Planetarium::setReferenceFrameAsFocusedBodies(bool centerViewport)
+{
+	physics->referenceFrame.set(focusedBodies);
+	orbitTracer->reset(false);
+	if(centerViewport)
+	{
+		const double az = 1/viewportZoom;
+		viewportPosition.x = -az * size.w/2;
+		viewportPosition.y = -az * size.h/2;
+	}
+}
+
+void Planetarium::resetReferenceFrame(bool centerViewport)
+{
+	const Vector2D pos = centerViewport? physics->referenceFrame.position() : Vector2D::NULL_VECTOR;
+
+	physics->referenceFrame.reset();
+	orbitTracer->reset(false);
+	if(centerViewport)
+	{
+		const double az = 1/viewportZoom;
+		viewportPosition = pos;
+		viewportPosition.x -= az * size.w/2;
+		viewportPosition.y -= az * size.h/2;
+	}
+}
+
 //------------------------------------ \/ \/ SYNCHRONIZED METHODS \/ \/ -----------------------------------
 
 void Planetarium::removeFocusedBodies(bool alsoDelete)

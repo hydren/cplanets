@@ -111,6 +111,14 @@ struct Planetarium extends Physics2D::Listener
 	/** Sets the given bodies as the focused/selected ones. */
 	void setFocusedBodies(const std::vector<Body2D*>& bodies);
 
+	/** Sets the current focused bodies as the reference frame, effectively overriding the previous one.
+	 *  If 'centerViewport' is true, also adjusts the viewport to make it in the center on the reference frame barycenter. */
+	void setReferenceFrameAsFocusedBodies(bool centerViewport=false);
+
+	/** Sets the current focused bodies as the origin, effectively overriding the previous one.
+	 *  If 'centerViewport' is true, also adjusts the viewport to make it in the center on the previous reference frame barycenter. */
+	void resetReferenceFrame(bool centerViewport=false);
+
 	//synchronized methods
 
 	/** Removes all focused bodies from the universe. By default, it also deletes these bodies. If 'alsoDelete' is false, then it wont delete these bodies.
