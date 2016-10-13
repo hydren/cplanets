@@ -1058,6 +1058,7 @@ void onUserEvent(int cmd,int param,int param2)
 
 	if(cmd == ::USER_EVENT_ID__UPDATE_BODIES_LIST)
 	{
+		txtBodies->setListData(new vector<Body2DClone>(planetarium->getBodies()), true);
 		txtBodiesUpdateSize();
 		sclpBodies->refresh();
 	}
@@ -1106,7 +1107,6 @@ void onBodyDeletion(Body2D* deletedBodyPtr)
 
 void txtBodiesRefreshAll()
 {
-	txtBodies->setListData(new vector<Body2DClone>(planetarium->getBodies()), true);
 	send_uev(::USER_EVENT_ID__UPDATE_BODIES_LIST);
 }
 
