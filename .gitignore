@@ -43,3 +43,4 @@ org.eclipse.cdt.managedbuilder.core.prefs
 
 # cplanets executables
 cplanets
+/msvc-debug/
