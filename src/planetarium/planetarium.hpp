@@ -217,6 +217,8 @@ struct Planetarium extends Physics2D::Listener
 	bool isOrbitTracingEnabled() const;
 	void setOrbitTracingEnabled(bool choice=true);
 
+	void resetOrbitTracerHistory(bool deepCleanup=false);
+
 	//special functions that returns references
 	unsigned& getOrbitTracerLengthReference() const;
 	bool& getOrbitTracerSwitchReference() const;

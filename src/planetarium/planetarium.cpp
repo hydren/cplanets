@@ -774,11 +774,6 @@ void Planetarium::setOrbitTraceLength(unsigned length)
 	orbitTracer->traceLength = length;
 }
 
-unsigned& Planetarium::getOrbitTracerLengthReference() const
-{
-	return orbitTracer->traceLength;
-}
-
 bool Planetarium::isOrbitTracingEnabled() const
 {
 	return orbitTracer->isActive;
@@ -787,6 +782,16 @@ bool Planetarium::isOrbitTracingEnabled() const
 void Planetarium::setOrbitTracingEnabled(bool choice)
 {
 	orbitTracer->isActive = choice;
+}
+
+void Planetarium::resetOrbitTracerHistory(bool deepCleanupRequested)
+{
+	orbitTracer->reset(deepCleanupRequested);
+}
+
+unsigned& Planetarium::getOrbitTracerLengthReference() const
+{
+	return orbitTracer->traceLength;
 }
 
 bool& Planetarium::getOrbitTracerSwitchReference() const
