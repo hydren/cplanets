@@ -353,7 +353,8 @@ void Planetarium::removeFocusedBodies(bool alsoDelete)
 		for(unsigned i = 0; i < listeners.size(); i++)
 			listeners[i]->onBodyDeletion(body);
 
-		physics->referenceFrame.dissociate(body);
+		bool changedReference = physics->referenceFrame.dissociate(body);
+		if(changedReference) orbitTracer->reset(false);
 
 		if(not undoEnabled)
 		{
@@ -381,7 +382,8 @@ void Planetarium::removeBody(Body2D* body, bool alsoDelete)
 	for(unsigned i = 0; i < listeners.size(); i++)
 		listeners[i]->onBodyDeletion(body);
 
-	physics->referenceFrame.dissociate(body);
+	bool changedReference = physics->referenceFrame.dissociate(body);
+	if(changedReference) orbitTracer->reset(false);
 	remove_element(focusedBodies, body);
 
 	if(not undoEnabled)
