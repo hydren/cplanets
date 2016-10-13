@@ -875,7 +875,8 @@ void Planetarium::updateView()
 			lastRedrawRequestTime = SDL_GetTicks();
 		}
 
-		SDL_Delay(1000/fps - (SDL_GetTicks() - lastUpdateTime));
+		Uint32 delay = 1000/fps - (SDL_GetTicks() - lastUpdateTime);
+		if(delay > 0) SDL_Delay(delay);
 	}
 }
 
