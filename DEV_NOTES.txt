@@ -10,7 +10,6 @@
 -------------- To Do
 
 - Milestones
-- Clear trace when changing reference frame
 - Try to create a MSVC project.
 - After completing 1.0 milestone, do a complete feature re-check on planets and cplanets.
 

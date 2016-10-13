@@ -921,6 +921,9 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 	else //delete user objects of collided bodies (the physics code won't do it as it has no knowledge of this)
 		purgeUserObjects(collidingList);
 
+	// since currently the physics code will always reset the reference frame on collision, do reset the orbit tracer as well.
+	orbitTracer->reset(false);
+
 	//creates a collision event for listeners
 	CollisionEvent* ev = new CollisionEvent();
 	foreach(Body2D*, body, vector<Body2D*>, collidingList)
