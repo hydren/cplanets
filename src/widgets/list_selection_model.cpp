@@ -191,6 +191,8 @@ void ListSelectionModel::clear(unsigned exceptStart, unsigned exceptEnd)
 			currentChangeStartIndex = -1;
 		}
 	}
+	if(currentChangeStartIndex != -1)
+		notify(currentChangeStartIndex, selection.size()-1);
 }
 
 void ListSelectionModel::shift(bool up, unsigned index)
