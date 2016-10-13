@@ -1,6 +1,15 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.9 - 13/10/2016
+* Fixed makefile.
+* Fixed shaking bodies when using reference frames with too many bodies or too variable barycenter.
+* Fixed crash in MSVC build when adding bodies with orbit trace on.
+* Fixed shift-selection not working on bodies list when selecting last index.
+~ Resetting orbit trace history when changing reference frame.
+~ Adjusting reference frame when toogling tabs collapse or fullscreen mode.
+
+
 0.9.8 - 10/10/2016
 + Added fullscreen mode (enable through button, disable pressing escape)
 + Added button to collapse tabs.
