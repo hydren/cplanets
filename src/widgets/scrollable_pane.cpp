@@ -34,8 +34,8 @@ void ScrollablePane::draw()
 void ScrollablePane::refresh()
 {
 	this->draw_blit_recur();
-	this->hide(); //xxx cumbersome workaround for ScrollablePane::refresh()
-	this->show(); //cumbersome workaround for ScrollablePane::refresh()
+	this->hidden = true;
+	this->show();
 }
 
 void ScrollablePane::updateOffset(int dx, int dy)

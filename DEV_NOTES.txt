@@ -1,6 +1,6 @@
 -------------- Bugs
 
-- Scrollbar performace is kinda sluggish. Look at testsw.cpp for a references about using scrollbars.
+- Glitches when in large scale: single point spawn, upper-left grabbing.
 - Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
 - Simulation fails when changing timestep on Backwards Difference Correction solver.
 - Bezier spline is glitched (due to wrong parametrization).
