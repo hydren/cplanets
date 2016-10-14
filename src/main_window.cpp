@@ -241,12 +241,35 @@ DialogBgrWin* dialogHelp;
 ScrollablePane* sclpHelpText;
 MultiLineTextRenderer* mltHelpText;
 
-// kludges
+// %%%%%%%%%%%%% XXX Kludges %%%%%%%%%%%%%%%
 
 void forceFullWindowRefresh()
 {
 	window->draw_blit_recur();
 	SDL_Flip(window->win);
+}
+
+// workaround for file_chooser behind FileDialog bug
+void stackDialogsOnTop()
+{
+	DialogBgrWin* aux_dialogs[] =
+	{
+		dialogLoad,
+		dialogSave,
+		null  // do not remove this guy
+	};
+
+	static bool once = false;
+	if(not once)
+	{
+		for(int i = 0; aux_dialogs[i] != null; i++)
+		{
+			aux_dialogs[i]->setPositionOnCenter();
+			aux_dialogs[i]->setVisible();
+			aux_dialogs[i]->hide();
+		}
+		once = true;
+	}
 }
 
 // ================ CPlanetsGUI::MainWindow namespace ================
@@ -880,25 +903,9 @@ void onButtonPressed(Button* btn)
 		replaceUniverse(emptyUniverse);
 	}
 
-	//fixme there's got to be a better way to avoid file_chooser behind FileDialog bug
-	//xxx workaround for file_chooser behind FileDialog bug
-	if(btn == btnLoad or btn == btnSave)
-	{
-		static bool once = false;
-		if(not once)
-		{
-			dialogSave->setPositionOnCenter();
-			dialogSave->setVisible();
-			dialogSave->hide();
-			dialogLoad->setPositionOnCenter();
-			dialogLoad->setVisible();
-			dialogLoad->hide();
-			once = true;
-		}
-	}
-
 	if(btn == btnLoad)
 	{
+		stackDialogsOnTop(); //kludge
 		if(not dialogSave->hidden) return;
 		dialogLoad->setPositionOnCenter();
 		dialogLoad->setVisible();
@@ -907,6 +914,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnSave)
 	{
+		stackDialogsOnTop(); //kludge
 		if(not dialogLoad->hidden) return;
 		dialogSave->setPositionOnCenter();
 		dialogSave->setVisible();
