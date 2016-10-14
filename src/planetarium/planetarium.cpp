@@ -820,7 +820,7 @@ void Planetarium::performPhysics()
 
 void Planetarium::updateView()
 {
-	static long lastUpdateTime, lastRedrawRequestTime = 0;
+	static Uint32 lastUpdateTime, lastRedrawRequestTime = 0;
 	while(true)
 	{
 		lastUpdateTime = SDL_GetTicks();
@@ -859,9 +859,9 @@ void Planetarium::updateView()
 		}
 
 		const bool allowedByLegacy = not running or
-				(currentIterationCount >= ((long) iterationsPerDisplay) and (SDL_GetTicks() - lastRedrawRequestTime) > ((long) displayPeriod));
+				(currentIterationCount >= iterationsPerDisplay and SDL_GetTicks() - lastRedrawRequestTime > (Uint32) displayPeriod);
 
-		if(not isRedrawPending && (not legacyControl || allowedByLegacy) )
+		if(not isRedrawPending and (not legacyControl or allowedByLegacy) )
 		{
 			isRedrawPending = true;
 
@@ -875,7 +875,7 @@ void Planetarium::updateView()
 			lastRedrawRequestTime = SDL_GetTicks();
 		}
 
-		Uint32 delay = 1000/fps - (SDL_GetTicks() - lastUpdateTime);
+		long delay = (1000/fps) - (long)(SDL_GetTicks() - lastUpdateTime);
 		if(delay > 0) SDL_Delay(delay);
 	}
 }
