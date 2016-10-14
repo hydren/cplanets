@@ -482,7 +482,7 @@ void Planetarium::addRandomBody(double avMass, double avDiameter, double avSpeed
 	addCustomBody(
 		gauss_random_between(avMass*0.9, avMass*1.1),
 		gauss_random_between(avDiameter*0.9, avDiameter*1.1),
-		Vector2D(random_between(minPosX, maxPosX), random_between(minPosY, maxPosY)),
+		Vector2D(random_decimal_between(minPosX, maxPosX), random_decimal_between(minPosY, maxPosY)),
 		Vector2D(gauss_random_between(avSpeed*0.9, avSpeed*1.1)),
 		SDL_util::getRandomColor()
 	);
@@ -514,7 +514,7 @@ void Planetarium::addRandomOrbitingBody(const double area[4], const bool& clockw
 				 maxPosX = area != null ? area[0] + area[2] : DBL_MAX,
 				 maxPosY = area != null ? area[1] + area[3] : DBL_MAX;
 
-	Vector2D position(random_between(minPosX, maxPosX), random_between(minPosY, maxPosY));
+	Vector2D position(random_decimal_between(minPosX, maxPosX), random_decimal_between(minPosY, maxPosY));
 
 	Vector2D centerOfMass, centerOfMassVelocity;
 	double totalMass;

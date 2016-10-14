@@ -28,7 +28,7 @@ const Vector2D Vector2D::Y_VERSOR (0, 1);
 Vector2D::Vector2D(double magnitude)
 : x(), y()
 {
-	double angle = random_between(0.0, 2.0*M_PI);
+	double angle = random_decimal_between(0.0, 2.0*M_PI);
 	x = magnitude*cos(angle);
 	y = magnitude*sin(angle);
 }

@@ -1,6 +1,6 @@
 -------------- Bugs
 
-- Glitches when in large scale: single point spawn, upper-left grabbing.
+- Glitches when in large scale: upper-left grabbing (caused by overflow).
 - Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
 - Simulation fails when changing timestep on Backwards Difference Correction solver.
 - Bezier spline is glitched (due to wrong parametrization).

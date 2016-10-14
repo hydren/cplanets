@@ -18,7 +18,7 @@ using std::string;
 
 string generateRandomName()
 {
-	return string("B")+random_between(0, 10000);
+	return string("B")+random_between(0, 10000); // FIXME this way of generation ids is evil and wrong
 }
 
 Body2D::Body2D(double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration)
