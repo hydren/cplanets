@@ -233,17 +233,17 @@ void FileDialog::confirmation(Button* okBtn)
 	if(self->mode == SAVE_FILE) //filename was not retrieved
 		self->dlgwFilenameField.dok(); //retrieve filename (typed by user)
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
-	DialogBgrWin::close(okBtn);
+	DialogBgrWin::closeParentDialogBgrWin(okBtn);
 	close_file_chooser();
 }
 
 //called when we click Cancel or 'X' button
-void FileDialog::cancellation(Button* okBtn)
+void FileDialog::cancellation(Button* cancelBtn)
 {
-	FileDialog* self = static_cast<FileDialog*>(okBtn->parent);
+	FileDialog* self = static_cast<FileDialog*>(cancelBtn->parent);
 	self->selectedFilename.clear();
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
-	DialogBgrWin::close(okBtn);
+	DialogBgrWin::closeParentDialogBgrWin(cancelBtn);
 	close_file_chooser();
 }
 

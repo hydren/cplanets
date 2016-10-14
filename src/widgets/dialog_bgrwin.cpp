@@ -33,7 +33,7 @@ DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWi
   titleBarArea(Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
   style(st),
   titleStrOffset(0),
-  btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), Label(""), create_pixmap(close_btn_xpm), DialogBgrWin::close)
+  btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), Label(""), create_pixmap(close_btn_xpm), DialogBgrWin::closeParentDialogBgrWin)
 {
 	this->validate();
 }
@@ -66,6 +66,15 @@ void DialogBgrWin::setPositionOnCenter()
 {
 	this->setPosition(Point(0.5 * (SDL_GetVideoSurface()->w - this->tw_area.w), 0.5 * (SDL_GetVideoSurface()->h - this->tw_area.h)));
 }
+
+void DialogBgrWin::close()
+{
+	setVisible(false);
+	if(onClosedCallback != null)
+		onClosedCallback(this);
+}
+
+// ####################  protected #####################
 
 void DialogBgrWin::bind()
 {
@@ -108,16 +117,10 @@ void DialogBgrWin::draw(BgrWin* bwSelf)
 	draw_title_ttf->draw_string(self->win, self->titleStr.c_str(), Point(4, self->titleStrOffset));
 }
 
-void DialogBgrWin::close(Button* btn)
+void DialogBgrWin::closeParentDialogBgrWin(Button* btn)
 {
-	DialogBgrWin* self = static_cast<DialogBgrWin*>(btn->parent);
-	self->setVisible(false);
-	if(self->onClosedCallback != null)
-		self->onClosedCallback(self);
+	static_cast<DialogBgrWin*>(btn->parent)->close();
 }
-
-void DialogBgrWin::buttonCallbackCloseParentDialogBgrWin(Button* btn)
-{ DialogBgrWin::close(btn); }
 
 void DialogBgrWin::dialog_mwin_down(BgrWin* bgr,int x,int y,int but)
 {

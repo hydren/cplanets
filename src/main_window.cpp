@@ -109,6 +109,8 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void onUserEvent(int cmd,int param,int param2);
 
+void closeParentDialogFromButton(Button* btn);
+
 // planetarium callbacks
 void onListSelectionChanged(unsigned, unsigned);
 void onBodyReFocus();
@@ -270,6 +272,21 @@ void stackDialogsOnTop()
 		}
 		once = true;
 	}
+}
+
+//
+static void (*callbackFileDialogConfirmation)(Button*) = null;
+void customDialogBgrConfirmation(Button* okBtn)
+{
+	callbackFileDialogConfirmation(okBtn);
+	forceFullWindowRefresh();
+}
+
+static void (*callbackFileDialogCancellation)(Button*) = null;
+void customDialogBgrCancellation(Button* cancelBtn)
+{
+	callbackFileDialogCancellation(cancelBtn);
+	forceFullWindowRefresh();
 }
 
 // ================ CPlanetsGUI::MainWindow namespace ================
@@ -586,7 +603,7 @@ void CPlanets::init()
 	FULL_ABOUT_TEXT = string("This program is inspired by Yaron Minsky's \"planets\" program.\n\n").append(CPLANETS_LICENSE);
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", null, theme.dialogStyle);
 
-	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", DialogBgrWin::buttonCallbackCloseParentDialogBgrWin);
+	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", closeParentDialogFromButton);
 	packLabeledComponent(btnAboutOk);
 	setComponentPosition(btnAboutOk, 0.5*(400-btnAboutOk->tw_area.w), 300-btnAboutOk->tw_area.h-WIDGETS_SPACING);
 
@@ -1070,6 +1087,11 @@ void onUserEvent(int cmd,int param,int param2)
 		txtBodiesUpdateSize();
 		sclpBodies->refresh();
 	}
+}
+
+void closeParentDialogFromButton(Button* btn)
+{
+	static_cast<DialogBgrWin*>(btn->parent)->close();
 }
 
 void onListSelectionChanged(unsigned ind0, unsigned ind1)
