@@ -255,8 +255,7 @@ struct Planetarium extends Physics2D::Listener
 	bool undoEnabled;
 
 	//auxiliary variables
-	bool auxWasRunningBeforeSelection;
-	bool auxWasRunningBeforeBodyCreationMode;
+	bool aux_wasRunningBeforeSelection, aux_wasRunningBeforeBodyCreationMode, aux_hadReferenceFrameBeforeCollision;
 
 	/// Gets the given position transposed into the planetarium. version not accounting for the physics' reference frame.
 	Vector2D getTransposedNoRef(const Vector2D& position) const;

@@ -102,9 +102,9 @@ Planetarium::Planetarium(SDL_Rect rect, Uint32 pixdepth)
   lastMouseLeftButtonDown(0), isMouseLeftButtonDown(false), lastMouseClickPoint(),
   undoEnabled(true),
   //aux
-  auxWasRunningBeforeSelection(false),
-  auxWasRunningBeforeBodyCreationMode(false)
-
+  aux_wasRunningBeforeSelection(false),
+  aux_wasRunningBeforeBodyCreationMode(false),
+  aux_hadReferenceFrameBeforeCollision(false)
 {
 	this->physics->solver = new LeapfrogSolver(*physics);
 	this->physics->listeners.push_back(this);
@@ -283,7 +283,7 @@ void Planetarium::setBodyCreationMode(bool enable)
 	if(enable)
 	{
 		bodyCreationState = POSITION_SELECTION;
-		auxWasRunningBeforeBodyCreationMode = running;
+		aux_wasRunningBeforeBodyCreationMode = running;
 		setRunning(false);
 	}
 	else this->bodyCreationState = IDLE;
@@ -317,6 +317,7 @@ void Planetarium::setReferenceFrameAsFocusedBodies(bool centerViewport)
 		viewportPosition.x = -az * size.w/2;
 		viewportPosition.y = -az * size.h/2;
 	}
+	aux_hadReferenceFrameBeforeCollision = true;
 }
 
 void Planetarium::resetReferenceFrame(bool centerViewport)
@@ -332,6 +333,7 @@ void Planetarium::resetReferenceFrame(bool centerViewport)
 		viewportPosition.x -= az * size.w/2;
 		viewportPosition.y -= az * size.h/2;
 	}
+	aux_hadReferenceFrameBeforeCollision = false;
 }
 
 //------------------------------------ \/ \/ SYNCHRONIZED METHODS \/ \/ -----------------------------------
@@ -656,7 +658,7 @@ void Planetarium::onMouseButtonPressed(int x, int y, int but)
 		lastMouseLeftButtonDown = SDL_GetTicks();
 		isMouseLeftButtonDown = true;
 		lastMouseClickPoint = Vector2D(x, y);
-		auxWasRunningBeforeSelection = running;
+		aux_wasRunningBeforeSelection = running;
 		if(pauseOnSelection)
 			setRunning(false);
 	}
@@ -686,7 +688,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 				Body2D* newBody = new Body2D(mass, bodyCreationDiameter, bodyCreationPosition, selectedVelocity, Vector2D());
 				addCustomBody(newBody, SDL_util::getRandomColor());
 				setBodyCreationMode(IDLE);
-				if(auxWasRunningBeforeBodyCreationMode)
+				if(aux_wasRunningBeforeBodyCreationMode)
 					setRunning();
 			}
 			else //user tried to click a single body, or it was a mistake/random action.
@@ -711,7 +713,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 						}
 					}
 				}
-				if(pauseOnSelection and auxWasRunningBeforeSelection)
+				if(pauseOnSelection and aux_wasRunningBeforeSelection)
 					setRunning();
 
 				//notify listeners about re-focusing of bodies
@@ -745,7 +747,7 @@ void Planetarium::onMouseButtonReleased(int x, int y, int but)
 					}
 				}
 			}
-			if(pauseOnSelection and auxWasRunningBeforeSelection)
+			if(pauseOnSelection and aux_wasRunningBeforeSelection)
 				setRunning();
 
 			//notify listeners about re-focusing of bodies
@@ -923,7 +925,11 @@ void Planetarium::onCollision(vector<Body2D*>& collidingList, Body2D& resultingM
 		purgeUserObjects(collidingList);
 
 	// since currently the physics code will always reset the reference frame on collision, do reset the orbit tracer as well.
-	orbitTracer->reset(false);
+	if(aux_hadReferenceFrameBeforeCollision)
+	{
+		orbitTracer->reset(false);
+		aux_hadReferenceFrameBeforeCollision = false;
+	}
 
 	//creates a collision event for listeners
 	CollisionEvent* ev = new CollisionEvent();
