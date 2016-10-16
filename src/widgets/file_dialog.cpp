@@ -233,7 +233,7 @@ void FileDialog::confirmation(Button* okBtn)
 	if(self->mode == SAVE_FILE) //filename was not retrieved
 		self->dlgwFilenameField.dok(); //retrieve filename (typed by user)
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
-	DialogBgrWin::closeParentDialogBgrWin(okBtn);
+	self->close();
 	close_file_chooser();
 }
 
@@ -243,7 +243,7 @@ void FileDialog::cancellation(Button* cancelBtn)
 	FileDialog* self = static_cast<FileDialog*>(cancelBtn->parent);
 	self->selectedFilename.clear();
 	if(self->onFinishedCallback != null) self->onFinishedCallback(self);
-	DialogBgrWin::closeParentDialogBgrWin(cancelBtn);
+	self->close();
 	close_file_chooser();
 }
 

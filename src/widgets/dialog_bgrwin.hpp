@@ -32,6 +32,7 @@ namespace WidgetsExtra
 		virtual void setPosition(Point position);
 		void setPositionOnCenter();
 
+		void draw();
 		void close();
 
 		protected:
@@ -41,8 +42,7 @@ namespace WidgetsExtra
 		virtual void bind();
 		virtual void validate();
 
-		static void draw(BgrWin*);
-		static void closeParentDialogBgrWin(Button* btn);
+		static void dialog_display_cmd(BgrWin*);
 		static void dialog_mwin_down(BgrWin* bgr,int x,int y,int but);
 	};
 }

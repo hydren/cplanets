@@ -25,15 +25,17 @@ static const char *close_btn_xpm[] = {
 " xx  xx ",
 "xx    xx"};
 
+static void closeParentDialogBgrWin(Button* btn) { static_cast<DialogBgrWin*>(btn->parent)->close(); }
+
 DialogBgrWin::DialogBgrWin(Rect bounds, string txt, void (*onClosed)(DialogBgrWin*), Style st)
-: BgrWin(null, bounds, null, DialogBgrWin::draw, DialogBgrWin::dialog_mwin_down, mwin::move, mwin::up, 0),
+: BgrWin(null, bounds, null, DialogBgrWin::dialog_display_cmd, DialogBgrWin::dialog_mwin_down, mwin::move, mwin::up, 0),
   WinBaseWrapper(this),
   onClosedCallback(onClosed),
   titleStr(txt),
   titleBarArea(Rect(0, 0, this->tw_area.w-2, 1.5 * TTF_FontHeight(draw_title_ttf->ttf_font) -2)),
   style(st),
   titleStrOffset(0),
-  btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), Label(""), create_pixmap(close_btn_xpm), DialogBgrWin::closeParentDialogBgrWin)
+  btnClose(this, Style(0,1), Rect(0, 0, titleBarArea.h-4, titleBarArea.h-4), Label(""), create_pixmap(close_btn_xpm), closeParentDialogBgrWin)
 {
 	this->validate();
 }
@@ -67,6 +69,29 @@ void DialogBgrWin::setPositionOnCenter()
 	this->setPosition(Point(0.5 * (SDL_GetVideoSurface()->w - this->tw_area.w), 0.5 * (SDL_GetVideoSurface()->h - this->tw_area.h)));
 }
 
+void DialogBgrWin::draw()
+{
+	this->init_gui();
+	this->draw_raised(0, this->bgcol, true);
+
+	if(this->style.st == 0)	switch(this->style.param)
+	{
+			case 0: Color5::GradientBlue.draw_gradient(this, this->titleBarArea); break;
+			case 1: Color5::GradientGrey.draw_gradient(this, this->titleBarArea); break;
+			case 2: Color5::GradientGreen.draw_gradient(this, this->titleBarArea); break;
+			case 3: Color5::GradientWheat.draw_gradient(this, this->titleBarArea); break;
+			case 4: Color5::GradientRose.draw_gradient(this, this->titleBarArea); break;
+			case 5: Color5::GradientDarkBlue.draw_gradient(this, this->titleBarArea); break;
+			case 6: Color5::GradientDarkGrey.draw_gradient(this, this->titleBarArea); break;
+	}
+	else
+	{
+		SDL_FillRect(this->win, &this->titleBarArea, calc_color(this->style.param));
+	}
+
+	draw_title_ttf->draw_string(this->win, this->titleStr.c_str(), Point(4, this->titleStrOffset));
+}
+
 void DialogBgrWin::close()
 {
 	setVisible(false);
@@ -92,36 +117,13 @@ void DialogBgrWin::validate()
 	titleStrOffset = 0.5 * (titleBarArea.h - TTF_FontHeight(draw_title_ttf->ttf_font));
 }
 
-void DialogBgrWin::draw(BgrWin* bwSelf)
+// static
+void DialogBgrWin::dialog_display_cmd(BgrWin* self)
 {
-	DialogBgrWin* self = static_cast<DialogBgrWin*>(bwSelf);
-
-	self->init_gui();
-	self->draw_raised(0, self->bgcol, true);
-
-	if(self->style.st == 0)	switch(self->style.param)
-	{
-			case 0: Color5::GradientBlue.draw_gradient(self, self->titleBarArea); break;
-			case 1: Color5::GradientGrey.draw_gradient(self, self->titleBarArea); break;
-			case 2: Color5::GradientGreen.draw_gradient(self, self->titleBarArea); break;
-			case 3: Color5::GradientWheat.draw_gradient(self, self->titleBarArea); break;
-			case 4: Color5::GradientRose.draw_gradient(self, self->titleBarArea); break;
-			case 5: Color5::GradientDarkBlue.draw_gradient(self, self->titleBarArea); break;
-			case 6: Color5::GradientDarkGrey.draw_gradient(self, self->titleBarArea); break;
-	}
-	else
-	{
-		SDL_FillRect(self->win, &self->titleBarArea, calc_color(self->style.param));
-	}
-
-	draw_title_ttf->draw_string(self->win, self->titleStr.c_str(), Point(4, self->titleStrOffset));
+	static_cast<DialogBgrWin*>(self)->draw();
 }
 
-void DialogBgrWin::closeParentDialogBgrWin(Button* btn)
-{
-	static_cast<DialogBgrWin*>(btn->parent)->close();
-}
-
+// static
 void DialogBgrWin::dialog_mwin_down(BgrWin* bgr,int x,int y,int but)
 {
 	Rect& titleBarArea = static_cast<DialogBgrWin*>(bgr)->titleBarArea;
