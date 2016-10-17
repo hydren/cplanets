@@ -14,6 +14,7 @@ const char* commandLineHelpTxt = "\n" \
 	"Use --help or -h to show this help. \n" \
 	"Use --centered or -c to start cplanets centered. \n" \
 	"Use --window-size <width> <height> (or -w) to specify window size. \n" \
+	"Use --hide-toolbars or -d to start cplanets with the toolbars hidden. \n" \
 	"Use --color-theme <theme> (or -t) to specify a color theme. \n" \
 	"Use --load-file <filePath> (or -l) to specify a file to open the program with. \n";
 
@@ -45,6 +46,9 @@ void CPlanets::parse(int argc, char* argv[])
 				else cout << "Passed invalid arguments for " << argstr << ": \"" << argv[i+1] << "\" \"" << argv[i+2] << "\" (must be positive integers <width> <height>)" << endl;
 			else cout << "Missing arguments for " << argstr << endl;
 		}
+
+		else if(argstr == "--hide-toobars" or argstr == "-d")
+			aux_startToolbarHidden = true;
 
 		else if(argstr == "--color-theme" or argstr == "-t")
 		{

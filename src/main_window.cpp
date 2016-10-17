@@ -123,7 +123,7 @@ void txtBodiesUpdateSize();
 
 void dialogAboutAdjust();
 void collapseTabs(bool choice);
-void toogleFullscreen(bool choice);
+void hideToolbars(bool choice);
 
 void loadUniverseFromFile(const string& path);
 void replaceUniverse(const Universe2D& universeCopy);
@@ -195,7 +195,7 @@ Rect windowSize(0, 0, 640, 480);
 
 FlowLayout* toolbarNorthLayout;
 IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnHelp, *btnAbout;
-ToogleButton* tglFullScreen, *tglCollapseLeftPanel;
+ToogleButton* tglHideToolbars, *tglCollapseLeftPanel;
 IconButton* btnRun, *btnPause;
 
 TabbedPane* tabs;
@@ -247,6 +247,11 @@ DialogBgrWin* dialogHelp;
 ScrollablePane* sclpHelpText;
 MultiLineTextRenderer* mltHelpText;
 
+// ================ CMD LINE PARSING ================
+string filePathToLoad;
+bool aux_startToolbarHidden = false;
+#include "cli.hxx"
+
 // %%%%%%%%%%%%% XXX Kludges %%%%%%%%%%%%%%%
 
 void forceFullWindowRefresh()
@@ -294,8 +299,6 @@ void customDialogBgrCancellation(Button* cancelBtn)
 }
 
 // ================ CPlanetsGUI::MainWindow namespace ================
-string filePathToLoad;
-#include "cli.hxx"
 
 void CPlanets::init()
 {
@@ -344,8 +347,8 @@ void CPlanets::init()
 
 	toolbarNorthLayout->addComponent(new Layout::Spacer(toolbarNorthLayout));
 
-	tglFullScreen = new IconToogleButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/fullscreen.png"), onCheckBoxPressed);
-	toolbarNorthLayout->addComponent(tglFullScreen);
+	tglHideToolbars = new IconToogleButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/fullscreen.png"), onCheckBoxPressed);
+	toolbarNorthLayout->addComponent(tglHideToolbars);
 
 	tglCollapseLeftPanel = new IconToogleButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/collapse-tabs.png"), onCheckBoxPressed);
 	toolbarNorthLayout->addComponent(tglCollapseLeftPanel);
@@ -642,6 +645,12 @@ void CPlanets::init()
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
 	mltHelpText->setText(HELP_TEXT, sclpHelpText->tw_area.w);
 
+	if(aux_startToolbarHidden)
+	{
+		*tglHideToolbars->d = true;
+		hideToolbars(true);
+	}
+
 //	cout << "\n" << "Basic analysis:" << endl;
 //	print_h();  // DEBUG
 //	cout << "\n" << "Deep analysis:" << endl;
@@ -823,9 +832,9 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			}
 			break;
 		case SDLK_ESCAPE:
-			if(down and *tglFullScreen->d == true)
+			if(down and *tglHideToolbars->d == true)
 			{
-				onCheckBoxPressed(tglFullScreen, true);
+				onCheckBoxPressed(tglHideToolbars, true);
 			}
 			break;
 		default:break;
@@ -969,7 +978,7 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 
 	if(chck == chckComputeEnergy)
 	{
-		if(not planetarium->physics->systemEnergyComputingEnabled)
+		if(not planetarium->physics->systemEnergyComputingEnabled and sdl_running)
 		{
 			msgLogK->draw_mes("--");
 			msgLogP->draw_mes("--");
@@ -982,9 +991,9 @@ void onCheckBoxPressed(CheckBox* chck, bool fake)
 		collapseTabs(*tglCollapseLeftPanel->d);
 	}
 
-	if(chck == tglFullScreen)
+	if(chck == tglHideToolbars)
 	{
-		toogleFullscreen(*tglFullScreen->d);
+		hideToolbars(*tglHideToolbars->d);
 	}
 }
 
@@ -1075,7 +1084,7 @@ void onUserEvent(int cmd,int param,int param2)
 		{
 			planetariumPane->doRefresh();
 
-			if(*tglFullScreen->d == false) // dont draw this if fullscreen
+			if(*tglHideToolbars->d == false) // dont draw this if fullscreen
 			{
 				if(planetarium->physics->systemEnergyComputingEnabled)
 				{
@@ -1198,7 +1207,7 @@ void collapseTabs(bool choice)
 	}
 }
 
-void toogleFullscreen(bool choice)
+void hideToolbars(bool choice)
 {
 	if(choice == true)
 	{
@@ -1213,9 +1222,6 @@ void toogleFullscreen(bool choice)
 	}
 	else
 	{
-		if(planetarium->physics->systemEnergyComputingEnabled)
-			onCheckBoxPressed(chckComputeEnergy, false);
-
 		planetariumPane->widen(-tabs->tw_area.w-TOOLBAR_SIZE-3*WIDGETS_SPACING, -2*TOOLBAR_SIZE-2*WIDGETS_SPACING);
 		planetariumPane->move(tabs->tw_area.w+2*WIDGETS_SPACING, TOOLBAR_SIZE+WIDGETS_SPACING);
 		tabs->show();
@@ -1224,7 +1230,12 @@ void toogleFullscreen(bool choice)
 		toolbarSouthLayout->showAll();
 		planetarium->viewportPosition.x += tabs->tw_area.w + 2*WIDGETS_SPACING; // maintains viewport position in relation to the screen
 		planetarium->viewportPosition.y += TOOLBAR_SIZE + WIDGETS_SPACING; // maintains viewport position in relation to the screen
-		forceFullWindowRefresh();
+
+		if(planetarium->physics->systemEnergyComputingEnabled)
+			onCheckBoxPressed(chckComputeEnergy, false);
+
+		if(sdl_running)
+			forceFullWindowRefresh();
 	}
 }
 
