@@ -1171,10 +1171,10 @@ void collapseTabs(bool choice)
 {
 	if(choice == true)
 	{
+		planetarium->viewportPosition.x -= tabs->tw_area.w; // maintains viewport position in relation to the screen
 		planetariumPane->move(-tabs->tw_area.w, 0);
 		planetariumPane->widen(tabs->tw_area.w, 0);
 		tabs->hide();
-		planetarium->viewportPosition.x -= tabs->tw_area.w; // maintains viewport position in relation to the screen
 	}
 	else
 	{
