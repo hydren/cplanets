@@ -111,7 +111,7 @@ FileDialog::FileDialog(FileDialogMode mode, void (*onFinished)(FileDialog*), con
 		DropDownMenuFactory ddmf;
 		ddmf.setLabel("File type:  ");
 		ddmf.setAppearance(DropDownMenuFactory::COMBOBOX);
-		ddmf.setSize(Rect(0, 0, dlgwFilenameField.tw_area.w * 0.5, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)));
+		ddmf.setSize(Rect(0, 0, dlgwFilenameField.tw_area.w * 0.75, 1.25 * TTF_FontHeight(draw_ttf->ttf_font)));
 		ddmf.setCallback(FileDialog::selectFileType);
 
 		ddmf.addItem("All files"); selectedType = "All files";

@@ -601,6 +601,7 @@ void CPlanets::init()
 
 	vector<string> strFiletypes;
 	strFiletypes.push_back("Plain text (*.txt)");
+	strFiletypes.push_back("Comma separated values (*.csv)");
 	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes, theme.dialogStyle, theme.buttonStyle);
 	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes, theme.dialogStyle, theme.buttonStyle);
 
@@ -1231,7 +1232,7 @@ void loadUniverseFromFile(const string& path)  // throws std::runtime_error
 {
 	if(FileInputStream(path.c_str()).good())
 	{
-		Universe2D* u = ApplicationIO::load(path, ApplicationIO::FORMAT_DEFAULT);
+		Universe2D* u = ApplicationIO::load(path);
 
 		if(u != null)
 		{
