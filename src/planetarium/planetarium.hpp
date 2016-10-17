@@ -207,7 +207,7 @@ struct Planetarium extends Physics2D::Listener
 	struct OrbitTracer;
 	OrbitTracer* orbitTracer;
 
-	enum OrbitTraceStyle { DOTTED, LINEAR, SPLINE };
+	enum OrbitTraceStyle { DOTTED, LINEAR, SPLINE }; // spline is glitched
 	OrbitTraceStyle getOrbitTraceStyle() const;
 	void setOrbitTraceStyle(OrbitTraceStyle style);
 

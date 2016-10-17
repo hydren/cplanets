@@ -1,9 +1,5 @@
 -------------- Bugs
 
-- Glitches when in large scale: upper-left grabbing (caused by overflow).
-- Simulation fails when changing timestep on Backwards Difference Correction solver.
-- Bezier spline is glitched (due to wrong parametrization).
-
 -------------- To Do
 
 - Try to create a MSVC project.
@@ -13,8 +9,11 @@
 -------------- Backlog
 
 - Refactor the 'widgets' folder as a separate extension to sdl-widgets (or develop a fully separate toolkit with it, i.e. SDL_toolkit)
-- Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
 - There should be a makefile (nmake) for win32 build
+- Glitches when in large scale: upper-left grabbing (caused by overflow when dimensions are higher than Sint16 maximum and minimum values).
+- Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
+- Simulation fails when changing timestep on Backwards Difference Correction solver (this method does not support non-const timesteps; a correction formula needs to be obtained)
+- Bezier spline is glitched (due to wrong parametrization).
 
 -------------- Milestones
 
