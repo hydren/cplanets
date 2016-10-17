@@ -1,13 +1,11 @@
 -------------- Bugs
 
 - Glitches when in large scale: upper-left grabbing (caused by overflow).
-- Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
 - Simulation fails when changing timestep on Backwards Difference Correction solver.
 - Bezier spline is glitched (due to wrong parametrization).
 
 -------------- To Do
 
-- Refactor some static functions from widgets to methods when appropriate. Remember: when a cast is done, it should be protected. Otherwise code should be moved to methods. (except, perhaps, BgrWin draw code)  
 - Try to create a MSVC project.
 - Milestones
 - After completing 1.0 milestone, do a complete feature re-check on planets and cplanets.
@@ -15,6 +13,7 @@
 -------------- Backlog
 
 - Refactor the 'widgets' folder as a separate extension to sdl-widgets (or develop a fully separate toolkit with it, i.e. SDL_toolkit)
+- Glitch when reopening a on-top bgr that was moved before being closed. (on-top Bgr's seems to only copy the portion of the bottom layer that they oclude when they were closed)
 - There should be a makefile (nmake) for win32 build
 
 -------------- Milestones

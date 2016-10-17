@@ -109,6 +109,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog);
 
 void onUserEvent(int cmd,int param,int param2);
 
+void onCloseDialogRefreshAll(DialogBgrWin* btn);
 void closeParentDialogFromButton(Button* btn);
 
 // planetarium callbacks
@@ -600,6 +601,8 @@ void CPlanets::init()
 	dialogLoad = new FileDialog(FileDialog::SELECT_FILE, onFileChosenOpenUniverse, strFiletypes, theme.dialogStyle, theme.buttonStyle);
 	dialogSave = new FileDialog(FileDialog::SAVE_FILE, onFileChosenSaveUniverse, strFiletypes, theme.dialogStyle, theme.buttonStyle);
 
+	dialogLoad->onClosedCallback = dialogSave->onClosedCallback = onCloseDialogRefreshAll;
+
 	FULL_ABOUT_TEXT = string("This program is inspired by Yaron Minsky's \"planets\" program.\n\n").append(CPLANETS_LICENSE);
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", null, theme.dialogStyle);
 
@@ -1087,6 +1090,11 @@ void onUserEvent(int cmd,int param,int param2)
 		txtBodiesUpdateSize();
 		sclpBodies->refresh();
 	}
+}
+
+void onCloseDialogRefreshAll(DialogBgrWin* btn)
+{
+	forceFullWindowRefresh();
 }
 
 void closeParentDialogFromButton(Button* btn)
