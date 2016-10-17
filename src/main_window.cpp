@@ -181,6 +181,7 @@ Rect genericToolbarButtonSize(0, 0, TOOLBAR_SIZE-2*WIDGETS_SPACING, TOOLBAR_SIZE
 CustomListener customListener;
 RenderText* draw_light_ttf;
 bool aux_isPressed_SDLK_r = false;
+bool pauseOnFileLoad = false;
 
 //  ================ THEMES =================
 #include "themes.hxx"
@@ -1048,8 +1049,8 @@ void onFileChosenOpenUniverse(FileDialog* dialog)
 			alert(e.what());
 		}
 	}
-	onButtonPressed(btnRun); // todo make this optional
-	SDL_WM_SetCaption("cplanets", "cplanets"); //todo maybe put filename on title
+	if(not pauseOnFileLoad) onButtonPressed(btnRun);
+	SDL_WM_SetCaption("cplanets", "cplanets");
 }
 
 void onFileChosenSaveUniverse(FileDialog* dialog)
@@ -1060,7 +1061,7 @@ void onFileChosenSaveUniverse(FileDialog* dialog)
 		ApplicationIO::save(planetarium->physics->universe, dialog->selectedFilename);
 	}
 	onButtonPressed(btnRun);
-	SDL_WM_SetCaption("cplanets", "cplanets"); //todo maybe put filename on title
+	SDL_WM_SetCaption("cplanets", "cplanets");
 }
 
 void onUserEvent(int cmd,int param,int param2)
