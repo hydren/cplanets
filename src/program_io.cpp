@@ -105,7 +105,7 @@ void init()
 
 	//todo implement other formats to save and load...
 	put(ApplicationIO::FORMAT_TXT, "txt", ApplicationIO::save_txt, ApplicationIO::load_txt);
-	put(ApplicationIO::FORMAT_CSV, "csv", ApplicationIO::save_csv, ApplicationIO::load_txt);
+	put(ApplicationIO::FORMAT_CSV, "csv", ApplicationIO::save_csv, ApplicationIO::load_csv);
 	//...
 
 	alreadyInit = true;
@@ -256,7 +256,76 @@ void ApplicationIO::save_csv(const Universe2D& universe, const std::string& file
 	return;
 }
 
-Universe2D* load_csv(const std::string& filename)
+Universe2D* ApplicationIO::load_csv(const std::string& filename)
 {
-	return null; // todo
+	Universe2D* universe = new Universe2D();
+	universe->gravity = 9.807;
+	universe->gExp = 2.0;
+
+	bool tryToReadGravity = true;
+
+	char buffer[512];
+	FileInputStream fis(filename.c_str());
+
+	while(fis.good())
+	{
+		fis.getline(buffer, 512);
+		string line = trim(string(buffer));
+
+		if(line.empty()) continue;
+
+		vector<string> values = split(line, ',');
+
+		if(tryToReadGravity)
+		{
+			if(parseable<double>(values[0]))
+			{
+				universe->gravity = parse<double>(values[0]);
+				if(values.size() > 1 and parseable<double>(values[1]))
+				{
+					universe->gExp = parse<double>(values[1]);
+				}
+				tryToReadGravity = false;
+				continue;
+			}
+			else if(values.size() == 7)
+			{
+				tryToReadGravity = false;
+			}
+		}
+
+		if(values.size() != 7) continue;
+
+		string id = trim(values[0]);
+
+		string token;
+		token = trim(values[1]);
+		if(not parseable<double>(token)) continue; //should have a parseable value
+		double mass = parse<double>(token);
+
+		token = trim(values[2]);
+		if(not parseable<double>(token)) continue; //should have a parseable value
+		double diameter = parse<double>(token);
+
+		token = trim(values[3]);
+		if(not parseable<double>(token)) continue; //should have a parseable value
+		double position_x = parse<double>(token);
+
+		token = trim(values[4]);
+		if(not parseable<double>(token)) continue; //should have a parseable value
+		double position_y = parse<double>(token);
+
+		token = trim(values[5]);
+		if(not parseable<double>(token)) continue; //should have a parseable value
+		double velocity_x = parse<double>(token);
+
+		token = trim(values[6]);
+		if(not parseable<double>(token)) continue; //should have a parseable value
+		double velocity_y = parse<double>(token);
+
+		//add successfully read body
+		universe->bodies.push_back(new Body2D(mass, diameter, Vector2D(position_x, position_y), Vector2D(velocity_x, velocity_y), Vector2D::NULL_VECTOR));
+	}
+
+	return universe;
 }
