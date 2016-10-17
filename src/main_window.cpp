@@ -180,8 +180,10 @@ Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
 Rect genericToolbarButtonSize(0, 0, TOOLBAR_SIZE-2*WIDGETS_SPACING, TOOLBAR_SIZE-2*WIDGETS_SPACING);
 CustomListener customListener;
 RenderText* draw_light_ttf;
-bool aux_isPressed_SDLK_r = false;
 bool pauseOnFileLoad = false;
+unsigned bodyCreationDelay = 500;
+
+bool aux_isPressed_SDLK_r = false;
 
 //  ================ THEMES =================
 #include "themes.hxx"
@@ -1282,7 +1284,7 @@ void addRandomBody(bool orbiting)
 
 int keepAddingRandomBodyWhilePressed(void* boolCreateOrbitingAsVoidPtr)
 {
-	SDL_Delay(500); // todo make this delay adjustable
+	SDL_Delay(bodyCreationDelay);
 	long lastUpdateTime;
 	bool* createOrbiting = static_cast<bool*>(boolCreateOrbitingAsVoidPtr);
 	while(aux_isPressed_SDLK_r)
