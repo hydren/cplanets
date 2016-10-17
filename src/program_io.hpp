@@ -16,7 +16,7 @@ namespace ApplicationIO
 		FORMAT_DEFAULT,
 		FORMAT_TXT,  //Plain text
 
-//		FORMAT_CSV, //Comma separated values
+		FORMAT_CSV, //Comma separated values
 //		FORMAT_XML,
 //		FORMAT_ODS,
 //		FORMAT_SER, //Java Serialized Object File
@@ -34,6 +34,9 @@ namespace ApplicationIO
 
 	void save_txt(const Universe2D& universe, const std::string& filename);
 	Universe2D* load_txt(const std::string& filename);
+
+	void save_csv(const Universe2D& universe, const std::string& filename);
+	Universe2D* load_csv(const std::string& filename);
 }
 
 

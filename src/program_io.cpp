@@ -33,7 +33,7 @@ map<FileFormat, load_function_type> loadFunctionOf;
 
 void init();
 
-void put(const char* ext, ApplicationIO::FileFormat ff, save_function_type save_cmd, load_function_type load_cmd)
+void put(ApplicationIO::FileFormat ff, const char* ext, save_function_type save_cmd, load_function_type load_cmd)
 {
 	formatOf[ext] = ff;
 	extensionOf[ff].push_back(ext);
@@ -104,12 +104,15 @@ void init()
 	if(alreadyInit) return;
 
 	//todo implement other formats to save and load...
-	put("txt", ApplicationIO::FORMAT_TXT, ApplicationIO::save_txt, ApplicationIO::load_txt);
+	put(ApplicationIO::FORMAT_TXT, "txt", ApplicationIO::save_txt, ApplicationIO::load_txt);
+	put(ApplicationIO::FORMAT_CSV, "csv", ApplicationIO::save_csv, ApplicationIO::load_txt);
 	//...
 
 	alreadyInit = true;
 }
 
+
+// TXT type
 void ApplicationIO::save_txt(const Universe2D& universe, const std::string& filename)
 {
 	string content = "universe definition";
@@ -234,3 +237,26 @@ Universe2D* ApplicationIO::load_txt(const std::string& filename)
 	return universe;
 }
 
+// CSV type
+
+void ApplicationIO::save_csv(const Universe2D& universe, const std::string& filename)
+{
+	string content = string() + universe.gravity + ", " + universe.gExp + ", 0, 0, 0, 0, 0\n";
+
+	const_foreach(const Body2D*, body, vector<Body2D*>, universe.bodies)
+	{
+		content = content + body->id + ", " + body->mass + ", " + body->diameter + ", "
+				+ body->position.x + ", " + body->position.y + ", "
+				+ body->velocity.x + ", " + body->velocity.y + "\n";
+	}
+
+	FileOutputStream fos(filename.c_str(), FileOutputStream::out);
+	fos << content;
+	fos.close();
+	return;
+}
+
+Universe2D* load_csv(const std::string& filename)
+{
+	return null; // todo
+}
