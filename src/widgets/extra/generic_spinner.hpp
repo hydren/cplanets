@@ -42,14 +42,14 @@ namespace WidgetsExtra
 		/// A interface to a listener to this model. The callback that is called when the data model changes;
 		struct Listener { virtual void onValueChange(SpinnerDataModel*) abstract; };
 		futil::ListenerManager<Listener> listeners;
-		void notify() // todo this notify() method could be standartized
+		void notify()
 		{
 			if(onValueChange != null) onValueChange(this);
 			for(unsigned i = 0; i < listeners.size(); i++) listeners[i]->onValueChange(this);
 		}
 	};
 
-	template<typename Type> //todo change Type to GenericNumber
+	template<typename Type>
 	struct NumberSpinnerDataModel extends SpinnerDataModel
 	{
 		Type* value, step, min, max;

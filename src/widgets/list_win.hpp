@@ -115,7 +115,7 @@ namespace WidgetsExtra
 		/// A function pointer to a procedure to get a string value of the specified value.
 		/// By default, the action is to try to cast to std::string, but other actions can be specified.
 		/// See String::Callbacks for a useful set of templates of functions.
-		std::string (*stringfyFunction)(Type value); // todo should stringfyFunction be a function that receives value by reference?
+		std::string (*stringfyFunction)(Type value);
 
 		void updateSelection(std::vector<Type>* newData)
 		{

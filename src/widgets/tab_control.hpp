@@ -26,7 +26,6 @@ namespace WidgetsExtra
 		/// Creates a button with the given parameters and register it in the controller.
 		/// The button is associated to the given BgrWin* and will make it visible when clicked.
 		RExtButton* addTab(WinBase* parent, Rect tabButtonRect, Label lab, BgrWin* content);
-//		void removeTab(unsigned index); //todo do a removeTab() on TabController
 
 		/// Sets the active (visible) tab.
 		void setActiveTab(unsigned index);

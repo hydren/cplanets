@@ -9,7 +9,8 @@
 #define WIDGETS_LIST_MODEL_EXTRA_HPP_
 
 #include "abstract_list_model.hpp"
-#include "futil/futil.hpp"
+#include "futil/general/language.hpp"
+#include "futil/string/callbacks.hpp"
 
 namespace WidgetsExtra
 {
@@ -22,10 +23,10 @@ namespace WidgetsExtra
 	struct StringableTypeUIListModel extends UIListModel
 	{
 		StringableTypeUIListModel()
-		: data(), stringfyFunction(String::Callbacks::stringfy_by_cast<StringableType>) {}
+		: data(), stringfyFunction(stringfy_by_cast<StringableType>) {}
 
 		StringableTypeUIListModel(const std::vector<StringableType>& data)
-		: data(data), stringfyFunction(String::Callbacks::stringfy_by_cast<StringableType>) {}
+		: data(data), stringfyFunction(stringfy_by_cast<StringableType>) {}
 
 		StringableTypeUIListModel(std::string (*stringfyFunction)(StringableType))
 		: data(), stringfyFunction(stringfyFunction) {}
@@ -45,7 +46,7 @@ namespace WidgetsExtra
 
 		protected:
 		std::vector<StringableType> data;
-		std::string (*stringfyFunction)(StringableType value);  //todo should stringfyFunction be a function that receives value by reference
+		std::string (*stringfyFunction)(StringableType value);
 	};
 }
 
