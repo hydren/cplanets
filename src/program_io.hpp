@@ -31,6 +31,9 @@ namespace ApplicationIO
 	void save(const Universe2D& universe, const std::string& filename, FileFormat format, bool appendExtension);
 	Universe2D* load(std::string filename);
 	Universe2D* load(std::string filename, FileFormat format);
+
+	void save_txt(const Universe2D& universe, const std::string& filename);
+	Universe2D* load_txt(const std::string& filename);
 }
 
 
