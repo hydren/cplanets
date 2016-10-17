@@ -11,20 +11,50 @@
 #include "futil/string/more_operators.hpp"
 #include "futil/math/more_random.h"
 
-#include <cstdlib>
 #include <cmath>
 
+#include <vector>
+#include <algorithm>
+
+using std::vector;
 using std::string;
 
-string generateRandomName()
+struct id_generator
 {
-	return string("B")+random_between(0, 10000); // FIXME this way of generation ids is evil and wrong
-}
+	vector<unsigned> available_ids;
+	unsigned last, size;
+
+	id_generator(unsigned size=10000)
+	: available_ids(), last(0), size(size)
+	{ refill(); }
+
+	void refill()
+	{
+		for(unsigned i = last; i < size; i++)
+			available_ids.push_back(i);
+
+		std::random_shuffle(available_ids.begin(), available_ids.end());
+		last = size;
+		size *= 2;
+	}
+
+	string generateRandomName()
+	{
+		if(available_ids.empty())
+			refill();
+
+		string result = string("B") + available_ids.back();
+		available_ids.pop_back();
+		return result;
+	}
+};
+
+id_generator gen;
 
 Body2D::Body2D(double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration)
 : mass(mass), diameter(diameter), position(position), velocity(velocity), acceleration(acceleration), userObject(null)
 {
-	id = generateRandomName();
+	id = gen.generateRandomName();
 }
 
 Body2D::Body2D(string id, double mass, double diameter, Vector2D position, Vector2D velocity, Vector2D acceleration)
@@ -32,7 +62,7 @@ Body2D::Body2D(string id, double mass, double diameter, Vector2D position, Vecto
 {}
 
 Body2D::Body2D()
-: id(generateRandomName()), mass(1), diameter(1), position(Vector2D()), velocity(Vector2D()), acceleration(Vector2D()), userObject(null)
+: id(gen.generateRandomName()), mass(1), diameter(1), position(Vector2D()), velocity(Vector2D()), acceleration(Vector2D()), userObject(null)
 {}
 
 string Body2D::toString()
