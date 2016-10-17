@@ -230,7 +230,7 @@ Universe2D* ApplicationIO::load_txt(const std::string& filename)
 			double velocity_y = parse<double>(token);
 
 			//add successfully read body
-			universe->bodies.push_back(new Body2D(mass, diameter, Vector2D(position_x, position_y), Vector2D(velocity_x, velocity_y), Vector2D::NULL_VECTOR));
+			universe->bodies.push_back(new Body2D(id, mass, diameter, Vector2D(position_x, position_y), Vector2D(velocity_x, velocity_y), Vector2D::NULL_VECTOR));
 		}
 	}
 
@@ -324,7 +324,7 @@ Universe2D* ApplicationIO::load_csv(const std::string& filename)
 		double velocity_y = parse<double>(token);
 
 		//add successfully read body
-		universe->bodies.push_back(new Body2D(mass, diameter, Vector2D(position_x, position_y), Vector2D(velocity_x, velocity_y), Vector2D::NULL_VECTOR));
+		universe->bodies.push_back(new Body2D(id, mass, diameter, Vector2D(position_x, position_y), Vector2D(velocity_x, velocity_y), Vector2D::NULL_VECTOR));
 	}
 
 	return universe;
