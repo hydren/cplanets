@@ -2,6 +2,7 @@
 
 -------------- To Do
 
+
 - Try to create a MSVC project.
 - Milestones
 - After completing 1.0 milestone, do a complete feature re-check on planets and cplanets.
@@ -41,8 +42,11 @@ Show paused/resumed state more explicitly - done
 Implement button with icon and offer icons-only buttons - done
 Theming functionality (mainly to match many OSes' ones) - done
 Command line arguments - done
-Basic "help" dialog
 Hide left bar, hide all mode - done
+Implement add unidirectional orbiting body
+Add pan and zoom buttons
+Basic "help" dialog
+
 
 - 1.x
 

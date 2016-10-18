@@ -785,6 +785,8 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			planetarium->currentViewportZoomChangeRate = down? 1.0 - planetarium->viewportZoomChangeRateValue : 1.0;
 			break;
 		//key bindings
+
+		//body manipulations
 		case SDLK_e:
 			if(down) onButtonPressed(btnClear);
 			break;
@@ -802,12 +804,16 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_o:
 			if(down) onButtonPressed(btnRecolorAll);
 			break;
+
+		//undo
 		case SDLK_u:
 			if(down) onButtonPressed(btnUndo);
 			break;
 		case SDLK_g:
 			if(down) onButtonPressed(btnRewind);
 			break;
+
+		//simulation
 		case SDLK_p:
 			if(down) onButtonPressed(planetarium->running? btnPause: btnRun);
 			break;
@@ -820,9 +826,13 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_h:
 			if(down) onButtonPressed(btnHalveTraceLentgh);
 			break;
+		case SDLK_b:
+			if(down) onCheckBoxPressed(chckBouncingOnCollision, true);
+			break;
 		case SDLK_s:
 			if(down) onCheckBoxPressed(tgbAA, true);
 			break;
+		case SDLK_c:
 		case SDLK_SPACE:
 			if(down)
 			{
@@ -830,12 +840,32 @@ void onKeyEvent(SDL_keysym *key, bool down)
 				onButtonPressed(btnFollowSelection);
 			}
 			break;
+		case SDLK_x:  //cancel C-O-M tracking
+			if(down) onButtonPressed(btnResetReferenceFrame);
+			break;
+
+		//window
+		case SDLK_k:
+			if(down) onCheckBoxPressed(tglHideToolbars, true);
+			break;
+
+		// extra binding to disable hide toolbars
 		case SDLK_ESCAPE:
-			if(down and *tglHideToolbars->d == true)
+			if(down)
 			{
-				onCheckBoxPressed(tglHideToolbars, true);
+				if(*tglHideToolbars->d == true) onCheckBoxPressed(tglHideToolbars, true);
+				else ; //todo quit application
 			}
 			break;
+
+		case SDLK_q:
+			//todo quit application
+			break;
+
+//		case SDLK_h: conflicts with h
+//			//todo show help dialog
+//			break;
+
 		default:break;
 	}
 }
