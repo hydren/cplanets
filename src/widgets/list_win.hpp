@@ -39,6 +39,7 @@ namespace WidgetsExtra
 
 		virtual void draw();
 		virtual unsigned getListHeight();
+		virtual unsigned getListWidth() abstract;
 		virtual void clickList(const Point& point);
 
 		// Pure virtuals, needs implementation from child class
@@ -50,8 +51,8 @@ namespace WidgetsExtra
 		virtual void onMouseDown(Point point, int buttonNumber);
 		virtual void onMouseMove(Point point, int buttonNumber); // by default does nothing
 		virtual void onMouseUp(Point point, int buttonNumber); // by default does nothing
-		inline RenderText* getResolvedTextRenderer();
-		inline RenderText* getResolvedTextRendererCaseSelected();
+		RenderText* getResolvedTextRenderer();
+		RenderText* getResolvedTextRendererCaseSelected();
 		static RenderText* draw_white_ttf;
 
 		private:
@@ -93,6 +94,18 @@ namespace WidgetsExtra
 				return stringfyFunction(listData->at(index)); // if a stringfy function was specified, use it
 			else
 				return "<unstringable value>";
+		}
+
+		virtual unsigned getListWidth()
+		{
+			RenderText* render = this->getResolvedTextRendererCaseSelected();
+			unsigned max = 0;
+			for(unsigned i = 0, currentSize; i < listData->size(); i++)
+			{
+				currentSize = render->text_width(getAsString(i).c_str());
+				if(i == 0 or currentSize > max) max = currentSize;
+			}
+			return max;
 		}
 
 		virtual std::vector<Type>* getListData() { return listData; }
