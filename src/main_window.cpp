@@ -393,7 +393,6 @@ void CPlanets::init()
 	tabs->addTab("Bodies", tabBodies);
 
 	sclpBodies = new ScrollablePane(tabBodies, theme.scrollStyle, Rect(2, 2, sizeTab.w - 3, sizeTab.h - 3), tabs->bgcol);
-	sclpBodies->setScrollbarHorizontalVisible(false);
 
 	Rect txtBodiesSize(0, 0, sclpBodies->tw_area.w, sclpBodies->tw_area.h);
 	txtBodies = new ListWin<Body2DClone>(&sclpBodies->content, theme.listWinStyle, txtBodiesSize, stringfy_by_method<Body2DClone, &Body2DClone::toString>);
@@ -1163,15 +1162,13 @@ void txtBodiesRefreshAll()
 
 void txtBodiesUpdateSize()
 {
-	unsigned height2 = sclpBodies->tw_area.h;
+	unsigned widthNeeded = max(txtBodies->getListWidth(), sclpBodies->tw_area.w - sclpBodies->scrollbarThickness);
+	unsigned heightNeeded = max(txtBodies->getListHeight(), sclpBodies->tw_area.h - sclpBodies->scrollbarThickness);
 
-	if(txtBodies->size() >= 0) //if there are texts, make the height of the content to be at least the needed size for the texts
-		height2 = max(txtBodies->getListHeight(), (unsigned) sclpBodies->tw_area.h);
-
-	if(height2 != txtBodies->tw_area.h) //avoids unneeded widening
+	if(widthNeeded != sclpBodies->content.tw_area.w or heightNeeded != sclpBodies->content.tw_area.h) //avoids unneeded resize
 	{
-		txtBodies->widen(0, height2 - txtBodies->tw_area.h);
-		sclpBodies->widenContent(0, height2 - sclpBodies->content.tw_area.h);
+		sclpBodies->widenContent(widthNeeded - sclpBodies->content.tw_area.w, heightNeeded - sclpBodies->content.tw_area.h);
+		txtBodies->widen(widthNeeded - txtBodies->tw_area.w, heightNeeded - txtBodies->tw_area.h);
 	}
 }
 
