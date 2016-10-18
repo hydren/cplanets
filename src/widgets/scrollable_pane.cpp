@@ -109,6 +109,7 @@ void ScrollablePane::setScrollbarHorizontalVisible(bool visibleDesired)
 		scrollbarVertical.widen(0, scrollbarThickness);
 		scrollbarVertical.set_range(scrollbarVertical.range);
 	}
+	decorativeMask.hidden = (scrollbarHorizontal.hidden or scrollbarVertical.hidden);
 }
 
 void ScrollablePane::scrollContentOnMouseWheel(WinBase* component, int but)
