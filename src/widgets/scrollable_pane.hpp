@@ -61,6 +61,7 @@ namespace WidgetsExtra
 		static void scrollContentOnMouseWheel(WinBase* child, int but);
 
 		protected:
+		BgrWin decorativeMask;
 		static void hscrollbarCallback(HScrollbar*,int val,int range);
 		static void vscrollbarCallback(VScrollbar*,int val,int range);
 		static void scrollContentOnMouseWheel(BgrWin*,int x,int y,int but);

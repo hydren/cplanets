@@ -15,11 +15,12 @@ ScrollablePane::ScrollablePane(WinBase* parent, Style style, Rect bounds, Uint32
 : WinBase(parent, null, bounds.x, bounds.y, bounds.w, bounds.h, bgColor, id),
   offset(0, 0),
   scrollbarThickness(style.param != 0 ? style.param : ScrollablePane::DEFAULT_SCROLLBAR_THICKNESS),
-  content(this, Rect(0, 0, bounds.w - scrollbarThickness, bounds.h - scrollbarThickness), null, WidgetsExtra::drawBgrWin, scrollContentOnMouseWheel, null, null, bgColor, id),
+  content(this, Rect(0, 0, bounds.w - scrollbarThickness, bounds.h - scrollbarThickness), null, WidgetsExtra::drawBgrWin, ScrollablePane::scrollContentOnMouseWheel, null, null, bgColor, id),
   scrollbarHorizontal(this, Style(1,style.st,5), Rect(0, bounds.h - scrollbarThickness, bounds.w - scrollbarThickness, scrollbarThickness), content.tw_area.w, ScrollablePane::hscrollbarCallback, id),
   scrollbarVertical(this, Style(1,style.st,5), Rect(bounds.w - scrollbarThickness, 0, scrollbarThickness, bounds.h - scrollbarThickness), content.tw_area.h, ScrollablePane::vscrollbarCallback, id),
   scrollingSpeedHorizontal(scrollbarHorizontal.style.param2),
-  scrollingSpeedVertical(scrollbarVertical.style.param2)
+  scrollingSpeedVertical(scrollbarVertical.style.param2),
+  decorativeMask(this, Rect(scrollbarVertical.area.x, scrollbarHorizontal.area.y, scrollbarThickness, scrollbarThickness), null, WidgetsExtra::drawBgrWin, null, null, null, bgColor)
 {}
 
 ScrollablePane::~ScrollablePane()
