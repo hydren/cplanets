@@ -76,12 +76,12 @@ namespace WidgetsExtra
 	template<typename Type>
 	struct Spinner extends AbstractSpinner
 	{
-		Type* value, step, min, max;
+		Type* value, step, minValue, maxValue;
 		bool needsRefresh;
 
 		Spinner(WinBase *pw, Style style, Rect area, const char* label=null, Type* value=null)
 		: AbstractSpinner(pw, style, area, label),
-		  value(value==null? new Type(1) : value), step(1), min(0), max(9999),
+		  value(value==null? new Type(1) : value), step(1), minValue(0), maxValue(9999),
 		  needsRefresh(false)
 		{}
 
@@ -127,7 +127,7 @@ namespace WidgetsExtra
 		/// Return true if 'val' is in the valid range of this spinner's value.
 		virtual bool isValidValue(Type val)
 		{
-			return (val >= this->min) && (val <= this->max);
+			return (val >= this->minValue) && (val <= this->maxValue);
 		}
 
 		//overrides AbstractSpinner's
@@ -150,10 +150,10 @@ namespace WidgetsExtra
 		/// Increments the spinner value by 'step'.
 		virtual void incrementValue()
 		{
-			if(this->max - *(this->value) > this->step)  //if there is room for 'step'-sized increment, do it
+			if(this->maxValue - *(this->value) > this->step)  //if there is room for 'step'-sized increment, do it
 				*(this->value) += this->step;
 			else
-				*(this->value) = this->max;  // if there is no room for a 'step'-size increment, just set value as max.
+				*(this->value) = this->maxValue;  // if there is no room for a 'step'-size increment, just set value as max.
 
 			this->refresh();
 		}
@@ -162,10 +162,10 @@ namespace WidgetsExtra
 		/// Decrements the spinner value by 'step'.
 		virtual void decrementValue()
 		{
-			if(*(this->value) - this->min > this->step)  // if there is room for 'step'-sized decrement, do it
+			if(*(this->value) - this->minValue > this->step)  // if there is room for 'step'-sized decrement, do it
 				*(this->value) -= this->step;
 			else
-				*(this->value) = this->min;  // if there is no room for a 'step'-size decrement, just set value as min.
+				*(this->value) = this->minValue;  // if there is no room for a 'step'-size decrement, just set value as min.
 
 			this->refresh();
 		}
