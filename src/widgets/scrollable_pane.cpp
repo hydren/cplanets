@@ -56,6 +56,7 @@ void ScrollablePane::widen(int dx, int dy)
 	WinBase::widen(dx, dy);
 	scrollbarVertical.move(dx, 0); scrollbarVertical.widen(0, dy);
 	scrollbarHorizontal.move(0, dy); scrollbarHorizontal.widen(dx, 0);
+	decorativeMask.move(dx, dy);
 }
 
 void ScrollablePane::widenContent(int dx, int dy)
