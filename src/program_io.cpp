@@ -92,8 +92,7 @@ Universe2D* ApplicationIO::load(std::string filename, FileFormat format)
 {
 	init();
 	if(format == FORMAT_DEFAULT) format = FORMAT_TXT;
-	try { return loadFunctionOf.at(format)(filename); }
-	catch (const std::out_of_range& e) { return null; }  // unknown format
+	return loadFunctionOf[format](filename);
 }
 
 // ======== format specifics ===================================================================================================================
