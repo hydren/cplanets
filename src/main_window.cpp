@@ -424,7 +424,7 @@ void CPlanets::init()
 	factory.setCallback(onDropDownMenuButton);
 
 	factory.setLabel("Integration method: ", true);
-	factory.setSize(Rect(40, 40, 200, 20));
+	factory.setSize(Rect(40, 40, BODIES_PANEL_WIDTH - 3*WIDGETS_SPACING, 20));
 	typedef AbstractPhysics2DSolver::GenericFactory SolverFactory;
 	const_foreach(const SolverFactory*, solverFactory, vector<const SolverFactory*>, AbstractPhysics2DSolver::registeredFactories)
 	{
@@ -440,7 +440,7 @@ void CPlanets::init()
 	spnGravity->setValue(&(planetarium->physics->universe.gravity), true);
 	spnGravity->setStepValue(0.1);
 
-	spnGExp = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,1.8*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
+	spnGExp = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,2.1*TOOLBAR_SIZE, TOOLBAR_SIZE), "G. Exp:");
 	setComponentPosition(spnGExp, spnGravity->area.x + spnGravity->tw_area.w + WIDGETS_SPACING, spnGravity->area.y);
 	spnGExp->setValue(&(planetarium->physics->universe.gExp), true);
 	spnGExp->setStepValue(0.1);
@@ -496,6 +496,7 @@ void CPlanets::init()
 
 	spnBodyVelocity = new Spinner<double>(tabOptions, theme.buttonStyle, Rect(0,0,5.75*TOOLBAR_SIZE, TOOLBAR_SIZE), "Velocity (for random objects):");
 	setComponentPosition(spnBodyVelocity, spnBodyDiameter->area.x, spnBodyDiameter->area.y + spnBodyDiameter->tw_area.h + WIDGETS_SPACING);
+	spnBodyVelocity->maxValue = 999999;
 	spnBodyVelocity->setValue(&(planetarium->bodyCreationSpeed), true);
 	spnBodyVelocity->setStepValue(0.1);
 
