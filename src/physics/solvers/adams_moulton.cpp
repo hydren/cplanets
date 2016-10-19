@@ -65,7 +65,7 @@ void AdamsBashforthMoultonSolver::step()
 	}
 }
 
-DEFINE_CLASS_FACTORY(ABM2Solver, "Adams-Moulton (2nd-order)(Trapr.)");
+DEFINE_CLASS_FACTORY(ABM2Solver, "Adams-Moulton (2nd-order)(Trapez.)");
 
 ABM2Solver::ABM2Solver(Physics2D& u)
 : AdamsBashforthMoultonSolver(u, 1, &CLASS_FACTORY)
