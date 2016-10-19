@@ -48,6 +48,8 @@
 #include "widgets/icon_button.hpp"
 #include "widgets/multi_line_text_renderer.hpp"
 
+#define IS_SHIFT_PRESSED(keys_state) (keys_state->mod & (KMOD_LSHIFT | KMOD_RSHIFT))
+
 using std::cout;
 using std::endl;
 using std::vector;
@@ -88,6 +90,8 @@ void workaround_sdl_stream_file_close() // part of workaround
 
 //**********************************************************************************
 
+enum RandomBodyAdditionMode { PURE_RANDOM, ORBITING, ORBITING_UNIDIRECTIONAL };
+
 //  ============= FUNCTION PROTOTYPES ================
 void onSDLInit();
 
@@ -127,7 +131,7 @@ void hideToolbars(bool choice);
 
 void loadUniverseFromFile(const string& path);
 void replaceUniverse(const Universe2D& universeCopy);
-void addRandomBody(bool orbiting=false);
+void addRandomBody(RandomBodyAdditionMode, bool=false);
 
 // thread functions
 int keepAddingRandomBodyWhilePressed(void* unused);
@@ -181,9 +185,11 @@ Rect genericToolbarButtonSize(0, 0, TOOLBAR_SIZE-2*WIDGETS_SPACING, TOOLBAR_SIZE
 CustomListener customListener;
 RenderText* draw_light_ttf;
 bool pauseOnFileLoad = false;
-unsigned bodyCreationDelay = 500;
 
-bool aux_isPressed_SDLK_r = false;
+// random body addition mode
+RandomBodyAdditionMode randomBodyAdditionMode = PURE_RANDOM;
+bool keepAddingRandomBodies = false;
+unsigned randomBodyCreationDelay = 500;
 
 //  ================ THEMES =================
 #include "themes.hxx"
@@ -794,12 +800,35 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(btnAddBody);
 			break;
 		case SDLK_r:
-			if(down) onButtonPressed(btnAddRandom);
-			aux_isPressed_SDLK_r = down;
+			if(down and not keepAddingRandomBodies)
+			{
+				randomBodyAdditionMode = PURE_RANDOM;
+				keepAddingRandomBodies = true;
+				addRandomBody(PURE_RANDOM);  // add once
+				SDL_CreateThread(keepAddingRandomBodyWhilePressed, null);  // then add continuously after a delay
+			}
+			else if(not down and randomBodyAdditionMode == PURE_RANDOM)
+				keepAddingRandomBodies = false;
 			break;
 		case SDLK_j:
-			if(down) onButtonPressed(btnAddRandomOrbiting);
-			aux_isPressed_SDLK_r = down;
+			if(down and not keepAddingRandomBodies)
+			{
+				randomBodyAdditionMode = IS_SHIFT_PRESSED(key)? ORBITING_UNIDIRECTIONAL : ORBITING;
+				keepAddingRandomBodies = true;
+				if(randomBodyAdditionMode == ORBITING)
+				{
+					addRandomBody(randomBodyAdditionMode);  // add once
+					SDL_CreateThread(keepAddingRandomBodyWhilePressed, null);  // then add continuously after a delay
+				}
+				else // ORBITING_UNIDIRECTIONAL
+				{
+					bool* orientation = new bool(rand()%2==0);
+					addRandomBody(randomBodyAdditionMode, *orientation);  // add once
+					SDL_CreateThread(keepAddingRandomBodyWhilePressed, orientation);  // then add continuously after a delay
+				}
+			}
+			else if(not down and (randomBodyAdditionMode == ORBITING or randomBodyAdditionMode == ORBITING_UNIDIRECTIONAL))
+			keepAddingRandomBodies = false;
 			break;
 		case SDLK_o:
 			if(down) onButtonPressed(btnRecolorAll);
@@ -892,14 +921,12 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnAddRandom)
 	{
-		addRandomBody();
-		SDL_CreateThread(keepAddingRandomBodyWhilePressed, new bool(false));
+		addRandomBody(PURE_RANDOM);
 	}
 
 	if(btn == btnAddRandomOrbiting)
 	{
-		addRandomBody(true);
-		SDL_CreateThread(keepAddingRandomBodyWhilePressed, new bool(true));
+		addRandomBody(ORBITING);
 	}
 
 	if(btn == btnRemove)
@@ -1310,28 +1337,27 @@ void replaceUniverse(const Universe2D& universeCopy)
 	onButtonPressed(btnRun);
 }
 
-void addRandomBody(bool orbiting)
+void addRandomBody(RandomBodyAdditionMode mode, bool orientation)
 {
 	const Vector2D minPos = planetarium->getAntiTransposed(Vector2D()), maxPos = planetarium->getAntiTransposed(Vector2D(planetariumPane->tw_area.w, planetariumPane->tw_area.h));
 	const double area[4] = {minPos.x, minPos.y, maxPos.x - minPos.x, maxPos.y - minPos.y};
 
-	if(orbiting)
-		planetarium->addRandomOrbitingBody(area);
-	else
-		planetarium->addRandomBody(area);
+	if(mode == PURE_RANDOM) planetarium->addRandomBody(area);
+	if(mode == ORBITING) planetarium->addRandomOrbitingBody(area);
+	if(mode == ORBITING_UNIDIRECTIONAL) planetarium->addRandomOrbitingBody(area, orientation);
 }
 
-int keepAddingRandomBodyWhilePressed(void* boolCreateOrbitingAsVoidPtr)
+int keepAddingRandomBodyWhilePressed(void* arg)
 {
-	SDL_Delay(bodyCreationDelay);
+	SDL_Delay(randomBodyCreationDelay);
 	long lastUpdateTime;
-	bool* createOrbiting = static_cast<bool*>(boolCreateOrbitingAsVoidPtr);
-	while(aux_isPressed_SDLK_r)
+	bool orientation = (arg != null? *static_cast<bool*>(arg) : false); // ends up used only when unidirectional
+	while(keepAddingRandomBodies)
 	{
 		lastUpdateTime = SDL_GetTicks();
-		addRandomBody(*createOrbiting);
+		addRandomBody(randomBodyAdditionMode, orientation);  // orientation ends up used only when unidirectional
 		SDL_Delay(5000/planetarium->fps - (SDL_GetTicks() - lastUpdateTime));
 	}
-	delete createOrbiting;
+	if(arg != null) delete static_cast<bool*>(arg);
 	return 0;
 }

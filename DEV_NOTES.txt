@@ -43,7 +43,7 @@ Implement button with icon and offer icons-only buttons - done
 Theming functionality (mainly to match many OSes' ones) - done
 Command line arguments - done
 Hide left bar, hide all mode - done
-Implement add unidirectional orbiting body
+Implement add unidirectional orbiting body - done
 Add pan and zoom buttons
 Basic "help" dialog
 
