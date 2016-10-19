@@ -94,6 +94,7 @@ enum RandomBodyAdditionMode { PURE_RANDOM, ORBITING, ORBITING_UNIDIRECTIONAL };
 
 //  ============= FUNCTION PROTOTYPES ================
 void onSDLInit();
+void quitCplanets();
 
 void draw(); // The drawing function.
 void drawAboutDialog(BgrWin* dialog);
@@ -692,6 +693,13 @@ void onSDLInit()
 	}
 }
 
+void quitCplanets()
+{
+	SDL_Event quitEvent;
+	quitEvent.type = SDL_QUIT;
+	SDL_PushEvent(&quitEvent);
+}
+
 void draw()
 {
 	window->clear();
@@ -884,12 +892,12 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down)
 			{
 				if(*tglHideToolbars->d == true) onCheckBoxPressed(tglHideToolbars, true);
-				else ; //todo quit application
+				else quitCplanets();
 			}
 			break;
 
 		case SDLK_q:
-			//todo quit application
+			quitCplanets();
 			break;
 
 //		case SDLK_h: conflicts with h
