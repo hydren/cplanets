@@ -867,7 +867,7 @@ void onKeyEvent(SDL_keysym *key, bool down)
 		case SDLK_b:
 			if(down) onCheckBoxPressed(chckBouncingOnCollision, true);
 			break;
-		case SDLK_s:
+		case SDLK_v:
 			if(down) onCheckBoxPressed(tgbAA, true);
 			break;
 		case SDLK_c:
