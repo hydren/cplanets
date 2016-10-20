@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{670B0714-E312-44EB-8FF7-D411AEC33A53}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>cplanets</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(MSBuildProjectDirectory)\src;$(MSBuildProjectDirectory)\src_libs;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(MSBuildProjectDirectory)\src;$(MSBuildProjectDirectory)\src_libs;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL.lib;
+SDLmain.lib
+;SDL_image.lib
+;SDL_ttf.lib;
+SDL_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL.lib
+;SDLmain.lib
+;SDL_image.lib
+;SDL_ttf.lib;
+SDL_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\cli.hxx" />
+    <ClInclude Include="src\geometry\vector2d.hpp" />
+    <ClInclude Include="src\help.h" />
+    <ClInclude Include="src\hotfixes.h" />
+    <ClInclude Include="src\main_window.hpp" />
+    <ClInclude Include="src\physics\body2d.hpp" />
+    <ClInclude Include="src\physics\physics2d.hpp" />
+    <ClInclude Include="src\physics\physics2dsolver.hpp" />
+    <ClInclude Include="src\physics\solvers\adams_bashforth.hpp" />
+    <ClInclude Include="src\physics\solvers\adams_moulton.hpp" />
+    <ClInclude Include="src\physics\solvers\built_in.hpp" />
+    <ClInclude Include="src\physics\solvers\euler.hpp" />
+    <ClInclude Include="src\physics\solvers\multistep.hpp" />
+    <ClInclude Include="src\physics\solvers\one_step.hpp" />
+    <ClInclude Include="src\physics\solvers\rk2.hpp" />
+    <ClInclude Include="src\physics\solvers\rk3.hpp" />
+    <ClInclude Include="src\physics\solvers\rk4.hpp" />
+    <ClInclude Include="src\physics\solvers\rk_high.hpp" />
+    <ClInclude Include="src\physics\solvers\runge_kutta.hpp" />
+    <ClInclude Include="src\physics\universe2d.hpp" />
+    <ClInclude Include="src\planetarium\collision_event.hxx" />
+    <ClInclude Include="src\planetarium\orbit_tracer.hxx" />
+    <ClInclude Include="src\planetarium\physics2d_events_manager.hxx" />
+    <ClInclude Include="src\planetarium\planetarium.hpp" />
+    <ClInclude Include="src\planetarium\planetarium_pane.hpp" />
+    <ClInclude Include="src\planetarium\planetarium_user_object.hxx" />
+    <ClInclude Include="src\planetarium\state_manager.hxx" />
+    <ClInclude Include="src\program_io.hpp" />
+    <ClInclude Include="src\SDL_util.hpp" />
+    <ClInclude Include="src\themes.hxx" />
+    <ClInclude Include="src\version.h" />
+    <ClInclude Include="src\widgets\abstract_layout.hpp" />
+    <ClInclude Include="src\widgets\dialog_bgrwin.hpp" />
+    <ClInclude Include="src\widgets\drop_menu.hpp" />
+    <ClInclude Include="src\widgets\extra\abstract_list_model.hpp" />
+    <ClInclude Include="src\widgets\extra\generic_list_win.hpp" />
+    <ClInclude Include="src\widgets\extra\generic_spinner.hpp" />
+    <ClInclude Include="src\widgets\extra\list_model.hpp" />
+    <ClInclude Include="src\widgets\extra\list_model_extra.hpp" />
+    <ClInclude Include="src\widgets\file_dialog.hpp" />
+    <ClInclude Include="src\widgets\flow_layout.hpp" />
+    <ClInclude Include="src\widgets\icon_button.hpp" />
+    <ClInclude Include="src\widgets\label_win.hpp" />
+    <ClInclude Include="src\widgets\list_selection_model.hpp" />
+    <ClInclude Include="src\widgets\list_selection_model_extra.hpp" />
+    <ClInclude Include="src\widgets\list_win.hpp" />
+    <ClInclude Include="src\widgets\multi_line_text_renderer.hpp" />
+    <ClInclude Include="src\widgets\scrollable_pane.hpp" />
+    <ClInclude Include="src\widgets\spinner.hpp" />
+    <ClInclude Include="src\widgets\tabs.hpp" />
+    <ClInclude Include="src\widgets\tab_control.hpp" />
+    <ClInclude Include="src\widgets\toogle_button.hpp" />
+    <ClInclude Include="src\widgets\value_shower.hpp" />
+    <ClInclude Include="src\widgets\widgets_debug.hpp" />
+    <ClInclude Include="src\widgets\widgets_util.hpp" />
+    <ClInclude Include="src_libs\futil\collection\actions.hpp" />
+    <ClInclude Include="src_libs\futil\collection\iterable_queue.hpp" />
+    <ClInclude Include="src_libs\futil\collection\map_actions.hpp" />
+    <ClInclude Include="src_libs\futil\config.h" />
+    <ClInclude Include="src_libs\futil\exception.hpp" />
+    <ClInclude Include="src_libs\futil\general\byte.h" />
+    <ClInclude Include="src_libs\futil\general\chrono.h" />
+    <ClInclude Include="src_libs\futil\general\language.hpp" />
+    <ClInclude Include="src_libs\futil\general\snprintf.h" />
+    <ClInclude Include="src_libs\futil\listener.hpp" />
+    <ClInclude Include="src_libs\futil\math\constants.h" />
+    <ClInclude Include="src_libs\futil\math\gauss_random.h" />
+    <ClInclude Include="src_libs\futil\math\more_random.h" />
+    <ClInclude Include="src_libs\futil\math\parse_number.hpp" />
+    <ClInclude Include="src_libs\futil\math\rect.hpp" />
+    <ClInclude Include="src_libs\futil\math\round.h" />
+    <ClInclude Include="src_libs\futil\string\actions.hpp" />
+    <ClInclude Include="src_libs\futil\string\callbacks.hpp" />
+    <ClInclude Include="src_libs\futil\string\more_operators.hpp" />
+    <ClInclude Include="src_libs\futil\string\split.hpp" />
+    <ClInclude Include="src_libs\futil\version.h" />
+    <ClInclude Include="src_libs\SDL_widgets\compat.h" />
+    <ClInclude Include="src_libs\SDL_widgets\config.h" />
+    <ClInclude Include="src_libs\SDL_widgets\SDL_widgets.h" />
+    <ClInclude Include="src_libs\SDL_widgets\sw-pixmaps.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\geometry\vector2d.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\main_window.cpp" />
+    <ClCompile Include="src\physics\body2d.cpp" />
+    <ClCompile Include="src\physics\physics2d.cpp" />
+    <ClCompile Include="src\physics\physics2dsolver.cpp" />
+    <ClCompile Include="src\physics\solvers\adams_bashforth.cpp" />
+    <ClCompile Include="src\physics\solvers\adams_moulton.cpp" />
+    <ClCompile Include="src\physics\solvers\butcher_tables.cpp" />
+    <ClCompile Include="src\physics\solvers\euler.cpp" />
+    <ClCompile Include="src\physics\solvers\multistep.cpp" />
+    <ClCompile Include="src\physics\solvers\one_step.cpp" />
+    <ClCompile Include="src\physics\solvers\rk2.cpp" />
+    <ClCompile Include="src\physics\solvers\rk3.cpp" />
+    <ClCompile Include="src\physics\solvers\rk4.cpp" />
+    <ClCompile Include="src\physics\solvers\rk_high.cpp" />
+    <ClCompile Include="src\physics\solvers\runge_kutta.cpp" />
+    <ClCompile Include="src\physics\universe2d.cpp" />
+    <ClCompile Include="src\planetarium\planetarium.cpp" />
+    <ClCompile Include="src\planetarium\planetarium_pane.cpp" />
+    <ClCompile Include="src\program_io.cpp" />
+    <ClCompile Include="src\SDL_util.cpp" />
+    <ClCompile Include="src\widgets\abstract_layout.cpp" />
+    <ClCompile Include="src\widgets\dialog_bgrwin.cpp" />
+    <ClCompile Include="src\widgets\drop_menu.cpp" />
+    <ClCompile Include="src\widgets\extra\generic_list_win.cpp" />
+    <ClCompile Include="src\widgets\extra\generic_spinner.cpp" />
+    <ClCompile Include="src\widgets\extra\list_model.cpp" />
+    <ClCompile Include="src\widgets\file_dialog.cpp" />
+    <ClCompile Include="src\widgets\flow_layout.cpp" />
+    <ClCompile Include="src\widgets\icon_button.cpp" />
+    <ClCompile Include="src\widgets\label_win.cpp" />
+    <ClCompile Include="src\widgets\list_selection_model.cpp" />
+    <ClCompile Include="src\widgets\list_win.cpp" />
+    <ClCompile Include="src\widgets\multi_line_text_renderer.cpp" />
+    <ClCompile Include="src\widgets\scrollable_pane.cpp" />
+    <ClCompile Include="src\widgets\spinner.cpp" />
+    <ClCompile Include="src\widgets\tabs.cpp" />
+    <ClCompile Include="src\widgets\tab_control.cpp" />
+    <ClCompile Include="src\widgets\toogle_button.cpp" />
+    <ClCompile Include="src\widgets\value_shower.cpp" />
+    <ClCompile Include="src\widgets\widgets_debug.cpp" />
+    <ClCompile Include="src\widgets\widgets_util.cpp" />
+    <ClCompile Include="src_libs\futil\exception.cpp" />
+    <ClCompile Include="src_libs\futil\general\chrono.cpp" />
+    <ClCompile Include="src_libs\futil\general\snprintf.cpp" />
+    <ClCompile Include="src_libs\futil\math\gauss_random.cpp" />
+    <ClCompile Include="src_libs\futil\math\more_random.cpp" />
+    <ClCompile Include="src_libs\futil\math\parse_number.cpp" />
+    <ClCompile Include="src_libs\futil\math\round.cpp" />
+    <ClCompile Include="src_libs\futil\string\actions.cpp" />
+    <ClCompile Include="src_libs\futil\string\more_operators.cpp" />
+    <ClCompile Include="src_libs\futil\string\split.cpp" />
+    <ClCompile Include="src_libs\SDL_widgets\SDL_widgets.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
