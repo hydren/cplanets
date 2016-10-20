@@ -178,8 +178,6 @@ string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
 
 SDL_Surface* APP_LOGO;
 
-#include "help.h"
-
 //  ================ VARIABLES ===============
 Rect genericButtonSize(0, 0, TOOLBAR_SIZE, TOOLBAR_SIZE); //useful to reuse
 Rect genericToolbarButtonSize(0, 0, TOOLBAR_SIZE-2*WIDGETS_SPACING, TOOLBAR_SIZE-2*WIDGETS_SPACING);
@@ -253,6 +251,8 @@ MultiLineTextRenderer* mltAboutText;
 DialogBgrWin* dialogHelp;
 ScrollablePane* sclpHelpText;
 MultiLineTextRenderer* mltHelpText;
+
+#include <help.hxx>
 
 // ================ CMD LINE PARSING ================
 string filePathToLoad;
@@ -650,7 +650,7 @@ void CPlanets::init()
 	sclpHelpText->content.display_cmd = drawHelpDialog;
 
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
-	mltHelpText->setText(HELP_TEXT, sclpHelpText->content.tw_area.w*1.5);
+	mltHelpText->setText(aux_help_text::content, sclpHelpText->content.tw_area.w*1.5);
 
 	if(aux_startToolbarHidden)
 	{
@@ -737,10 +737,26 @@ void drawHelpDialog(BgrWin* bw)
 	BgrWin* dialog = &sclpHelpText->content;
 	WidgetsExtra::drawBgrWin(bw);
 	mltHelpText->draw(dialog->win);
-	for(unsigned i = 0, k = mltHelpText->getTextHeight() + WIDGETS_SPACING; i < aux_help_text_keybind_key.size(); i++, k += TTF_FontHeight(draw_mono_ttf->ttf_font))
+
+	unsigned offset = mltHelpText->getTextHeight() + WIDGETS_SPACING;
+	for(unsigned i = 0; i < aux_help_text::btn_icons.size(); i++, offset += TTF_FontHeight(draw_mono_ttf->ttf_font))
 	{
-		draw_mono_ttf->draw_string(dialog->win, aux_help_text_keybind_key[i].c_str(), Point(WIDGETS_SPACING*4, k));
-		draw_mono_ttf->draw_string(dialog->win, aux_help_text_keybind_desc[i].c_str(), Point(WIDGETS_SPACING*36, k));
+		Rect rt;
+		rt.x = 8*WIDGETS_SPACING; rt.y = offset;
+		SDL_BlitSurface(aux_help_text::btn_icons[i], null, dialog->win, &rt);
+		draw_mono_ttf->draw_string(dialog->win, aux_help_text::btn_desc[i].c_str(), Point(WIDGETS_SPACING*36, offset));
+	}
+
+	offset += 2*TTF_FontHeight(draw_mono_ttf->ttf_font);
+
+	draw_ttf->draw_string(dialog->win, "The following is a list of key bindings:" , Point(8*WIDGETS_SPACING, offset));
+
+	offset += 2*TTF_FontHeight(draw_ttf->ttf_font);
+
+	for(unsigned i = 0; i < aux_help_text::keybind_key.size(); i++, offset += TTF_FontHeight(draw_mono_ttf->ttf_font))
+	{
+		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_key[i].c_str(), Point(WIDGETS_SPACING*4, offset));
+		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_desc[i].c_str(), Point(WIDGETS_SPACING*36, offset));
 	}
 }
 
@@ -933,8 +949,8 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnHelp)
 	{
-		aux_help_text_keybind::init();
-		unsigned extraSize = aux_help_text_keybind_key.size()*TTF_FontHeight(draw_mono_ttf->ttf_font);
+		aux_help_text::init();
+		unsigned extraSize = (aux_help_text::keybind_desc.size()+aux_help_text::btn_desc.size()+2)*TTF_FontHeight(draw_mono_ttf->ttf_font);
 		adjustDialog(dialogHelp, sclpHelpText, mltHelpText, extraSize);
 		setComponentPosition(dialogHelp, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogHelp->setVisible(dialogHelp->parent==null or dialogHelp->hidden);

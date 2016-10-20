@@ -1,22 +1,31 @@
 /*
- * help.h
+ * help.hxx
  *
  *  Created on: 6 de out de 2016
  *      Author: carlosfaruolo
  */
 
-const char* HELP_TEXT = "The following is a ist of keybindings: "
-;
+namespace aux_help_text {
 
-vector<string> aux_help_text_keybind_key, aux_help_text_keybind_desc;
+	const char* content = "Welcome to CPlanets!"
+			"\n CPlanets is a simple orbital planetary simulator, inspired by Yaron Minsky's \"Planets\"."
+			"\n More info on Yaron Minsky's \"Planets\" (http://planets.homedns.org/)"
+			"\n"
+			"\n The following is a list of buttons descriptions: ";
 
-namespace aux_help_text_keybind {
-	static void s(const char* key, const char* desc) { aux_help_text_keybind_key.push_back(key); aux_help_text_keybind_desc.push_back(desc); }
+	vector<SDL_Surface*> btn_icons;
+	vector<string> btn_desc;
+	static void p(SDL_Surface* surf, const char* desc) { btn_icons.push_back(surf); btn_desc.push_back(desc); }
+
+	vector<string> keybind_key, keybind_desc;
+	static void s(const char* key, const char* desc) { keybind_key.push_back(key); keybind_desc.push_back(desc); }
 
 	static void init()
 	{
 		static bool once = false;
 		if(once) return;
+
+		p(btnNew->icon.image,		"Creates a new universe.");
 
 		s("shift+h", 		"Display this help dialog");
 		s("a", 				"Add body");
