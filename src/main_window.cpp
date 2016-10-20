@@ -618,7 +618,7 @@ void CPlanets::init()
 	dialogLoad->onClosedCallback = dialogSave->onClosedCallback = onCloseDialogRefreshAll;
 
 	FULL_ABOUT_TEXT = string("This program is inspired by Yaron Minsky's \"planets\" program.\n\n").append(CPLANETS_LICENSE);
-	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", null, theme.dialogStyle);
+	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", onCloseDialogRefreshAll, theme.dialogStyle);
 
 	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", closeParentDialogFromButton);
 	packLabeledComponent(btnAboutOk);
@@ -638,7 +638,7 @@ void CPlanets::init()
 	mltAboutText = new MultiLineTextRenderer(draw_ttf, null, posMltAboutText, 3*WIDGETS_SPACING);
 	mltAboutText->setText(FULL_ABOUT_TEXT, sclpAboutLicense->content.tw_area.w);
 
-	dialogHelp = new DialogBgrWin(Rect(0,0,400,300), "Help", null, theme.dialogStyle);
+	dialogHelp = new DialogBgrWin(Rect(0,0,400,300), "Help", onCloseDialogRefreshAll, theme.dialogStyle);
 
 	Rect rectSclpHelpText(
 		WIDGETS_SPACING,
