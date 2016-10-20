@@ -126,7 +126,7 @@ void onBodyDeletion(Body2D* deletedBodyPtr);
 void txtBodiesRefreshAll();
 void txtBodiesUpdateSize();
 
-void adjustDialog(DialogBgrWin*, ScrollablePane*, MultiLineTextRenderer*);
+void adjustDialog(DialogBgrWin*, ScrollablePane*, MultiLineTextRenderer*, unsigned extra=0);
 void collapseTabs(bool choice);
 void hideToolbars(bool choice);
 
@@ -346,8 +346,8 @@ void CPlanets::init()
 	toolbarNorthLayout->addComponent(static_cast<Layout::Element*>(new Layout::Separator(window, Layout::HORIZONTAL, TOOLBAR_SIZE)));
 	toolbarNorthLayout->getComponentAt(toolbarNorthLayout->getComponentCount()-1)->offset.y = -5;
 
-//	btnHelp = new IconButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/help.png"), onButtonPressed);
-//	toolbarNorthLayout->addComponent(btnHelp);
+	btnHelp = new IconButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/help.png"), onButtonPressed);
+	toolbarNorthLayout->addComponent(btnHelp);
 
 	btnAbout = new IconButton(window, theme.toolbarButtonStyle, genericToolbarButtonSize, Label(""), loadImage("data/about.png"), onButtonPressed);
 	toolbarNorthLayout->addComponent(btnAbout);
@@ -648,10 +648,9 @@ void CPlanets::init()
 
 	sclpHelpText = new ScrollablePane(dialogHelp, theme.scrollStyle, rectSclpHelpText, window->bgcol);
 	sclpHelpText->content.display_cmd = drawHelpDialog;
-	sclpHelpText->setScrollbarHorizontalVisible(false);
 
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
-	mltHelpText->setText(HELP_TEXT, sclpHelpText->content.tw_area.w);
+	mltHelpText->setText(HELP_TEXT, sclpHelpText->content.tw_area.w*1.5);
 
 	if(aux_startToolbarHidden)
 	{
@@ -738,6 +737,11 @@ void drawHelpDialog(BgrWin* bw)
 	BgrWin* dialog = &sclpHelpText->content;
 	WidgetsExtra::drawBgrWin(bw);
 	mltHelpText->draw(dialog->win);
+	for(unsigned i = 0, k = mltHelpText->getTextHeight() + WIDGETS_SPACING; i < aux_help_text_keybind_key.size(); i++, k += TTF_FontHeight(draw_mono_ttf->ttf_font))
+	{
+		draw_mono_ttf->draw_string(dialog->win, aux_help_text_keybind_key[i].c_str(), Point(WIDGETS_SPACING*4, k));
+		draw_mono_ttf->draw_string(dialog->win, aux_help_text_keybind_desc[i].c_str(), Point(WIDGETS_SPACING*36, k));
+	}
 }
 
 void drawPlanetariumWithVersion(BgrWin* bgr)
@@ -870,7 +874,13 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			if(down) onButtonPressed(btnDoubleTraceLength);
 			break;
 		case SDLK_h:
-			if(down) onButtonPressed(btnHalveTraceLentgh);
+			if(down)
+			{
+				if(IS_SHIFT_PRESSED(key))
+					onButtonPressed(btnHelp);
+				else
+					onButtonPressed(btnHalveTraceLentgh);
+			}
 			break;
 		case SDLK_b:
 			if(down) onCheckBoxPressed(chckBouncingOnCollision, true);
@@ -908,10 +918,6 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			quitCplanets();
 			break;
 
-//		case SDLK_h: conflicts with h
-//			//todo show help dialog
-//			break;
-
 		default:break;
 	}
 }
@@ -927,7 +933,9 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnHelp)
 	{
-		adjustDialog(dialogHelp, sclpHelpText, mltHelpText);
+		aux_help_text_keybind::init();
+		unsigned extraSize = aux_help_text_keybind_key.size()*TTF_FontHeight(draw_mono_ttf->ttf_font);
+		adjustDialog(dialogHelp, sclpHelpText, mltHelpText, extraSize);
 		setComponentPosition(dialogHelp, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogHelp->setVisible(dialogHelp->parent==null or dialogHelp->hidden);
 	}
@@ -1247,15 +1255,15 @@ void txtBodiesUpdateSize()
 	}
 }
 
-void adjustDialog(DialogBgrWin* dialog, ScrollablePane* pane, MultiLineTextRenderer* mlt)
+void adjustDialog(DialogBgrWin* dialog, ScrollablePane* pane, MultiLineTextRenderer* mlt, unsigned extra)
 {
 	const int headerSize = dialog->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
-	const int totalSize = headerSize + mlt->getTextHeight();
+	const int totalSize = headerSize + mlt->getTextHeight() + extra;
 
 	//expand BgrWin to fit the text
 	if(totalSize > pane->content.tw_area.h)
 	{
-		pane->widenContent(0, totalSize - pane->content.tw_area.h);
+		pane->widenContent(mlt->getTextWidth()-pane->content.tw_area.w, totalSize - pane->content.tw_area.h);
 		pane->refresh();
 	}
 }
