@@ -86,9 +86,6 @@ SDL_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\cli.hxx" />
     <ClInclude Include="src\geometry\vector2d.hpp" />
     <ClInclude Include="src\help.h" />
