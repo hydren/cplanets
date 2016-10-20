@@ -126,7 +126,7 @@ void onBodyDeletion(Body2D* deletedBodyPtr);
 void txtBodiesRefreshAll();
 void txtBodiesUpdateSize();
 
-void dialogAboutAdjust();
+void adjustDialog(DialogBgrWin*, ScrollablePane*, MultiLineTextRenderer*);
 void collapseTabs(bool choice);
 void hideToolbars(bool choice);
 
@@ -645,12 +645,13 @@ void CPlanets::init()
 		WIDGETS_SPACING + dialogHelp->titleBarArea.h,
 		dialogHelp->tw_area.w - 2*WIDGETS_SPACING,
 		dialogHelp->tw_area.h - 3*WIDGETS_SPACING - dialogHelp->titleBarArea.h);
+
 	sclpHelpText = new ScrollablePane(dialogHelp, theme.scrollStyle, rectSclpHelpText, window->bgcol);
 	sclpHelpText->content.display_cmd = drawHelpDialog;
 	sclpHelpText->setScrollbarHorizontalVisible(false);
 
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
-	mltHelpText->setText(HELP_TEXT, sclpHelpText->tw_area.w);
+	mltHelpText->setText(HELP_TEXT, sclpHelpText->content.tw_area.w);
 
 	if(aux_startToolbarHidden)
 	{
@@ -919,13 +920,14 @@ void onButtonPressed(Button* btn)
 {
 	if(btn == btnAbout)
 	{
-		dialogAboutAdjust();
+		adjustDialog(dialogAbout, sclpAboutLicense, mltAboutText);
 		setComponentPosition(dialogAbout, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogAbout->setVisible(dialogAbout->parent==null or dialogAbout->hidden);
 	}
 
 	if(btn == btnHelp)
 	{
+		adjustDialog(dialogHelp, sclpHelpText, mltHelpText);
 		setComponentPosition(dialogHelp, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogHelp->setVisible(dialogHelp->parent==null or dialogHelp->hidden);
 	}
@@ -1245,16 +1247,16 @@ void txtBodiesUpdateSize()
 	}
 }
 
-void dialogAboutAdjust()
+void adjustDialog(DialogBgrWin* dialog, ScrollablePane* pane, MultiLineTextRenderer* mlt)
 {
-	const int headerSize = dialogAbout->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
-	const int totalSize = headerSize + mltAboutText->getTextHeight();
+	const int headerSize = dialog->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
+	const int totalSize = headerSize + mlt->getTextHeight();
 
 	//expand BgrWin to fit the text
-	if(totalSize > sclpAboutLicense->content.tw_area.h)
+	if(totalSize > pane->content.tw_area.h)
 	{
-		sclpAboutLicense->widenContent(0, totalSize - sclpAboutLicense->content.tw_area.h);
-		sclpAboutLicense->refresh();
+		pane->widenContent(0, totalSize - pane->content.tw_area.h);
+		pane->refresh();
 	}
 }
 
