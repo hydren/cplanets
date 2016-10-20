@@ -801,6 +801,13 @@ void onKeyEvent(SDL_keysym *key, bool down)
 			break;
 		//key bindings
 
+		case SDLK_s:
+			if(down) onButtonPressed(btnSave);
+			break;
+		case SDLK_l:
+			if(down) onButtonPressed(btnLoad);
+			break;
+
 		//body manipulations
 		case SDLK_e:
 			if(down) onButtonPressed(btnClear);
