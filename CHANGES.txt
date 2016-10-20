@@ -1,6 +1,32 @@
 (+ added, ~ changed, * fixed, - removed)
 
 History:
+0.9.10 - 20/10/2016
+~ Fullscreen mode is now termed as "hidden toobars" mode.
++ Added CSV format support, with examples.
++ Added keybinding to 'b' key (toogle bounce on collision).
++ Added keybinding to 'c' key (follow center).
++ Added keybinding to 'x' key (stop follow).
++ Added keybinding to 'k' key (toogle hidden toolbars).
++ Added keybinding to 'q' key (quit).
+~ Also, the escape key will also quit the program if the toolbars aren't hidden.
++ Now its possible to add random orbiting bodies in a single direction (unidirectional) with shift+'j' keybinding.
++ Added parameter to specify whether to start with hidden toobars mode.
+* Fixed crash that occurred when the program was under heavy load.
+* Fixed orbit tracing resetting after collision even if previously it hadn't a reference frame set.
+* Fixed single point spawn bug, that occurred on large scales.
+* Fixed file load functions not loading bodies ids (they were generating instead, ignoring file specified ids).
+* Improved scrollbar performace.
+* Improved list update performance a bit.
+* Fixed draw glitch when reopening a file dialog that was moved before its closure.
+* Fixed visual glitch in scrollable pane's gap amid scrollbars (when both are active)
+* Fixed mistake in the code with collapse tabs and hidden toolbars mode.
+* Minor visual improvements on widgets positions. 
++ Debug MSVC build (however, gdb debugging it is not possible).
++ Created an MSVC (VC10) project as an alternative way to compile the code on win32.
+* Other minor fixes.
+~ Refactoring
+
 0.9.9 - 13/10/2016
 * Fixed makefile.
 * Fixed shaking bodies when using reference frames with too many bodies or too variable barycenter.
