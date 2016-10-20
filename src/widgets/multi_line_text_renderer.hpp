@@ -35,6 +35,7 @@ namespace WidgetsExtra
 
 		unsigned getTextHeight() const;
 		unsigned getTextHeight(unsigned padding) const;
+		unsigned getTextWidth() const;
 
 		void breakLines(Uint16 maxWidth);
 		void setText(std::string text, Uint16 maxWidth);
@@ -42,6 +43,7 @@ namespace WidgetsExtra
 		protected:
 		std::vector<std::string> lines;
 		std::string fullText;
+		unsigned width;
 	};
 }
 

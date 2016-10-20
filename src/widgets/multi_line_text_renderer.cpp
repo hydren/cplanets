@@ -14,7 +14,7 @@ using std::string;
 using std::vector;
 
 MultiLineTextRenderer::MultiLineTextRenderer(RenderText* renderText, SDL_Surface* surface, Point position, unsigned padding)
-: renderText(renderText), surface(surface), position(position), padding(padding)
+: renderText(renderText), surface(surface), position(position), padding(padding), width(0)
 {}
 
 void MultiLineTextRenderer::draw()
@@ -52,6 +52,11 @@ unsigned MultiLineTextRenderer::getTextHeight(unsigned padding) const
 	return this->lines.size() * TTF_FontHeight(this->renderText->ttf_font) + padding;
 }
 
+unsigned MultiLineTextRenderer::getTextWidth() const
+{
+	return width;
+}
+
 void MultiLineTextRenderer::breakLines(Uint16 maxWidth)
 {
 	this->lines.clear();
@@ -62,4 +67,5 @@ void MultiLineTextRenderer::setText(std::string text, Uint16 maxWidth)
 {
 	this->fullText = text;
 	this->breakLines(maxWidth);
+	this->width = maxWidth;
 }
