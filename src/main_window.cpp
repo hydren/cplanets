@@ -176,7 +176,7 @@ const unsigned BODIES_PANEL_WIDTH = TOOLBAR_SIZE * 7;
 const int PLANETARIUM_ID = 959;
 const int USER_EVENT_ID__UPDATE_BODIES_LIST = 160;
 const double DEFAULT_GRAVITY = 9.807;
-string VERSION_TEXT, FULL_ABOUT_TEXT; //not really a constant, but still
+string VERSION_TEXT; //not really a constant, but still
 
 SDL_Surface* APP_LOGO;
 
@@ -254,6 +254,10 @@ DialogBgrWin* dialogHelp;
 ScrollablePane* sclpHelpText;
 MultiLineTextRenderer* mltHelpText;
 
+// "About" dialog details
+#include <about.hxx>
+
+// help dialog details
 #include <help.hxx>
 
 // ================ CMD LINE PARSING ================
@@ -620,7 +624,7 @@ void CPlanets::init()
 	dialogLoad->onClosedCallback = dialogSave->onClosedCallback = onCloseDialogRefreshAll;
 
 	// "About" dialog
-	FULL_ABOUT_TEXT = string("This program is inspired by Yaron Minsky's \"planets\" program.\n\n").append(CPLANETS_LICENSE);
+	aux_about_text::init();
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", onCloseDialogRefreshAll, theme.dialogStyle);
 
 	btnAboutOk = new Button(dialogAbout, Style(0, 1), genericButtonSize, "Close", closeParentDialogFromButton);
@@ -639,7 +643,7 @@ void CPlanets::init()
 
 	Point posMltAboutText(WIDGETS_SPACING, dialogAbout->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2);
 	mltAboutText = new MultiLineTextRenderer(draw_ttf, null, posMltAboutText, 3*WIDGETS_SPACING);
-	mltAboutText->setText(FULL_ABOUT_TEXT, sclpAboutLicense->content.tw_area.w);
+	mltAboutText->setText(aux_about_text::content, sclpAboutLicense->content.tw_area.w);
 
 	adjustAboutDialogContent();
 
@@ -720,26 +724,6 @@ void draw()
 	msgLogK->draw_label();
 	msgLogP->draw_label();
 	msgLogE->draw_label();
-}
-
-void drawAboutDialog(BgrWin* bw)
-{
-	BgrWin* dialog = &sclpAboutLicense->content;
-	WidgetsExtra::drawBgrWin(bw);
-
-	int logoOffset = 0;
-	if(APP_LOGO != null)
-	{
-		SDL_Rect position = {WIDGETS_SPACING, WIDGETS_SPACING, 0, 0};
-		SDL_BlitSurface(APP_LOGO, null, bw->win, &position);
-		logoOffset = APP_LOGO->w;
-	}
-
-	static const string versionStr = string("Version ").append(CPLANETS_VERSION), titleStr("cplanets, a interactive program to play with gravitation");
-	draw_title_ttf->draw_string(dialog->win, titleStr.c_str()  , Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING));
-	draw_title_ttf->draw_string(dialog->win, versionStr.c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font)));
-
-	mltAboutText->draw(dialog->win);
 }
 
 void drawPlanetariumWithVersion(BgrWin* bgr)
@@ -1246,32 +1230,6 @@ void txtBodiesUpdateSize()
 	{
 		sclpBodies->widenContent(widthNeeded - sclpBodies->content.tw_area.w, heightNeeded - sclpBodies->content.tw_area.h);
 		txtBodies->widen(widthNeeded - txtBodies->tw_area.w, heightNeeded - txtBodies->tw_area.h);
-	}
-}
-
-void adjustAboutDialogContent()
-{
-	const int headerSize = dialogAbout->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
-	const int totalSize = headerSize + mltAboutText->getTextHeight();
-
-	//expand BgrWin to fit the text
-	if(totalSize > sclpAboutLicense->content.tw_area.h)
-	{
-		sclpAboutLicense->widenContent(mltAboutText->getTextWidth() - sclpAboutLicense->content.tw_area.w, totalSize - sclpAboutLicense->content.tw_area.h);
-		sclpAboutLicense->refresh();
-	}
-}
-
-void adjustDialog(DialogBgrWin* dialog, ScrollablePane* pane, MultiLineTextRenderer* mlt, unsigned extra)
-{
-	const int headerSize = dialog->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
-	const int totalSize = headerSize + mlt->getTextHeight() + extra;
-
-	//expand BgrWin to fit the text
-	if(totalSize > pane->content.tw_area.h)
-	{
-		pane->widenContent(mlt->getTextWidth()-pane->content.tw_area.w, totalSize - pane->content.tw_area.h);
-		pane->refresh();
 	}
 }
 
