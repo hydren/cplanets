@@ -41,7 +41,7 @@ Theming functionality (mainly to match many OSes' ones) - done
 Command line arguments - done
 Hide left bar, hide all mode - done
 Implement add unidirectional orbiting body - done
-Basic "help" dialog
+Basic "help" dialog - done
 
 
 - 1.x
@@ -81,7 +81,7 @@ Types of bodies (planet, star, etc)
 Chemical evolution of bodies (aging)
 Adaptive stepsize
 3D mode
-
+...
 
 -------------- Misc. references
 
@@ -100,5 +100,3 @@ http://www.mymathlib.com/diffeq/second_order/numerov.html
 ODE for N-body
 http://tutorial.math.lamar.edu/Classes/DE/SystemsDE.aspx
 http://www.kof.zcu.cz/st/dis/schwarzmeier/gravitational_simulation.html
-
-
