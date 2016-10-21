@@ -126,10 +126,9 @@ void onBodyDeletion(Body2D* deletedBodyPtr);
 void txtBodiesRefreshAll();
 void txtBodiesUpdateSize();
 
-//void adjustAboutDialogContent();
+void adjustAboutDialogContent();
 void adjustHelpDialogContent();
 
-void adjustDialog(DialogBgrWin*, ScrollablePane*, MultiLineTextRenderer*, unsigned extra=0);
 void collapseTabs(bool choice);
 void hideToolbars(bool choice);
 
@@ -620,6 +619,7 @@ void CPlanets::init()
 
 	dialogLoad->onClosedCallback = dialogSave->onClosedCallback = onCloseDialogRefreshAll;
 
+	// "About" dialog
 	FULL_ABOUT_TEXT = string("This program is inspired by Yaron Minsky's \"planets\" program.\n\n").append(CPLANETS_LICENSE);
 	dialogAbout = new DialogBgrWin(Rect(0,0,400,300), "About cplanets", onCloseDialogRefreshAll, theme.dialogStyle);
 
@@ -641,6 +641,9 @@ void CPlanets::init()
 	mltAboutText = new MultiLineTextRenderer(draw_ttf, null, posMltAboutText, 3*WIDGETS_SPACING);
 	mltAboutText->setText(FULL_ABOUT_TEXT, sclpAboutLicense->content.tw_area.w);
 
+	adjustAboutDialogContent();
+
+	// help dialog
 	dialogHelp = new DialogBgrWin(Rect(0,0,400,300), "Help", onCloseDialogRefreshAll, theme.dialogStyle);
 
 	Rect rectSclpHelpText(
@@ -655,9 +658,10 @@ void CPlanets::init()
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
 	mltHelpText->setText(aux_help_text::content, sclpHelpText->content.tw_area.w*1.5);
 
-	//needs to be called after the buttons' and about Help's stuff are created
+	// needs to be called after the buttons' and about Help's stuff are created
 	adjustHelpDialogContent();
 
+	// if user specified hidden toolbars via cmd args, hide it now
 	if(aux_startToolbarHidden)
 	{
 		*tglHideToolbars->d = true;
@@ -920,7 +924,6 @@ void onButtonPressed(Button* btn)
 {
 	if(btn == btnAbout)
 	{
-		adjustDialog(dialogAbout, sclpAboutLicense, mltAboutText);
 		setComponentPosition(dialogAbout, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogAbout->setVisible(dialogAbout->parent==null or dialogAbout->hidden);
 	}
@@ -1243,6 +1246,19 @@ void txtBodiesUpdateSize()
 	{
 		sclpBodies->widenContent(widthNeeded - sclpBodies->content.tw_area.w, heightNeeded - sclpBodies->content.tw_area.h);
 		txtBodies->widen(widthNeeded - txtBodies->tw_area.w, heightNeeded - txtBodies->tw_area.h);
+	}
+}
+
+void adjustAboutDialogContent()
+{
+	const int headerSize = dialogAbout->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
+	const int totalSize = headerSize + mltAboutText->getTextHeight();
+
+	//expand BgrWin to fit the text
+	if(totalSize > sclpAboutLicense->content.tw_area.h)
+	{
+		sclpAboutLicense->widenContent(mltAboutText->getTextWidth() - sclpAboutLicense->content.tw_area.w, totalSize - sclpAboutLicense->content.tw_area.h);
+		sclpAboutLicense->refresh();
 	}
 }
 
