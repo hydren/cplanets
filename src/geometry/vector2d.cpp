@@ -261,7 +261,7 @@ double Vector2D::innerProduct(const Vector2D& v) const
 
 // ------- projection operations (XXX not tested)
 
-Vector2D Vector2D::operator ||(const Vector2D& v) const
+Vector2D Vector2D::operator ||(const Vector2D& v) const  // FIXME projection operator is incorrect, not passing tests
 {
 	return (*this) * (((*this)^v)/(v^v));
 }
@@ -289,7 +289,7 @@ Vector2D Vector2D::reflection(const Vector2D& v) const
 	return (*this)|v;
 }
 
-// ------- rotation operations (XXX not tested)
+// ------- rotation operations
 
 Vector2D Vector2D::operator <(const double& radians) const
 {
@@ -317,6 +317,6 @@ Vector2D& Vector2D::rotate(const double& radians)
 
 Vector2D Vector2D::perpendicular() const
 {
-	return (*this) < 1.57079632679489661923; // rotate by pi/2 radians
+	return (*this) < M_PI_2; // rotate by pi/2 radians
 }
 

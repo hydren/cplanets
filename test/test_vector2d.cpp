@@ -1,13 +1,16 @@
 
 #include "geometry/vector2d.hpp"
 
-#include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
+
+#include <iostream>
 #include <vector>
 
 #include "futil/general/language.hpp"
 #include "futil/math/constants.h"
+#include "futil/math/more_random.h"
 
 using std::cout;
 using std::endl;
@@ -166,13 +169,47 @@ unit_test(unary_minus_operator_test)
 
 unit_test(rotation_operator_test)
 {
-	Vector2D v1(1, 0);
-	test((v1 < M_PI) == Vector2D(0, 1), "Rotation operator failed with versor rotation");
+	Vector2D v1(1, 0), v2(0, 1);
+	v1 = (v1 < M_PI_2);
+	double diff = fabs(v1.x - v2.x) + fabs(v1.y - v2.y);
+	test(diff < 0.00001, "Rotating X_VERSOR by Pi/2 radians should give Y_VERSOR");
+}
+
+unit_test(in_place_rotation_operator_test)
+{
+	Vector2D v1(1, 0), v2(0, 1);
+	v1 << M_PI_2;
+	double diff = fabs(v1.x - v2.x) + fabs(v1.y - v2.y);
+	test(diff < 0.00001, "Rotating X_VERSOR by Pi/2 radians should give Y_VERSOR (in-place operator)");
+}
+
+unit_test(projection_operator_with_versors_test)
+{
+	Vector2D v1(5, 7), v2(5, 0), v3(0, 7);
+	Vector2D v1_proj_on_x_versor = (v1 || Vector2D::X_VERSOR);
+	Vector2D v1_proj_on_y_versor = (v1 || Vector2D::Y_VERSOR);
+
+	double diff = 0;
+
+	diff += fabs(v1_proj_on_x_versor.x - v2.x) + fabs(v1_proj_on_x_versor.y - v2.y);
+	diff += fabs(v1_proj_on_y_versor.x - v3.x) + fabs(v1_proj_on_y_versor.y - v3.y);
+
+	test(diff < 0.00001, "Projection operator should filter out components when second operand is a versor");
+}
+
+//============== other methods ==============
+
+unit_test(perpendicular_method_test)
+{
+	Vector2D v1(0, 1), v2(-1, 0);
+	v1 = v1.perpendicular();
+	double diff = fabs(v1.x - v2.x) + fabs(v1.y - v2.y);
+	test(diff < 0.00001, "Perpendicular of Y_VERSOR should give -X_VERSOR (in-place operator)");
 }
 
 //============== semantic tests ==============
 
-unit_test(no_arg_constructed_vector_length)
+unit_test(no_arg_constructed_vector_length_test)
 {
 	Vector2D v1;
 	test(v1.length() == 0, "Default constructor vector length should be zero.");
@@ -188,10 +225,43 @@ unit_test(arithmetic_commutativity_test)
 
 unit_test(alias_operator_length_test)
 {
-	Vector2D v1(rand(), rand()), v2(rand(), rand());
-	test(-v1 == v1.opposite(), ".opposite() should have the same result as unary minus operator");
+	Vector2D v1(rand(), rand());
+	test(v1.length() == ~v1, ".length() should have the same result as the ~ operator");
 }
 
+unit_test(alias_operator_magnitude_test)
+{
+	Vector2D v1(rand(), rand());
+	test(v1.magnitude() == ~v1, ".magnitude() should have the same result as the ~ operator");
+}
+
+unit_test(alias_operator_opposite_test)
+{
+	Vector2D v1(rand(), rand());
+	test(v1.opposite() == -v1, ".opposite() should have the same result as unary minus operator");
+}
+
+unit_test(alias_operator_rotation_test)
+{
+	Vector2D v1(rand(), rand());
+	double angle = random_decimal_between(-2*M_PI, 2*M_PI);
+	test(v1.rotation(angle) == (v1 < angle), ".rotation() should have the same result as the < operator");
+}
+
+unit_test(alias_operator_rotate_test)
+{
+	Vector2D v1(rand(), rand());
+	double angle = random_decimal_between(-2*M_PI, 2*M_PI);
+	test(v1.rotate(angle) == (v1 << angle), ".rotate() should have the same result as the << operator");
+}
+
+unit_test(alias_operator_projection_test)
+{
+	Vector2D v1(rand(), rand()), v2(rand(), rand());
+	test(v1.projection(v2) == (v1 || v2), ".projection() should have the same result as the || operator");
+}
+
+// =============================================================================================================================
 //ToDo write more tests regarding math consistency
 //https://en.wikipedia.org/wiki/Euclidean_vector
 
