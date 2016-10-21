@@ -126,6 +126,9 @@ void onBodyDeletion(Body2D* deletedBodyPtr);
 void txtBodiesRefreshAll();
 void txtBodiesUpdateSize();
 
+//void adjustAboutDialogContent();
+void adjustHelpDialogContent();
+
 void adjustDialog(DialogBgrWin*, ScrollablePane*, MultiLineTextRenderer*, unsigned extra=0);
 void collapseTabs(bool choice);
 void hideToolbars(bool choice);
@@ -652,8 +655,8 @@ void CPlanets::init()
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
 	mltHelpText->setText(aux_help_text::content, sclpHelpText->content.tw_area.w*1.5);
 
-	aux_help_text::init();
-	sclpHelpText->scrollingSpeedVertical = (aux_help_text::extra_height+mltHelpText->getTextHeight())/20;
+	//needs to be called after the buttons' and about Help's stuff are created
+	adjustHelpDialogContent();
 
 	if(aux_startToolbarHidden)
 	{
@@ -924,7 +927,6 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnHelp)
 	{
-		adjustDialog(dialogHelp, sclpHelpText, mltHelpText, aux_help_text::extra_height);
 		setComponentPosition(dialogHelp, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogHelp->setVisible(dialogHelp->parent==null or dialogHelp->hidden);
 	}

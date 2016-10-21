@@ -13,7 +13,13 @@ namespace aux_help_text {
 			"\n"
 			"\n" "The following is a list of button descriptions: ";
 
-	unsigned extra_height;
+	unsigned extra_height, listings_max_width;
+
+	const unsigned
+		offset_btn_icons = 8*WIDGETS_SPACING,
+		offset_btn_desc = 16*WIDGETS_SPACING,
+		offset_keybind_key = 4*WIDGETS_SPACING,
+		offset_keybind_desc = 36*WIDGETS_SPACING;
 
 	vector<SDL_Surface*> btn_icons;
 	vector<string> btn_desc;
@@ -80,6 +86,21 @@ namespace aux_help_text {
 
 		extra_height = (keybind_desc.size()+2)*TTF_FontHeight(draw_mono_ttf->ttf_font) + 1.5*btnAbout->icon.image->h*btn_icons.size();
 
+		listings_max_width = 0;
+		for(unsigned i = 0; i < btn_desc.size(); i++)
+		{
+			unsigned size = offset_btn_desc + draw_blue_ttf->text_width(btn_desc[i].c_str());
+			if(i == 0 or size > listings_max_width)
+				listings_max_width = size;
+		}
+
+		for(unsigned i = 0; i < keybind_desc.size(); i++)
+		{
+			unsigned size = offset_keybind_desc + draw_mono_ttf->text_width(keybind_desc[i].c_str());
+			if(size > listings_max_width)
+				listings_max_width = size;
+		}
+
 		once = true;
 	}
 }
@@ -91,20 +112,20 @@ void drawHelpDialog(BgrWin* bw)
 	mltHelpText->draw(dialog->win);
 
 	Rect rt;
-	rt.x = 8*WIDGETS_SPACING;
-	Point pt(16*WIDGETS_SPACING, 0);
+	rt.x = aux_help_text::offset_btn_icons;
+	Point pt(aux_help_text::offset_btn_desc, 0);
 
 	unsigned offset = mltHelpText->getTextHeight() + WIDGETS_SPACING;
 	for(unsigned i = 0; i < aux_help_text::btn_icons.size(); i++, offset += btnAbout->icon.image->h*1.5)
 	{
-		rt.y = offset; pt.y = offset;
+		rt.y = pt.y = offset;
 		SDL_BlitSurface(aux_help_text::btn_icons[i], null, dialog->win, &rt);
 		draw_blue_ttf->draw_string(dialog->win, aux_help_text::btn_desc[i].c_str(), pt);
 	}
 
 	offset += 2*TTF_FontHeight(draw_ttf->ttf_font);
 
-	pt.x = 4*WIDGETS_SPACING;
+	pt.x = aux_help_text::offset_keybind_key;
 	pt.y = offset;
 	draw_ttf->draw_string(dialog->win, "The following is a list of key bindings:" , pt);
 
@@ -112,8 +133,30 @@ void drawHelpDialog(BgrWin* bw)
 
 	for(unsigned i = 0; i < aux_help_text::keybind_key.size(); i++, offset += TTF_FontHeight(draw_mono_ttf->ttf_font))
 	{
-		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_key[i].c_str(), Point(4*WIDGETS_SPACING, offset));
-		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_desc[i].c_str(), Point(36*WIDGETS_SPACING, offset));
+		pt.y = offset;
+		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_key[i].c_str(), pt);
+		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_desc[i].c_str(), Point(aux_help_text::offset_keybind_desc, offset));
 	}
+}
+
+void adjustHelpDialogContent()
+{
+	using aux_help_text::keybind_desc;
+	using aux_help_text::btn_desc;
+
+	aux_help_text::init();
+
+	const int headerSize = dialogHelp->titleBarArea.h + TTF_FontHeight(draw_title_ttf->ttf_font)*2;
+	const int totalSize = headerSize + mltHelpText->getTextHeight() + aux_help_text::extra_height;
+	const unsigned totalWidth = max(mltHelpText->getTextWidth(), aux_help_text::listings_max_width);
+
+	//expand BgrWin to fit the text
+	if(totalSize > sclpHelpText->content.tw_area.h)
+	{
+		sclpHelpText->widenContent(totalWidth - sclpHelpText->content.tw_area.w, totalSize - sclpHelpText->content.tw_area.h);
+		sclpHelpText->refresh();
+	}
+
+	sclpHelpText->scrollingSpeedVertical = totalSize/20;
 }
 
