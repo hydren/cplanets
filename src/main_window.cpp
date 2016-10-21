@@ -200,7 +200,7 @@ Rect windowSize(0, 0, 640, 480);
 
 FlowLayout* toolbarNorthLayout;
 IconButton* btnNew, *btnLoad, *btnSave, *btnUndo, *btnRewind, *btnHelp, *btnAbout;
-ToogleButton* tglHideToolbars, *tglCollapseLeftPanel;
+IconToogleButton* tglHideToolbars, *tglCollapseLeftPanel;
 IconButton* btnRun, *btnPause;
 
 TabbedPane* tabs;
@@ -646,11 +646,14 @@ void CPlanets::init()
 		dialogHelp->tw_area.w - 2*WIDGETS_SPACING,
 		dialogHelp->tw_area.h - 3*WIDGETS_SPACING - dialogHelp->titleBarArea.h);
 
-	sclpHelpText = new ScrollablePane(dialogHelp, theme.scrollStyle, rectSclpHelpText, window->bgcol);
+	sclpHelpText = new ScrollablePane(dialogHelp, theme.scrollStyle, rectSclpHelpText, txtBodies->bgcol);
 	sclpHelpText->content.display_cmd = drawHelpDialog;
 
 	mltHelpText = new MultiLineTextRenderer(draw_ttf, null, Point(), 3*WIDGETS_SPACING);
 	mltHelpText->setText(aux_help_text::content, sclpHelpText->content.tw_area.w*1.5);
+
+	aux_help_text::init();
+	sclpHelpText->scrollingSpeedVertical = (aux_help_text::extra_height+mltHelpText->getTextHeight())/20;
 
 	if(aux_startToolbarHidden)
 	{
@@ -730,34 +733,6 @@ void drawAboutDialog(BgrWin* bw)
 	draw_title_ttf->draw_string(dialog->win, versionStr.c_str(), Point(logoOffset + 3*WIDGETS_SPACING, 2.5*WIDGETS_SPACING + TTF_FontHeight(draw_title_ttf->ttf_font)));
 
 	mltAboutText->draw(dialog->win);
-}
-
-void drawHelpDialog(BgrWin* bw)
-{
-	BgrWin* dialog = &sclpHelpText->content;
-	WidgetsExtra::drawBgrWin(bw);
-	mltHelpText->draw(dialog->win);
-
-	unsigned offset = mltHelpText->getTextHeight() + WIDGETS_SPACING;
-	for(unsigned i = 0; i < aux_help_text::btn_icons.size(); i++, offset += TTF_FontHeight(draw_mono_ttf->ttf_font))
-	{
-		Rect rt;
-		rt.x = 8*WIDGETS_SPACING; rt.y = offset;
-		SDL_BlitSurface(aux_help_text::btn_icons[i], null, dialog->win, &rt);
-		draw_mono_ttf->draw_string(dialog->win, aux_help_text::btn_desc[i].c_str(), Point(WIDGETS_SPACING*36, offset));
-	}
-
-	offset += 2*TTF_FontHeight(draw_mono_ttf->ttf_font);
-
-	draw_ttf->draw_string(dialog->win, "The following is a list of key bindings:" , Point(8*WIDGETS_SPACING, offset));
-
-	offset += 2*TTF_FontHeight(draw_ttf->ttf_font);
-
-	for(unsigned i = 0; i < aux_help_text::keybind_key.size(); i++, offset += TTF_FontHeight(draw_mono_ttf->ttf_font))
-	{
-		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_key[i].c_str(), Point(WIDGETS_SPACING*4, offset));
-		draw_mono_ttf->draw_string(dialog->win, aux_help_text::keybind_desc[i].c_str(), Point(WIDGETS_SPACING*36, offset));
-	}
 }
 
 void drawPlanetariumWithVersion(BgrWin* bgr)
@@ -949,9 +924,7 @@ void onButtonPressed(Button* btn)
 
 	if(btn == btnHelp)
 	{
-		aux_help_text::init();
-		unsigned extraSize = (aux_help_text::keybind_desc.size()+aux_help_text::btn_desc.size()+2)*TTF_FontHeight(draw_mono_ttf->ttf_font);
-		adjustDialog(dialogHelp, sclpHelpText, mltHelpText, extraSize);
+		adjustDialog(dialogHelp, sclpHelpText, mltHelpText, aux_help_text::extra_height);
 		setComponentPosition(dialogHelp, window->tw_area.w*0.5 - 200, window->tw_area.h*0.5 - 150);
 		dialogHelp->setVisible(dialogHelp->parent==null or dialogHelp->hidden);
 	}
