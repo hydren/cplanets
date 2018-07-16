@@ -1,6 +1,6 @@
 [submodule "include/futil"]
 	path = src_libs/futil
-	url = https://github.com/hydren/futil.git
+	url = https://gitlab.com/hydren/futil.git
 [submodule "include/SDL_widgets"]
 	path = src_libs/SDL_widgets
-	url = https://github.com/hydren/SDL_widgets.git
+	url = https://gitlab.com/hydren/SDL_widgets.git
