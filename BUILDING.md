@@ -26,10 +26,10 @@ You can also use eclipse to build the project (tested to work with MinGW and Lin
 - When using MinGW, make sure the g++ program is on the OS path variable. On Windows you need to add the /bin directory to your PATH variable.
 
 ##### Instructions:
-- Clone the code from [this](https://github.com/hydren/cplanets.git) repository (make sure to use the `--recursive` options)
-- If you simply downloaded, you'll need to download the submodules as well ([SDL_widgets](https://github.com/hydren/SDL_widgets) and [futil](https://github.com/hydren/futil))
+- Clone the code from [this](https://gitlab.com/hydren/cplanets.git) repository (make sure to use the `--recursive` options)
+- If you simply downloaded, you'll need to download the submodules as well ([SDL_widgets](https://gitlab.com/hydren/SDL_widgets) and [futil](https://gitlab.com/hydren/futil))
 - Import the project using the [Import Projects wizard](http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Ftasks%2Ftasks-importproject.htm).
-- If you want to clone from Eclipse, select workspace and on the projects pane left-click and select `Import -> Projects from git`. Choose `Clone URI`. On the URI field, paste the github adress https://github.com/hydren/cplanets.git. Click next and the choose `master` and next. Wait for the download and then select `Import existing projects` and then next and finish.
+- If you want to clone from Eclipse, select workspace and on the projects pane left-click and select `Import -> Projects from git`. Choose `Clone URI`. On the URI field, paste the repository adress https://gitlab.com/hydren/cplanets.git. Click next and the choose `master` and next. Wait for the download and then select `Import existing projects` and then next and finish.
 - Left-click project and select build configuration according to your environment (i.e. `linux-gcc-release` for *Linux*, `mingw-release` for *Windows*) and then build.
 - Any problems indicates that something probably went wrong with previous steps (missing/wrongly installed SDL libraries, missing/wrongly installed submodules)
 - If something wents wrong because of some cross-gcc stuff, install the `C/C++ GCC Cross Compiler Support` plugin on Eclipse via `Install new software` option on Eclipse.
@@ -51,8 +51,8 @@ You can also use eclipse to build the project (tested to work with MinGW and Lin
 There is also a experimental VS2010 project available. 
 
 ##### Instructions:
-- Clone the code from [this](https://github.com/hydren/cplanets.git) repository (make sure to use the `--recursive` options)
-- If you simply downloaded, you'll need to download the submodules as well ([SDL_widgets](https://github.com/hydren/SDL_widgets) and [futil](https://github.com/hydren/futil))
+- Clone the code from [this](https://gitlab.com/hydren/cplanets.git) repository (make sure to use the `--recursive` options)
+- If you simply downloaded, you'll need to download the submodules as well ([SDL_widgets](https://gitlab.com/hydren/SDL_widgets) and [futil](https://gitlab.com/hydren/futil))
 - Open VS2010 and load the project file `cplanets.vcxproj`.
 - Select `Release` configuration and then build. 
 
